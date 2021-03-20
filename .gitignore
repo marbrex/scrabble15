@@ -1,2 +1,10 @@
-
+# ignore Eclipse project file
 .project
+
+# IntelliJ IDEA (IDE) project files
+.idea
+.gradle
+# IntelliJ IDEA modules file
+/scrabble15.iml
+# IntelliJ IDEA output files
+/out

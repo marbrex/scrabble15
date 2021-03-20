@@ -7,11 +7,18 @@
     -fx-background-color: brown;
 }
 
-.place {
+.player-place {
     -fx-background-color: #ffb657;
 }
 
-.player {
+.player-place Label {
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-pref-width: 100%;
+    -fx-pref-height: 100%;
+}
+
+.player-info {
     -fx-background-color: #ffca85;
 }
 
