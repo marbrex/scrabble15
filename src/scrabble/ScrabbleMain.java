@@ -15,7 +15,7 @@ public class ScrabbleMain extends Application {
         loader.setLocation(getClass().getResource("fxml/interface.fxml"));
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 1080, 720);
+        Scene scene = new Scene(root, 1075, 905);
         scene.getStylesheets().add(ScrabbleMain.class.getResource("css/style.css").toExternalForm());
 
         Image appIcon = new Image(ScrabbleMain.class.getResourceAsStream("img/scrabble-icon-dark.png"));

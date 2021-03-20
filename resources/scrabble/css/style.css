@@ -41,38 +41,37 @@
 
 #actions-block {
     -fx-background-color: #549cb9;
+    -fx-spacing: 10px;
 }
 
-#actions-bar {
-    -fx-background-color: rgba(255, 255, 255, 0);
-}
-
-.action-btn {
-    -fx-border-radius: 7px;
-    -fx-border-color: silver;
-    -fx-background-radius: 10px;
-    -fx-background-color: #e2a41e;
+#shuffle-btn {
+    -fx-border-color: black;
+    -fx-background-color: lightblue;
     -fx-font-weight: bold;
-    -fx-font-size: 25px;
-    -fx-text-fill: silver;
-    -fx-text-alignment: center;
+    -fx-text-fill: black;
+}
+
+#shuffle-btn:hover {
     -fx-cursor: hand;
 }
 
 #letters-block {
     -fx-background-color: #a154b9;
-    -fx-padding: 10px;
+    -fx-spacing: 10px;
 }
 
 .letter-btn {
-    -fx-border-radius: 7px;
-    -fx-border-color: silver;
-    -fx-background-radius: 10px;
-    -fx-background-color: crimson;
+    -fx-border-color: black;
+    -fx-background-color: orange;
     -fx-font-weight: bold;
-    -fx-font-size: 25px;
-    -fx-text-fill: silver;
-    -fx-text-alignment: center;
+    -fx-text-fill: black;
+    -fx-pref-height: 50px;
+    -fx-pref-width: 50px;
+    -fx-max-height: 55px;
+    -fx-max-width: 55px;
+}
+
+.letter-btn:hover {
     -fx-cursor: open-hand;
 }
 
@@ -81,13 +80,24 @@
 }
 
 #ok-btn {
-    -fx-border-radius: 7px;
-    -fx-border-color: silver;
-    -fx-background-radius: 10px;
-    -fx-background-color: #519436;
+    -fx-background-color: lime;
     -fx-font-weight: bold;
-    -fx-font-size: 25px;
-    -fx-text-fill: silver;
-    -fx-text-alignment: center;
+    -fx-text-fill: black;
+    -fx-pref-width: 80px;
+    -fx-pref-height: 50px;
+    -fx-max-width: 90px;
+    -fx-max-height: 55px;
+}
+
+#ok-btn:hover {
     -fx-cursor: hand;
+}
+
+JFXButton {
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
+    -fx-font-size: 20px;
+    -fx-text-alignment: center;
+    -fx-min-height: 30px;
+    -fx-min-width: 30px;
 }
