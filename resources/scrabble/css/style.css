@@ -4,11 +4,11 @@
 }
 
 #time-block {
-    -fx-background-color: brown;
+    /*-fx-background-color: brown;*/
 }
 
 .player-place {
-    -fx-background-color: #ffb657;
+    /*-fx-background-color: #ffb657;*/
 }
 
 .player-place Label {
@@ -19,18 +19,19 @@
 }
 
 .player-info {
-    -fx-background-color: #ffca85;
+    /*-fx-background-color: #ffca85;*/
 }
 
 #chat-block {
-    -fx-background-color: #54b96a;
+    /*-fx-background-color: #54b96a;*/
 }
 
 
 /* Game Block (Grid) */
 #game-block {
     -fx-alignment: center;
-    -fx-grid-lines-visible: true;
+    /*-fx-grid-lines-visible: true;*/
+    /*-fx-background-color: lightgray;*/
 }
 
 
@@ -48,7 +49,11 @@
     -fx-border-color: black;
     -fx-background-color: lightblue;
     -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-text-alignment: center;
     -fx-text-fill: black;
+    -fx-min-height: 30px;
+    -fx-min-width: 30px;
 }
 
 #shuffle-btn:hover {
@@ -56,17 +61,21 @@
 }
 
 #letters-block {
-    -fx-background-color: #a154b9;
+    -fx-background-color: #be965e;
     -fx-spacing: 10px;
 }
 
 .letter-btn {
+    -fx-border-radius: 7px;
+    -fx-background-radius: 7px;
     -fx-border-color: black;
     -fx-background-color: orange;
     -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-text-alignment: center;
     -fx-text-fill: black;
-    -fx-pref-height: 50px;
-    -fx-pref-width: 50px;
+    -fx-min-height: 30px;
+    -fx-min-width: 30px;
     -fx-max-height: 55px;
     -fx-max-width: 55px;
 }
@@ -76,13 +85,18 @@
 }
 
 #ok-btn-block {
-    -fx-background-color: #646e99;
+    -fx-background-color: #45a045;
 }
 
 #ok-btn {
+    -fx-border-color: black;
     -fx-background-color: lime;
     -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-text-alignment: center;
     -fx-text-fill: black;
+    -fx-min-height: 30px;
+    -fx-min-width: 30px;
     -fx-pref-width: 80px;
     -fx-pref-height: 50px;
     -fx-max-width: 90px;
@@ -91,13 +105,4 @@
 
 #ok-btn:hover {
     -fx-cursor: hand;
-}
-
-JFXButton {
-    -fx-border-radius: 7px;
-    -fx-background-radius: 7px;
-    -fx-font-size: 20px;
-    -fx-text-alignment: center;
-    -fx-min-height: 30px;
-    -fx-min-width: 30px;
 }

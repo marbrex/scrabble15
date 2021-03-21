@@ -132,59 +132,59 @@
                   </JFXButton>
                </children>
             </HBox>
-            <HBox id="letters-block" alignment="CENTER" fillHeight="false" prefHeight="80.0" prefWidth="497.0" spacing="10.0">
+            <HBox fx:id="lettersBlock" id="letters-block" alignment="CENTER" fillHeight="false" prefHeight="80.0" prefWidth="497.0" spacing="10.0">
                <children>
-                  <JFXButton id="letter-1" fx:id="letter1" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </JFXButton>
-                  <JFXButton fx:id="letter2" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </JFXButton>
-                  <JFXButton fx:id="letter3" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </JFXButton>
-                  <JFXButton fx:id="letter4" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </JFXButton>
-                  <JFXButton fx:id="letter5" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </JFXButton>
-                  <JFXButton fx:id="letter6" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </JFXButton>
-                  <JFXButton fx:id="letter7" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </JFXButton>
+<!--                  <JFXButton fx:id="letter1" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
+<!--                     <font>-->
+<!--                        <Font name="System Bold" size="20.0" />-->
+<!--                     </font>-->
+<!--                  </JFXButton>-->
+<!--                  <JFXButton fx:id="letter2" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
+<!--                     <font>-->
+<!--                        <Font name="System Bold" size="20.0" />-->
+<!--                     </font>-->
+<!--                  </JFXButton>-->
+<!--                  <JFXButton fx:id="letter3" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
+<!--                     <font>-->
+<!--                        <Font name="System Bold" size="20.0" />-->
+<!--                     </font>-->
+<!--                  </JFXButton>-->
+<!--                  <JFXButton fx:id="letter4" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
+<!--                     <font>-->
+<!--                        <Font name="System Bold" size="20.0" />-->
+<!--                     </font>-->
+<!--                  </JFXButton>-->
+<!--                  <JFXButton fx:id="letter5" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
+<!--                     <font>-->
+<!--                        <Font name="System Bold" size="20.0" />-->
+<!--                     </font>-->
+<!--                  </JFXButton>-->
+<!--                  <JFXButton fx:id="letter6" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
+<!--                     <font>-->
+<!--                        <Font name="System Bold" size="20.0" />-->
+<!--                     </font>-->
+<!--                  </JFXButton>-->
+<!--                  <JFXButton fx:id="letter7" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
+<!--                     <font>-->
+<!--                        <Font name="System Bold" size="20.0" />-->
+<!--                     </font>-->
+<!--                  </JFXButton>-->
                </children>
-               <fx:define>
-                  <ArrayList fx:id="letters" >
-                     <fx:reference source="letter1"/>
-                     <fx:reference source="letter2"/>
-                     <fx:reference source="letter3"/>
-                     <fx:reference source="letter4"/>
-                     <fx:reference source="letter5"/>
-                     <fx:reference source="letter6"/>
-                     <fx:reference source="letter7"/>
-                  </ArrayList>
-               </fx:define>
+<!--               <fx:define>-->
+<!--                  <ArrayList fx:id="letters">-->
+<!--                     <fx:reference source="letter1" />-->
+<!--                     <fx:reference source="letter2" />-->
+<!--                     <fx:reference source="letter3" />-->
+<!--                     <fx:reference source="letter4" />-->
+<!--                     <fx:reference source="letter5" />-->
+<!--                     <fx:reference source="letter6" />-->
+<!--                     <fx:reference source="letter7" />-->
+<!--                  </ArrayList>-->
+<!--               </fx:define>-->
             </HBox>
             <HBox id="ok-btn-block" alignment="CENTER" fillHeight="false" prefHeight="80.0" prefWidth="159.0">
                <children>
-                  <JFXButton id="ok-btn" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="OK">
+                  <JFXButton id="ok-btn" fx:id="okBtn" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="OK">
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -195,7 +195,7 @@
       </HBox>
    </bottom>
    <center>
-      <GridPane id="game-block" prefHeight="825.0" prefWidth="825.0" BorderPane.alignment="CENTER">
+      <GridPane id="game-block" fx:id="grid" prefHeight="825.0" prefWidth="825.0" BorderPane.alignment="CENTER">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -230,48 +230,6 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
-         <children>
-            <JFXButton alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="A" GridPane.columnIndex="4" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </JFXButton>
-            <JFXButton alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="C" GridPane.columnIndex="2" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </JFXButton>
-            <JFXButton alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S" GridPane.columnIndex="1" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </JFXButton>
-            <JFXButton alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="R" GridPane.columnIndex="3" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </JFXButton>
-            <JFXButton alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="B" GridPane.columnIndex="5" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </JFXButton>
-            <JFXButton alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="B" GridPane.columnIndex="6" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </JFXButton>
-            <JFXButton alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="L" GridPane.columnIndex="7" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </JFXButton>
-            <JFXButton alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="E" GridPane.columnIndex="8" GridPane.rowIndex="1">
-               <font>
-                  <Font name="System Bold" size="20.0" />
-               </font>
-            </JFXButton>
-         </children>
       </GridPane>
    </center>
 </BorderPane>
