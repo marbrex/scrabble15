@@ -5,7 +5,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -13,189 +12,11 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import java.util.ArrayList?>
 
-<BorderPane id="root-block" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="600.0" minWidth="800.0" prefHeight="905.0" prefWidth="1075.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.MainController">
-   <left>
-      <VBox id="left-bar" alignment="CENTER" minHeight="0.0" minWidth="0.0" prefHeight="654.0" prefWidth="250.0" BorderPane.alignment="CENTER">
-         <children>
-            <Pane id="time-block" prefHeight="40.0" prefWidth="156.0">
-               <children>
-                  <Label layoutX="94.0" layoutY="10.0" text="12:34">
-                     <font>
-                        <Font name="System Bold" size="15.0" />
-                     </font>
-                  </Label>
-               </children></Pane>
-            <VBox id="players-block" prefHeight="359.0" prefWidth="226.0">
-               <children>
-                  <HBox id="player-1" prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <Pane id="player-1-place-block" prefHeight="200.0" prefWidth="200.0" styleClass="player-place">
-                           <children>
-                              <Label id="player-1-place-label" layoutX="30.0" layoutY="27.0" styleClass="player-place-label" text="#1" />
-                           </children></Pane>
-                        <Pane id="player-1-info-block" prefHeight="44.0" prefWidth="279.0" styleClass="player-info">
-                           <children>
-                              <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" styleClass="player-icon">
-                                 <image>
-                                    <Image url="@../img/default-avatar-icon.png" />
-                                 </image>
-                              </ImageView>
-                              <Label layoutX="86.0" layoutY="14.0" text="Player1" />
-                              <Label layoutX="86.0" layoutY="35.0" text="21" />
-                           </children></Pane>
-                     </children>
-                  </HBox>
-                  <HBox id="player-2" prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <Pane id="player-2-place" prefHeight="200.0" prefWidth="200.0" styleClass="place">
-                           <children>
-                              <Label layoutX="30.0" layoutY="27.0" text="#2" />
-                           </children></Pane>
-                        <Pane id="player-2-name" prefHeight="44.0" prefWidth="279.0" styleClass="player">
-                           <children>
-                              <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" styleClass="player-icon">
-                                 <image>
-                                    <Image url="@../img/default-avatar-icon.png" />
-                                 </image>
-                              </ImageView>
-                              <Label layoutX="88.0" layoutY="20.0" text="Player2" />
-                              <Label layoutX="86.0" layoutY="37.0" text="19" />
-                           </children></Pane>
-                     </children>
-                  </HBox>
-                  <HBox id="player-3" prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <Pane id="player-3-place" prefHeight="200.0" prefWidth="200.0" styleClass="place">
-                           <children>
-                              <Label layoutX="30.0" layoutY="25.0" text="#3" />
-                           </children></Pane>
-                        <Pane id="player-3-name" prefHeight="44.0" prefWidth="279.0" styleClass="player">
-                           <children>
-                              <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" styleClass="player-icon">
-                                 <image>
-                                    <Image url="@../img/default-avatar-icon.png" />
-                                 </image>
-                              </ImageView>
-                              <Label layoutX="83.0" layoutY="15.0" text="Player3" />
-                              <Label layoutX="83.0" layoutY="33.0" text="16" />
-                           </children></Pane>
-                     </children>
-                  </HBox>
-                  <HBox id="player-4" prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <Pane id="player-4-place" prefHeight="200.0" prefWidth="200.0" styleClass="place">
-                           <children>
-                              <Label layoutX="30.0" layoutY="24.0" text="#4" />
-                           </children></Pane>
-                        <Pane id="player-4-name" prefHeight="44.0" prefWidth="279.0" styleClass="player">
-                           <children>
-                              <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" styleClass="player-icon">
-                                 <image>
-                                    <Image url="@../img/default-avatar-icon.png" />
-                                 </image>
-                              </ImageView>
-                              <Label layoutX="84.0" layoutY="16.0" text="Player4" />
-                              <Label layoutX="84.0" layoutY="35.0" text="12" />
-                           </children></Pane>
-                     </children>
-                  </HBox>
-               </children>
-            </VBox>
-            <Pane id="chat-block" prefHeight="325.0" prefWidth="226.0">
-               <children>
-                  <Label alignment="CENTER" layoutX="99.0" layoutY="67.0" text="CHAT" />
-               </children></Pane>
-         </children>
-      </VBox>
-   </left>
-   <bottom>
-      <HBox id="bottom-block" alignment="CENTER" minHeight="0.0" minWidth="0.0" prefHeight="80.0" prefWidth="1075.0" BorderPane.alignment="CENTER">
-         <children>
-            <HBox id="actions-block" alignment="CENTER" prefHeight="80.0" prefWidth="432.0">
-               <children>
-                  <JFXButton id="shuffle-btn" alignment="CENTER" maxHeight="50.0" text="Shuffle">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                     <graphic>
-                        <ImageView id="shuffle-btn-icon" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../img/shuffle-icon.png" />
-                           </image>
-                           <cursor>
-                              <Cursor fx:constant="DEFAULT" />
-                           </cursor>
-                        </ImageView>
-                     </graphic>
-                  </JFXButton>
-               </children>
-            </HBox>
-            <HBox fx:id="lettersBlock" id="letters-block" alignment="CENTER" fillHeight="false" prefHeight="80.0" prefWidth="497.0" spacing="10.0">
-               <children>
-<!--                  <JFXButton fx:id="letter1" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
-<!--                     <font>-->
-<!--                        <Font name="System Bold" size="20.0" />-->
-<!--                     </font>-->
-<!--                  </JFXButton>-->
-<!--                  <JFXButton fx:id="letter2" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
-<!--                     <font>-->
-<!--                        <Font name="System Bold" size="20.0" />-->
-<!--                     </font>-->
-<!--                  </JFXButton>-->
-<!--                  <JFXButton fx:id="letter3" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
-<!--                     <font>-->
-<!--                        <Font name="System Bold" size="20.0" />-->
-<!--                     </font>-->
-<!--                  </JFXButton>-->
-<!--                  <JFXButton fx:id="letter4" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
-<!--                     <font>-->
-<!--                        <Font name="System Bold" size="20.0" />-->
-<!--                     </font>-->
-<!--                  </JFXButton>-->
-<!--                  <JFXButton fx:id="letter5" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
-<!--                     <font>-->
-<!--                        <Font name="System Bold" size="20.0" />-->
-<!--                     </font>-->
-<!--                  </JFXButton>-->
-<!--                  <JFXButton fx:id="letter6" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
-<!--                     <font>-->
-<!--                        <Font name="System Bold" size="20.0" />-->
-<!--                     </font>-->
-<!--                  </JFXButton>-->
-<!--                  <JFXButton fx:id="letter7" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" styleClass="letter-btn" text="S">-->
-<!--                     <font>-->
-<!--                        <Font name="System Bold" size="20.0" />-->
-<!--                     </font>-->
-<!--                  </JFXButton>-->
-               </children>
-<!--               <fx:define>-->
-<!--                  <ArrayList fx:id="letters">-->
-<!--                     <fx:reference source="letter1" />-->
-<!--                     <fx:reference source="letter2" />-->
-<!--                     <fx:reference source="letter3" />-->
-<!--                     <fx:reference source="letter4" />-->
-<!--                     <fx:reference source="letter5" />-->
-<!--                     <fx:reference source="letter6" />-->
-<!--                     <fx:reference source="letter7" />-->
-<!--                  </ArrayList>-->
-<!--               </fx:define>-->
-            </HBox>
-            <HBox id="ok-btn-block" alignment="CENTER" fillHeight="false" prefHeight="80.0" prefWidth="159.0">
-               <children>
-                  <JFXButton id="ok-btn" fx:id="okBtn" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="OK">
-                     <font>
-                        <Font name="System Bold" size="20.0" />
-                     </font>
-                  </JFXButton>
-               </children>
-            </HBox>
-         </children>
-      </HBox>
-   </bottom>
-   <center>
-      <GridPane id="game-block" fx:id="grid" prefHeight="825.0" prefWidth="825.0" BorderPane.alignment="CENTER">
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="905.0" prefWidth="1075.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.ScrabbleController">
+   <children>
+      <GridPane id="game-block" fx:id="gridPaneUI" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="825.0" prefWidth="825.0">
         <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -231,5 +52,140 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
       </GridPane>
-   </center>
-</BorderPane>
+      <HBox id="bottom-block" alignment="CENTER" layoutY="825.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="80.0" prefWidth="1075.0">
+         <children>
+            <HBox id="actions-block" alignment="CENTER" prefHeight="80.0" prefWidth="475.0">
+               <children>
+                  <JFXButton id="shuffle-btn" alignment="CENTER" maxHeight="50.0" text="Shuffle">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                     <graphic>
+                        <ImageView id="shuffle-btn-icon" fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../img/shuffle-icon.png" />
+                           </image>
+                           <cursor>
+                              <Cursor fx:constant="DEFAULT" />
+                           </cursor>
+                        </ImageView>
+                     </graphic>
+                  </JFXButton>
+               </children>
+            </HBox>
+            <Pane id="letters-block" fx:id="lettersBlock" prefHeight="80.0" prefWidth="498.0" />
+            <HBox id="ok-btn-block" alignment="CENTER" fillHeight="false" prefHeight="80.0" prefWidth="159.0">
+               <children>
+                  <JFXButton id="ok-btn" fx:id="okBtn" alignment="CENTER" prefHeight="50.0" prefWidth="50.0" text="OK">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                  </JFXButton>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+      <VBox id="left-bar" alignment="CENTER" layoutX="825.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="825.0" prefWidth="250.0">
+         <children>
+            <Pane id="time-block" prefHeight="40.0" prefWidth="156.0">
+               <children>
+                  <Label layoutX="94.0" layoutY="10.0" text="12:34">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </Label>
+               </children>
+            </Pane>
+            <VBox id="players-block" prefHeight="359.0" prefWidth="226.0">
+               <children>
+                  <HBox id="player-1" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Pane id="player-1-place-block" prefHeight="200.0" prefWidth="200.0" styleClass="player-place">
+                           <children>
+                              <Label id="player-1-place-label" layoutX="30.0" layoutY="27.0" styleClass="player-place-label" text="#1" />
+                           </children>
+                        </Pane>
+                        <Pane id="player-1-info-block" prefHeight="44.0" prefWidth="279.0" styleClass="player-info">
+                           <children>
+                              <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" styleClass="player-icon">
+                                 <image>
+                                    <Image url="@../img/default-avatar-icon.png" />
+                                 </image>
+                              </ImageView>
+                              <Label layoutX="86.0" layoutY="14.0" text="Player1" />
+                              <Label layoutX="86.0" layoutY="35.0" text="21" />
+                           </children>
+                        </Pane>
+                     </children>
+                  </HBox>
+                  <HBox id="player-2" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Pane id="player-2-place" prefHeight="200.0" prefWidth="200.0" styleClass="place">
+                           <children>
+                              <Label layoutX="30.0" layoutY="27.0" text="#2" />
+                           </children>
+                        </Pane>
+                        <Pane id="player-2-name" prefHeight="44.0" prefWidth="279.0" styleClass="player">
+                           <children>
+                              <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" styleClass="player-icon">
+                                 <image>
+                                    <Image url="@../img/default-avatar-icon.png" />
+                                 </image>
+                              </ImageView>
+                              <Label layoutX="88.0" layoutY="20.0" text="Player2" />
+                              <Label layoutX="86.0" layoutY="37.0" text="19" />
+                           </children>
+                        </Pane>
+                     </children>
+                  </HBox>
+                  <HBox id="player-3" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Pane id="player-3-place" prefHeight="200.0" prefWidth="200.0" styleClass="place">
+                           <children>
+                              <Label layoutX="30.0" layoutY="25.0" text="#3" />
+                           </children>
+                        </Pane>
+                        <Pane id="player-3-name" prefHeight="44.0" prefWidth="279.0" styleClass="player">
+                           <children>
+                              <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" styleClass="player-icon">
+                                 <image>
+                                    <Image url="@../img/default-avatar-icon.png" />
+                                 </image>
+                              </ImageView>
+                              <Label layoutX="83.0" layoutY="15.0" text="Player3" />
+                              <Label layoutX="83.0" layoutY="33.0" text="16" />
+                           </children>
+                        </Pane>
+                     </children>
+                  </HBox>
+                  <HBox id="player-4" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Pane id="player-4-place" prefHeight="200.0" prefWidth="200.0" styleClass="place">
+                           <children>
+                              <Label layoutX="30.0" layoutY="24.0" text="#4" />
+                           </children>
+                        </Pane>
+                        <Pane id="player-4-name" prefHeight="44.0" prefWidth="279.0" styleClass="player">
+                           <children>
+                              <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0" layoutY="5.0" pickOnBounds="true" preserveRatio="true" styleClass="player-icon">
+                                 <image>
+                                    <Image url="@../img/default-avatar-icon.png" />
+                                 </image>
+                              </ImageView>
+                              <Label layoutX="84.0" layoutY="16.0" text="Player4" />
+                              <Label layoutX="84.0" layoutY="35.0" text="12" />
+                           </children>
+                        </Pane>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <Pane id="chat-block" prefHeight="325.0" prefWidth="226.0">
+               <children>
+                  <Label alignment="CENTER" layoutX="99.0" layoutY="67.0" text="CHAT" />
+               </children>
+            </Pane>
+         </children>
+      </VBox>
+   </children>
+</Pane>

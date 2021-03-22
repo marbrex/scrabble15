@@ -7,7 +7,10 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-public class ScrabbleMain extends Application {
+public class ScrabbleApp extends Application {
+
+    private double windowWidth = 1075;
+    private double windowHeight = 905;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -15,10 +18,10 @@ public class ScrabbleMain extends Application {
         loader.setLocation(getClass().getResource("fxml/interface.fxml"));
         Parent root = loader.load();
 
-        Scene scene = new Scene(root, 1075, 905);
-        scene.getStylesheets().add(ScrabbleMain.class.getResource("css/style.css").toExternalForm());
+        Scene scene = new Scene(root, windowWidth, windowHeight);
+        scene.getStylesheets().add(ScrabbleApp.class.getResource("css/style.css").toExternalForm());
 
-        Image appIcon = new Image(ScrabbleMain.class.getResourceAsStream("img/scrabble-icon-dark.png"));
+        Image appIcon = new Image(ScrabbleApp.class.getResourceAsStream("img/scrabble-icon-dark.png"));
 
         primaryStage.setTitle("Scrabble");
         primaryStage.getIcons().add(appIcon);
