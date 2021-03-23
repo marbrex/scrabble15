@@ -1,34 +1,73 @@
+/**
+ * scrabble.model.Cell class represents a cell of the letters grid.
+ *
+ * @author      Eldar Kasmamytov
+ */
+
 package scrabble.model;
 
 public class Cell {
 
-    private char ltr;
-    private int pts;
-    private boolean isFree;
+  /**
+   * Letter that is stocked by this cell.
+   */
+  private char ltr;
 
-    public Cell () {
-        isFree = true;
-        pts = 0;
-        ltr = (char) 0;
-    }
+  /**
+   * Points that a player will get
+   * by using this letter in his/her word.
+   */
+  private int pts;
 
-    public Cell (char ltr, int pts) {
-        isFree = false;
-        this.pts = pts;
-        this.ltr = ltr;
-    }
+  /**
+   * Indicates whether a cell is free.
+   */
+  private boolean isFree;
 
-    public void setCell (char letter, int points) {
-        isFree = false;
-        ltr = letter;
-        pts = points;
-    }
+  /**
+   * Default constructor.
+   */
+  public Cell() {
+    isFree = true;
+    pts = 0;
+    ltr = (char) 0;
+  }
 
-    public char getLtr() {
-        return ltr;
-    }
+  /**
+   * Constructor that takes 2 arguments.
+   * @param ltr Letter to put into the cell
+   * @param pts Points of the cell
+   */
+  public Cell(char ltr, int pts) {
+    isFree = false;
+    this.pts = pts;
+    this.ltr = ltr;
+  }
 
-    public int getPts() {
-        return pts;
-    }
+  /**
+   * Sets the letter and points of the cell.
+   * @param letter Letter to put into the cell
+   * @param points Points of the cell
+   */
+  public void setCell(char letter, int points) {
+    isFree = false;
+    ltr = letter;
+    pts = points;
+  }
+
+  /**
+   * Get the letter.
+   * @return The letter stocked by the cell
+   */
+  public char getLtr() {
+    return ltr;
+  }
+
+  /**
+   * Get the points.
+   * @return Points of the cell
+   */
+  public int getPts() {
+    return pts;
+  }
 }

@@ -1,3 +1,10 @@
+/**
+ * The Main Controller linked with "interface.fxml" file.
+ * Main function is to initialize and launch the application.
+ *
+ * @author      Eldar Kasmamytov
+ */
+
 package scrabble;
 
 import javafx.application.Application;
@@ -9,27 +16,27 @@ import javafx.stage.Stage;
 
 public class ScrabbleApp extends Application {
 
-    private double windowWidth = 1075;
-    private double windowHeight = 905;
+  final private double windowWidth = 1075;
+  final private double windowHeight = 905;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("fxml/interface.fxml"));
-        Parent root = loader.load();
+  @Override
+  public void start(Stage primaryStage) throws Exception {
+    FXMLLoader loader = new FXMLLoader();
+    loader.setLocation(getClass().getResource("fxml/interface.fxml"));
+    Parent root = loader.load();
 
-        Scene scene = new Scene(root, windowWidth, windowHeight);
-        scene.getStylesheets().add(ScrabbleApp.class.getResource("css/style.css").toExternalForm());
+    Scene scene = new Scene(root, windowWidth, windowHeight);
+    scene.getStylesheets().add(ScrabbleApp.class.getResource("css/style.css").toExternalForm());
 
-        Image appIcon = new Image(ScrabbleApp.class.getResourceAsStream("img/scrabble-icon-dark.png"));
+    Image appIcon = new Image(ScrabbleApp.class.getResourceAsStream("img/scrabble-icon-dark.png"));
 
-        primaryStage.setTitle("Scrabble");
-        primaryStage.getIcons().add(appIcon);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+    primaryStage.setTitle("Scrabble");
+    primaryStage.getIcons().add(appIcon);
+    primaryStage.setScene(scene);
+    primaryStage.show();
+  }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+  public static void main(String[] args) {
+    launch(args);
+  }
 }
