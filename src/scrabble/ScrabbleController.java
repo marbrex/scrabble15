@@ -1,15 +1,3 @@
-/**
- * The Main Controller linked with "interface.fxml" file.
- *
- * Main functions:
- * <ul>
- * <li>Initialize cells (Rectangle) of the 15x15 grid (GridPane).
- * <li>Initialize proposed letters.
- * </ul>
- *
- * @author      Eldar Kasmamytov
- */
-
 package scrabble;
 
 import com.jfoenix.controls.JFXButton;
@@ -25,6 +13,17 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import scrabble.model.Grid;
 
+/**
+ * The Main Controller linked with "interface.fxml" file.
+ *
+ * Main functions:
+ * <ul>
+ * <li>Initialize cells (Rectangle) of the 15x15 grid (GridPane).
+ * <li>Initialize proposed letters.
+ * </ul>
+ *
+ * @author      Eldar Kasmamytov
+ */
 public class ScrabbleController {
 
   /* Some reminders:
@@ -52,6 +51,9 @@ public class ScrabbleController {
   @FXML
   private JFXButton okBtn;
 
+  /**
+   * The actual data of the letter grid will be stocked here.
+   */
   private Grid gridData;
 
   final private int gridPaneSize;
@@ -74,16 +76,18 @@ public class ScrabbleController {
   }
 
   /**
-   * The FXML loader will call the initialize() method
-   * after the loading of the FXML document is complete.
-   * Initializes both grid cells and proposed letters.
+   * Creates and Initiates all the cells
+   * in the letter grid.
    */
-  @FXML
-  private void initialize() {
+  private void initCells () {
 
-    gridPaneUI.setPadding(new Insets(gridPanePadSize));
-    gridPaneUI.setHgap(gridPanePadSize);
-    gridPaneUI.setVgap(gridPanePadSize);
+    // creating an effect for all the cells
+    InnerShadow cellEffect = new InnerShadow();
+    cellEffect.setColor(Color.DARKGRAY);
+    cellEffect.setOffsetX(-5);
+    cellEffect.setOffsetY(5);
+    cellEffect.setHeight(20);
+    cellEffect.setWidth(20);
 
     for (int i = 0; i < cellNumber; i++) {
       for (int j = 0; j < cellNumber; j++) {
@@ -92,15 +96,7 @@ public class ScrabbleController {
         rect.setStroke(Color.DARKGRAY);
         rect.setArcWidth(10);
         rect.setArcHeight(10);
-
-        InnerShadow is = new InnerShadow();
-        is.setColor(Color.DARKGRAY);
-        is.setOffsetX(-5);
-        is.setOffsetY(5);
-        is.setHeight(20);
-        is.setWidth(20);
-
-        rect.setEffect(is);
+        rect.setEffect(cellEffect);
 
         rect.setOnMouseEntered(event -> rect.setFill(Color.CRIMSON));
         rect.setOnMouseExited(event -> rect.setFill(Color.AQUA));
@@ -148,6 +144,7 @@ public class ScrabbleController {
           Dragboard db = event.getDragboard();
           boolean success = false;
           if (db.hasString()) {
+
             int x = GridPane.getColumnIndex(rect);
             int y = GridPane.getRowIndex(rect);
             GridPane.clearConstraints(rect);
@@ -161,13 +158,13 @@ public class ScrabbleController {
             l.getStyleClass().add("letter-btn");
             l.setPrefSize(cellSize, cellSize);
 
+            // creating an effect for the letter
             DropShadow ds = new DropShadow();
             ds.setHeight(20);
             ds.setWidth(20);
             ds.setOffsetY(-3);
             ds.setOffsetX(3);
             ds.setColor(Color.GRAY);
-
             l.setEffect(ds);
 
             GridPane.setConstraints(l, x, y);
@@ -185,6 +182,20 @@ public class ScrabbleController {
         gridPaneUI.add(rect, i, j);
       }
     }
+  }
+
+  /**
+   * Creates and Initiates currently proposed letters.
+   */
+  private void initLetters () {
+
+    // creating an effect for the letter
+    DropShadow letterEffect = new DropShadow();
+    letterEffect.setHeight(20);
+    letterEffect.setWidth(20);
+    letterEffect.setOffsetY(-3);
+    letterEffect.setOffsetX(3);
+    letterEffect.setColor(Color.GRAY);
 
     for (int i = 0; i < lettersNumber; i++) {
       /* Using Pane here because it doesn't layout the objects inside of it,
@@ -197,15 +208,7 @@ public class ScrabbleController {
       Button ltr = new Button("S");
       ltr.getStyleClass().add("letter-btn");
       ltr.setPrefSize(cellSize, cellSize);
-
-      DropShadow ds = new DropShadow();
-      ds.setHeight(20);
-      ds.setWidth(20);
-      ds.setOffsetY(-3);
-      ds.setOffsetX(3);
-      ds.setColor(Color.GRAY);
-
-      ltr.setEffect(ds);
+      ltr.setEffect(letterEffect);
 
       ltr.setOnMousePressed(event -> {
         System.out
@@ -271,5 +274,27 @@ public class ScrabbleController {
 
       lettersBlock.getChildren().add(ltr);
     }
+  }
+
+  /**
+   * The FXML loader will call the initialize() method
+   * after the loading of the FXML document is complete.
+   * Initializes both grid cells and proposed letters.
+   */
+  @FXML
+  private void initialize() {
+
+    // setting the padding of the entire grid
+    // and margins for each cell
+    gridPaneUI.setPadding(new Insets(gridPanePadSize));
+    gridPaneUI.setHgap(gridPanePadSize);
+    gridPaneUI.setVgap(gridPanePadSize);
+
+    // Init all the cells
+    initCells();
+
+    // Init currently proposed letters
+    initLetters();
+
   }
 }

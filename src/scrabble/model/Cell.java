@@ -1,11 +1,10 @@
+package scrabble.model;
+
 /**
  * scrabble.model.Cell class represents a cell of the letters grid.
  *
  * @author      Eldar Kasmamytov
  */
-
-package scrabble.model;
-
 public class Cell {
 
   /**

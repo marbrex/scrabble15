@@ -1,12 +1,11 @@
+package scrabble.model;
+
 /**
  * scrabble.model.Grid class is used to stock
  * the internal state of the letters grid.
  *
  * @author      Eldar Kasmamytov
  */
-
-package scrabble.model;
-
 public class Grid {
 
   private Cell g[];

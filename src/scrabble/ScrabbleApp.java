@@ -1,10 +1,3 @@
-/**
- * The Main Controller linked with "interface.fxml" file.
- * Main function is to initialize and launch the application.
- *
- * @author      Eldar Kasmamytov
- */
-
 package scrabble;
 
 import javafx.application.Application;
@@ -14,6 +7,13 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+/**
+ * scrabble.ScrabbleApp class is the main class
+ * and the starting point of the application.
+ * Main function is to initialize and launch the application.
+ *
+ * @author      Eldar Kasmamytov
+ */
 public class ScrabbleApp extends Application {
 
   final private double windowWidth = 1075;
