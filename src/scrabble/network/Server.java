@@ -1,11 +1,11 @@
-package network;
+package scrabble.network;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.*;
 import java.util.ArrayList;
 
-import network.*;
+import scrabble.network.*;
 
 public class Server {
 

@@ -1,10 +1,10 @@
-package network;
+package scrabble.network;
 
 import java.io.*;
 import java.net.*;
 import java.util.ArrayList;
 
-import application.ChatController;
+import scrabble.ChatController;
 import javafx.application.Platform;
 
 public class Client extends Thread {
