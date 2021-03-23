@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 
 import java.util.Date;
 

@@ -1,4 +1,4 @@
-package model;
+package scrabble.model;
 
 public class HumanPlayer extends Player {
 	
