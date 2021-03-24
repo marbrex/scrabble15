@@ -1,108 +1,117 @@
 /* Left Bar */
 #left-bar {
-    /* -fx-background-color: cyan; */
+  /* -fx-background-color: cyan; */
 }
 
 #time-block {
-    /*-fx-background-color: brown;*/
+  /*-fx-background-color: brown;*/
 }
 
 .player-place {
-    /*-fx-background-color: #ffb657;*/
+  /*-fx-background-color: #ffb657;*/
 }
 
 .player-place Label {
-    -fx-font-weight: bold;
-    -fx-font-size: 15px;
-    -fx-pref-width: 100%;
-    -fx-pref-height: 100%;
+  -fx-font-weight: bold;
+  -fx-font-size: 15px;
+  -fx-pref-width: 100%;
+  -fx-pref-height: 100%;
 }
 
 .player-info {
-    /*-fx-background-color: #ffca85;*/
+  /*-fx-background-color: #ffca85;*/
 }
 
 #chat-block {
-    /*-fx-background-color: #54b96a;*/
+  /*-fx-background-color: #54b96a;*/
 }
 
 
 /* Game Block (Grid) */
 #game-block {
-    -fx-alignment: center;
-    /*-fx-grid-lines-visible: true;*/
-    /*-fx-background-color: lightgray;*/
+  -fx-alignment: center;
+  /*-fx-grid-lines-visible: true;*/
+  /*-fx-background-color: lightgray;*/
 }
 
 
 /* Bottom Block */
 #bottom-block {
-    /* -fx-background-color: #2c9494; */
+  /* -fx-background-color: #2c9494; */
 }
 
 #actions-block {
-    -fx-background-color: #549cb9;
-    -fx-spacing: 10px;
+  -fx-background-color: #549cb9;
+  -fx-spacing: 10px;
 }
 
 #shuffle-btn {
-    -fx-border-color: black;
-    -fx-background-color: lightblue;
-    -fx-font-weight: bold;
-    -fx-font-size: 20px;
-    -fx-text-alignment: center;
-    -fx-text-fill: black;
-    -fx-min-height: 30px;
-    -fx-min-width: 30px;
+  -fx-border-color: black;
+  -fx-background-color: lightblue;
+  -fx-font-weight: bold;
+  -fx-font-size: 20px;
+  -fx-text-alignment: center;
+  -fx-text-fill: black;
+  -fx-min-height: 30px;
+  -fx-min-width: 30px;
 }
 
 #shuffle-btn:hover {
-    -fx-cursor: hand;
+  -fx-cursor: hand;
 }
 
 #letters-block {
-    -fx-background-color: #be965e;
-    -fx-spacing: 10px;
+  -fx-background-color: #be965e;
+  -fx-spacing: 10px;
+}
+
+.letter-slot {
+  -fx-background-color: #968345;
+  -fx-background-radius: 7px;
+  -fx-min-height: 30px;
+  -fx-min-width: 30px;
+  -fx-max-height: 55px;
+  -fx-max-width: 55px;
 }
 
 .letter-btn {
-    -fx-border-radius: 7px;
-    -fx-background-radius: 7px;
-    -fx-border-color: black;
-    -fx-background-color: orange;
-    -fx-font-weight: bold;
-    -fx-font-size: 20px;
-    -fx-text-alignment: center;
-    -fx-text-fill: black;
-    -fx-min-height: 30px;
-    -fx-min-width: 30px;
-    -fx-max-height: 55px;
-    -fx-max-width: 55px;
+  -fx-border-radius: 7px;
+  -fx-background-radius: 7px;
+  -fx-border-color: black;
+  -fx-background-color: orange;
+  -fx-font-weight: bold;
+  -fx-font-size: 20px;
+  -fx-text-alignment: center;
+  -fx-text-fill: black;
+  -fx-min-height: 30px;
+  -fx-min-width: 30px;
+  -fx-max-height: 55px;
+  -fx-max-width: 55px;
 }
 
 .letter-btn:hover {
-    -fx-cursor: open-hand;
+  -fx-cursor: open-hand;
 }
 
 #ok-btn-block {
-    -fx-background-color: #45a045;
+  -fx-background-color: #45a045;
 }
 
 #ok-btn {
-    -fx-border-color: black;
-    -fx-background-color: lime;
-    -fx-font-weight: bold;
-    -fx-font-size: 20px;
-    -fx-text-alignment: center;
-    -fx-text-fill: black;
-    -fx-min-height: 30px;
-    -fx-min-width: 30px;
-    -fx-pref-width: 80px;
-    -fx-pref-height: 50px;
-    -fx-max-width: 90px;
-    -fx-max-height: 55px;
+  -fx-border-color: black;
+  -fx-background-color: lime;
+  -fx-font-weight: bold;
+  -fx-font-size: 20px;
+  -fx-text-alignment: center;
+  -fx-text-fill: black;
+  -fx-min-height: 30px;
+  -fx-min-width: 30px;
+  -fx-pref-width: 80px;
+  -fx-pref-height: 50px;
+  -fx-max-width: 90px;
+  -fx-max-height: 55px;
 }
 
 #ok-btn:hover {
-    -fx-cursor: hand;
+  -fx-cursor: hand;
 }

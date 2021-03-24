@@ -13,7 +13,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="905.0" prefWidth="1075.0"
   xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="scrabble.ScrabbleController">
@@ -58,7 +57,8 @@
     <HBox id="bottom-block" alignment="CENTER" layoutY="825.0" maxHeight="-Infinity"
       maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="80.0" prefWidth="1075.0">
       <children>
-        <HBox id="actions-block" alignment="CENTER" prefHeight="80.0" prefWidth="475.0">
+        <HBox id="actions-block" alignment="CENTER" fillHeight="false" prefHeight="80.0"
+          prefWidth="475.0">
           <children>
             <JFXButton id="shuffle-btn" alignment="CENTER" maxHeight="50.0" text="Shuffle">
               <font>
@@ -78,7 +78,8 @@
             </JFXButton>
           </children>
         </HBox>
-        <Pane id="letters-block" fx:id="lettersBlock" prefHeight="80.0" prefWidth="498.0"/>
+        <HBox id="letters-block" fx:id="lettersBlock" alignment="CENTER" fillHeight="false"
+          prefHeight="80.0" prefWidth="589.0" spacing="10.0"/>
         <HBox id="ok-btn-block" alignment="CENTER" fillHeight="false" prefHeight="80.0"
           prefWidth="159.0">
           <children>

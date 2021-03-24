@@ -8,11 +8,10 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /**
- * scrabble.ScrabbleApp class is the main class
- * and the starting point of the application.
- * Main function is to initialize and launch the application.
+ * scrabble.ScrabbleApp class is the main class and the starting point of the application. Main
+ * function is to initialize and launch the application.
  *
- * @author      Eldar Kasmamytov
+ * @author Eldar Kasmamytov
  */
 public class ScrabbleApp extends Application {
 

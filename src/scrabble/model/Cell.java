@@ -3,7 +3,7 @@ package scrabble.model;
 /**
  * scrabble.model.Cell class represents a cell of the letters grid.
  *
- * @author      Eldar Kasmamytov
+ * @author Eldar Kasmamytov
  */
 public class Cell {
 
@@ -13,8 +13,7 @@ public class Cell {
   private char ltr;
 
   /**
-   * Points that a player will get
-   * by using this letter in his/her word.
+   * Points that a player will get by using this letter in his/her word.
    */
   private int pts;
 
@@ -34,6 +33,7 @@ public class Cell {
 
   /**
    * Constructor that takes 2 arguments.
+   *
    * @param ltr Letter to put into the cell
    * @param pts Points of the cell
    */
@@ -45,6 +45,7 @@ public class Cell {
 
   /**
    * Sets the letter and points of the cell.
+   *
    * @param letter Letter to put into the cell
    * @param points Points of the cell
    */
@@ -56,6 +57,7 @@ public class Cell {
 
   /**
    * Get the letter.
+   *
    * @return The letter stocked by the cell
    */
   public char getLtr() {
@@ -64,9 +66,32 @@ public class Cell {
 
   /**
    * Get the points.
+   *
    * @return Points of the cell
    */
   public int getPts() {
     return pts;
+  }
+
+  /**
+   * Frees the cell
+   */
+  public void freeCell() {
+    isFree = true;
+    pts = 0;
+    ltr = (char) 0;
+  }
+
+  /**
+   * Returns:
+   * <ul>
+   *   <li>True - if the cell is free (a letter can be placed here)</li>
+   *   <li>False - if the cell already has a letter</li>
+   * </ul>
+   *
+   * @return Boolean
+   */
+  public boolean isFree() {
+    return this.isFree;
   }
 }
