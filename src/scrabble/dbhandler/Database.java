@@ -152,7 +152,56 @@ public class Database {
 		}
 	}
 
-	// Necessary to check if someone in the Network game has already the name
+	// Updating the amount of games lost in your Database and in the player's object
+	public void updateGamesLost(HumanPlayer player) {
+		try {
+			pstmt = connection
+					.prepareStatement("UPDATE Players SET GamesLost = ? WHERE Name = '" + player.getName() + "';");
+			pstmt.setInt(1, player.getGamesLost() + 1);
+			pstmt.executeUpdate();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Players WHERE Name = '" + player.getName() + "';");
+			while (rs.next()) {
+				player.setGamesLost(rs.getInt("GamesLost"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	// Player profiles to choose from in UI
+	public List<HumanPlayer> getPlayerProfiles() {
+		try {
+			List<HumanPlayer> playerProfiles = new ArrayList<HumanPlayer>();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Players;");
+			while (rs.next()) {
+				HumanPlayer player = new HumanPlayer();
+				player.setName(rs.getString("Name"));
+				player.setGamesWon(rs.getInt("GamesWon"));
+				player.setGamesLost(rs.getInt("GamesLost"));
+				player.setWinRate(rs.getDouble("Winrate"));
+				playerProfiles.add(player);
+			}
+			return playerProfiles;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	// Selecting Player Profile from UI
+	public HumanPlayer loadPlayerProfile(String name) {
+		List<HumanPlayer> playerProfiles = getPlayerProfiles();
+		for (HumanPlayer player : playerProfiles) {
+			if (player.getName().equals(name)) {
+				return player;
+			}
+		}
+		return null;
+	}
+
+	// Check, if Database contains already the name (for Profile or Network game)
 	public boolean checkDoubleNames(String name) {
 		List<String> playerNames = getPlayerNames();
 		if (playerNames.contains(name)) {
