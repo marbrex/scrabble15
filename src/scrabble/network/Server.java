@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.*;
 import java.util.ArrayList;
-
-import scrabble.network.*;
+import socket.*;
 
 public class Server {
 
@@ -29,7 +28,8 @@ public class Server {
 			System.out.println("Server is running!");
 			while (true) {
 				this.clientsocket = serversocket.accept();
-				ServerProtocol sp = new ServerProtocol(clientsocket, ++counter);
+				
+				ServerProtocol sp = new ServerProtocol(this, clientsocket, ++counter);
 				allClients.add(sp);
 				sp.start();
 			}
