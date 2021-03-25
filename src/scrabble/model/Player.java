@@ -16,8 +16,8 @@ public abstract class Player {
 	private Date usedOvertime;
 	
 	
-	public Player(String name) {
-		this.name = name;
+	public Player() {
+		this.score = 0;
 	}
 	//Setting your Rack in the beginning or while choosing the options 'exchange' or 'play'
 	public void settingRack() {
