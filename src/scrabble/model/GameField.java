@@ -35,16 +35,63 @@ public class GameField {
 	}
 	
 	public int getPositionLetterMultiplicator(int row, int column) {
-		return this.gameFieldLetterMultiplikator[row][column] > 0 ? this.gameFieldLetterMultiplikator[row][column] : 1;
+		if(this.gameFieldLetterMultiplikator[row][column] > 0) {
+			int multiplicator = this.gameFieldLetterMultiplikator[row][column];
+			this.gameFieldLetterMultiplikator[row][column] = 0; //Premium field should only count once, they are set back after using it
+			return multiplicator;
+		}
+		else {
+			return 1;
+		}
 	}
 	
 	public int getPositionWordMultiplicator(int row, int column) {
-		return this.gameFieldWordMultiplicator[row][column] > 0 ? this.gameFieldWordMultiplicator[row][column] : 1;
+		if(this.gameFieldWordMultiplicator[row][column] > 0) {
+			int multiplicator = this.gameFieldWordMultiplicator[row][column];
+			this.gameFieldWordMultiplicator[row][column] = 0; //Premium field should only count once, they are set back after using it
+			return multiplicator;
+		}
+		else {
+			return 1;
+		}
+	}
+	
+	public int calculateWordPoints(Word word) {
+		int points = this.calculateLetterPoints(word);
+		return this.calculateWordPoints(word, points);
+	}
+	
+	private int calculateLetterPoints(Word word) {
+		int points = 0;
+		for(int i = 0; i < word.getWordPosition().size(); i++) {
+			int row = word.getWordPosition().get(i).getRow();
+			int column = word.getWordPosition().get(i).getColumn();
+			if(this.gameField[row][column] == null) {
+				return 0;//Exception have to be thrown, need to be implemented
+			}
+			else {
+				points += this.gameField[row][column].getLetterValue() * this.getPositionLetterMultiplicator(row, column);
+			}
+		}
+		return points;
+	}
+	
+	private int calculateWordPoints(Word word, int wordPoints) {
+		for(int i = 0; i < word.getWordPosition().size(); i++) {
+			int row = word.getWordPosition().get(i).getRow();
+			int column = word.getWordPosition().get(i).getColumn();
+			if(this.gameField[row][column] == null) {
+				return 0;//Exception have to be thrown, need to be implemented
+			}
+			else {
+				wordPoints *= this.getPositionWordMultiplicator(row, column);
+			}
+		}
+		return wordPoints;
 	}
 	
 	
-	
-	
+	//Values of greater 1 or Zero if no special field
 	private void setUpGameFieldLetterMultiplicator() {
 		this.gameFieldLetterMultiplikator[0][3] = 2;//2x multiplicators
 		this.gameFieldLetterMultiplikator[0][11] = 2;
@@ -84,6 +131,7 @@ public class GameField {
 		this.gameFieldLetterMultiplikator[13][9] = 3;
 	}
 	
+	//Values of greater 1 or Zero if no special field
 	private void setUpGameFieldWordMultiplicator() {
 		this.gameFieldWordMultiplicator[1][1] = 2;//2x multiplicator
 		this.gameFieldWordMultiplicator[2][2] = 2;
