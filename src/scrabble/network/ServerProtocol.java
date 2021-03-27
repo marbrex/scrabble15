@@ -6,8 +6,8 @@ import java.util.HashMap;
 
 import javax.swing.SwingUtilities;
 
-import application.ChatController;
-import application.ClientMain;
+import scrabble.ChatController;
+import scrabble.ClientMain;
 import javafx.application.Platform;
 
 public class ServerProtocol extends Thread {

@@ -14,6 +14,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import scrabble.model.Grid;
+import scrabble.model.LetterBar;
 
 /**
  * <h1>The Main Controller linked with "interface.fxml" file.</h1>
@@ -54,6 +55,12 @@ public class ScrabbleController {
   private JFXButton okBtn;
 
   /**
+   * Shuffle button, which shuffles the LetterBar.
+   */
+  @FXML
+  private JFXButton shuffleBtn;
+
+  /**
    * The actual data of the letter grid will be stocked here.
    */
   private Grid gridData;
@@ -64,7 +71,9 @@ public class ScrabbleController {
   final private int cellSize;
 
   final private int lettersNumber;
-  Pane[] letterSlots;
+  Pane[] letterSlotsUI;
+
+  private LetterBar ltrBar;
 
   /**
    * Default constructor.
@@ -76,7 +85,8 @@ public class ScrabbleController {
     cellSize = gridPaneSize / cellNumber - gridPanePadSize;
     lettersNumber = 7;
     gridData = new Grid(cellNumber);
-    letterSlots = new Pane[lettersNumber];
+    letterSlotsUI = new Pane[lettersNumber];
+    ltrBar = new LetterBar(lettersNumber);
   }
 
   /**
@@ -142,11 +152,15 @@ public class ScrabbleController {
       boolean success = false;
       if (db.hasString()) {
 
+        // Getting the coordinates of the placeholder rectangle
         int x = GridPane.getColumnIndex(rect);
         int y = GridPane.getRowIndex(rect);
+
+        // Removing the placeholder rectangle
         GridPane.clearConstraints(rect);
         gridPaneUI.getChildren().remove(rect);
 
+        // Getting the letter data transferred by D&D
         char letter = db.getString().charAt(0);
         int points = Character.getNumericValue(db.getString().charAt(1));
 
@@ -158,6 +172,7 @@ public class ScrabbleController {
         ds.setOffsetX(3);
         ds.setColor(Color.GRAY);
 
+        // Creating a new Letter
         Button ltr = initLetter(letter, points, ds);
 
         // Adding the Letter to the GridPane (FRONT)
@@ -166,7 +181,6 @@ public class ScrabbleController {
 
         // Adding the Letter to the GridData (BACK)
         gridData.setCell(x, y, letter, points);
-        gridData.display();
 
         success = true;
       }
@@ -230,11 +244,15 @@ public class ScrabbleController {
 
       ltr.setLayoutX(mouseEvent.getX() + ltr.getLayoutX() - ltr.getWidth() / 2);
       ltr.setLayoutY(mouseEvent.getY() + ltr.getLayoutY() - ltr.getHeight() / 2);
+
+      mouseEvent.consume();
     });
 
     ltr.setOnMouseReleased(mouseEvent -> {
       ltr.setCursor(Cursor.DEFAULT);
       ltr.setStyle("-fx-opacity: 1");
+
+      mouseEvent.consume();
     });
 
     ltr.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> ltr.setStyle("-fx-opacity: 0.8"));
@@ -261,6 +279,7 @@ public class ScrabbleController {
 
       // if the data was successfully moved, clear it
       if (event.getTransferMode() == TransferMode.MOVE) {
+
         switch (ltr.getParent().getClass().getSimpleName()) {
           case "GridPane":
             int x = GridPane.getColumnIndex(ltr);
@@ -286,10 +305,19 @@ public class ScrabbleController {
             gridData.display();
 
             break;
+
           case "Pane":
             for (int i = 0; i < lettersNumber; i++) {
-              if (letterSlots[i].getChildren().contains(ltr)) {
-                letterSlots[i].getChildren().remove(ltr);
+              if (letterSlotsUI[i].getChildren().contains(ltr)) {
+                // Removing the letter from FRONT
+                letterSlotsUI[i].getChildren().remove(ltr);
+                gridData.display();
+
+                // Removing the letter from BACK
+                ltrBar.getSlot(i).freeCell();
+                ltrBar.display();
+
+                break;
               }
             }
             break;
@@ -315,8 +343,9 @@ public class ScrabbleController {
     ds.setOffsetX(3);
     ds.setColor(Color.GRAY);
 
+    // This alphabet will be used to pick letters from
     Random rand = new Random();
-    String alphabet = "abcdefghijklmnopqrstuvwxyz";
+    String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     for (int i = 0; i < lettersNumber; i++) {
       /* Using Pane here because it doesn't layout the objects inside of it,
@@ -325,17 +354,94 @@ public class ScrabbleController {
        * Other containers like HBox position their children automatically, and thus
        * changing the layoutX and layoutY of their children doesn't actually move them.
        * */
-      letterSlots[i] = new Pane();
-      letterSlots[i].setPrefSize(cellSize, cellSize);
-      lettersBlock.getChildren().add(letterSlots[i]);
-      letterSlots[i].getStyleClass().add("letter-slot");
+      Pane pane = new Pane();
+      pane.setPrefSize(cellSize, cellSize);
+      lettersBlock.getChildren().add(pane);
+      pane.getStyleClass().add("letter-slot");
 
+      pane.setOnDragOver(event -> {
+        // data is dragged over the target
+        System.out.println("onDragOver");
+
+        /* accept it only if it is not dragged from the same node
+         * and if it has a string data */
+        if (event.getGestureSource() != pane &&
+            event.getDragboard().hasString()) {
+          // allow for both copying and moving, whatever user chooses
+          event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+        }
+
+        event.consume();
+      });
+
+      pane.setOnDragEntered(event -> {
+        // the drag-and-drop gesture entered the target
+        System.out.println("onDragEntered");
+
+        // show to the user that it is an actual gesture target
+        if (event.getGestureSource() != pane &&
+            event.getDragboard().hasString()) {
+          pane.getStyleClass().add("letter-slot-drag-entered");
+        }
+
+        event.consume();
+      });
+
+      pane.setOnDragExited(event -> {
+        // mouse moved away, remove the graphical cues
+        pane.getStyleClass().remove("letter-slot-drag-entered");
+
+        event.consume();
+      });
+
+      pane.setOnDragDropped(event -> {
+        // data dropped
+        System.out.println("onDragDropped");
+
+        // if there is a string data on dragboard, read it and use it
+        Dragboard db = event.getDragboard();
+        boolean success = false;
+        if (db.hasString()) {
+
+          char letter = db.getString().charAt(0);
+          int points = Character.getNumericValue(db.getString().charAt(1));
+
+          Button ltr = initLetter(letter, points, ds);
+
+          // Adding the Letter (FRONT)
+          pane.getChildren().add(ltr);
+
+          // Getting an index of letter slot for BACK
+          int index = lettersBlock.getChildren().indexOf(pane);
+
+          // Adding it to the LetterBar (BACK)
+          ltrBar.getSlot(index).setCell(letter, points);
+
+          success = true;
+        }
+        /* let the source know whether the string was successfully
+         * transferred and used */
+        event.setDropCompleted(success);
+
+        event.consume();
+      });
+
+      // Picking random letter from the alphabet declared above
       char randLetter = alphabet.charAt(rand.nextInt(alphabet.length()));
+      int ltrPoints = 1;
 
-      Button ltr = initLetter(Character.toUpperCase(randLetter), 1, ds);
+      // Creating new letter
+      Button ltr = initLetter(randLetter, ltrPoints, ds);
 
-      letterSlots[i].getChildren().add(ltr);
+      // Adding the created letter to its slot (FRONT)
+      letterSlotsUI[i] = pane;
+      letterSlotsUI[i].getChildren().add(ltr);
+
+      // Adding it to the LetterBar (BACK)
+      ltrBar.getSlot(i).setCell(randLetter, ltrPoints);
     }
+    // Verifying the internal state
+    ltrBar.display();
   }
 
   /**
@@ -356,6 +462,11 @@ public class ScrabbleController {
 
     // Init currently proposed letters
     initLetters();
+
+    shuffleBtn.setOnMouseClicked(event -> {
+      ltrBar.shuffle();
+      ltrBar.display();
+    });
 
   }
 }

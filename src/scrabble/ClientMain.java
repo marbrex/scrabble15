@@ -15,7 +15,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import socket.Client;
+import scrabble.network.Client;
 
 public class ClientMain extends Application{
 	

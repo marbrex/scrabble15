@@ -60,7 +60,8 @@
         <HBox id="actions-block" alignment="CENTER" fillHeight="false" prefHeight="80.0"
           prefWidth="475.0">
           <children>
-            <JFXButton id="shuffle-btn" alignment="CENTER" maxHeight="50.0" text="Shuffle">
+            <JFXButton id="shuffle-btn" fx:id="shuffleBtn" alignment="CENTER" maxHeight="50.0"
+              text="Shuffle">
               <font>
                 <Font name="System Bold" size="20.0"/>
               </font>

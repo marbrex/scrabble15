@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.*;
 import java.util.ArrayList;
-import socket.*;
+import scrabble.network.*;
 
 public class Server {
 

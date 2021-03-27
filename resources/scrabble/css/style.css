@@ -74,6 +74,10 @@
   -fx-max-width: 55px;
 }
 
+.letter-slot-drag-entered {
+  -fx-background-color: GREEN;
+}
+
 .letter-btn {
   -fx-border-radius: 7px;
   -fx-background-radius: 7px;

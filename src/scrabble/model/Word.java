@@ -1,26 +1,33 @@
 package scrabble.model;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class Word {
-	private String word;
-	private ArrayList<LetterPosition> wordPosition;
-	
-	
-	public Word(ArrayList<LetterPosition> position) {
-		this.wordPosition = position;
-	}
-	
-	public void setWord(String word) {
-		this.word = word;
-	}
 
-	public String getWord() {
-		return word;
-	}
+  private LinkedList<Cell> w;
+  private int wordLength;
+  public boolean isCorrect;
 
-	public ArrayList<LetterPosition> getWordPosition() {
-		return wordPosition;
-	}
-	
+  public Word () {
+    w = new LinkedList<Cell>();
+    wordLength = 0;
+    isCorrect = false;
+  }
+
+  public void addCellEnd (Cell cell) {
+    if (!cell.isFree()) {
+      w.addLast(cell);
+    }
+  }
+
+  public void addCellStart (Cell cell) {
+    if (!cell.isFree()) {
+      w.addFirst(cell);
+    }
+  }
+
+  public void removeCell (Cell cell) {
+    w.remove(cell);
+  }
+
 }
