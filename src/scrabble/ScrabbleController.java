@@ -231,29 +231,29 @@ public class ScrabbleController {
     ltr.setPrefSize(cellSize, cellSize);
     ltr.setEffect(effect);
 
-    ltr.setOnMousePressed(event -> {
-      System.out
-          .println("Event.getScene: (" + event.getSceneX() + ", " + event.getSceneY() + ")");
-      System.out.println("Event.get: (" + event.getX() + ", " + event.getY() + ")\n");
-    });
-
-    ltr.setOnMouseDragged(mouseEvent -> {
-      ltr.toFront();
-      ltr.setCursor(Cursor.CLOSED_HAND);
-      ltr.setStyle("-fx-opacity: 0.6");
-
-      ltr.setLayoutX(mouseEvent.getX() + ltr.getLayoutX() - ltr.getWidth() / 2);
-      ltr.setLayoutY(mouseEvent.getY() + ltr.getLayoutY() - ltr.getHeight() / 2);
-
-      mouseEvent.consume();
-    });
-
-    ltr.setOnMouseReleased(mouseEvent -> {
-      ltr.setCursor(Cursor.DEFAULT);
-      ltr.setStyle("-fx-opacity: 1");
-
-      mouseEvent.consume();
-    });
+//    ltr.setOnMousePressed(event -> {
+//      System.out
+//          .println("Event.getScene: (" + event.getSceneX() + ", " + event.getSceneY() + ")");
+//      System.out.println("Event.get: (" + event.getX() + ", " + event.getY() + ")\n");
+//    });
+//
+//    ltr.setOnMouseDragged(mouseEvent -> {
+//      ltr.toFront();
+//      ltr.setCursor(Cursor.CLOSED_HAND);
+//      ltr.setStyle("-fx-opacity: 0.6");
+//
+//      ltr.setLayoutX(mouseEvent.getX() + ltr.getLayoutX() - ltr.getWidth() / 2);
+//      ltr.setLayoutY(mouseEvent.getY() + ltr.getLayoutY() - ltr.getHeight() / 2);
+//
+//      mouseEvent.consume();
+//    });
+//
+//    ltr.setOnMouseReleased(mouseEvent -> {
+//      ltr.setCursor(Cursor.DEFAULT);
+//      ltr.setStyle("-fx-opacity: 1");
+//
+//      mouseEvent.consume();
+//    });
 
     ltr.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> ltr.setStyle("-fx-opacity: 0.8"));
     ltr.addEventHandler(MouseEvent.MOUSE_EXITED, event -> ltr.setStyle("-fx-opacity: 1"));
@@ -445,6 +445,33 @@ public class ScrabbleController {
   }
 
   /**
+   * Shuffles letters in the Letter Bar and updates both Back and Front parts.
+   */
+  private void shuffleLetters() {
+    // creating an effect for the letter
+    DropShadow ds = new DropShadow();
+    ds.setHeight(20);
+    ds.setWidth(20);
+    ds.setOffsetY(-3);
+    ds.setOffsetX(3);
+    ds.setColor(Color.GRAY);
+
+    ltrBar.shuffle();
+    ltrBar.display();
+
+    for (int i = 0; i < lettersNumber; i++) {
+      if (!letterSlotsUI[i].getChildren().isEmpty()) {
+        letterSlotsUI[i].getChildren().remove(0);
+      }
+
+      if (!ltrBar.getSlot(i).isFree()) {
+        Button l = initLetter(ltrBar.getSlot(i).getLtr(), ltrBar.getSlot(i).getPts(), ds);
+        letterSlotsUI[i].getChildren().add(l);
+      }
+    }
+  }
+
+  /**
    * The FXML loader will call the initialize() method after the loading of the FXML document is
    * complete. Initializes both grid cells and proposed letters.
    */
@@ -464,8 +491,7 @@ public class ScrabbleController {
     initLetters();
 
     shuffleBtn.setOnMouseClicked(event -> {
-      ltrBar.shuffle();
-      ltrBar.display();
+      shuffleLetters();
     });
 
   }
