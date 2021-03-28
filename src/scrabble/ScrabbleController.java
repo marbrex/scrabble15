@@ -2,6 +2,8 @@ package scrabble;
 
 import com.jfoenix.controls.JFXButton;
 import java.util.Random;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.NumberBinding;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
@@ -61,6 +63,12 @@ public class ScrabbleController {
   private JFXButton shuffleBtn;
 
   /**
+   * Pane which stores time (located at the top of Side Panel)
+   */
+  @FXML
+  private Pane timePane;
+
+  /**
    * The actual data of the letter grid will be stocked here.
    */
   private Grid gridData;
@@ -103,7 +111,12 @@ public class ScrabbleController {
     rect.setStroke(Color.DARKGRAY);
     rect.setArcWidth(10);
     rect.setArcHeight(10);
-    rect.setEffect(effect);
+//    rect.setEffect(effect);
+
+    // Binding size of the Rectangle to size of the GridPane
+    double temp = gridPanePadSize * (cellNumber + 1);
+    rect.heightProperty().bind(gridPaneUI.heightProperty().subtract(temp).divide(cellNumber));
+    rect.widthProperty().bind(gridPaneUI.widthProperty().subtract(temp).divide(cellNumber));
 
     rect.setOnMouseEntered(event -> rect.setFill(Color.CRIMSON));
     rect.setOnMouseExited(event -> rect.setFill(Color.AQUA));
@@ -207,6 +220,9 @@ public class ScrabbleController {
     is.setHeight(20);
     is.setWidth(20);
 
+    // Binding GridPane's Height to be always equal to its Width
+    gridPaneUI.prefHeightProperty().bind(gridPaneUI.widthProperty());
+
     for (int i = 0; i < cellNumber; i++) {
       for (int j = 0; j < cellNumber; j++) {
 
@@ -229,7 +245,7 @@ public class ScrabbleController {
     Button ltr = new Button(String.valueOf(letter));
     ltr.getStyleClass().add("letter-btn");
     ltr.setPrefSize(cellSize, cellSize);
-    ltr.setEffect(effect);
+//    ltr.setEffect(effect);
 
 //    ltr.setOnMousePressed(event -> {
 //      System.out

@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
@@ -13,12 +14,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="905.0" prefWidth="1075.0"
-  xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="scrabble.ScrabbleController">
-  <children>
-    <GridPane id="game-block" fx:id="gridPaneUI" maxHeight="-Infinity" maxWidth="-Infinity"
-      prefHeight="825.0" prefWidth="825.0">
+<BorderPane prefHeight="905.0" prefWidth="1075.0" xmlns="http://javafx.com/javafx/11.0.2"
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.ScrabbleController">
+  <center>
+    <GridPane id="game-block" fx:id="gridPaneUI" alignment="CENTER" maxHeight="-Infinity"
+      maxWidth="-Infinity" prefHeight="825.0" prefWidth="825.0" BorderPane.alignment="CENTER">
       <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
@@ -54,8 +54,11 @@
         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
       </rowConstraints>
     </GridPane>
-    <HBox id="bottom-block" alignment="CENTER" layoutY="825.0" maxHeight="-Infinity"
-      maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="80.0" prefWidth="1075.0">
+  </center>
+  <bottom>
+    <HBox id="bottom-block" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+      minHeight="0.0" minWidth="0.0" prefHeight="80.0" prefWidth="1075.0"
+      BorderPane.alignment="CENTER">
       <children>
         <HBox id="actions-block" alignment="CENTER" fillHeight="false" prefHeight="80.0"
           prefWidth="475.0">
@@ -94,10 +97,13 @@
         </HBox>
       </children>
     </HBox>
-    <VBox id="left-bar" alignment="CENTER" layoutX="825.0" maxHeight="-Infinity"
-      maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="825.0" prefWidth="250.0">
+  </bottom>
+  <right>
+    <VBox id="left-bar" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
+      minHeight="0.0" minWidth="0.0" prefHeight="825.0" prefWidth="250.0"
+      BorderPane.alignment="CENTER">
       <children>
-        <Pane id="time-block" prefHeight="40.0" prefWidth="156.0">
+        <Pane id="time-block" fx:id="timePane" prefHeight="40.0" prefWidth="156.0">
           <children>
             <Label layoutX="94.0" layoutY="10.0" text="12:34">
               <font>
@@ -208,5 +214,5 @@
         </Pane>
       </children>
     </VBox>
-  </children>
-</Pane>
+  </right>
+</BorderPane>
