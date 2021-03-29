@@ -8,11 +8,10 @@ import scrabble.model.*;
 public class Database {
 
 	static Connection connection = null;
-	private static Statement stmt = null;
+	protected static Statement stmt = null;
 	private static PreparedStatement pstmt = null;
 
-	// Connecting to DB and creating DB File if it doesn't exist (SQLite .jar file
-	// needed!)
+	/** Connecting to DB and creating DB File if it doesn't exist (SQLite .jar file needed!) */
 	public void connectToDB() {
 		try {
 			Class.forName("org.sqlite.JDBC");
@@ -26,7 +25,7 @@ public class Database {
 		System.out.println("Successfully connected to DB!");
 	}
 
-	// Disconnecting from DB
+	/** Disconnecting from DB */
 	public void disconnectDB() {
 		try {
 			stmt = null;
@@ -39,15 +38,13 @@ public class Database {
 		System.out.println("Disconnected from DB");
 	}
 
-	// Necessary to fill them with player statistics
+	/** Creating tables for the Database */
 	public void createTables() {
 		List<String> sqlstatements = new ArrayList<String>();
 		sqlstatements.add("CREATE TABLE IF NOT EXISTS Players (Id INT PRIMARY KEY, Name VARCHAR(25) NOT NULL, "
 				+ " GamesWon INT NOT NULL, GamesLost INT NOT NULL, Winrate DOUBLE NOT NULL);");
-		sqlstatements.add("CREATE TABLE IF NOT EXISTS Rooms (RoomId INT PRIMARY KEY, Name VARCHAR(25) NOT NULL);");
-		sqlstatements
-				.add("CREATE TABLE IF NOT EXISTS PlayerinRoom (Id INT PRIMARY KEY, Player_Id references Players (Id), "
-						+ "Room_Id references Rooms (RoomId));");
+		sqlstatements.add("CREATE TABLE IF NOT EXISTS Statistics (Statistic_Id INT PRIMARY KEY, Player_Id references Players (ID));");
+
 		try {
 			stmt = connection.createStatement();
 			for (String sql : sqlstatements) {
@@ -59,26 +56,25 @@ public class Database {
 		}
 	}
 
-	// Deleting all tables which are present in our Database
+	/** Deleting all tables which are present in our Database */
 	public void dropAllTables() {
 		dropPlayerTable();
-		dropRoomTable();
-		dropPlayerinRoomTable();
+		dropStatisticsTable();
 		System.out.println("All tables dropped.");
 	}
 
-	// Deleting Room Table
-	private void dropRoomTable() {
+	/** Deleting Statistics Table */
+	private void dropStatisticsTable() {
 		try {
 			stmt = connection.createStatement();
-			stmt.executeUpdate("DROP TABLE Rooms;");
+			stmt.executeUpdate("DROP TABLE Statistics;");
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	// Deleting Player table
+	/** Deleting Player table */
 	private void dropPlayerTable() {
 		try {
 			stmt = connection.createStatement();
@@ -89,22 +85,10 @@ public class Database {
 		}
 	}
 
-	// Deleting Player in Room table
-	private void dropPlayerinRoomTable() {
-		try {
-			stmt = connection.createStatement();
-			stmt.executeUpdate("DROP TABLE PlayerinRoom;");
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	// Necessary for general game statistics
+	/** Fills in player table with Player Data */
 	public void fillPlayerTable(String[][] playerData) {
 		try {
-			pstmt = connection
-					.prepareStatement("INSERT INTO Players (Id,Name,GamesWon,GamesLost,Winrate) VALUES (?,?,?,?,?);");
+			pstmt = connection.prepareStatement("INSERT INTO Players (Id,Name,GamesWon,GamesLost,Winrate) VALUES (?,?,?,?,?);");
 			for (int i = 0; i < playerData.length; i++) {
 				pstmt.setInt(1, Integer.parseInt(playerData[i][0]));
 				pstmt.setString(2, playerData[i][1]);
@@ -118,28 +102,26 @@ public class Database {
 			e.printStackTrace();
 		}
 	}
-
-	// Returns a List, which contains all Player names saved in the Database
-	public List<String> getPlayerNames() {
-		try {
-			List<String> playernames = new ArrayList<String>();
-			stmt = connection.createStatement();
-			ResultSet rs = stmt.executeQuery("SELECT Name FROM Players;");
-			while (rs.next()) {
-				playernames.add(rs.getString("Name"));
-			}
-			return playernames;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			return null;
-		}
+	
+	/**
+	 * Fills in statistics table with Statistic Data
+	 * 
+	 * @throws SQLException
+	 */
+	public void fillStatisticTable(String[][] statisticData) throws SQLException {
+		pstmt = connection.prepareStatement("INSERT INTO Statistic_Id (Statistic_Id, Player_Id) VALUES (?,?);");
+		for (int i = 0; i < statisticData.length; i++) {
+			pstmt.setInt(1, Integer.parseInt(statisticData[i][0]));
+			pstmt.setInt(2, Integer.parseInt(statisticData[i][1]));
+			pstmt.executeUpdate();
+	}
 	}
 
-	// Updating the amount of games won in your Database and in the player's object
+
+	/** Updating the amount of games won in your Database and in the player's object */
 	public void updateGamesWon(HumanPlayer player) {
 		try {
-			pstmt = connection
-					.prepareStatement("UPDATE Players SET GamesWon = ? WHERE Name = '" + player.getName() + "';");
+			pstmt = connection.prepareStatement("UPDATE Players SET GamesWon = ? WHERE Name = '" + player.getName() + "';");
 			pstmt.setInt(1, player.getGamesWon() + 1);
 			pstmt.executeUpdate();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Players WHERE Name = '" + player.getName() + "';");
@@ -152,11 +134,10 @@ public class Database {
 		}
 	}
 
-	// Updating the amount of games lost in your Database and in the player's object
+	/** Updating the amount of games lost in your Database and in the player's object */
 	public void updateGamesLost(HumanPlayer player) {
 		try {
-			pstmt = connection
-					.prepareStatement("UPDATE Players SET GamesLost = ? WHERE Name = '" + player.getName() + "';");
+			pstmt = connection.prepareStatement("UPDATE Players SET GamesLost = ? WHERE Name = '" + player.getName() + "';");
 			pstmt.setInt(1, player.getGamesLost() + 1);
 			pstmt.executeUpdate();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Players WHERE Name = '" + player.getName() + "';");
@@ -168,48 +149,32 @@ public class Database {
 			e.printStackTrace();
 		}
 	}
-
-	// Player profiles to choose from in UI
-	public List<HumanPlayer> getPlayerProfiles() {
+	/** Updating the Win-Rate in the Database */
+	public void updateWinRate(HumanPlayer player) {
 		try {
-			List<HumanPlayer> playerProfiles = new ArrayList<HumanPlayer>();
-			ResultSet rs = stmt.executeQuery("SELECT * FROM Players;");
-			while (rs.next()) {
-				HumanPlayer player = new HumanPlayer();
-				player.setName(rs.getString("Name"));
-				player.setGamesWon(rs.getInt("GamesWon"));
-				player.setGamesLost(rs.getInt("GamesLost"));
-				player.setWinRate(rs.getDouble("Winrate"));
-				playerProfiles.add(player);
-			}
-			return playerProfiles;
+			pstmt = connection.prepareStatement("UPDATE Players SET Winrate = ? WHERE Name = '" + player.getName() + "';");
+			pstmt.setDouble(1, player.getWinRate());
+			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
 		}
 	}
-
-	// Selecting Player Profile from UI
-	public HumanPlayer loadPlayerProfile(String name) {
-		List<HumanPlayer> playerProfiles = getPlayerProfiles();
-		for (HumanPlayer player : playerProfiles) {
-			if (player.getName().equals(name)) {
-				return player;
+	
+	/** Updating the Name if Player wants to change it */
+	public void updatePlayerName(HumanPlayer player, String newName) {
+		DBInformation info = new DBInformation();
+		if(!info.containsName(player.getName())) {
+			try {
+				stmt = connection.createStatement();
+				stmt.executeUpdate("UPDATE Players SET Name = '" + newName + "' WHERE Name = '" + player.getName() + "';");
+				player.setName(newName);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
-		return null;
 	}
 
-	// Check, if Database contains already the name (for Profile or Network game)
-	public boolean checkDoubleNames(String name) {
-		List<String> playerNames = getPlayerNames();
-		if (playerNames.contains(name)) {
-			return true;
-		} else {
-			return false;
-		}
-
-	}
 
 }
