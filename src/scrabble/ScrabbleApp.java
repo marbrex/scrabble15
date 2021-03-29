@@ -18,7 +18,7 @@ public class ScrabbleApp extends Application {
   final private double windowWidth = 1075;
   final private double windowHeight = 905;
 
-  final private double windowMinWidth = 600;
+  final private double windowMinWidth = 620;
   final private double windowMinHeight = 450;
 
   @Override

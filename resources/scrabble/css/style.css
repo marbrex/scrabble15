@@ -70,10 +70,6 @@
 .letter-slot {
   -fx-background-color: #968345;
   -fx-background-radius: 7px;
-  -fx-min-height: 50px;
-  -fx-min-width: 50px;
-  -fx-max-height: 50px;
-  -fx-max-width: 50px;
 }
 
 .letter-slot-drag-entered {
@@ -89,10 +85,8 @@
   -fx-font-size: 20px;
   -fx-text-alignment: center;
   -fx-text-fill: black;
-  -fx-min-height: 50px;
-  -fx-min-width: 50px;
-  -fx-max-height: 50px;
-  -fx-max-width: 50px;
+  -fx-wrap-text: true;
+  -fx-padding: -5;
 }
 
 .letter-btn:hover {

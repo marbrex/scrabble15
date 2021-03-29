@@ -7,6 +7,7 @@ import javafx.beans.binding.NumberBinding;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
@@ -15,6 +16,8 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
 import scrabble.model.Grid;
 import scrabble.model.LetterBar;
 
@@ -67,6 +70,12 @@ public class ScrabbleController {
    */
   @FXML
   private Pane timePane;
+
+  /**
+   * The root element in FXML.
+   */
+  @FXML
+  private BorderPane root;
 
   /**
    * The actual data of the letter grid will be stocked here.
@@ -188,6 +197,31 @@ public class ScrabbleController {
         // Creating a new Letter
         Button ltr = initLetter(letter, points, ds);
 
+        // Changing size of the Letter according to size of the Grid
+        double gridHeight = gridPaneUI.heightProperty().getValue();
+        double ltrSize = (gridHeight - (gridPanePadSize * (cellNumber + 1))) / cellNumber;
+        ltr.setMaxSize(ltrSize, ltrSize);
+        ltr.setPrefSize(ltrSize, ltrSize);
+        ltr.setMinSize(ltrSize, ltrSize);
+
+        // Binding height of the Letter to height of the Grid
+        gridPaneUI.heightProperty().addListener((observable, oldValue, newValue) -> {
+          double ltrNewSize =
+              (newValue.doubleValue() - (gridPanePadSize * (cellNumber + 1))) / cellNumber;
+          ltr.setMaxHeight(ltrNewSize);
+          ltr.setPrefHeight(ltrNewSize);
+          ltr.setMinHeight(ltrNewSize);
+        });
+
+        // Binding width of the Letter to width of the Grid
+        gridPaneUI.widthProperty().addListener((observable, oldValue, newValue) -> {
+          double ltrNewSize =
+              (newValue.doubleValue() - (gridPanePadSize * (cellNumber + 1))) / cellNumber;
+          ltr.setMaxWidth(ltrNewSize);
+          ltr.setPrefWidth(ltrNewSize);
+          ltr.setMinWidth(ltrNewSize);
+        });
+
         // Adding the Letter to the GridPane (FRONT)
         GridPane.setConstraints(ltr, x, y);
         gridPaneUI.getChildren().add(ltr);
@@ -221,7 +255,9 @@ public class ScrabbleController {
     is.setWidth(20);
 
     // Binding GridPane's Height to be always equal to its Width
-    gridPaneUI.prefHeightProperty().bind(gridPaneUI.widthProperty());
+    gridPaneUI.widthProperty().addListener((observable, oldValue, newValue) -> {
+      gridPaneUI.setPrefHeight(newValue.doubleValue());
+    });
 
     for (int i = 0; i < cellNumber; i++) {
       for (int j = 0; j < cellNumber; j++) {
@@ -245,6 +281,8 @@ public class ScrabbleController {
     Button ltr = new Button(String.valueOf(letter));
     ltr.getStyleClass().add("letter-btn");
     ltr.setPrefSize(cellSize, cellSize);
+    ltr.setMinSize(cellSize, cellSize);
+    ltr.setMaxSize(cellSize, cellSize);
 //    ltr.setEffect(effect);
 
 //    ltr.setOnMousePressed(event -> {
@@ -372,6 +410,8 @@ public class ScrabbleController {
        * */
       Pane pane = new Pane();
       pane.setPrefSize(cellSize, cellSize);
+      pane.setMinSize(cellSize, cellSize);
+      pane.setMaxSize(cellSize, cellSize);
       lettersBlock.getChildren().add(pane);
       pane.getStyleClass().add("letter-slot");
 

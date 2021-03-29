@@ -14,7 +14,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="905.0" prefWidth="1075.0" xmlns="http://javafx.com/javafx/11.0.2"
+<BorderPane fx:id="root" prefHeight="905.0" prefWidth="1075.0"
+  xmlns="http://javafx.com/javafx/11.0.2"
   xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.ScrabbleController">
   <center>
     <GridPane id="game-block" fx:id="gridPaneUI" alignment="CENTER" maxHeight="-Infinity"
