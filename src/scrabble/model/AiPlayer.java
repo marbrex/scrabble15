@@ -2,15 +2,16 @@ package scrabble.model;
 
 public class AiPlayer extends Player {
 
-	// Difficulty-Array for the Ai
+	/** Difficulty-Array for the Ai */
 	private String[] difficulty = { "easy", "hard" };
-	// Difficulty chosen for the Ai
+	/** Difficulty chosen for the Ai */
 	private String chosenDifficulty;
 
+	/** Constructor of the AiPlayer class */
 	public AiPlayer() {
 		super();
 	}
-
+	/** Setting the difficulty of the AI-Player */
 	public void setDifficulty(String diff) {
 		switch (diff) {
 		case ("easy"):
@@ -24,7 +25,7 @@ public class AiPlayer extends Player {
 			break;
 		}
 	}
-
+	/** Returns the difficulty of the AI-Player */
 	public String getDifficulty() {
 		return this.chosenDifficulty;
 	}
