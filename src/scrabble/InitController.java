@@ -28,7 +28,9 @@ public class InitController {
 	public Scene mainWindow() {
 		Scene scene = null;
 		try {
-			Pane root = (Pane)FXMLLoader.load(getClass().getResource("ChatScene.fxml"));
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("fxml/ChatScene.fxml"));
+			Pane root = loader.load();
 			scene = new Scene(root,600,450);
 		} catch(Exception e) {
 			e.printStackTrace();

@@ -35,7 +35,9 @@ public class ClientMain extends Application{
 	public Scene initUser() {
 		Scene scene = null;
 		try {
-			Pane root = (Pane)FXMLLoader.load(getClass().getResource("Init.fxml"));
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("fxml/Init.fxml"));
+			Pane root = loader.load();
 			scene = new Scene(root);		
 			primaryStage.setScene(scene);
 			primaryStage.show();
