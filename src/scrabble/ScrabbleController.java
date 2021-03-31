@@ -579,5 +579,14 @@ public class ScrabbleController {
       shuffleLetters();
     });
 
+    // Testing Dictionary
+    URL dictPath = getClass().getResource("dictionaries/english-default.txt");
+    File dict = new File(dictPath.getFile());
+    Dictionary.setDictionary(dict);
+
+    for (int i = 0; i < 10; i++) {
+      System.out.println(Dictionary.getWords().get(i));
+    }
+
   }
 }
