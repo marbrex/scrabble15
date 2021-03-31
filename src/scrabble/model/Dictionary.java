@@ -9,10 +9,7 @@ public class Dictionary {
 	private static List<String> words = new ArrayList<String>();
 	private static List<String> definitions = new ArrayList<String>();
 
-	/** Setting the Dictionary -> following the Format is necessary!
-	 * 
-	 * @param file
-	 */
+	/** Setting the Dictionary -> following the Format is necessary! */
 	public static void setDictionary(File file) {
 		try {
 			in = new BufferedReader(new FileReader(file));
@@ -20,13 +17,18 @@ public class Dictionary {
 			in.readLine();
 			in.readLine();
 			String msg;
-			String word;
+			String word = null;
 			String definition;
 			while ((msg = in.readLine()) != null) {
 				c = msg.toCharArray();
+				word = null;
 				for (int i = 0; i < c.length; i++) {
 					if (Character.isWhitespace(c[i])) {
 						word = msg.substring(0, i);
+					} else if (i == c.length - 1) {
+						word = msg.substring(0, i + 1);
+					}
+					if (word != null && word.length() <= 15) {
 						words.add(word);
 						break;
 					}
@@ -48,36 +50,47 @@ public class Dictionary {
 		}
 
 	}
-	/** Return the list of words
-	 * 
-	 * 
-	 */
+
+	/** Return the list of words */
 	public static List<String> getWords() {
 		return words;
 	}
-	/**
-	 * Returns the List of all Definitions
-	 * 
-	 */
+
+	/** Returns the list of all Definitions */
 	public static List<String> getDefinitions() {
 		return definitions;
 	}
-	/**
-	 * Returns the size of the Dictionary
-	 *
-	 */
+
+	/** Returns the size of the Dictionary */
 	public static int getDictionarySize() {
 		return getWords().size();
 	}
-	/*
-	public static void main(String[] args) {
 
-		setDictionary(new File(""));
-		for (int i = 0; i < 10; i++) {
-			System.out.println(definitions.get(i));
+	/** Checks, if given word matches a word of the Dictionary */
+	public static boolean matches(Word word) {
+		for (String dictionaryWord : words) {
+			if (word.getWordAsString().equals(dictionaryWord)) {
+				return true;
+			}
 		}
-		System.out.println(getDefinitions().get(279493));
-		System.out.println("Size of Definitions: " + definitions.size());
+		return false;
 	}
-	*/
+
+	/** Adds a Word into the Word-List */
+	public static void addWord(Word word) {
+		if (!matches(word)) {
+			words.add(word.getWordAsString());
+			Collections.sort(words);
+		}
+	}
+
+	/** Removes Word from the Word-List */
+	public static void removeWord(Word word) {
+		for (int i = 0; i < words.size(); i++) {
+			if (words.get(i).equals(word.getWordAsString())) {
+				words.remove(i);
+				break;
+			}
+		}
+	}
 }
