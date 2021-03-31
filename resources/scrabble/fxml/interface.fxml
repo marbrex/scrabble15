@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -9,14 +10,13 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="root" prefHeight="905.0" prefWidth="1075.0"
-  xmlns="http://javafx.com/javafx/11.0.2"
-  xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.ScrabbleController">
+  xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="scrabble.ScrabbleController">
   <center>
     <GridPane id="game-block" fx:id="gridPaneUI" alignment="CENTER" maxHeight="-Infinity"
       maxWidth="-Infinity" prefHeight="825.0" prefWidth="825.0" BorderPane.alignment="CENTER">
@@ -100,120 +100,101 @@
     </HBox>
   </bottom>
   <right>
-    <VBox id="left-bar" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
-      minHeight="0.0" minWidth="0.0" prefHeight="825.0" prefWidth="250.0"
-      BorderPane.alignment="CENTER">
-      <children>
-        <Pane id="time-block" fx:id="timePane" prefHeight="40.0" prefWidth="156.0">
+    <BorderPane id="side-panel" BorderPane.alignment="CENTER">
+      <top>
+        <HBox id="time-block" fx:id="timeBlock" alignment="CENTER" fillHeight="false" spacing="10.0"
+          BorderPane.alignment="CENTER">
           <children>
-            <Label layoutX="94.0" layoutY="10.0" text="12:34">
+            <Label id="time" text="12:34">
               <font>
                 <Font name="System Bold" size="15.0"/>
               </font>
             </Label>
           </children>
-        </Pane>
-        <VBox id="players-block" prefHeight="359.0" prefWidth="226.0">
+          <padding>
+            <Insets bottom="10.0" top="10.0"/>
+          </padding>
+        </HBox>
+      </top>
+      <bottom>
+        <VBox id="chat-block" fx:id="chatBlock" alignment="CENTER" fillWidth="false"
+          prefHeight="300.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <children>
-            <HBox id="player-1" prefHeight="100.0" prefWidth="200.0">
+            <Label alignment="CENTER" text="CHAT"/>
+          </children>
+        </VBox>
+      </bottom>
+      <center>
+        <VBox id="players-block" fx:id="playersBlock" alignment="CENTER"
+          BorderPane.alignment="CENTER">
+          <children>
+            <HBox id="player-1-block" alignment="CENTER" fillHeight="false" prefHeight="100.0"
+              prefWidth="200.0" spacing="10.0" styleClass="players-block">
               <children>
-                <Pane id="player-1-place-block" prefHeight="200.0" prefWidth="200.0"
-                  styleClass="player-place">
-                  <children>
-                    <Label id="player-1-place-label" layoutX="30.0" layoutY="27.0"
-                      styleClass="player-place-label" text="#1"/>
-                  </children>
-                </Pane>
-                <Pane id="player-1-info-block" prefHeight="44.0" prefWidth="279.0"
-                  styleClass="player-info">
-                  <children>
-                    <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0"
-                      layoutY="5.0" pickOnBounds="true" preserveRatio="true"
-                      styleClass="player-icon">
-                      <image>
-                        <Image url="@../img/default-avatar-icon.png"/>
-                      </image>
-                    </ImageView>
-                    <Label layoutX="86.0" layoutY="14.0" text="Player1"/>
-                    <Label layoutX="86.0" layoutY="35.0" text="21"/>
-                  </children>
-                </Pane>
+                <ImageView id="player-1-avatar" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true"
+                  preserveRatio="true" styleClass="players-avatar">
+                  <image>
+                    <Image url="@../img/default-avatar-icon.png"/>
+                  </image>
+                </ImageView>
+                <Label id="player-1-name" styleClass="players-name" text="Player1"/>
+                <Label id="player-1-score" styleClass="players-score" text="21"/>
               </children>
+              <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+              </padding>
             </HBox>
-            <HBox id="player-2" prefHeight="100.0" prefWidth="200.0">
+            <HBox id="player-2-block" alignment="CENTER" fillHeight="false" prefHeight="100.0"
+              prefWidth="200.0" spacing="10.0" styleClass="players-block">
               <children>
-                <Pane id="player-2-place" prefHeight="200.0" prefWidth="200.0" styleClass="place">
-                  <children>
-                    <Label layoutX="30.0" layoutY="27.0" text="#2"/>
-                  </children>
-                </Pane>
-                <Pane id="player-2-name" prefHeight="44.0" prefWidth="279.0" styleClass="player">
-                  <children>
-                    <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0"
-                      layoutY="5.0" pickOnBounds="true" preserveRatio="true"
-                      styleClass="player-icon">
-                      <image>
-                        <Image url="@../img/default-avatar-icon.png"/>
-                      </image>
-                    </ImageView>
-                    <Label layoutX="88.0" layoutY="20.0" text="Player2"/>
-                    <Label layoutX="86.0" layoutY="37.0" text="19"/>
-                  </children>
-                </Pane>
+                <ImageView id="player-2-avatar" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true"
+                  preserveRatio="true" styleClass="players-avatar">
+                  <image>
+                    <Image url="@../img/default-avatar-icon.png"/>
+                  </image>
+                </ImageView>
+                <Label id="player-2-name" styleClass="players-name" text="Player2"/>
+                <Label id="player-2-score" styleClass="players-score" text="19"/>
               </children>
+              <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+              </padding>
             </HBox>
-            <HBox id="player-3" prefHeight="100.0" prefWidth="200.0">
+            <HBox id="player-3-block" alignment="CENTER" fillHeight="false" prefHeight="100.0"
+              prefWidth="200.0" spacing="10.0" styleClass="players-block">
               <children>
-                <Pane id="player-3-place" prefHeight="200.0" prefWidth="200.0" styleClass="place">
-                  <children>
-                    <Label layoutX="30.0" layoutY="25.0" text="#3"/>
-                  </children>
-                </Pane>
-                <Pane id="player-3-name" prefHeight="44.0" prefWidth="279.0" styleClass="player">
-                  <children>
-                    <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0"
-                      layoutY="5.0" pickOnBounds="true" preserveRatio="true"
-                      styleClass="player-icon">
-                      <image>
-                        <Image url="@../img/default-avatar-icon.png"/>
-                      </image>
-                    </ImageView>
-                    <Label layoutX="83.0" layoutY="15.0" text="Player3"/>
-                    <Label layoutX="83.0" layoutY="33.0" text="16"/>
-                  </children>
-                </Pane>
+                <ImageView id="player-3-avatar" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true"
+                  preserveRatio="true" styleClass="players-avatar">
+                  <image>
+                    <Image url="@../img/default-avatar-icon.png"/>
+                  </image>
+                </ImageView>
+                <Label id="player-3-name" styleClass="players-name" text="Player3"/>
+                <Label id="player-3-score" styleClass="players-score" text="18"/>
               </children>
+              <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+              </padding>
             </HBox>
-            <HBox id="player-4" prefHeight="100.0" prefWidth="200.0">
+            <HBox id="player-4-block" alignment="CENTER" fillHeight="false" prefHeight="100.0"
+              prefWidth="200.0" spacing="10.0" styleClass="players-block">
               <children>
-                <Pane id="player-4-place" prefHeight="200.0" prefWidth="200.0" styleClass="place">
-                  <children>
-                    <Label layoutX="30.0" layoutY="24.0" text="#4"/>
-                  </children>
-                </Pane>
-                <Pane id="player-4-name" prefHeight="44.0" prefWidth="279.0" styleClass="player">
-                  <children>
-                    <ImageView id="player-1-icon" fitHeight="60.0" fitWidth="60.0" layoutX="14.0"
-                      layoutY="5.0" pickOnBounds="true" preserveRatio="true"
-                      styleClass="player-icon">
-                      <image>
-                        <Image url="@../img/default-avatar-icon.png"/>
-                      </image>
-                    </ImageView>
-                    <Label layoutX="84.0" layoutY="16.0" text="Player4"/>
-                    <Label layoutX="84.0" layoutY="35.0" text="12"/>
-                  </children>
-                </Pane>
+                <ImageView id="player-4-avatar" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true"
+                  preserveRatio="true" styleClass="players-avatar">
+                  <image>
+                    <Image url="@../img/default-avatar-icon.png"/>
+                  </image>
+                </ImageView>
+                <Label id="player-4-name" styleClass="players-name" text="Player4"/>
+                <Label id="player-4-score" styleClass="players-score" text="15"/>
               </children>
+              <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
+              </padding>
             </HBox>
           </children>
         </VBox>
-        <Pane id="chat-block" prefHeight="325.0" prefWidth="226.0">
-          <children>
-            <Label alignment="CENTER" layoutX="99.0" layoutY="67.0" text="CHAT"/>
-          </children>
-        </Pane>
-      </children>
-    </VBox>
+      </center>
+    </BorderPane>
   </right>
 </BorderPane>

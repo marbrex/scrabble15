@@ -1,14 +1,19 @@
 package scrabble;
 
+import com.jfoenix.controls.JFXBadge;
 import com.jfoenix.controls.JFXButton;
+import java.io.File;
+import java.net.URL;
 import java.util.Random;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.effect.Effect;
 import javafx.scene.effect.InnerShadow;
@@ -17,7 +22,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import scrabble.model.Dictionary;
 import scrabble.model.Grid;
 import scrabble.model.LetterBar;
 
@@ -116,19 +123,19 @@ public class ScrabbleController {
    */
   private Rectangle initCell(int i, int j, Effect effect) {
     Rectangle rect = new Rectangle(i, j, cellSize, cellSize);
-    rect.setFill(Color.AQUA);
+    rect.setFill(Color.LIGHTGRAY);
     rect.setStroke(Color.DARKGRAY);
     rect.setArcWidth(10);
     rect.setArcHeight(10);
-//    rect.setEffect(effect);
+    rect.setEffect(effect);
 
     // Binding size of the Rectangle to size of the GridPane
     double temp = gridPanePadSize * (cellNumber + 1);
     rect.heightProperty().bind(gridPaneUI.heightProperty().subtract(temp).divide(cellNumber));
     rect.widthProperty().bind(gridPaneUI.widthProperty().subtract(temp).divide(cellNumber));
 
-    rect.setOnMouseEntered(event -> rect.setFill(Color.CRIMSON));
-    rect.setOnMouseExited(event -> rect.setFill(Color.AQUA));
+    rect.setOnMouseEntered(event -> rect.setFill(Color.GRAY));
+    rect.setOnMouseExited(event -> rect.setFill(Color.LIGHTGRAY));
 
     rect.setOnDragOver(event -> {
       // data is dragged over the target
@@ -160,7 +167,7 @@ public class ScrabbleController {
 
     rect.setOnDragExited(event -> {
       // mouse moved away, remove the graphical cues
-      rect.setFill(Color.AQUA);
+      rect.setFill(Color.LIGHTGRAY);
 
       event.consume();
     });
@@ -182,11 +189,11 @@ public class ScrabbleController {
         GridPane.clearConstraints(rect);
         gridPaneUI.getChildren().remove(rect);
 
-        // Getting the letter data transferred by D&D
+        // Getting the letter tile's data transferred by D&D
         char letter = db.getString().charAt(0);
         int points = Character.getNumericValue(db.getString().charAt(1));
 
-        // creating an effect for the letter
+        // creating an effect for the letter tile
         DropShadow ds = new DropShadow();
         ds.setHeight(20);
         ds.setWidth(20);
@@ -194,37 +201,37 @@ public class ScrabbleController {
         ds.setOffsetX(3);
         ds.setColor(Color.GRAY);
 
-        // Creating a new Letter
-        Button ltr = initLetter(letter, points, ds);
+        // Creating a new Letter Tile
+        AnchorPane tile = initLetter(letter, points, ds);
 
         // Changing size of the Letter according to size of the Grid
         double gridHeight = gridPaneUI.heightProperty().getValue();
-        double ltrSize = (gridHeight - (gridPanePadSize * (cellNumber + 1))) / cellNumber;
-        ltr.setMaxSize(ltrSize, ltrSize);
-        ltr.setPrefSize(ltrSize, ltrSize);
-        ltr.setMinSize(ltrSize, ltrSize);
+        double tileSize = (gridHeight - (gridPanePadSize * (cellNumber + 1))) / cellNumber;
+        tile.setMaxSize(tileSize, tileSize);
+        tile.setPrefSize(tileSize, tileSize);
+        tile.setMinSize(tileSize, tileSize);
 
         // Binding height of the Letter to height of the Grid
         gridPaneUI.heightProperty().addListener((observable, oldValue, newValue) -> {
-          double ltrNewSize =
+          double tileNewSize =
               (newValue.doubleValue() - (gridPanePadSize * (cellNumber + 1))) / cellNumber;
-          ltr.setMaxHeight(ltrNewSize);
-          ltr.setPrefHeight(ltrNewSize);
-          ltr.setMinHeight(ltrNewSize);
+          tile.setMaxHeight(tileNewSize);
+          tile.setPrefHeight(tileNewSize);
+          tile.setMinHeight(tileNewSize);
         });
 
         // Binding width of the Letter to width of the Grid
         gridPaneUI.widthProperty().addListener((observable, oldValue, newValue) -> {
-          double ltrNewSize =
+          double tileNewSize =
               (newValue.doubleValue() - (gridPanePadSize * (cellNumber + 1))) / cellNumber;
-          ltr.setMaxWidth(ltrNewSize);
-          ltr.setPrefWidth(ltrNewSize);
-          ltr.setMinWidth(ltrNewSize);
+          tile.setMaxWidth(tileNewSize);
+          tile.setPrefWidth(tileNewSize);
+          tile.setMinWidth(tileNewSize);
         });
 
         // Adding the Letter to the GridPane (FRONT)
-        GridPane.setConstraints(ltr, x, y);
-        gridPaneUI.getChildren().add(ltr);
+        GridPane.setConstraints(tile, x, y);
+        gridPaneUI.getChildren().add(tile);
 
         // Adding the Letter to the GridData (BACK)
         gridData.setCell(x, y, letter, points);
@@ -244,7 +251,13 @@ public class ScrabbleController {
   /**
    * Creates and Initiates all the cells in the letter grid.
    */
-  private void initCells() {
+  private void initGrid() {
+
+    // setting the padding of the entire grid
+    // and margins for each cell
+    gridPaneUI.setPadding(new Insets(gridPanePadSize));
+    gridPaneUI.setHgap(gridPanePadSize);
+    gridPaneUI.setVgap(gridPanePadSize);
 
     // creating an effect for all the cells
     InnerShadow is = new InnerShadow();
@@ -276,43 +289,53 @@ public class ScrabbleController {
    * @param effect Effect
    * @return Letter (Button)
    */
-  private Button initLetter(char letter, int points, Effect effect) {
+  private AnchorPane initLetter(char letter, int points, Effect effect) {
 
-    Button ltr = new Button(String.valueOf(letter));
-    ltr.getStyleClass().add("letter-btn");
+    AnchorPane tile = new AnchorPane();
+    tile.getStyleClass().add("letter-btn");
+    tile.setPrefSize(cellSize, cellSize);
+    tile.setMinSize(cellSize, cellSize);
+    tile.setMaxSize(cellSize, cellSize);
+
+    Label ltr = new Label(String.valueOf(letter));
+    ltr.setLabelFor(tile);
     ltr.setPrefSize(cellSize, cellSize);
-    ltr.setMinSize(cellSize, cellSize);
-    ltr.setMaxSize(cellSize, cellSize);
-//    ltr.setEffect(effect);
+    ltr.getStyleClass().add("letter-label");
 
-//    ltr.setOnMousePressed(event -> {
-//      System.out
-//          .println("Event.getScene: (" + event.getSceneX() + ", " + event.getSceneY() + ")");
-//      System.out.println("Event.get: (" + event.getX() + ", " + event.getY() + ")\n");
-//    });
-//
-//    ltr.setOnMouseDragged(mouseEvent -> {
-//      ltr.toFront();
-//      ltr.setCursor(Cursor.CLOSED_HAND);
-//      ltr.setStyle("-fx-opacity: 0.6");
-//
-//      ltr.setLayoutX(mouseEvent.getX() + ltr.getLayoutX() - ltr.getWidth() / 2);
-//      ltr.setLayoutY(mouseEvent.getY() + ltr.getLayoutY() - ltr.getHeight() / 2);
-//
-//      mouseEvent.consume();
-//    });
-//
-//    ltr.setOnMouseReleased(mouseEvent -> {
-//      ltr.setCursor(Cursor.DEFAULT);
-//      ltr.setStyle("-fx-opacity: 1");
-//
-//      mouseEvent.consume();
-//    });
+    Label pts = new Label(String.valueOf(points));
+    pts.setLabelFor(tile);
+    pts.getStyleClass().add("points-label");
 
-    ltr.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> ltr.setStyle("-fx-opacity: 0.8"));
-    ltr.addEventHandler(MouseEvent.MOUSE_EXITED, event -> ltr.setStyle("-fx-opacity: 1"));
+    tile.setEffect(effect);
 
-    ltr.setOnDragDetected(event -> {
+    tile.setOnMousePressed(event -> {
+      System.out
+          .println("Event.getScene: (" + event.getSceneX() + ", " + event.getSceneY() + ")");
+      System.out.println("Event.get: (" + event.getX() + ", " + event.getY() + ")\n");
+    });
+
+    tile.setOnMouseDragged(mouseEvent -> {
+      tile.toFront();
+      tile.setCursor(Cursor.CLOSED_HAND);
+      tile.setStyle("-fx-opacity: 0.6");
+
+      tile.setLayoutX(mouseEvent.getX() + tile.getLayoutX() - tile.getWidth() / 2);
+      tile.setLayoutY(mouseEvent.getY() + tile.getLayoutY() - tile.getHeight() / 2);
+
+      mouseEvent.consume();
+    });
+
+    tile.setOnMouseReleased(mouseEvent -> {
+      tile.setCursor(Cursor.DEFAULT);
+      tile.setStyle("-fx-opacity: 1");
+
+      mouseEvent.consume();
+    });
+
+    tile.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> tile.setStyle("-fx-opacity: 0.8"));
+    tile.addEventHandler(MouseEvent.MOUSE_EXITED, event -> tile.setStyle("-fx-opacity: 1"));
+
+    tile.setOnDragDetected(event -> {
       // drag was detected, start drag-and-drop gesture
       System.out.println("onDragDetected");
 
@@ -321,25 +344,25 @@ public class ScrabbleController {
 
       // put a string on dragboard
       ClipboardContent content = new ClipboardContent();
-      content.putString(ltr.getText().charAt(0) + "1");
+      content.putString(ltr.getText() + pts.getText());
       db.setContent(content);
 
       event.consume();
     });
 
-    ltr.setOnDragDone(event -> {
+    tile.setOnDragDone(event -> {
       // the drag-and-drop gesture ended
       System.out.println("onDragDone");
 
       // if the data was successfully moved, clear it
       if (event.getTransferMode() == TransferMode.MOVE) {
 
-        switch (ltr.getParent().getClass().getSimpleName()) {
+        switch (tile.getParent().getClass().getSimpleName()) {
           case "GridPane":
-            int x = GridPane.getColumnIndex(ltr);
-            int y = GridPane.getRowIndex(ltr);
-            GridPane.clearConstraints(ltr);
-            gridPaneUI.getChildren().remove(ltr);
+            int x = GridPane.getColumnIndex(tile);
+            int y = GridPane.getRowIndex(tile);
+            GridPane.clearConstraints(tile);
+            gridPaneUI.getChildren().remove(tile);
 
             // creating an effect for all the cells
             InnerShadow is = new InnerShadow();
@@ -362,9 +385,9 @@ public class ScrabbleController {
 
           case "Pane":
             for (int i = 0; i < lettersNumber; i++) {
-              if (letterSlotsUI[i].getChildren().contains(ltr)) {
+              if (letterSlotsUI[i].getChildren().contains(tile)) {
                 // Removing the letter from FRONT
-                letterSlotsUI[i].getChildren().remove(ltr);
+                letterSlotsUI[i].getChildren().remove(tile);
                 gridData.display();
 
                 // Removing the letter from BACK
@@ -381,7 +404,16 @@ public class ScrabbleController {
       event.consume();
     });
 
-    return ltr;
+    tile.getChildren().add(ltr);
+    tile.getChildren().add(pts);
+
+    AnchorPane.setLeftAnchor(ltr, 0.0);
+    AnchorPane.setTopAnchor(ltr, 0.0);
+
+    AnchorPane.setRightAnchor(pts, 5.0);
+    AnchorPane.setBottomAnchor(pts, 5.0);
+
+    return tile;
   }
 
   /**
@@ -462,7 +494,7 @@ public class ScrabbleController {
           char letter = db.getString().charAt(0);
           int points = Character.getNumericValue(db.getString().charAt(1));
 
-          Button ltr = initLetter(letter, points, ds);
+          AnchorPane ltr = initLetter(letter, points, ds);
 
           // Adding the Letter (FRONT)
           pane.getChildren().add(ltr);
@@ -484,17 +516,19 @@ public class ScrabbleController {
 
       // Picking random letter from the alphabet declared above
       char randLetter = alphabet.charAt(rand.nextInt(alphabet.length()));
-      int ltrPoints = 1;
+      int ltrPoints = 2;
 
       // Creating new letter
-      Button ltr = initLetter(randLetter, ltrPoints, ds);
+      AnchorPane tile = initLetter(randLetter, ltrPoints, ds);
 
       // Adding the created letter to its slot (FRONT)
       letterSlotsUI[i] = pane;
-      letterSlotsUI[i].getChildren().add(ltr);
+      letterSlotsUI[i].getChildren().add(tile);
 
       // Adding it to the LetterBar (BACK)
       ltrBar.getSlot(i).setCell(randLetter, ltrPoints);
+
+      ltrBar.getSlot(i).refTile = tile;
     }
     // Verifying the internal state
     ltrBar.display();
@@ -504,6 +538,7 @@ public class ScrabbleController {
    * Shuffles letters in the Letter Bar and updates both Back and Front parts.
    */
   private void shuffleLetters() {
+
     // creating an effect for the letter
     DropShadow ds = new DropShadow();
     ds.setHeight(20);
@@ -521,7 +556,7 @@ public class ScrabbleController {
       }
 
       if (!ltrBar.getSlot(i).isFree()) {
-        Button l = initLetter(ltrBar.getSlot(i).getLtr(), ltrBar.getSlot(i).getPts(), ds);
+        AnchorPane l = initLetter(ltrBar.getSlot(i).getLtr(), ltrBar.getSlot(i).getPts(), ds);
         letterSlotsUI[i].getChildren().add(l);
       }
     }
@@ -534,14 +569,8 @@ public class ScrabbleController {
   @FXML
   private void initialize() {
 
-    // setting the padding of the entire grid
-    // and margins for each cell
-    gridPaneUI.setPadding(new Insets(gridPanePadSize));
-    gridPaneUI.setHgap(gridPanePadSize);
-    gridPaneUI.setVgap(gridPanePadSize);
-
     // Init all the cells
-    initCells();
+    initGrid();
 
     // Init currently proposed letters
     initLetters();

@@ -1,5 +1,8 @@
 package scrabble.model;
 
+import com.jfoenix.controls.JFXBadge;
+import javafx.scene.layout.AnchorPane;
+
 /**
  * scrabble.model.Cell class represents a cell of the letters grid.
  *
@@ -21,6 +24,8 @@ public class Cell {
    * Indicates whether a cell is free.
    */
   private boolean isFree;
+
+  public AnchorPane refTile;
 
   /**
    * Default constructor.
