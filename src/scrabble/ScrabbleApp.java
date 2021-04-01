@@ -19,7 +19,7 @@ public class ScrabbleApp extends Application {
   final private double windowHeight = 905;
 
   final private double windowMinWidth = 620;
-  final private double windowMinHeight = 450;
+  final private double windowMinHeight = 760;
 
   @Override
   public void start(Stage primaryStage) throws Exception {

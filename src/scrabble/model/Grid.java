@@ -86,4 +86,52 @@ public class Grid {
     }
     System.out.print("\n");
   }
+
+  /**
+   * Returns a Global Index of the specified Cell.
+   * @param cell Cell
+   * @return Global Index if the Cell is in the Grid, -1 otherwise.
+   */
+  public int getCellIndex (Cell cell) {
+    for (int i = 0; i < globalSize; i++) {
+      if (cell == g[i]) return i;
+    }
+    return -1;
+  }
+
+  /**
+   * Returns an X coordinate of a specififed cell
+   * @param cell Cell that is in Grid
+   * @return X coordinate (Column)
+   */
+  public int getCellX (Cell cell) {
+    int glInd;
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        glInd = getGlobalIndex(i, j);
+        if (cell == g[glInd]) {
+          return i;
+        }
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Returns an Y coordinate of a specififed cell
+   * @param cell Cell that is in Grid
+   * @return Y coordinate (Row)
+   */
+  public int getCellY (Cell cell) {
+    int glInd;
+    for (int i = 0; i < size; i++) {
+      for (int j = 0; j < size; j++) {
+        glInd = getGlobalIndex(i, j);
+        if (cell == g[glInd]) {
+          return j;
+        }
+      }
+    }
+    return -1;
+  }
 }

@@ -54,6 +54,22 @@
   -fx-text-fill: green;
   -fx-font-size: 15px;
   -fx-font-weight: bold;
+  -fx-alignment: center;
+  -fx-pref-width: 30px;
+  -fx-pref-height: 30px;
+  -fx-padding: 3px;
+}
+
+.word-points-label-invalid {
+  -fx-border-radius: 15px;
+  -fx-border-color: crimson;
+  -fx-border-width: 3px;
+  -fx-background-radius: 15px;
+  -fx-background-color: white;
+  -fx-text-fill: crimson;
+  -fx-font-size: 15px;
+  -fx-font-weight: bold;
+  -fx-alignment: center;
   -fx-pref-width: 30px;
   -fx-pref-height: 30px;
   -fx-padding: 3px;
@@ -146,8 +162,10 @@
   -fx-min-height: 50px;
   -fx-pref-width: 80px;
   -fx-pref-height: 50px;
+  -fx-opacity: 1;
 }
 
 #ok-btn:hover {
   -fx-cursor: hand;
+  -fx-opacity: 0.8;
 }

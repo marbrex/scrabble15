@@ -24,9 +24,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import scrabble.model.Cell;
 import scrabble.model.Dictionary;
 import scrabble.model.Grid;
 import scrabble.model.LetterBar;
+import scrabble.model.Word;
 
 /**
  * <h1>The Main Controller linked with "interface.fxml" file.</h1>
@@ -83,6 +85,9 @@ public class ScrabbleController {
    */
   @FXML
   private BorderPane root;
+
+  @FXML
+  private StackPane gridWrapper;
 
   /**
    * The actual data of the letter grid will be stocked here.
@@ -236,6 +241,163 @@ public class ScrabbleController {
         // Adding the Letter to the GridData (BACK)
         gridData.setCell(x, y, letter, points);
 
+        // Checking if there are any Neighbours
+        boolean top = false;
+        boolean right = false;
+        boolean bottom = false;
+        boolean left = false;
+        int topX = x;
+        int topY = y-1;
+        int rightX = x+1;
+        int rightY = y;
+        int bottomX = x;
+        int bottomY = y+1;
+        int leftX = x-1;
+        int leftY = y;
+        while (topY >= 0) {
+          if (!gridData.getCell(topX, topY).isFree()) {
+            top = true;
+            topY--;
+          }
+          else {
+            topY++;
+            break;
+          }
+        }
+        while (rightX < cellNumber) {
+          if (!gridData.getCell(rightX, rightY).isFree()) {
+            right = true;
+            rightX++;
+          }
+          else {
+            rightX--;
+            break;
+          }
+        }
+        while (bottomY < cellNumber) {
+          if (!gridData.getCell(bottomX, bottomY).isFree()) {
+            bottom = true;
+            bottomY++;
+          }
+          else {
+            bottomY--;
+            break;
+          }
+        }
+        while (leftX >= 0) {
+          if (!gridData.getCell(leftX, leftY).isFree()) {
+            left = true;
+            leftX--;
+          }
+          else {
+            leftX++;
+            break;
+          }
+        }
+
+        if (left || right) {
+          // There are HORIZONTAL neighbours
+
+          // Getting First and Last letter (Y is the same for all letters on this row)
+          // We don't know yet if there are empty gaps between these 2 letters.
+          int minX = Math.min(leftX, rightX);
+          int maxX = Math.max(leftX, rightX);
+          System.out.println("\nHORIZONTAL - Min Cell (" + minX + ", " + leftY + ")");
+          System.out.println("\nHORIZONTAL - Max Cell (" + maxX + ", " + leftY + ")");
+
+          // Creating a Word.
+          // Fills in all data members of the Word class.
+          // It checks whether the word has no empty gaps, i.e. the word is FULL.
+          // If thw word is full, then it checks if the word is VALID.
+          Word word = new Word(gridData.getCell(minX, leftY), gridData.getCell(maxX, leftY), gridData);
+
+          // Creating a highlighting effect for the word
+          AnchorPane wordLight = new AnchorPane();
+          if (word.isValid()) wordLight.getStyleClass().add("valid-word");
+          else wordLight.getStyleClass().add("invalid-word");
+
+          // Creating a label with word's points
+          Label wordPts = new Label(String.valueOf(word.getPoints()));
+          if (word.isValid()) wordPts.getStyleClass().add("word-points-label");
+          else wordPts.getStyleClass().add("word-points-label-invalid");
+          wordPts.setPrefSize(30, 30);
+
+          // Adjusting the size of the highlighted word box
+          double sizeX = word.getWordLength() * cellSize + (word.getWordLength()-1)*gridPanePadSize;
+          double sizeY = cellSize;
+          wordLight.setPrefSize(sizeX, sizeY);
+          wordLight.setMinSize(sizeX, sizeY);
+          wordLight.setMaxSize(sizeX, sizeY);
+
+          System.out.println("\nwidth: " + wordLight.getWidth());
+          System.out.println("height: " + wordLight.getHeight());
+
+          // Adding Points Label to Highlighted Box
+          wordLight.getChildren().add(wordPts);
+          // Adjusting The Points Label position in the Highlighted Box
+          AnchorPane.setRightAnchor(wordPts, -15.0);
+          AnchorPane.setTopAnchor(wordPts, -15.0);
+
+          wordLight.setViewOrder(0);
+
+          // Adding the Highlighted Box to the Grid Pane
+          gridPaneUI.add(wordLight, minX, leftY);
+        }
+
+        if (top || bottom) {
+          // There are VERTICAL neighbours
+
+          // Getting First and Last letter (Y is the same for all letters on this row)
+          // We don't know yet if there are empty gaps between these 2 letters.
+          int minY = Math.min(topY, bottomY);
+          int maxY = Math.max(topY, bottomY);
+          System.out.println("\nHORIZONTAL - Min Cell (" + topX + ", " + minY + ")");
+          System.out.println("\nHORIZONTAL - Max Cell (" + topX + ", " + maxY + ")");
+
+          // Creating a Word.
+          // Fills in all data members of the Word class.
+          // It checks whether the word has no empty gaps, i.e. the word is FULL.
+          // If thw word is full, then it checks if the word is VALID.
+          Word word = new Word(gridData.getCell(topX, minY), gridData.getCell(topX, maxY), gridData);
+
+          // Creating a highlighting effect for the word
+          AnchorPane wordLight = new AnchorPane();
+          if (word.isValid()) wordLight.getStyleClass().add("valid-word");
+          else wordLight.getStyleClass().add("invalid-word");
+
+          // Creating a label with word's points
+          Label wordPts = new Label(String.valueOf(word.getPoints()));
+          if (word.isValid()) wordPts.getStyleClass().add("word-points-label");
+          else wordPts.getStyleClass().add("word-points-label-invalid");
+          wordPts.setPrefSize(30, 30);
+
+          // Adjusting the size of the highlighted word box
+          double sizeX = cellSize;
+          double sizeY = word.getWordLength() * cellSize + (word.getWordLength()-1)*gridPanePadSize;
+          wordLight.setPrefSize(sizeX, sizeY);
+          wordLight.setMinSize(sizeX, sizeY);
+          wordLight.setMaxSize(sizeX, sizeY);
+
+          System.out.println("\nwidth: " + wordLight.getWidth());
+          System.out.println("height: " + wordLight.getHeight());
+
+          // Adjusting position of the Highlighted Box (there is no that problem in horiz.)
+          wordLight.setTranslateY(sizeY/2 - cellSize/2);
+
+          // Adding Points Label to Highlighted Box
+          wordLight.getChildren().add(wordPts);
+          // Adjusting The Points Label position in the Highlighted Box
+          AnchorPane.setRightAnchor(wordPts, -15.0);
+          AnchorPane.setBottomAnchor(wordPts, -15.0);
+
+          wordLight.setViewOrder(0);
+
+          // Adding the Highlighted Box to the Grid Pane
+          gridPaneUI.add(wordLight, topX, minY);
+        }
+
+        tile.setViewOrder(0);
+
         success = true;
       }
       /* let the source know whether the string was successfully
@@ -270,6 +432,11 @@ public class ScrabbleController {
     // Binding GridPane's Height to be always equal to its Width
     gridPaneUI.widthProperty().addListener((observable, oldValue, newValue) -> {
       gridPaneUI.setPrefHeight(newValue.doubleValue());
+    });
+
+    // Binding GridPane's Width to be always equal to its Height
+    gridWrapper.heightProperty().addListener((observable, oldValue, newValue) -> {
+      gridPaneUI.setPrefWidth(newValue.doubleValue());
     });
 
     for (int i = 0; i < cellNumber; i++) {
@@ -384,8 +551,11 @@ public class ScrabbleController {
             break;
 
           case "Pane":
+            System.out.println("\nonDragDone - src node: Pane");
             for (int i = 0; i < lettersNumber; i++) {
+              System.out.println("onDragDone - " + i);
               if (letterSlotsUI[i].getChildren().contains(tile)) {
+                System.out.println("onDragDone - found the src tile: " + i);
                 // Removing the letter from FRONT
                 letterSlotsUI[i].getChildren().remove(tile);
                 gridData.display();
@@ -579,14 +749,10 @@ public class ScrabbleController {
       shuffleLetters();
     });
 
-    // Testing Dictionary
+    // Setting the Dictionary (should be set only once, an error otherwise)
     URL dictPath = getClass().getResource("dictionaries/english-default.txt");
     File dict = new File(dictPath.getFile());
     Dictionary.setDictionary(dict);
-
-    for (int i = 0; i < 10; i++) {
-      System.out.println(Dictionary.getWords().get(i));
-    }
 
   }
 }

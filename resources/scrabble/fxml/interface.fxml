@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -18,43 +19,47 @@
   xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="scrabble.ScrabbleController">
   <center>
-    <GridPane id="game-block" fx:id="gridPaneUI" alignment="CENTER" maxHeight="-Infinity"
-      maxWidth="-Infinity" prefHeight="825.0" prefWidth="825.0" BorderPane.alignment="CENTER">
-      <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-      </columnConstraints>
-      <rowConstraints>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-      </rowConstraints>
-    </GridPane>
+    <StackPane fx:id="gridWrapper">
+      <children>
+        <GridPane id="game-block" fx:id="gridPaneUI" alignment="CENTER" maxHeight="-Infinity"
+          maxWidth="-Infinity" prefHeight="825.0" prefWidth="825.0">
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+          </rowConstraints>
+        </GridPane>
+      </children>
+    </StackPane>
   </center>
   <bottom>
     <HBox id="bottom-block" alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity"
@@ -100,9 +105,10 @@
     </HBox>
   </bottom>
   <right>
-    <BorderPane id="side-panel" BorderPane.alignment="CENTER">
+    <BorderPane id="side-panel" minWidth="200.0" BorderPane.alignment="CENTER">
       <top>
-        <HBox id="time-block" fx:id="timeBlock" alignment="CENTER" fillHeight="false" spacing="10.0"
+        <HBox id="time-block" fx:id="timeBlock" alignment="CENTER" fillHeight="false"
+          minHeight="40.0" minWidth="200.0" prefHeight="37.0" prefWidth="200.0" spacing="10.0"
           BorderPane.alignment="CENTER">
           <children>
             <Label id="time" text="12:34">
@@ -118,15 +124,16 @@
       </top>
       <bottom>
         <VBox id="chat-block" fx:id="chatBlock" alignment="CENTER" fillWidth="false"
-          prefHeight="300.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+          minHeight="150.0" minWidth="200.0" prefHeight="300.0" prefWidth="200.0"
+          BorderPane.alignment="CENTER">
           <children>
             <Label alignment="CENTER" text="CHAT"/>
           </children>
         </VBox>
       </bottom>
       <center>
-        <VBox id="players-block" fx:id="playersBlock" alignment="CENTER"
-          BorderPane.alignment="CENTER">
+        <VBox id="players-block" fx:id="playersBlock" alignment="CENTER" minHeight="300.0"
+          minWidth="200.0" prefHeight="485.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <children>
             <HBox id="player-1-block" alignment="CENTER" fillHeight="false" prefHeight="100.0"
               prefWidth="200.0" spacing="10.0" styleClass="players-block">
@@ -176,8 +183,9 @@
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
               </padding>
             </HBox>
-            <HBox id="player-4-block" alignment="CENTER" fillHeight="false" prefHeight="100.0"
-              prefWidth="200.0" spacing="10.0" styleClass="players-block">
+            <HBox id="player-4-block" alignment="CENTER" fillHeight="false" minHeight="75.0"
+              minWidth="200.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0"
+              styleClass="players-block">
               <children>
                 <ImageView id="player-4-avatar" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true"
                   preserveRatio="true" styleClass="players-avatar">
