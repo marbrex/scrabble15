@@ -1,6 +1,13 @@
 package scrabble.model;
 
 public class HumanPlayer extends Player {
+	
+	/**
+	 * scrabble.model.HumanPlayer class extends from the scrabble.model.Player class and contains game statistics,
+	 * which is only necessary for the HumanPlayer
+	 * 
+	 * @author Sergen Keskincelik
+	 */
 
 	/** Amount of games won for statistics -> HumanPlayer */
 	private int gamesWon;
@@ -15,7 +22,11 @@ public class HumanPlayer extends Player {
 	}
 	/**Returns Win-Rate of the player */
 	public double getWinRate() {
+		if(gamesLost != 0) {
 		return Math.round((gamesWon*100.0)/gamesLost)/100.0;
+		} else {
+			return (double)gamesWon;
+		}
 	}
 	/** Returns the amount of games lost in total */
 	public int getGamesLost() {

@@ -4,12 +4,18 @@ import java.util.Date;
 
 public abstract class Player {
 	
+	/**
+	 * scrabble.model.Player class to store important player characteristics, e.g. the name and score of the player
+	 * 
+	 * @author Sergen Keskincelik
+	 */
+	
 	/** Name of the Player */
 	private String name;
 	/** Amount of points which a player has received in the game */
 	private int score;
 	/** Rack to place your tiles */
-	private String[] rack = new String[7];
+	private LetterBar rack;
 	/** Turn options for each player */
 	private String[] turnOptions = {"pass","exchange","play"};
 	/** Necessary to determine, if one player used more than 10 minutes of overtime */
@@ -25,7 +31,7 @@ public abstract class Player {
 	}
 	/**Clearing the rack, e.g. in the end of the game */
 	public void clearRack() {
-		rack = new String[7];
+		rack = new LetterBar();
 	}
 	/** Returns the name of the player */
 	public String getName() {
@@ -42,6 +48,15 @@ public abstract class Player {
 	/** Setting the score of the player */
 	public void setScore(int score) {
 		this.score = score;
+	}
+	/** Setting the overtime of the Player */
+	public void setOvertime(Date overtime) {
+		this.usedOvertime = overtime;
+	}
+	
+	/** Returns the used Overtime of the Player */
+	public Date getOvertime() {
+		return this.usedOvertime;
 	}
 	
 }

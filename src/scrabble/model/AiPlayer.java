@@ -1,6 +1,13 @@
 package scrabble.model;
 
 public class AiPlayer extends Player {
+	
+	/**
+	 * scrabble.model.AiPlayer extends from the Player class and is necessary to determine the difficulty
+	 * of each AI Player
+	 * 
+	 * @author Sergen Keskincelik
+	 */
 
 	/** Difficulty-Array for the Ai */
 	private String[] difficulty = { "easy", "hard" };
