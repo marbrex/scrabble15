@@ -4,13 +4,19 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import scrabble.model.HumanPlayer;
+
+/**
+ * scrabble.dbhandler.DBInformation class to receive player statistics from the Database
+ * 
+ * @author Sergen Keskincelik
+ * @author Moritz Raucher
+ */
 
 public class DBInformation extends Database {
 
 	/** Player profiles to choose from in UI */
-	public List<HumanPlayer> getPlayerProfiles() {
+	public static HumanPlayer getPlayerProfile() {
 		try {
 			List<HumanPlayer> playerProfiles = new ArrayList<HumanPlayer>();
 			stmt = connection.createStatement();
@@ -22,7 +28,11 @@ public class DBInformation extends Database {
 				player.setGamesLost(rs.getInt("GamesLost"));
 				playerProfiles.add(player);
 			}
-			return playerProfiles;
+			if(playerProfiles.size() > 0) {
+			return playerProfiles.get(0);
+			} else {
+				return null;
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -30,19 +40,8 @@ public class DBInformation extends Database {
 		}
 	}
 
-	/** Loading player profile by selecting profile in the UI */
-	public HumanPlayer loadPlayerProfile(HumanPlayer hp) {
-		List<HumanPlayer> playerProfiles = getPlayerProfiles();
-		for (HumanPlayer player : playerProfiles) {
-			if (player.getName().equals(hp.getName())) {
-				return player;
-			}
-		}
-		return null;
-	}
-
 	/** Checks, if Database contains already the name (e.g. for Player Profile) */
-	public boolean containsName(String name) {
+	public static boolean containsName(String name) {
 		List<String> playerNames = getPlayerNames();
 		if (playerNames.contains(name)) {
 			return true;
@@ -53,7 +52,7 @@ public class DBInformation extends Database {
 	}
 
 	/** Returns a List, which contains all Player names saved in the Database */
-	private List<String> getPlayerNames() {
+	private static List<String> getPlayerNames() {
 		try {
 			List<String> playernames = new ArrayList<String>();
 			stmt = connection.createStatement();
@@ -69,7 +68,7 @@ public class DBInformation extends Database {
 	}
 
 	/** Returns one specific Identification number from Statistics table */
-	public boolean containsIdentification(int id) {
+	public static boolean containsIdentification(int id) {
 		try {
 			stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT Statistic_Id FROM Statistics;");
@@ -84,38 +83,16 @@ public class DBInformation extends Database {
 			return false;
 		}
 	}
-	
+
 	/** Returns all statistics of an Player in a List */
-	public List<String> getPlayerStatistic(HumanPlayer player) {
+	public static List<String> getPlayerStatistic(HumanPlayer player) {
 		List<String> playerStatistic = new ArrayList<String>();
-		HumanPlayer hp = loadPlayerProfile(player);
+		HumanPlayer hp = getPlayerProfile();
 		playerStatistic.add(hp.getName());
 		playerStatistic.add(Integer.toString(hp.getGamesWon()));
 		playerStatistic.add(Integer.toString(hp.getGamesLost()));
 		playerStatistic.add(Double.toString(hp.getWinRate()));
 		return playerStatistic;
 	}
-	/** Returns the amount of the games won in total from all player */
-	public int getMostGamesWon() {
-		int max = 0;
-		List<HumanPlayer> players = getPlayerProfiles();
-		for(HumanPlayer player : players) {
-			if(max < player.getGamesWon()) {
-				max = player.getGamesWon();
-			}
-		}
-		return max;
-	}
-	/** Returns the highest Win-Rate in total from a player */
-	public double getHighestWinrate() {
-		double max = 0;
-		List<HumanPlayer> players = getPlayerProfiles();
-		for(HumanPlayer player : players) {
-			if(max < player.getWinRate()) {
-				max = player.getWinRate();
-			}
-		}
-		return max;
-	}		
 
 }
