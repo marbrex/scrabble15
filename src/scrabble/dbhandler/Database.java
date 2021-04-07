@@ -98,8 +98,7 @@ public class Database {
 	/** Fills in player table with Player Data */
 	public static void fillPlayerTable(List<String> playerData) {
 		try {
-			pstmt = connection
-					.prepareStatement("INSERT INTO Players (Id,Name,GamesWon,GamesLost,Winrate) VALUES (?,?,?,?,?);");
+			pstmt = connection.prepareStatement("INSERT INTO Players (Id,Name,GamesWon,GamesLost,Winrate) VALUES (?,?,?,?,?);");
 			pstmt.setInt(1, Integer.parseInt(playerData.get(0)));
 			pstmt.setString(2, playerData.get(1));
 			pstmt.setInt(3, Integer.parseInt(playerData.get(2)));
@@ -135,6 +134,7 @@ public class Database {
 			pstmt = connection.prepareStatement("UPDATE Players SET GamesWon = ? WHERE Name = '" + player.getName() + "';");
 			pstmt.setInt(1, player.getGamesWon() + 1);
 			pstmt.executeUpdate();
+			stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Players WHERE Name = '" + player.getName() + "';");
 			while (rs.next()) {
 				player.setGamesWon(rs.getInt("GamesWon"));
@@ -154,6 +154,7 @@ public class Database {
 			pstmt = connection.prepareStatement("UPDATE Players SET GamesLost = ? WHERE Name = '" + player.getName() + "';");
 			pstmt.setInt(1, player.getGamesLost() + 1);
 			pstmt.executeUpdate();
+			stmt = connection.createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Players WHERE Name = '" + player.getName() + "';");
 			while (rs.next()) {
 				player.setGamesLost(rs.getInt("GamesLost"));
@@ -168,8 +169,7 @@ public class Database {
 	/** Updating the Win-Rate in the Database */
 	public static void updateWinRate(HumanPlayer player) {
 		try {
-			pstmt = connection
-					.prepareStatement("UPDATE Players SET Winrate = ? WHERE Name = '" + player.getName() + "';");
+			pstmt = connection.prepareStatement("UPDATE Players SET Winrate = ? WHERE Name = '" + player.getName() + "';");
 			pstmt.setDouble(1, player.getWinRate());
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
@@ -180,7 +180,7 @@ public class Database {
 
 	/** Updating the Name if Player wants to change it */
 	public static void updatePlayerName(HumanPlayer player, String newName) {
-		if (!DBInformation.containsName(player.getName())) {
+		if (!DBInformation.containsName(newName)) {
 			try {
 				stmt = connection.createStatement();
 				stmt.executeUpdate("UPDATE Players SET Name = '" + newName + "' WHERE Name = '" + player.getName() + "';");
@@ -190,6 +190,10 @@ public class Database {
 				e.printStackTrace();
 			}
 		}
+	}
+	
+	public static Connection getConnection() {
+		return connection;
 	}
 
 }

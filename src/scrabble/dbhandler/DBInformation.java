@@ -2,6 +2,7 @@ package scrabble.dbhandler;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import scrabble.model.HumanPlayer;
@@ -13,13 +14,15 @@ import scrabble.model.HumanPlayer;
  * @author Moritz Raucher
  */
 
-public class DBInformation extends Database {
+public class DBInformation {
 
+	private static Statement stmt = null;
+	
 	/** Player profiles to choose from in UI */
 	public static HumanPlayer getPlayerProfile() {
 		try {
 			List<HumanPlayer> playerProfiles = new ArrayList<HumanPlayer>();
-			stmt = connection.createStatement();
+			stmt = Database.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT * FROM Players;");
 			while (rs.next()) {
 				HumanPlayer player = new HumanPlayer();
@@ -55,7 +58,7 @@ public class DBInformation extends Database {
 	private static List<String> getPlayerNames() {
 		try {
 			List<String> playernames = new ArrayList<String>();
-			stmt = connection.createStatement();
+			stmt = Database.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT Name FROM Players;");
 			while (rs.next()) {
 				playernames.add(rs.getString("Name"));
@@ -70,7 +73,7 @@ public class DBInformation extends Database {
 	/** Returns one specific Identification number from Statistics table */
 	public static boolean containsIdentification(int id) {
 		try {
-			stmt = connection.createStatement();
+			stmt = Database.getConnection().createStatement();
 			ResultSet rs = stmt.executeQuery("SELECT Statistic_Id FROM Statistics;");
 			while (rs.next()) {
 				if (id == rs.getInt("Statistic_Id")) {
