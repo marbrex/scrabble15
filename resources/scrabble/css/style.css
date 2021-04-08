@@ -34,7 +34,7 @@
   -fx-border-color: green;
   -fx-border-width: 5px;
   -fx-background-radius: 7px;
-  -fx-background-color: TRANSPARENT;
+  -fx-background-color: rgba(0, 0, 0, 0);;
 }
 
 .invalid-word {
@@ -42,37 +42,61 @@
   -fx-border-color: crimson;
   -fx-border-width: 5px;
   -fx-background-radius: 7px;
-  -fx-background-color: TRANSPARENT;
+  -fx-background-color: rgba(0, 0, 0, 0);
 }
 
 .word-points-label {
-  -fx-border-radius: 15px;
+  -fx-border-radius: 10px;
   -fx-border-color: green;
   -fx-border-width: 3px;
-  -fx-background-radius: 15px;
+  -fx-background-radius: 10px;
   -fx-background-color: white;
   -fx-text-fill: green;
   -fx-font-size: 15px;
   -fx-font-weight: bold;
   -fx-alignment: center;
-  -fx-pref-width: 30px;
-  -fx-pref-height: 30px;
-  -fx-padding: 3px;
+  -fx-wrap-text: true;
+  -fx-min-width: 20px;
+  -fx-pref-width: 20px;
+  -fx-max-width: 20px;
+  -fx-min-height: 20px;
+  -fx-pref-height: 20px;
+  -fx-max-height: 20px;
+  -fx-padding: -5px;
 }
 
 .word-points-label-invalid {
-  -fx-border-radius: 15px;
+  -fx-border-radius: 10px;
   -fx-border-color: crimson;
   -fx-border-width: 3px;
-  -fx-background-radius: 15px;
+  -fx-background-radius: 10px;
   -fx-background-color: white;
   -fx-text-fill: crimson;
   -fx-font-size: 15px;
   -fx-font-weight: bold;
   -fx-alignment: center;
-  -fx-pref-width: 30px;
-  -fx-pref-height: 30px;
-  -fx-padding: 3px;
+  -fx-min-width: 20px;
+  -fx-pref-width: 20px;
+  -fx-max-width: 20px;
+  -fx-min-height: 20px;
+  -fx-pref-height: 20px;
+  -fx-max-height: 20px;
+  -fx-padding: -5px;
+}
+
+.slot {
+  -fx-border-radius: 7px;
+  -fx-background-radius: 7px;
+  -fx-border-color: darkgray;
+  -fx-background-color: lightgray;
+}
+
+.slot:hover {
+  -fx-background-color: gray;
+}
+
+.slot-on-drag-entered {
+  -fx-background-color: green;
 }
 
 
@@ -168,4 +192,13 @@
 #ok-btn:hover {
   -fx-cursor: hand;
   -fx-opacity: 0.8;
+}
+
+.line {
+  -fx-fill: transparent;
+  -fx-stroke-width: 5px;
+  -fx-stroke: green;
+  -fx-stroke-type: outside;
+  -fx-stroke-line-join: round;
+  -fx-stroke-line-cap: round;
 }

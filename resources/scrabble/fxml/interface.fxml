@@ -16,8 +16,8 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="root" prefHeight="905.0" prefWidth="1075.0"
-  xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="scrabble.ScrabbleController">
+  xmlns="http://javafx.com/javafx/11.0.2"
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.ScrabbleController">
   <center>
     <StackPane fx:id="gridWrapper">
       <children>
@@ -124,19 +124,18 @@
       </top>
       <bottom>
         <VBox id="chat-block" fx:id="chatBlock" alignment="CENTER" fillWidth="false"
-          minHeight="150.0" minWidth="200.0" prefHeight="300.0" prefWidth="200.0"
-          BorderPane.alignment="CENTER">
+          minHeight="100.0" minWidth="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <children>
             <Label alignment="CENTER" text="CHAT"/>
           </children>
         </VBox>
       </bottom>
       <center>
-        <VBox id="players-block" fx:id="playersBlock" alignment="CENTER" minHeight="300.0"
+        <VBox id="players-block" fx:id="playersBlock" alignment="CENTER" minHeight="200.0"
           minWidth="200.0" prefHeight="485.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <children>
-            <HBox id="player-1-block" alignment="CENTER" fillHeight="false" prefHeight="100.0"
-              prefWidth="200.0" spacing="10.0" styleClass="players-block">
+            <HBox id="player-1-block" alignment="CENTER" fillHeight="false" minHeight="50.0"
+              prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">
               <children>
                 <ImageView id="player-1-avatar" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true"
                   preserveRatio="true" styleClass="players-avatar">
@@ -151,8 +150,8 @@
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
               </padding>
             </HBox>
-            <HBox id="player-2-block" alignment="CENTER" fillHeight="false" prefHeight="100.0"
-              prefWidth="200.0" spacing="10.0" styleClass="players-block">
+            <HBox id="player-2-block" alignment="CENTER" fillHeight="false" minHeight="50.0"
+              prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">
               <children>
                 <ImageView id="player-2-avatar" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true"
                   preserveRatio="true" styleClass="players-avatar">
@@ -167,8 +166,8 @@
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
               </padding>
             </HBox>
-            <HBox id="player-3-block" alignment="CENTER" fillHeight="false" prefHeight="100.0"
-              prefWidth="200.0" spacing="10.0" styleClass="players-block">
+            <HBox id="player-3-block" alignment="CENTER" fillHeight="false" minHeight="50.0"
+              prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">
               <children>
                 <ImageView id="player-3-avatar" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true"
                   preserveRatio="true" styleClass="players-avatar">
@@ -183,9 +182,8 @@
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>
               </padding>
             </HBox>
-            <HBox id="player-4-block" alignment="CENTER" fillHeight="false" minHeight="75.0"
-              minWidth="200.0" prefHeight="100.0" prefWidth="200.0" spacing="10.0"
-              styleClass="players-block">
+            <HBox id="player-4-block" alignment="CENTER" fillHeight="false" minHeight="50.0"
+              prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">
               <children>
                 <ImageView id="player-4-avatar" fitHeight="60.0" fitWidth="60.0" pickOnBounds="true"
                   preserveRatio="true" styleClass="players-avatar">

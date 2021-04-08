@@ -1,6 +1,7 @@
 package scrabble.model;
 
 import java.util.Date;
+import scrabble.game.LetterBar;
 
 public abstract class Player {
 	

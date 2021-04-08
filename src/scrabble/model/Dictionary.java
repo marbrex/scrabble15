@@ -2,6 +2,7 @@ package scrabble.model;
 
 import java.io.*;
 import java.util.*;
+import scrabble.game.Word;
 
 public class Dictionary {
 

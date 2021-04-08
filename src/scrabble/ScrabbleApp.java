@@ -15,11 +15,11 @@ import javafx.stage.Stage;
  */
 public class ScrabbleApp extends Application {
 
-  final private double windowWidth = 1075;
-  final private double windowHeight = 905;
+  final private double windowWidth = 800;
+  final private double windowHeight = 600;
 
   final private double windowMinWidth = 620;
-  final private double windowMinHeight = 760;
+  final private double windowMinHeight = 500;
 
   @Override
   public void start(Stage primaryStage) throws Exception {
@@ -28,9 +28,9 @@ public class ScrabbleApp extends Application {
     Parent root = loader.load();
 
     Scene scene = new Scene(root, windowWidth, windowHeight);
-    scene.getStylesheets().add(ScrabbleApp.class.getResource("css/style.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
 
-    Image appIcon = new Image(ScrabbleApp.class.getResourceAsStream("img/scrabble-icon-dark.png"));
+    Image appIcon = new Image(getClass().getResourceAsStream("img/scrabble-icon-dark.png"));
 
     primaryStage.setMinWidth(windowMinWidth);
     primaryStage.setMinHeight(windowMinHeight);
