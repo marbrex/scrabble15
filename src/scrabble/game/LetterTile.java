@@ -8,11 +8,11 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
-import scrabble.ScrabbleController;
+import scrabble.GameController;
 
 class LetterTile {
 
-  final ScrabbleController controller;
+  final GameController controller;
 
   private double cellSize;
 
@@ -159,7 +159,7 @@ class LetterTile {
     });
   }
 
-  public LetterTile(ScrabbleController controller) {
+  public LetterTile(GameController controller) {
     cellSize = 50;
 
     this.controller = controller;
@@ -167,7 +167,7 @@ class LetterTile {
     initShape((char) 0, 0);
   }
 
-  public LetterTile(char letter, int points, double cellSize, ScrabbleController controller) {
+  public LetterTile(char letter, int points, double cellSize, GameController controller) {
     this.cellSize = cellSize;
 
     this.controller = controller;

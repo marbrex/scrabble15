@@ -17,7 +17,7 @@
 
 <BorderPane fx:id="root" prefHeight="905.0" prefWidth="1075.0"
   xmlns="http://javafx.com/javafx/11.0.2"
-  xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.ScrabbleController">
+  xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.GameController">
   <center>
     <StackPane fx:id="gridWrapper">
       <children>

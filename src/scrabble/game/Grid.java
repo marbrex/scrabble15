@@ -1,9 +1,8 @@
 package scrabble.game;
 
 import javafx.geometry.Insets;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import scrabble.ScrabbleController;
+import scrabble.GameController;
 
 /**
  * scrabble.game.Grid class is used to stock the internal state of the letters grid.
@@ -12,7 +11,7 @@ import scrabble.ScrabbleController;
  */
 public class Grid {
 
-  final ScrabbleController controller;
+  final GameController controller;
 
   private Slot[] slots;
   int size;
@@ -58,7 +57,7 @@ public class Grid {
    *
    * @param size Width and Height of the grid
    */
-  public Grid(GridPane grid, int size, ScrabbleController controller) {
+  public Grid(GridPane grid, int size, GameController controller) {
     this.size = size;
     globalSize = size * size;
     slots = new Slot[globalSize];

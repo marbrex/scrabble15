@@ -24,11 +24,11 @@ public class ScrabbleApp extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
     FXMLLoader loader = new FXMLLoader();
-    loader.setLocation(getClass().getResource("fxml/interface.fxml"));
+    loader.setLocation(getClass().getResource("fxml/Mainpage.fxml"));
     Parent root = loader.load();
 
     Scene scene = new Scene(root, windowWidth, windowHeight);
-    scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
 
     Image appIcon = new Image(getClass().getResourceAsStream("img/scrabble-icon-dark.png"));
 

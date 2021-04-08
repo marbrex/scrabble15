@@ -30,25 +30,25 @@ import javafx.util.Duration;
 
 public class LoadingController implements Initializable {
 
-	@FXML
-	public Label hintLabel;
+  @FXML
+  public Label hintLabel;
 
-	@FXML
-	public ProgressBar progressBar;
+  @FXML
+  public ProgressBar progressBar;
 
-	@FXML
-	public Circle pingCircle;
+  @FXML
+  public Circle pingCircle;
 
-	@FXML
-	public Label pingLabel;
+  @FXML
+  public Label pingLabel;
 
-	@FXML
-	public Label modeLabel;
+  @FXML
+  public Label modeLabel;
 
-	@FXML
-	public Label showPing;
+  @FXML
+  public Label showPing;
 
-	public void increaseValue() {
+  public void increaseValue() {
 	  /*
 		if (!Main.isNetwork()) {
 			pingLabel.setVisible(false);
@@ -62,51 +62,54 @@ public class LoadingController implements Initializable {
 			modeLabel.setText("Mode: Network game");
 		}
 */
-		KeyFrame keyframe = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+    KeyFrame keyframe = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 
-			private double progress = 0;
+      private double progress = 0;
 
-			@Override
-			public void handle(ActionEvent event) {
-				int randomNumber = (int) (1 + Math.random() * 120);
-				if (randomNumber >= 60 && randomNumber <= 99) {
-					showPing.setTextFill(Color.web("#ff8d1b", 0.8));
-					pingCircle.setFill(Color.web("#ff8d1b"));
-				} else if (randomNumber > 99) {
-					showPing.setTextFill(Color.web("#ff0000", 0.8));
-					pingCircle.setFill(Color.web("#ff0000"));
-				} else if (randomNumber < 60) {
-					showPing.setTextFill(Color.web("#27b53c", 0.8));
-					pingCircle.setFill(Color.web("#27b53c"));
-				}
-				showPing.setText("" + randomNumber + " ms");
-				progress += 0.125;
-				progressBar.setProgress(progress);
-				if(progressBar.getProgress() > 1) {
-					try {
-						Parent root = FXMLLoader.load(getClass().getResource("Startscreen.fxml"));
-						Stage stage = (Stage) progressBar.getScene().getWindow();
-						stage.setScene(new Scene(root, 649, 539));
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-			}
+      @Override
+      public void handle(ActionEvent event) {
+        int randomNumber = (int) (1 + Math.random() * 120);
+        if (randomNumber >= 60 && randomNumber <= 99) {
+          showPing.setTextFill(Color.web("#ff8d1b", 0.8));
+          pingCircle.setFill(Color.web("#ff8d1b"));
+        } else if (randomNumber > 99) {
+          showPing.setTextFill(Color.web("#ff0000", 0.8));
+          pingCircle.setFill(Color.web("#ff0000"));
+        } else if (randomNumber < 60) {
+          showPing.setTextFill(Color.web("#27b53c", 0.8));
+          pingCircle.setFill(Color.web("#27b53c"));
+        }
+        showPing.setText("" + randomNumber + " ms");
+        progress += 0.125;
+        progressBar.setProgress(progress);
+        if (progressBar.getProgress() > 1) {
+          try {
+            Parent root = FXMLLoader.load(getClass().getResource("fxml/interface.fxml"));
+            Stage stage = (Stage) progressBar.getScene().getWindow();
+            Scene scene = new Scene(root, 649, 539);
+            scene.getStylesheets().add(getClass()
+                .getResource("css/style.css").toExternalForm());
+            stage.setScene(scene);
+          } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+          }
+        }
+      }
 
-		});
-		// Setting Timeline
-		Timeline handleProgressValue = new Timeline();
-		// Adding KeyFrame to handle ProgressBar
-		handleProgressValue.getKeyFrames().add(keyframe);
-		// Doing this 9 times
-		handleProgressValue.setCycleCount(9);
-		// Starting the counter
-		handleProgressValue.play();
-	}
+    });
+    // Setting Timeline
+    Timeline handleProgressValue = new Timeline();
+    // Adding KeyFrame to handle ProgressBar
+    handleProgressValue.getKeyFrames().add(keyframe);
+    // Doing this 9 times
+    handleProgressValue.setCycleCount(9);
+    // Starting the counter
+    handleProgressValue.play();
+  }
 
-	@Override
-	public void initialize(URL arg0, ResourceBundle arg1) {
-		this.increaseValue();
-	}
+  @Override
+  public void initialize(URL arg0, ResourceBundle arg1) {
+    this.increaseValue();
+  }
 }

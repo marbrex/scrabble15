@@ -2,7 +2,7 @@ package scrabble.game;
 
 import java.util.Random;
 import javafx.scene.input.Dragboard;
-import scrabble.ScrabbleController;
+import scrabble.GameController;
 
 /**
  * LetterBar class is an internal state of the letter bar at the bottom.
@@ -11,7 +11,7 @@ import scrabble.ScrabbleController;
  */
 public class LetterBar {
 
-  ScrabbleController controller;
+  GameController controller;
 
   /**
    * Number of Letters in the bar.
@@ -73,7 +73,7 @@ public class LetterBar {
   /**
    * Default Constructor. Sets the "size" of the bar to 7.
    */
-  public LetterBar(ScrabbleController controller) {
+  public LetterBar(GameController controller) {
     size = 7;
     slots = new Slot[size];
 
@@ -87,7 +87,7 @@ public class LetterBar {
    *
    * @param size The number of slots
    */
-  public LetterBar(int size, ScrabbleController controller) {
+  public LetterBar(int size, GameController controller) {
     this.size = size;
     slots = new Slot[size];
 

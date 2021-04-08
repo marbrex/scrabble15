@@ -1,11 +1,11 @@
 package scrabble.game;
 
 import javafx.scene.shape.Polygon;
-import scrabble.ScrabbleController;
+import scrabble.GameController;
 
 public class WordGraph {
 
-  ScrabbleController controller;
+  GameController controller;
 
   private LetterTile start;
   private int count;
@@ -19,7 +19,7 @@ public class WordGraph {
     shape.getStyleClass().add("line");
   }
 
-  public WordGraph(LetterTile start, ScrabbleController controller) {
+  public WordGraph(LetterTile start, GameController controller) {
     this.start = start;
     count = 0;
     maxWidth = 15;
@@ -30,7 +30,7 @@ public class WordGraph {
     initShape();
   }
 
-  public WordGraph(LetterTile start, int maxWidth, int maxHeight, ScrabbleController controller) {
+  public WordGraph(LetterTile start, int maxWidth, int maxHeight, GameController controller) {
     this.start = start;
     count = 0;
     this.maxWidth = maxWidth;

@@ -6,11 +6,11 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import scrabble.ScrabbleController;
+import scrabble.GameController;
 
 public class Slot {
 
-  ScrabbleController controller;
+  GameController controller;
 
   private double size;
   private boolean isFree;
@@ -203,7 +203,7 @@ public class Slot {
     container.setViewOrder(2);
   }
 
-  public Slot(ScrabbleController controller) {
+  public Slot(GameController controller) {
     size = 30;
     isFree = true;
 
@@ -212,7 +212,7 @@ public class Slot {
     initShape();
   }
 
-  public Slot(LetterTile tile, ScrabbleController controller) {
+  public Slot(LetterTile tile, GameController controller) {
     size = 30;
     isFree = true;
 
@@ -223,7 +223,7 @@ public class Slot {
     setContent(tile);
   }
 
-  public Slot(double size, ScrabbleController controller) {
+  public Slot(double size, GameController controller) {
     this.size = size;
     isFree = true;
 
@@ -232,7 +232,7 @@ public class Slot {
     initShape();
   }
 
-  public Slot(double size, LetterTile tile, ScrabbleController controller) {
+  public Slot(double size, LetterTile tile, GameController controller) {
     this.size = size;
     isFree = true;
 

@@ -3,7 +3,7 @@ package scrabble.game;
 import java.util.LinkedList;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
-import scrabble.ScrabbleController;
+import scrabble.GameController;
 import scrabble.model.Dictionary;
 
 /**
@@ -13,7 +13,7 @@ import scrabble.model.Dictionary;
  */
 public class Word {
 
-  ScrabbleController controller;
+  GameController controller;
 
   private LinkedList<LetterTile> w;
   private int wordLength;
@@ -181,7 +181,7 @@ public class Word {
   /**
    * Default Constructor.
    */
-  public Word(ScrabbleController controller) {
+  public Word(GameController controller) {
     w = new LinkedList<LetterTile>();
     points = 0;
     wordLength = 0;
@@ -203,7 +203,7 @@ public class Word {
    * @param end        Ending point of the Word (Last Letter)
    * @param controller Controller
    */
-  public Word(LetterTile start, LetterTile end, ScrabbleController controller) {
+  public Word(LetterTile start, LetterTile end, GameController controller) {
     w = new LinkedList<LetterTile>();
     points = 0;
     wordLength = 0;
