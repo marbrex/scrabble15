@@ -23,6 +23,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -47,6 +48,9 @@ public class LoadingController implements Initializable {
 
   @FXML
   public Label showPing;
+  
+  @FXML
+  public BorderPane pane;
 
   public void increaseValue() {
 	  /*
@@ -86,7 +90,7 @@ public class LoadingController implements Initializable {
           try {
             Parent root = FXMLLoader.load(getClass().getResource("fxml/interface.fxml"));
             Stage stage = (Stage) progressBar.getScene().getWindow();
-            Scene scene = new Scene(root, 649, 539);
+            Scene scene = new Scene(root, pane.getScene().getWidth(), pane.getScene().getHeight());
             scene.getStylesheets().add(getClass()
                 .getResource("css/style.css").toExternalForm());
             stage.setScene(scene);

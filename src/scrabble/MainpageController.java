@@ -69,7 +69,7 @@ public class MainpageController implements Initializable {
   private JFXButton settingsBtn;
 
   @FXML
-  private Pane root;
+  private BorderPane root;
 
   Collection<JFXButton> mainMenuButtons;
 
@@ -133,7 +133,7 @@ public class MainpageController implements Initializable {
     Parent root = FXMLLoader.load(getClass().getResource(resource));
     Button btn = ((Button) event.getSource());
     Stage stage = (Stage) btn.getScene().getWindow();
-    Scene scene = new Scene(root, 649, 539);
+    Scene scene = new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
     scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
     stage.setScene(scene);
   }
