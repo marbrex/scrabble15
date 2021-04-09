@@ -17,6 +17,8 @@ public class Grid {
   int size;
   private int globalSize;
 
+  private Map map;
+
   double padSize;
   private double paneSize;
   double cellSize;
@@ -46,7 +48,7 @@ public class Grid {
     for (int row = 0; row < size; row++) {
       for (int column = 0; column < size; column++) {
 
-        Slot slot = new Slot(controller);
+        Slot slot = new Slot(map.getMultiplier(getGlobalIndex(row, column)), controller);
         addSlot(slot, row, column);
       }
     }
@@ -68,6 +70,8 @@ public class Grid {
 
     this.controller = controller;
     this.container = grid;
+
+    map = new Map();
 
     initGrid();
   }

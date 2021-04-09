@@ -89,14 +89,35 @@
   -fx-background-radius: 7px;
   -fx-border-color: darkgray;
   -fx-background-color: lightgray;
+  -fx-opacity: 1;
 }
 
 .slot:hover {
-  -fx-background-color: gray;
+  -fx-opacity: 0.8;
 }
 
 .slot-on-drag-entered {
   -fx-background-color: green;
+}
+
+.slot-dl {
+  -fx-background-color: #66CCFF;
+}
+
+.slot-tl {
+  -fx-background-color: #0099FF;
+}
+
+.slot-dw {
+  -fx-background-color: #ffa200;
+}
+
+.slot-tw {
+  -fx-background-color: #ff4800;
+}
+
+.slot > Label {
+  -fx-font-weight: bold;
 }
 
 

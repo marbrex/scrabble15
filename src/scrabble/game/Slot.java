@@ -1,5 +1,6 @@
 package scrabble.game;
 
+import javafx.scene.control.Label;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
@@ -15,6 +16,8 @@ public class Slot {
   private double size;
   private boolean isFree;
 
+  private Multiplier multiplier;
+
   public LetterTile content;
 
   StackPane container;
@@ -29,7 +32,26 @@ public class Slot {
     is.setWidth(20);
 
     container = new StackPane();
+
     container.getStyleClass().add("slot");
+    if (multiplier != null && multiplier != Multiplier.NO) {
+      switch (multiplier) {
+        case DL:
+          container.getStyleClass().add("slot-dl");
+          break;
+        case TL:
+          container.getStyleClass().add("slot-tl");
+          break;
+        case DW:
+          container.getStyleClass().add("slot-dw");
+          break;
+        case TW:
+          container.getStyleClass().add("slot-tw");
+          break;
+      }
+      container.getChildren().add(new Label(multiplier.getAsString()));
+    }
+
     container.setPrefSize(size, size);
     container.setMinSize(size, size);
     container.setMaxSize(size, size);
@@ -212,11 +234,33 @@ public class Slot {
     initShape();
   }
 
+  public Slot(Multiplier multiplier, GameController controller) {
+    size = 30;
+    isFree = true;
+
+    this.controller = controller;
+    this.multiplier = multiplier;
+
+    initShape();
+  }
+
   public Slot(LetterTile tile, GameController controller) {
     size = 30;
     isFree = true;
 
     this.controller = controller;
+
+    initShape();
+
+    setContent(tile);
+  }
+
+  public Slot(LetterTile tile, Multiplier multiplier, GameController controller) {
+    size = 30;
+    isFree = true;
+
+    this.controller = controller;
+    this.multiplier = multiplier;
 
     initShape();
 
@@ -264,5 +308,9 @@ public class Slot {
     content = tile;
     tile.slot = this;
     isFree = false;
+  }
+
+  public void setMultiplier(Multiplier multiplier) {
+    this.multiplier = multiplier;
   }
 }
