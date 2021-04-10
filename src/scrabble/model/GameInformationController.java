@@ -3,6 +3,8 @@ package scrabble.model;
 import java.util.ArrayList;
 
 import scrabble.model.GameStatusType;
+import scrabble.network.LobbyServer;
+import scrabble.network.LobbyServerProtocol;
 import scrabble.network.NetworkPlayer;
 
 public class GameInformationController {
@@ -11,13 +13,15 @@ public class GameInformationController {
 	 * Is accessible from multiple server threads.
 	 * @author Hendrik Diehl
 	 */
-	private ArrayList<NetworkPlayer> players; //List of all players, maximum of 4 will be changed to player class
+	private LobbyServer mainServer; //server himself
+	private ArrayList<NetworkPlayer> players; //List of all players, maximum of 4
 	private GameStatusType status; //status => Lobby or Game
 	private int gamePort; //port to the GameServer
 	/**
 	 * constructor which initialize the class
 	 */
-	public GameInformationController() {
+	public GameInformationController(LobbyServer mainServer) {
+		this.mainServer = mainServer;
 		this.players = new ArrayList<NetworkPlayer>();
 		this.status = GameStatusType.LOBBY;
 	}
@@ -43,12 +47,12 @@ public class GameInformationController {
 	 * @param player player which want to be added
 	 * @return information about the success of add procedure
 	 */
-	public synchronized boolean addPlayer(NetworkPlayer  player) {
+	public synchronized boolean addPlayer(NetworkPlayer  player) { //problem of 
 		if(this.players.size() <= 4) {
 			this.players.add(player);
-			return true; //player eded
+			return true; //player added
 		} else {
-			return false; //player not eded because game/lobby is full
+			return false; //player not added because game/lobby is full
 		}
 	}
 	/**
@@ -80,7 +84,7 @@ public class GameInformationController {
 	 * Method to get all Player profiles in the Lobby 
 	 * @return List of all Player profiles
 	 */
-	private ArrayList<String> getPlayersInformation() { //will be changed to the player class .
+	private ArrayList<String> getPlayersInformation() {
 		ArrayList<String> players = new ArrayList<String>();
 		for(NetworkPlayer player : this.players) {
 			players.add(player.getPlayer());
@@ -93,8 +97,10 @@ public class GameInformationController {
 	public synchronized void updateAllLobbys() {
 		ArrayList<String> playersArrayList = this.getPlayersInformation();
 		for(NetworkPlayer player : this.players) {
+			System.err.println("Update all ");
 			player.updateLobbyinformation(playersArrayList);
 		}
+		System.err.println("LOBBY UPDATE : " + playersArrayList.size());
 	}
 	/**
 	 * Method to delete a player from the game/lobby.
@@ -106,4 +112,17 @@ public class GameInformationController {
 			this.updateAllLobbys();
 		}
 	}
+	/**
+	 * method called by an host to kick a specific player in the lobby
+	 * @param i number of the player in the lobby
+	 */
+	public void kickPlayer(int i) {
+		if(i < this.players.size()) {
+			System.err.println("Kick Player : " + i);
+			LobbyServerProtocol player = (LobbyServerProtocol)this.players.get(i); //will be changed in future first approach.
+			player.sendShutdownMsg();
+			player.deletePlayer();
+		}
+	}
+	
 }

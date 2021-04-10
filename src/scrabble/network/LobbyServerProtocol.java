@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+
 import scrabble.GameLobbyController;
 import scrabble.model.GameInformationController;
 import scrabble.model.MessageType;
@@ -21,8 +22,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 	private Socket client;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
-	//gui
-	private GameLobbyController gameLobby;
+	private LobbyServer corespondingServer;
 	//controll
 	private Boolean isRunning;
 	private GameInformationController gameInfoController;
@@ -34,15 +34,15 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 	 * @param gameLobby controller of the GameLobbyScreen
 	 * @param gameInfoController controller which holds game specific information
 	 */
-	public LobbyServerProtocol(Socket s, GameLobbyController gameLobby, GameInformationController gameInfoController) {
+	public LobbyServerProtocol(Socket s, LobbyServer server, GameInformationController gameInfoController) {
 		try {
+			this.corespondingServer = server;
 			this.out = new ObjectOutputStream(s.getOutputStream());
 			this.in = new ObjectInputStream(s.getInputStream());
-			this.gameLobby = gameLobby;
 			this.gameInfoController = gameInfoController;
 			this.isRunning = true;
 			this.player = "test player"; // need to be changed
-			System.out.println("Lobby server protocol created");
+			//System.out.println("Lobby server protocol created");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -54,7 +54,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 	public void run() {
 		while(isRunning) {
 			try { //after Server closed the loop is executed ? 
-				System.out.println("Protocol run pass");
+				//System.out.println("Protocol run pass");
 				Object o = in.readObject();
 				Message message = (Message) o;
 				switch(message.getType()) {
@@ -83,12 +83,20 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 	 * method to react to a client which ends the connection
 	 */
 	private void reactToShutdown() {
-		System.out.println("Client shutdown message received");
-		this.gameInfoController.deletePlayer(this);
-		this.isRunning = false;
-		this.closeConnection();
+		//System.out.println("Client shutdown message received");
+		deletePlayer();
 		//need to be deleted from server list
 	}
+	/**
+	 * method to delete the specific protocol
+	 */
+	public void deletePlayer() {
+		this.corespondingServer.deleteSpecificProtocol(this);
+		this.gameInfoController.deletePlayer(this);
+		//this.gameInfoController.updateAllLobbys();
+		this.shutdown();
+	}
+	
 	/**
 	 * method which react to an JoinMessage of an User
 	 * If the gameInformationController add the player information about the lobby are ended.
@@ -96,7 +104,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 	 * @param message message which will be casted to the specific MessageType to get information
 	 */
 	private void reactToJoin(Message message) {
-		System.out.println("Client Join Message received");
+		//System.out.println("Client Join Message received");
 		if(this.gameInfoController.addPlayer(this)) {
 			System.out.println("Player added");
 			//Needed ?
@@ -129,7 +137,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 	 * joining, also himself
 	 */
 	private void sendLobbyInformation() {
-		System.out.println("Send lobby information after client add");
+		//System.out.println("Send lobby information after client add");
 		Message msg = new Message(MessageType.ACEPTED, "");
 		try {
 			this.out.writeObject(msg);
@@ -146,7 +154,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 	 * because of the call hierarchy. A Join message is expected.
 	 */
 	public void sendInformationMessage() {
-		System.out.println("Send basic lobby information");
+		//System.out.println("Send basic lobby information");
 		InformationMessage iM = new InformationMessage(MessageType.INFORMATION, "1", this.gameInfoController.getStatus(), this.gameInfoController.getPlayerAmount());
 		try {
 			this.out.writeObject(iM);
@@ -171,10 +179,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 		}
 	}
 	/**
-	 * method to shut the protocol down
+	 * method to shutdown the protocol
 	 */
 	public void shutdown() {
-		System.out.println("Shutdown Protocol");
+		//System.out.println("Shutdown Protocol");
 		//this.sendShutdownMsg(); //Problem two calls ?
 		this.isRunning = false;
 		this.closeConnection();
@@ -186,7 +194,11 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 		System.out.println("Send shutdown message");
 		Message msg = new Message(MessageType.SHUTDOWN, "");
 		try {
-			if(this.out != null) {
+			if(this.client != null && !this.client.isClosed()) { //Doesn't go in here ??????ß
+				this.out.writeObject(msg);
+				this.out.flush();
+				System.out.println("Shutdown sended");
+			} else { //only trying purpose !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Here problem in kick procedure 
 				this.out.writeObject(msg);
 				this.out.flush();
 			}
@@ -200,7 +212,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 		// TODO Auto-generated method stub
 		//implemet
 	}
-	//here Problem with the null Pointer, player have to bes set after first contact
+	//here Problem with the null Pointer, player have to be set after first contact
 	/**
 	 * method to get the specific player class of a client.
 	 */
@@ -212,7 +224,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 	 */
 	@Override
 	public void updateLobbyinformation(ArrayList<String> players) {
-		System.out.println("Update the Lobby information");
+		//System.out.println("Update the Lobby information");
 		LobbyInformationMessage msg = new LobbyInformationMessage(MessageType.LOBBY, "", players);
 		try {
 			this.out.writeObject(msg);

@@ -10,6 +10,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+
 import scrabble.GameFinderController;
 import scrabble.GameLobbyController;
 import scrabble.model.GameStatusType;
@@ -44,13 +45,14 @@ public class LobbyClientProtocol extends Thread {
 	 */
 	public LobbyClientProtocol(GameFinderController controller) throws ConnectException{
 		this.gameFinderController = controller;
-		boolean socketFinded = false;
-		while(!socketFinded) {
+		this.setSocket();
+	}
+	private void setSocket() throws ConnectException {
+		while(!this.isRunning) {
 			try {
 				this.client = new Socket(adress, port);
 				this.in = new ObjectInputStream(client.getInputStream());
 				this.out = new ObjectOutputStream(client.getOutputStream());
-				socketFinded = true;
 				this.isRunning = true;
 				System.out.println("Verbunden mit Socket : " + this.port);
 			} catch(ConnectException e) {
@@ -91,19 +93,19 @@ public class LobbyClientProtocol extends Thread {
 	public void run() {
 		while(isRunning) {
 			try {
-				System.out.println("Run pass");
+				//System.out.println("Run pass");
 				Object o = in.readObject();
-				System.out.println("Object received");
+				//System.out.println("Object received");
 				Message message = (Message) o;
-				System.out.println("Message casted");
+				//System.out.println("Message casted");
 				switch(message.getType()) {
 				case INFORMATION :
 					this.reactToInformation(message);
 					break;
 				case SHUTDOWN :
-					this.shutdownProtocol();
+					this.reactToShutdown();
 					break;
-				case ACEPTED : //austauchen nur Lobby react um null pointer abzufangen, geht wahrscheins nict da lobby an alle geschickt wird
+				case ACEPTED :
 					this.reactToAcepted(message);
 					break;
 				case LOBBY :
@@ -126,20 +128,36 @@ public class LobbyClientProtocol extends Thread {
 		}
 	}
 	/**
+	 * method to react to a shutdown message, no response expected
+	 */
+	private void reactToShutdown() {
+		System.err.println("Shutdown wanted from server");
+		this.isRunning = false;
+		this.closeConnection();
+		if(this.gameLobbyController != null) {
+			this.gameLobbyController.openMenu();
+		} else {
+			this.gameFinderController.goInMenu();
+		}
+		
+	}
+	/**
 	 * method to react to lobby informations of the server. Will update the screen in consequence.
 	 * @param message
 	 */
 	private void reactToLobby(Message message) {
 		// TODO Auto-generated method stub
-		System.out.println("Lobby information received");
+		//System.out.println("Lobby information received");
 		LobbyInformationMessage msg = (LobbyInformationMessage) message;
 		//this.gameFinderController.goInLobby();
 		this.lobbyPlayers = msg.getPlayers();
+		System.err.println("LOBBY UPDATE : " + this.lobbyPlayers.size());
 		if(msg.getPlayers() == null) {
-			System.err.println("Leere Liste von server !!!!!!!11");
+			System.err.println("null list from server !!!!!!!11");
 		}
+		//Hier kommt leere List an ????????????????????????????????
 		//null pointer because of run later, need a call back after Lobby is created
-		this.gameFinderController = null;
+		//here past position of null set of finderController
 		if(this.gameLobbyController != null) {
 			this.updateLobbyinformation();
 		}
@@ -150,7 +168,7 @@ public class LobbyClientProtocol extends Thread {
 	 */
 	private void reactToAcepted(Message message) {
 		// TODO Auto-generated method stub
-		System.out.println("Join acceptence received");
+		//System.out.println("Join acceptence received");
 		this.gameFinderController.goInLobby();
 	}
 	
@@ -159,7 +177,7 @@ public class LobbyClientProtocol extends Thread {
 	 * @param message message from the server which will be castes to the specific type
 	 */
 	private void reactToInformation(Message message) {
-		System.out.println("Information Message received");
+		//System.out.println("Information Message received");
 		InformationMessage iM = (InformationMessage) message;
 		GameStatusType status = iM.getStatus();
 		int amount = iM.getLobbyPlayers();
@@ -172,11 +190,11 @@ public class LobbyClientProtocol extends Thread {
 	 * method to close the connection of the protocol
 	 */
 	private void closeConnection() {
-		try {
+		try { //if a input or output stream is closed the other close himself and the close method throw the exception
 			if(this.client != null) {
 				this.client.close();
 			}
-				System.out.println("connection closed");
+			//System.out.println("connection closed");
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -185,8 +203,9 @@ public class LobbyClientProtocol extends Thread {
 	/**
 	 * method to end the running thread and close the connection
 	 */
-	public void shutdownProtocol() {
+	public void shutdownProtocol() { //In future change to an approach with an boolean condition about call or selfcall
 		this.isRunning = false;
+		this.sendShutdownMsg(); //last message
 		this.closeConnection();
 		System.out.println("GameFinderProtocol shutdown");
 	}
@@ -194,30 +213,28 @@ public class LobbyClientProtocol extends Thread {
 	 * method to change the controller of the screen when new window is loaded
 	 * @param glc
 	 */
-	public void setLobbyController(GameLobbyController glc) { //ausgeführt nach dem Lobby empfang
+	public void setLobbyController(GameLobbyController glc) {
 		//glc is null by method, but why
+		this.gameFinderController = null;
 		this.gameLobbyController = glc;
 		if(glc != null) {
 			System.out.println("Controller not null");
 		}
-		System.out.println("Lobby controller are set");
+		//System.out.println("Lobby controller are set");
 		this.updateLobbyinformation();
 		//System.out.println("First Lobby informations are set");
 	}
-	//Hier Null Pointer
 	/**
 	 * method to update the visibility of the player profiles of the GameLobby screen.
 	 */
 	private void updateLobbyinformation() {
 		//System.out.println("Client updated lobby informations");
-		if(this.gameLobbyController != null) {
-			System.out.println("Controller not null");
-		}
-		if(this.lobbyPlayers == null) {
-			System.out.println("Player list is null");
+		for(int i = 0; i < 4; i++) {
+			this.gameLobbyController.setProfileNotVisible(i);
 		}
 		for(int i = 0; i < lobbyPlayers.size(); i++) {
-			this.gameLobbyController.setProfileVisible(i); //Immer noch null ?
+			System.err.println("Update gui :" + i);
+			this.gameLobbyController.setProfileVisible(i, lobbyPlayers.get(i));
 		}
 		
 	}
@@ -239,10 +256,10 @@ public class LobbyClientProtocol extends Thread {
 	 * method to send a last shutdown message to the client, to give them the opportunity to handle. No respond expected.
 	 */
 	public void sendShutdownMsg() {
-		System.out.println("Send shutdown message");
+		//System.out.println("Send shutdown message");
 		Message msg = new Message(MessageType.SHUTDOWN, "");
 		try {
-			if(this.out != null) { //abfrage
+			if(!this.client.isClosed()) {
 				this.out.writeObject(msg);
 				this.out.flush();
 			}
@@ -252,3 +269,4 @@ public class LobbyClientProtocol extends Thread {
 		}
 	}
 }
+

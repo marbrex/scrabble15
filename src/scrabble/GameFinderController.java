@@ -8,6 +8,7 @@ import com.jfoenix.controls.JFXButton;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
@@ -21,7 +22,6 @@ public class GameFinderController implements LobbyController{
 	 * Controller of the GameFinder.fxml screen
 	 * @author Hendrik Diehl
 	 */
-	//gui
 	@FXML private JFXButton joinBtn;
 	@FXML private TextField portField;
 	@FXML private RadioButton useOwnPort;
@@ -29,14 +29,13 @@ public class GameFinderController implements LobbyController{
 	@FXML private CheckBox portBox;
 	@FXML private JFXButton backButton;
 	@FXML private Label statusLabel2;
-	//network
 	private LobbyClientProtocol clientProtocol;
 	
 	
 	
 	
 	/**
-	 * method to activate the control fields for a specific port given by the user.
+	 * method to activate the control fields for a specific port given by the user
 	 * activates an TextField and show an Message on the screen
 	 */
 	private void activateOwnPortControlls() {
@@ -90,14 +89,15 @@ public class GameFinderController implements LobbyController{
 	 * @return boolean about the acceptance of the String parameter
 	 */
 	private boolean checkPortString(String port) {
-		return port.matches("\\d{2,}"); //not finished until yet
+		return port.matches("\\d{2,}");
 	}
 	
 	/**
 	 *  handles the actionEvent of the backButton and calls the openScreen method with the Menu.fxml file
 	 */
 	@FXML private void backButtonAction() {
-		try {
+		/*
+			System.out.println("Back Button");
 			this.shutdown();
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("Menu.fxml"));
 			Stage stage = (Stage) this.joinBtn.getScene().getWindow();
@@ -105,14 +105,28 @@ public class GameFinderController implements LobbyController{
 			scene = new Scene(loader.load());
 			stage.setScene(scene);
 			stage.setTitle("Scrablle");
-			stage.setHeight(600);
-			stage.setWidth(800);
+			stage.setHeight(700);
+			stage.setWidth(900);
 			stage.setResizable(false);
 			stage.show();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			*/
+			this.clientProtocol.shutdownProtocol(); //shutdown when in GameFinder screen
+			goInMenu();
+	}
+
+	public void goInMenu(){
+		Platform.runLater(()-> {
+			try {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Menu.fxml"));
+				Parent root = loader.load();
+				Stage stage = (Stage) this.backButton.getScene().getWindow();
+				stage.setScene(new Scene(root, 900, 700));
+				stage.setResizable(false);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		});
 	}
 	/**
 	 * initialize method of javaFx in which the a joinProtokol automatically search for an game Lobby in an
@@ -195,9 +209,9 @@ public class GameFinderController implements LobbyController{
 	/**
 	 * method to navigate from the GameFinder screen to the GameLobby screen as client
 	 */
-	public void goInLobby() { //need to add the window close method
+	public void goInLobby() {
 			Platform.runLater(() -> {
-				try {
+				try {/*
 					FXMLLoader loader = new FXMLLoader(getClass().getResource("GameLobby.fxml"));
 					loader.setControllerFactory(c -> {
 						return new GameLobbyController(false);
@@ -207,20 +221,35 @@ public class GameFinderController implements LobbyController{
 					Scene scene;
 					scene = new Scene(loader.load());
 					lobbyController = loader.<GameLobbyController>getController();
+					lobbyController.setProtocol(this.clientProtocol);
 					if(lobbyController == null) {
 						System.out.println("LobbyController == null");
 					}
 					this.clientProtocol.setLobbyController(lobbyController);
 					stage.setScene(scene);
 					stage.setTitle("Scrablle");
-					stage.setHeight(600);
-					stage.setWidth(800);
+					stage.setHeight(700);
+					stage.setWidth(900);
 					stage.setResizable(false);
 					stage.show();
+					*/
+					FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/GameLobby.fxml"));
+					loader.setControllerFactory(c -> {
+						return new GameLobbyController(false);
+					});
+					Parent root = loader.load();
+					GameLobbyController lobbyController = loader.<GameLobbyController>getController();
+					lobbyController.setProtocol(this.clientProtocol);
+					this.clientProtocol.setLobbyController(lobbyController);
+					Stage stage = (Stage) this.joinBtn.getScene().getWindow();
+					stage.setScene(new Scene(root, 900, 700));
+					stage.setResizable(false);
+					stage.setOnHidden(e -> {lobbyController.shutdown();});
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			});
 	}
+	
 }

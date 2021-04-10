@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
+
 import scrabble.GameLobbyController;
 import scrabble.model.GameInformationController;
 
@@ -34,6 +35,21 @@ public class LobbyServer extends Thread {
 	 */
 	public LobbyServer(GameLobbyController gameLobby) throws PortsOccupiedException{
 		//Setting up server port
+		this.setServer();
+		//setting up controls
+		this.gameLobby = gameLobby;
+		this.clients = new ArrayList<LobbyServerProtocol>();
+		this.gameInfoController = new GameInformationController(this);
+		this.host = new LobbyHostProtocol(gameLobby, gameInfoController);
+		this.gameLobby.setHostProtocol(this.host);
+		this.gameInfoController.addPlayer(host);
+		this.gameLobby.setProfileVisible(0, "Host"); //change to protocol call in future?? 
+	}
+	/**
+	 * Method to set the server port
+	 * @throws PortsOccupiedException thrown when all ports occupied
+	 */
+	private void setServer() throws PortsOccupiedException { //can be used in the run method not in the constructor, perhaps faster loading
 		while(!isRunning) {
 			try {
 				this.server = new ServerSocket(port);
@@ -41,8 +57,8 @@ public class LobbyServer extends Thread {
 				System.out.println("GameLobbyServer Constructor choosen port : " + this.port);
 			} catch (SocketException e) {
 				//Socket in use
-				if(this.port < 11131) { //Standart Ports ausprobieren
-					this.port++; //Portv erhöhen
+				if(this.port < 11131) { //try standard ports
+					this.port++; //increase port number
 				} else {
 					throw new PortsOccupiedException("Standart ports are occupied");
 				}
@@ -51,27 +67,20 @@ public class LobbyServer extends Thread {
 				e.printStackTrace();
 			}
 		}
-		//setting up controls
-		this.gameLobby = gameLobby;
-		this.clients = new ArrayList<LobbyServerProtocol>();
-		this.gameInfoController = new GameInformationController();
-		this.host = new LobbyHostProtocol(gameLobby);
-		this.gameInfoController.addPlayer(host);
-		this.gameLobby.setProfileVisible(0);
 	}
 	/**
 	 * Run method of the thread class in which the server will wait until a client try to connect.
 	 * A connecting client is add to a list and a LobbyServerProtocol will start.
 	 */
 	public void run() {
-		System.out.println("GameLobbyServerStart");
+		//System.out.println("GameLobbyServerStart");
 		while(isRunning) {
 			try {
 				System.out.println("GameLobbyServer run pass");
 				System.out.println(this.clients.size());
 				Socket s = this.server.accept();
-				LobbyServerProtocol lobbyProtocol = new LobbyServerProtocol(s, this.gameLobby, gameInfoController);
-				System.out.println("LobbyProtocol constructor");
+				LobbyServerProtocol lobbyProtocol = new LobbyServerProtocol(s, this, gameInfoController);
+				//System.out.println("LobbyProtocol constructor");
 				this.getInContact(lobbyProtocol);
 			} catch (SocketException e) {
 				//do something
@@ -80,7 +89,7 @@ public class LobbyServer extends Thread {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("GameLobbyServerStopped");
+		//System.out.println("GameLobbyServerStopped");
 	}
 	/**
 	 * Method to close the connection of the server
@@ -105,7 +114,7 @@ public class LobbyServer extends Thread {
 	/**
 	 * Method which will call a the shutdown procedure for all connected clients.
 	 */
-	private void closeAllProtocols() {
+	private void closeAllProtocols() { //need of deleting protocols
 		for(LobbyServerProtocol lP : this.clients) {
 			lP.sendShutdownMsg();
 			lP.shutdown();
