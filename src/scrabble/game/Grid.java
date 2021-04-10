@@ -77,6 +77,28 @@ public class Grid {
   }
 
   /**
+   * Constructor that creates a square grid.
+   *
+   * @param size Width and Height of the grid
+   */
+  public Grid(GridPane grid, String mapPath, int size, GameController controller) {
+    this.size = size;
+    globalSize = size * size;
+    slots = new Slot[globalSize];
+
+    paneSize = 825;
+    padSize = 3;
+    cellSize = paneSize / size - padSize;
+
+    this.controller = controller;
+    this.container = grid;
+
+    map = new Map(mapPath);
+
+    initGrid();
+  }
+
+  /**
    * Returns the global index (index in 1D array). of the specified cell.
    *
    * @param row    Row of the cell

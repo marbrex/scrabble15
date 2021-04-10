@@ -187,6 +187,48 @@
   /*-fx-padding: -5;*/
 }
 
+.letter-btn-hor-min {
+  -fx-border-radius: 7px 0 0 7px;
+  -fx-background-radius: 7px 0 0 7px;
+  -fx-border-width: 1px 0 1px 1px;
+}
+
+.letter-btn-hor-mid {
+  -fx-border-radius: 0;
+  -fx-background-radius: 0;
+  -fx-border-width: 1px 0 1px 0;
+}
+
+.letter-btn-hor-max {
+  -fx-border-radius: 0 7px 7px 0;
+  -fx-background-radius: 0 7px 7px 0;
+  -fx-border-width: 1px 1px 1px 0;
+}
+
+.letter-btn-ver-min {
+  -fx-border-radius: 7px 7px 0 0;
+  -fx-background-radius: 7px 7px 0 0;
+  -fx-border-width: 1px 1px 0 1px;
+}
+
+.letter-btn-ver-mid {
+  -fx-border-radius: 0;
+  -fx-background-radius: 0;
+  -fx-border-width: 0 1px 0 1px;
+}
+
+.letter-btn-ver-max {
+  -fx-border-radius: 0 0 7px 7px;
+  -fx-background-radius: 0 0 7px 7px;
+  -fx-border-width: 0 1px 1px 1px;
+}
+
+.letter-btn-mid {
+  -fx-border-radius: 0;
+  -fx-background-radius: 0;
+  -fx-border-width: 0;
+}
+
 .letter-btn:hover {
   -fx-cursor: open-hand;
 }

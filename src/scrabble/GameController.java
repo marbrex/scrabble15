@@ -4,6 +4,8 @@ import com.jfoenix.controls.JFXButton;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 import javafx.fxml.FXML;
 import javafx.scene.effect.DropShadow;
@@ -11,9 +13,12 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import scrabble.game.Grid;
+import scrabble.game.LeaderBoard;
 import scrabble.game.LetterBar;
 import scrabble.game.Word;
 import scrabble.model.Dictionary;
+import scrabble.model.HumanPlayer;
+import scrabble.model.Player;
 
 /**
  * <h1>The Main Controller linked with "interface.fxml" file.</h1>
@@ -83,11 +88,41 @@ public class GameController {
 
   public ArrayList<Word> wordsInGrid;
 
+  public LeaderBoard leaderBoard;
+
   /**
    * Default constructor.
    */
   public GameController() {
     wordsInGrid = new ArrayList<Word>();
+  }
+
+  public void initGrid(String mapPath) {
+    grid = new Grid(gridPaneUI, mapPath, 15, this);
+    grid.initCells();
+  }
+
+  public void initGrid() {
+    grid = new Grid(gridPaneUI, 15, this);
+    grid.initCells();
+  }
+
+  public void initDictionary(String dictPath) {
+    // Setting the Dictionary (should be set only once, an error otherwise)
+    URL dictURL = getClass().getResource(dictPath);
+    File dict = new File(dictURL.getFile());
+    Dictionary.setDictionary(dict);
+  }
+
+  public void initDictionary() {
+    // Setting the Dictionary (should be set only once, an error otherwise)
+    URL dictPath = getClass().getResource("dictionaries/english-default.txt");
+    File dict = new File(dictPath.getFile());
+    Dictionary.setDictionary(dict);
+  }
+
+  public void initPlayers(List<Player> players) {
+    leaderBoard = new LeaderBoard(players);
   }
 
   /**
@@ -97,13 +132,9 @@ public class GameController {
   @FXML
   private void initialize() {
 
-    // Setting the Dictionary (should be set only once, an error otherwise)
-    URL dictPath = getClass().getResource("dictionaries/english-default.txt");
-    File dict = new File(dictPath.getFile());
-    Dictionary.setDictionary(dict);
+    initDictionary();
 
-    grid = new Grid(gridPaneUI, 15, this);
-    grid.initCells();
+    initGrid();
 
     letterBar = new LetterBar(this);
 
