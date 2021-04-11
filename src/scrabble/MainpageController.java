@@ -72,12 +72,24 @@ public class MainpageController implements Initializable {
   private BorderPane root;
 
   Collection<JFXButton> mainMenuButtons;
+  
+  private static boolean checkNetworkmode;
+  
+  private HumanPlayer player;
 
   /*
    * public void setSize(Stage stage) {
    * this.soundButton.fitHeightProperty().bind(stage.heightProperty());
    * this.soundButton.fitWidthProperty().bind(stage.widthProperty()); }
    */
+  
+  public static void setNetworkmode(boolean check) {
+    checkNetworkmode = check;
+  }
+  
+  public static boolean isNetwork() {
+    return checkNetworkmode;
+  }
 
   public void pressingButton(ActionEvent event) {
     switch (((Button) event.getSource()).getText()) {
@@ -143,6 +155,7 @@ public class MainpageController implements Initializable {
     JFXButton singlePlayerBtn = new JFXButton("Singleplayer");
     singlePlayerBtn.setOnMouseClicked(event -> {
       try {
+        setNetworkmode(false);
         changeScene("fxml/LoadingScreen.fxml", "css/mainMenu.css", event);
       } catch (IOException e) {
         e.printStackTrace();
@@ -155,6 +168,7 @@ public class MainpageController implements Initializable {
     multiPlayerBtn.getStyleClass().add("button");
     multiPlayerBtn.setOnMouseClicked(event -> {
       try {
+        setNetworkmode(true);
         changeScene("fxml/Menu.fxml", "css/style.css", event);
       } catch (IOException e) {
         e.printStackTrace();
@@ -182,15 +196,9 @@ public class MainpageController implements Initializable {
     Database.connectToDB();
     Database.createTables();
 
-    ArrayList<String> playersData = new ArrayList<String>();
-    playersData.add("1");
-    playersData.add("John");
-    playersData.add("3");
-    playersData.add("1");
-    playersData.add("3");
-
 //    Database.fillPlayerTable(playersData);
-    HumanPlayer player = DBInformation.getPlayerProfile();
+//    HumanPlayer player = DBInformation.loadProfile(0);
+    player = ChooseProfileController.getPlayer();
     this.idLabel.setText("Welcome back, " + player.getName());
     Database.disconnectDB();
     //	setSize();

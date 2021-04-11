@@ -53,8 +53,8 @@ public class LoadingController implements Initializable {
   public BorderPane pane;
 
   public void increaseValue() {
-	  /*
-		if (!Main.isNetwork()) {
+	  
+		if (!MainpageController.isNetwork()) {
 			pingLabel.setVisible(false);
 			pingCircle.setVisible(false);
 			showPing.setVisible(false);
@@ -65,7 +65,7 @@ public class LoadingController implements Initializable {
 			showPing.setVisible(true);
 			modeLabel.setText("Mode: Network game");
 		}
-*/
+
     KeyFrame keyframe = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 
       private double progress = 0;
