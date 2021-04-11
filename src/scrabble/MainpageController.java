@@ -30,50 +30,32 @@ import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
 import scrabble.model.HumanPlayer;
 
-public class MainpageController implements Initializable {
-
-  @FXML
-  private ImageView backgroundPane;
-
-  @FXML
-  private Label switchsoundLabel;
+public class MainPageController implements Initializable {
 
   @FXML
   private Label idLabel;
 
   @FXML
-  private JFXButton settingsButton;
-
-  @FXML
-  private JFXButton profileButton;
-
-  @FXML
-  private JFXButton exitButton;
-
-  @FXML
-  private JFXButton soundButton;
-
-  @FXML
-  private ProgressBar progressBar;
-
-  @FXML
-  private ImageView soundImage;
-
-  @FXML
   private VBox buttonsBlock;
 
   @FXML
-  private JFXButton playButton;
+  private JFXButton playBtn;
 
   @FXML
   private JFXButton settingsBtn;
+
+  @FXML
+  private JFXButton changeProfileBtn;
+
+  @FXML
+  private JFXButton exitAppBtn;
 
   @FXML
   private BorderPane root;
 
   Collection<JFXButton> mainMenuButtons;
   
-  private static boolean checkNetworkmode;
+  private static boolean checkNetworkMode;
   
   private HumanPlayer player;
 
@@ -83,83 +65,37 @@ public class MainpageController implements Initializable {
    * this.soundButton.fitWidthProperty().bind(stage.widthProperty()); }
    */
   
-  public static void setNetworkmode(boolean check) {
-    checkNetworkmode = check;
+  public static void setNetworkMode(boolean check) {
+    checkNetworkMode = check;
   }
   
   public static boolean isNetwork() {
-    return checkNetworkmode;
+    return checkNetworkMode;
   }
 
-  public void pressingButton(ActionEvent event) {
-    switch (((Button) event.getSource()).getText()) {
-      case "settingsButton":
-        break;
-      case "Play Scrabble":
-        //		Main.setNetwork(false);
-        try {
-          this.changeScene("fxml/LoadingScreen.fxml", "css/mainMenu.css", event);
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        break;
-      case "Play Network Game":
-        //		Main.setNetwork(true);
-        try {
-          this.changeScene("fxml/LoadingScreen.fxml", "css/mainMenu.css", event);
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        break;
-      case "profileButton":
-        try {
-          this.changeScene("ProfileScreen.fxml", "css/mainMenu.css", event);
-        } catch (IOException e) {
-          // TODO Auto-generated catch block
-          e.printStackTrace();
-        }
-        break;
-      case "playTutorial":
-        break;
-      case "exitButton":
-        break;
-      default:
-        break;
+  public void changeScene(String resource, String style, Event event) {
+    try {
+      System.out.println(resource);
+      Parent root = FXMLLoader.load(getClass().getResource(resource));
+      Button btn = ((Button) event.getSource());
+      Stage stage = (Stage) btn.getScene().getWindow();
+      Scene scene = new Scene(root, this.root.getScene().getWidth(),
+          this.root.getScene().getHeight());
+      scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
+      stage.setScene(scene);
     }
-  }
-
-  public void increaseValue() {
-    double progress = 0;
-    for (int i = 0; i < 100; i++) {
-      if (i % 25 == 0) {
-        progress += 0.25;
-        progressBar.setProgress(progress);
-      }
+    catch (IOException e) {
+      e.printStackTrace();
+      System.err.println("Error: " + e.getMessage());
     }
-  }
-
-  public void changeScene(String resource, String style, Event event) throws IOException {
-    System.out.println(resource);
-    Parent root = FXMLLoader.load(getClass().getResource(resource));
-    Button btn = ((Button) event.getSource());
-    Stage stage = (Stage) btn.getScene().getWindow();
-    Scene scene = new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-    scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
-    stage.setScene(scene);
   }
 
   public Collection<JFXButton> getPlayButtons() {
     Collection<JFXButton> buttons = new ArrayList<JFXButton>();
     JFXButton singlePlayerBtn = new JFXButton("Singleplayer");
     singlePlayerBtn.setOnMouseClicked(event -> {
-      try {
-        setNetworkmode(false);
-        changeScene("fxml/LoadingScreen.fxml", "css/mainMenu.css", event);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      setNetworkMode(false);
+      changeScene("fxml/LoadingScreen.fxml", "css/mainMenu.css", event);
     });
     singlePlayerBtn.getStyleClass().add("button");
     buttons.add(singlePlayerBtn);
@@ -167,12 +103,8 @@ public class MainpageController implements Initializable {
     JFXButton multiPlayerBtn = new JFXButton("Multiplayer");
     multiPlayerBtn.getStyleClass().add("button");
     multiPlayerBtn.setOnMouseClicked(event -> {
-      try {
-        setNetworkmode(true);
-        changeScene("fxml/Menu.fxml", "css/style.css", event);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      setNetworkMode(true);
+      changeScene("fxml/Menu.fxml", "css/style.css", event);
     });
     buttons.add(multiPlayerBtn);
 
@@ -209,17 +141,22 @@ public class MainpageController implements Initializable {
       mainMenuButtons.add((JFXButton) buttonsBlock.getChildren().get(i));
     }
 
-    playButton.setOnMouseClicked((event -> {
+    playBtn.setOnMouseClicked((event -> {
       buttonsBlock.getChildren().clear();
       buttonsBlock.getChildren().setAll(getPlayButtons());
     }));
 
     settingsBtn.setOnMouseClicked(event -> {
-      try {
-        changeScene("fxml/Settings.fxml", "css/settings.css", event);
-      } catch (IOException e) {
-        e.printStackTrace();
-      }
+      changeScene("fxml/Settings.fxml", "css/settings.css", event);
+    });
+
+    changeProfileBtn.setOnMouseClicked(event -> {
+      changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
+    });
+
+    exitAppBtn.setOnMouseClicked(event -> {
+      Stage stage = (Stage) exitAppBtn.getScene().getWindow();
+      stage.close();
     });
   }
 

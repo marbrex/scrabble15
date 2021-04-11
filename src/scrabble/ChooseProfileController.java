@@ -100,7 +100,7 @@ public class ChooseProfileController implements Initializable {
     Parent root;
     try {
       if (player != null) {
-        root = FXMLLoader.load(getClass().getResource("fxml/Mainpage.fxml"));
+        root = FXMLLoader.load(getClass().getResource("fxml/MainPage.fxml"));
         Button btn = ((Button) event.getSource());
         Stage stage = (Stage) btn.getScene().getWindow();
         Scene scene =
