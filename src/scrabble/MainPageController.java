@@ -147,7 +147,7 @@ public class MainPageController implements Initializable {
     }));
 
     settingsBtn.setOnMouseClicked(event -> {
-      changeScene("fxml/Settings.fxml", "css/settings.css", event);
+      changeScene("fxml/SettingsGameplay.fxml", "css/settings.css", event);
     });
 
     changeProfileBtn.setOnMouseClicked(event -> {
