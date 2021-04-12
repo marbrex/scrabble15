@@ -1,9 +1,10 @@
 package scrabble.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AiPlayer extends Player {
+public class AiPlayer extends Player implements Serializable{
 	
 	/**
 	 * scrabble.model.AiPlayer extends from the Player class and is necessary to determine the difficulty

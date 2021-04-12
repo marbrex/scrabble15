@@ -1,6 +1,7 @@
 package scrabble.model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import scrabble.model.GameStatusType;
 import scrabble.network.LobbyServer;
@@ -52,8 +53,25 @@ public class GameInformationController {
 			this.players.add(player);
 			return true; //player added
 		} else {
+			this.lobbyFull(); //Perhaps change the call location because of update procedure
 			return false; //player not added because game/lobby is full
 		}
+	}
+	/**
+	 * method to start lobby procedure for full lobby
+	 */
+	private void lobbyFull() {
+		// TODO Auto-generated method stub
+		this.sendFullMessages();
+	}
+	/**
+	 * method to inform the clients that the lobby maximum is reached
+	 */
+	private void sendFullMessages() {
+		for(NetworkPlayer player : this.players) {
+			player.sendFullMessage();
+		}
+		
 	}
 	/**
 	 * Method to set the status of the game/lobby.
@@ -84,8 +102,8 @@ public class GameInformationController {
 	 * Method to get all Player profiles in the Lobby 
 	 * @return List of all Player profiles
 	 */
-	private ArrayList<String> getPlayersInformation() {
-		ArrayList<String> players = new ArrayList<String>();
+	private ArrayList<Player> getPlayersInformation() {
+		ArrayList<Player> players = new ArrayList<Player>();
 		for(NetworkPlayer player : this.players) {
 			players.add(player.getPlayer());
 		}
@@ -95,7 +113,7 @@ public class GameInformationController {
 	 * Method to update the lobby informations of all players.
 	 */
 	public synchronized void updateAllLobbys() {
-		ArrayList<String> playersArrayList = this.getPlayersInformation();
+		ArrayList<Player> playersArrayList = this.getPlayersInformation();
 		for(NetworkPlayer player : this.players) {
 			System.err.println("Update all ");
 			player.updateLobbyinformation(playersArrayList);
@@ -120,9 +138,27 @@ public class GameInformationController {
 		if(i < this.players.size()) {
 			System.err.println("Kick Player : " + i);
 			LobbyServerProtocol player = (LobbyServerProtocol)this.players.get(i); //will be changed in future first approach.
-			player.sendShutdownMsg();
+			player.sendKickMessage();
 			player.deletePlayer();
 		}
 	}
-	
+	/**
+	 * method to sort the list in a specific sequence
+	 */
+	public void setPlayerSequence() {
+		this.players.sort(new Comparator<NetworkPlayer>() {
+
+			@Override
+			public int compare(NetworkPlayer arg0, NetworkPlayer arg1) {
+				if(arg0.getSequencePos() > arg1.getSequencePos()) {
+					return 1;
+				} else if(arg0.getSequencePos() < arg1.getSequencePos()) {
+					return -1;
+				} else {
+					return 0; //case of same amount ?
+				}
+			}
+			
+		});
+	}
 }

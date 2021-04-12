@@ -1,9 +1,10 @@
 package scrabble.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import scrabble.game.LetterBar;
 
-public abstract class Player {
+public abstract class Player implements Serializable{
 	
 	/**
 	 * scrabble.model.Player class to store important player characteristics, e.g. the name and score of the player

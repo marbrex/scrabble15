@@ -11,4 +11,6 @@ public enum MessageType {
 	INFORMATION, //Lobby information
 	SHUTDOWN, //server shutdown
 	LOBBY, //information about the lobby
+	KICK, //kicking a player from the Lobby
+	FULL, //lobby maximum is reached
 }

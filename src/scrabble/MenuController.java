@@ -18,6 +18,21 @@ public class MenuController {
 	//gui
 	@FXML private JFXButton joinGameButton;
 	@FXML private JFXButton hostGameButton;
+	@FXML private JFXButton backButton;
+	
+	
+	@FXML private void backButtonAction() {
+		try {
+			FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Mainpage.fxml"));
+			Parent root = loader.load();
+			Stage stage = (Stage) this.backButton.getScene().getWindow();
+			stage.setScene(new Scene(root));
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+	}
 	
 	
 	/**

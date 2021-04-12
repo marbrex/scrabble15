@@ -1,5 +1,7 @@
 package scrabble.model;
 
+import java.io.Serializable;
+
 /**
  * scrabble.model.HumanPlayer class extends from the scrabble.model.Player class and contains game
  * statistics, which is only necessary for the HumanPlayer
@@ -7,7 +9,7 @@ package scrabble.model;
  * @author Sergen Keskincelik
  */
 
-public class HumanPlayer extends Player {
+public class HumanPlayer extends Player implements Serializable{
 
   /** Amount of games won for statistics -> HumanPlayer */
   private int gamesWon;

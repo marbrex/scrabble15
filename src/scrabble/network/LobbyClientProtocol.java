@@ -10,7 +10,8 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-
+import scrabble.model.HumanPlayer;
+import scrabble.model.Player;
 import scrabble.GameFinderController;
 import scrabble.GameLobbyController;
 import scrabble.model.GameStatusType;
@@ -22,18 +23,30 @@ public class LobbyClientProtocol extends Thread {
 	 * @author Hendrik Diehl
 	 */
 	//network
-	private Socket client;
+	/** socket conection to the server */
+	private Socket server;
+	/** output to the server */
 	private ObjectOutputStream out;
+	/** input to the server */
 	private ObjectInputStream in;
+	/** standard connection port */
 	private int port = 11111;
+	/** network address for local network connections */
 	private String adress ="localhost";
+	/** own port number if wanted */
 	private int ownPort;
-	//Controll
+	//Control
+	/** Control boolean for run method */
 	private boolean isRunning;
-	private ArrayList<String> lobbyPlayers;
+	/** list of all Players in the lobby */
+	private ArrayList<Player> lobbyPlayers;
 	//Gui
+	/** controller of the gameFinder screen */
 	private GameFinderController gameFinderController;
+	/** controller of the GameLobby not loaded before lobby join */
 	private GameLobbyController gameLobbyController;
+	/** player instance of the client is allays human player */
+	private HumanPlayer player;
 	
 	
 	
@@ -43,32 +56,44 @@ public class LobbyClientProtocol extends Thread {
 	 * @param controller Controller of the GameFinder screen
 	 * @throws ConnectException thrown if connection on the known ports are not possible
 	 */
-	public LobbyClientProtocol(GameFinderController controller) throws ConnectException{
+	public LobbyClientProtocol(GameFinderController controller){
 		this.gameFinderController = controller;
-		this.setSocket();
+		this.loadPlayer();
 	}
-	private void setSocket() throws ConnectException {
+	/**
+	 * method to get player instance from DB
+	 */
+	private void loadPlayer() { //not implemented yet
+		this.player = new HumanPlayer();
+		this.player.setName("Client");
+		//dummy
+	}
+	/**
+	 * method to set the connection on the standard ports
+	 * @throws ConnectException
+	 */
+	private void setSocket() throws PortsOccupiedException{ //change to ports occupied exception 
 		while(!this.isRunning) {
 			try {
-				this.client = new Socket(adress, port);
-				this.in = new ObjectInputStream(client.getInputStream());
-				this.out = new ObjectOutputStream(client.getOutputStream());
+				this.server = new Socket(adress, port);
+				this.in = new ObjectInputStream(server.getInputStream());
+				this.out = new ObjectOutputStream(server.getOutputStream());
 				this.isRunning = true;
-				System.out.println("Verbunden mit Socket : " + this.port);
+				System.out.println("Connected with socket : " + this.port);
 			} catch(ConnectException e) {
-				System.out.println("Keine Verbindung auf Port " + this.port);
+				System.out.println("No connection at port " + this.port);
 				if(this.port < 11131) { //In connection with the standart port (+20)
 					this.port++;
 				} else {
-					throw e;
+					throw new PortsOccupiedException("Standard ports are occupied");
 				}
 			} catch (UnknownHostException e) {
 				// TODO Auto-generated catch block
-				this.isRunning = false;
+				this.isRunning = false; //?????????????
 				e.printStackTrace();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
-				this.isRunning = false;
+				this.isRunning = false; //?????????????????
 				e.printStackTrace();
 			}
 		}
@@ -82,62 +107,110 @@ public class LobbyClientProtocol extends Thread {
 	 */
 	public LobbyClientProtocol(GameFinderController controller, int ownPort) throws ConnectException, IOException {
 		this.gameFinderController = controller;
-		this.client = new Socket(adress, ownPort);
-		this.in = new ObjectInputStream(client.getInputStream());
-		this.out = new ObjectOutputStream(client.getOutputStream());
+		this.server = new Socket(adress, ownPort);
+		this.in = new ObjectInputStream(server.getInputStream());
+		this.out = new ObjectOutputStream(server.getOutputStream());
 		this.isRunning = true;
 	}
 	/**
 	 * run method of the thread class. The thread is waiting for messages from the server and react to an specific MessageType
 	 */
 	public void run() {
+		try {
+			this.setSocket();
+			this.gameFinderController.connectSucessful();
+		} catch (PortsOccupiedException e1) {
+			this.gameFinderController.connectNotSucessful();
+		}
 		while(isRunning) {
-			try {
-				//System.out.println("Run pass");
-				Object o = in.readObject();
-				//System.out.println("Object received");
-				Message message = (Message) o;
-				//System.out.println("Message casted");
-				switch(message.getType()) {
-				case INFORMATION :
-					this.reactToInformation(message);
-					break;
-				case SHUTDOWN :
-					this.reactToShutdown();
-					break;
-				case ACEPTED :
-					this.reactToAcepted(message);
-					break;
-				case LOBBY :
-					this.reactToLobby(message);
-					break;
-				}
-			} catch (EOFException e) {
-				this.shutdownProtocol();
-			} catch (SocketException e) {
-				//do something
-				
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-				this.isRunning = false;
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			react();
+		}
+		System.err.println("CLIENT PROTOCOL OUTRUN");
+	}
+	/**
+	 * method to react to an incoming message.
+	 */
+	private void react() {
+		try {
+			//System.out.println("Run pass");
+			Object o = in.readObject();
+			//System.out.println("Object received");
+			Message message = (Message) o;
+			//System.out.println("Message casted");
+			switch(message.getType()) {
+			case INFORMATION :
+				this.reactToInformation(message);
+				break;
+			case SHUTDOWN :
+				this.reactToShutdown();
+				break;
+			case ACEPTED :
+				this.reactToAcepted(message);
+				break;
+			case LOBBY :
+				this.reactToLobby(message);
+				break;
+			case KICK :
+				this.reactToKick(message);
+				break;
+			case REJECTED :
+				this.reactRejected(message);
+				break;
+			case FULL : 
+				this.reactToFullMessage(message);
+				break;
 			}
+		} catch (EOFException e) {
+			this.shutdownProtocol(true);
+		} catch (SocketException e) {
+			//do something
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			this.isRunning = false;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * method to react to the start of an full lobby procedure
+	 * @param message message from the server
+	 */
+	private void reactToFullMessage(Message message) {
+		if(this.gameLobbyController != null) {
+			this.gameLobbyController.startTimer();
+			//start procedure -> not implemented yet
+		}
+		
+	}
+	/**
+	 * method to react to an rejection message
+	 * @param message message of the server
+	 */
+	private void reactRejected(Message message) {
+		this.shutdownProtocol(true);
+		
+	}
+	private void reactToKick(Message message) {
+		System.out.println("Kick message received");
+		this.shutdownProtocol(false);
+		if(this.gameLobbyController != null) {
+			this.gameLobbyController.openMenu();
+		} else {
+			this.gameFinderController.openMenu();
 		}
 	}
 	/**
 	 * method to react to a shutdown message, no response expected
 	 */
 	private void reactToShutdown() {
-		System.err.println("Shutdown wanted from server");
-		this.isRunning = false;
-		this.closeConnection();
+		this.shutdownProtocol(false);
 		if(this.gameLobbyController != null) {
 			this.gameLobbyController.openMenu();
 		} else {
-			this.gameFinderController.goInMenu();
+			this.gameFinderController.openMenu();
 		}
 		
 	}
@@ -155,7 +228,6 @@ public class LobbyClientProtocol extends Thread {
 		if(msg.getPlayers() == null) {
 			System.err.println("null list from server !!!!!!!11");
 		}
-		//Hier kommt leere List an ????????????????????????????????
 		//null pointer because of run later, need a call back after Lobby is created
 		//here past position of null set of finderController
 		if(this.gameLobbyController != null) {
@@ -189,10 +261,10 @@ public class LobbyClientProtocol extends Thread {
 	/**
 	 * method to close the connection of the protocol
 	 */
-	private void closeConnection() {
+	private void closeConnection() { //change !!!!!!!!!!!!!!!!!
 		try { //if a input or output stream is closed the other close himself and the close method throw the exception
-			if(this.client != null) {
-				this.client.close();
+			if(this.server != null) {
+				this.server.close();
 			}
 			//System.out.println("connection closed");
 		} catch (IOException e) {
@@ -203,9 +275,11 @@ public class LobbyClientProtocol extends Thread {
 	/**
 	 * method to end the running thread and close the connection
 	 */
-	public void shutdownProtocol() { //In future change to an approach with an boolean condition about call or selfcall
+	public void shutdownProtocol(boolean selfcall) { //In future change to an approach with an boolean condition about call or selfcall
 		this.isRunning = false;
-		this.sendShutdownMsg(); //last message
+		if(selfcall) {
+			this.sendShutdownMsg(); //last message
+		}
 		this.closeConnection();
 		System.out.println("GameFinderProtocol shutdown");
 	}
@@ -214,27 +288,21 @@ public class LobbyClientProtocol extends Thread {
 	 * @param glc
 	 */
 	public void setLobbyController(GameLobbyController glc) {
-		//glc is null by method, but why
 		this.gameFinderController = null;
 		this.gameLobbyController = glc;
 		if(glc != null) {
 			System.out.println("Controller not null");
 		}
-		//System.out.println("Lobby controller are set");
 		this.updateLobbyinformation();
-		//System.out.println("First Lobby informations are set");
 	}
 	/**
 	 * method to update the visibility of the player profiles of the GameLobby screen.
 	 */
 	private void updateLobbyinformation() {
-		//System.out.println("Client updated lobby informations");
-		for(int i = 0; i < 4; i++) {
-			this.gameLobbyController.setProfileNotVisible(i);
-		}
+		this.gameLobbyController.resetProfileVisibility();
 		for(int i = 0; i < lobbyPlayers.size(); i++) {
 			System.err.println("Update gui :" + i);
-			this.gameLobbyController.setProfileVisible(i, lobbyPlayers.get(i));
+			this.gameLobbyController.setProfileVisible(i, lobbyPlayers.get(i).getName());
 		}
 		
 	}
@@ -242,7 +310,7 @@ public class LobbyClientProtocol extends Thread {
 	 * method which will inform the server that the client want to join the lobby.
 	 */
 	public void sendJoinMessage() {
-		Message msg = new Message(MessageType.JOIN, "");
+		Message msg = new Message(MessageType.JOIN, this.player);
 		try {
 			this.out.writeObject(msg);
 			this.out.flush();
@@ -257,11 +325,13 @@ public class LobbyClientProtocol extends Thread {
 	 */
 	public void sendShutdownMsg() {
 		//System.out.println("Send shutdown message");
-		Message msg = new Message(MessageType.SHUTDOWN, "");
+		Message msg = new Message(MessageType.SHUTDOWN, this.player);
 		try {
-			if(!this.client.isClosed()) {
-				this.out.writeObject(msg);
-				this.out.flush();
+			if(this.server != null) {
+				if(!this.server.isClosed()) {
+					this.out.writeObject(msg);
+					this.out.flush();
+				}
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -269,4 +339,3 @@ public class LobbyClientProtocol extends Thread {
 		}
 	}
 }
-

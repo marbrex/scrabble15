@@ -4,8 +4,11 @@ import java.io.IOException;
 
 import com.jfoenix.controls.JFXButton;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -13,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import scrabble.network.LobbyClientProtocol;
 import scrabble.network.LobbyHostProtocol;
 import scrabble.network.LobbyServer;
@@ -34,6 +38,7 @@ public class GameLobbyController implements LobbyController{
 	@FXML private Label label1;
 	@FXML private Label label2;
 	@FXML private Label label3;
+	@FXML private JFXButton startButton;
 	@FXML private JFXButton configureButton;
 	@FXML private JFXButton kick0;
 	@FXML private JFXButton kick1;
@@ -44,7 +49,10 @@ public class GameLobbyController implements LobbyController{
 	private boolean isHost;
 	private LobbyClientProtocol client;
 	private LobbyHostProtocol host;
-	
+	/** variable for the screen countdown */
+	private int second = 60;
+	/** timer */
+	private Timeline timer;
 	
 	/**
 	 * constructor with information about the type of lobby screen => host or client 
@@ -70,6 +78,9 @@ public class GameLobbyController implements LobbyController{
 				this.isHost();
 			});
 		}
+		//Test !!!!!!!!!!!!!!!!!!!!!!
+		this.setUpTimer();
+		this.startTimer();
 	}
 	/**
 	 * method for loading a screen from an fxml file
@@ -90,7 +101,7 @@ public class GameLobbyController implements LobbyController{
 			*/
 			Platform.runLater(()->{
 				try {
-					FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Menu.fxml"));
+					FXMLLoader loader = new FXMLLoader(getClass().getResource("Menu.fxml"));
 					Parent root = loader.load();
 					Stage stage = (Stage) this.backButton.getScene().getWindow();
 					stage.setScene(new Scene(root, 900, 700));
@@ -109,7 +120,7 @@ public class GameLobbyController implements LobbyController{
 		if(server != null) {
 			server.shutdown();
 		} else if(this.client != null) {
-			this.client.shutdownProtocol();
+			this.client.shutdownProtocol(true);
 		}
 		
 	}
@@ -117,23 +128,18 @@ public class GameLobbyController implements LobbyController{
 	 * method which set up the server
 	 */
 	private void isHost() {
-			try {
-				this.server = new LobbyServer(this);
-				this.server.start();
-				this.activateConfigureControlls();
-			} catch (PortsOccupiedException e) {
-				// TODO Auto-generated catch block
-				this.timeLabel.setText(e.getMessage());
-				this.activateConfigureControlls();
-			}
-			
+		this.activateHostControlls();
+		this.server = new LobbyServer(this);
+		this.server.start();
 	}
 	/**
 	 * method to show host specific options on the screen
 	 */
-	private void activateConfigureControlls() {
+	public void activateHostControlls() {
 		this.configureButton.setDisable(false);
 		this.configureButton.setVisible(true);
+		this.startButton.setDisable(false);
+		this.startButton.setVisible(true);
 	}
 	/**
 	 * method which sets specific player profiles visible
@@ -146,10 +152,12 @@ public class GameLobbyController implements LobbyController{
 				this.profile0.setVisible(true);
 				this.profile0.setDisable(false);
 				this.label0.setText(name);
+				/*
 				if(this.isHost) {
 					this.kick0.setVisible(true);
 					this.kick0.setDisable(false);
 				}
+				*/
 				break;
 			case 1: 
 				this.profile1.setVisible(true);
@@ -182,9 +190,24 @@ public class GameLobbyController implements LobbyController{
 		});
 	}
 	/**
-	 * method which sets specific player profiles invisible
-	 * @param number number of the profile which should be shown
+	 * method which sets all Profiles , normally in order to represent a new arrangement 
 	 */
+	public void resetProfileVisibility() {
+		Platform.runLater(()-> {
+			this.profile0.setVisible(false);
+			this.profile0.setDisable(true);
+			
+			this.profile1.setVisible(false);
+			this.profile1.setDisable(true);
+			
+			this.profile2.setVisible(false);
+			this.profile2.setDisable(true);
+			
+			this.profile3.setVisible(false);
+			this.profile3.setDisable(true);
+		});
+	}
+	/*
 	public void setProfileNotVisible(int number) {
 		Platform.runLater(()-> {
 			switch(number) {
@@ -222,7 +245,8 @@ public class GameLobbyController implements LobbyController{
 				break;
 			}
 		});
-	}
+	}*/
+	
 	/**
 	 * method to set up the timer label (time or other messages)
 	 * @param msg message which should be shown at the top of the screen
@@ -238,7 +262,6 @@ public class GameLobbyController implements LobbyController{
 	 */
 	public void setProtocol(LobbyClientProtocol clientProtocol) {
 		this.client = clientProtocol;
-		
 	}
 	/**
 	 * method to react to an host who wants to kick an player
@@ -262,5 +285,60 @@ public class GameLobbyController implements LobbyController{
 	 */
 	public void setHostProtocol(LobbyHostProtocol host) {
 		this.host = host;
+	}
+	/**
+	 * method to start the lobby timer
+	 */
+	public void startTimer() {
+		this.timer.play();
+	}
+	/**
+	 * method to stop the lobby timer
+	 */
+	public void stopTimer() {
+		this.timer.stop();
+		this.second = 60;
+	}
+	/**
+	 * method to set up the lobby timer
+	 */
+	private void setUpTimer() {
+		this.timer = new Timeline(
+				new KeyFrame(Duration.seconds(1),
+				new EventHandler<ActionEvent>() {
+					@Override
+					public void handle(ActionEvent arg0) {
+						// TODO Auto-generated method stub
+						setTimeLabel(String.valueOf(--second));
+					}
+					
+				}));
+		timer.setCycleCount(60);
+		timer.setOnFinished(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				// TODO Auto-generated method stub
+				timerFinished();
+			}
+		});
+	}
+	/**
+	 * method to start the enter game procedure
+	 */
+	private void timerFinished() {
+		
+	}
+	/**
+	 * method to react to the start button accessible from the lobby host
+	 */
+	@FXML private void startButtonAction() {
+		this.stopTimer(); //test
+	}
+	/**
+	 * method to react to the configure button accessible from the lobby host.
+	 * There should be the option of changing extra points from positions add a dictionary and choose to a own port.
+	 */
+	@FXML private void configureButtonAction() {
+		//to do
 	}
 }

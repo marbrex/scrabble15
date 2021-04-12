@@ -6,7 +6,9 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-
+import scrabble.network.LobbyHostProtocol;
+import scrabble.network.LobbyServerProtocol;
+import scrabble.network.PortsOccupiedException;
 import scrabble.GameLobbyController;
 import scrabble.model.GameInformationController;
 
@@ -15,15 +17,20 @@ public class LobbyServer extends Thread {
 	 * Class of the lobby server which is responsible for a network game.
 	 * @author Hendrik Diehl
 	 */
-	//network
+	/** Standard port for an network game*/
 	private int port = 11111;
+	/** Server socket for the server*/
 	private ServerSocket server;
+	/** Control boolean for thread run */
 	private boolean isRunning;
-	//gui
+	/** Corresponding controller of an GameLobby */
 	private GameLobbyController gameLobby;
 	//controll
+	/** controller of the game information */
 	private GameInformationController gameInfoController;
+	/** All connected clients, also ones only in GameFinder */
 	private ArrayList<LobbyServerProtocol> clients;
+	/** protocol of the game host */
 	private LobbyHostProtocol host;
 	
 	
@@ -33,17 +40,24 @@ public class LobbyServer extends Thread {
 	 * @param gameLobby controller of the GameLobby screen
 	 * @throws PortsOccupiedException exception thrown if no standard port is available 
 	 */
-	public LobbyServer(GameLobbyController gameLobby) throws PortsOccupiedException{
-		//Setting up server port
-		this.setServer();
+	public LobbyServer(GameLobbyController gameLobby){
 		//setting up controls
+		initializeParts(gameLobby);
+	}
+	/**
+	 * method to initialize important parts of the server
+	 * @param gameLobby controller of the corresponding GameLobby
+	 */
+	private void initializeParts(GameLobbyController gameLobby) {
 		this.gameLobby = gameLobby;
 		this.clients = new ArrayList<LobbyServerProtocol>();
 		this.gameInfoController = new GameInformationController(this);
 		this.host = new LobbyHostProtocol(gameLobby, gameInfoController);
+		//Perhaps the host initializing in the run thread because of the DB connection (slow ?)  
 		this.gameLobby.setHostProtocol(this.host);
 		this.gameInfoController.addPlayer(host);
-		this.gameLobby.setProfileVisible(0, "Host"); //change to protocol call in future?? 
+		this.gameLobby.setProfileVisible(0, this.host.getPlayer().getName()); //change to protocol call in future?? 
+		//
 	}
 	/**
 	 * Method to set the server port
@@ -53,7 +67,7 @@ public class LobbyServer extends Thread {
 		while(!isRunning) {
 			try {
 				this.server = new ServerSocket(port);
-				this.isRunning = true; //Schleife brechen
+				this.isRunning = true; //breaking loop
 				System.out.println("GameLobbyServer Constructor choosen port : " + this.port);
 			} catch (SocketException e) {
 				//Socket in use
@@ -73,28 +87,37 @@ public class LobbyServer extends Thread {
 	 * A connecting client is add to a list and a LobbyServerProtocol will start.
 	 */
 	public void run() {
-		//System.out.println("GameLobbyServerStart");
-		while(isRunning) {
-			try {
-				System.out.println("GameLobbyServer run pass");
-				System.out.println(this.clients.size());
-				Socket s = this.server.accept();
-				LobbyServerProtocol lobbyProtocol = new LobbyServerProtocol(s, this, gameInfoController);
-				//System.out.println("LobbyProtocol constructor");
-				this.getInContact(lobbyProtocol);
-			} catch (SocketException e) {
-				//do something
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+		try {
+			this.setServer();
+		} catch (PortsOccupiedException e) {
+			this.gameLobby.setTimeLabel(e.getMessage());
+			//Here own port control should be allowed
+			//this.gameLobby.activateConfigureControlls(); //old
 		}
-		//System.out.println("GameLobbyServerStopped");
+		while(isRunning) {
+			react();
+		}
+		System.err.println("SERVER OUTRUN");
+	}
+	/**
+	 * method to accept a client
+	 */
+	private void react() {
+		try {
+			Socket s = this.server.accept();
+			LobbyServerProtocol lobbyProtocol = new LobbyServerProtocol(s, this, gameInfoController);
+			this.getInContact(lobbyProtocol);
+		} catch (SocketException e) {
+			//do something
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	/**
 	 * Method to close the connection of the server
 	 */
-	private void closeConnection() {
+	private void closeConnection() { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 		try {
 			this.server.close();
 		} catch (IOException e) {
@@ -105,7 +128,7 @@ public class LobbyServer extends Thread {
 	/**
 	 * Method which will shutdown the server
 	 */
-	public void shutdown() {
+	public void shutdown() { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! critical
 		this.isRunning = false;
 		this.closeAllProtocols();
 		this.closeConnection();
@@ -114,10 +137,10 @@ public class LobbyServer extends Thread {
 	/**
 	 * Method which will call a the shutdown procedure for all connected clients.
 	 */
-	private void closeAllProtocols() { //need of deleting protocols
+	private void closeAllProtocols() { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! critical
 		for(LobbyServerProtocol lP : this.clients) {
-			lP.sendShutdownMsg();
-			lP.shutdown();
+			lP.sendShutdownMsg(); //here changing of the shutdown class
+			lP.shutdownProtocol(true);
 		}
 	}
 	/*
@@ -126,9 +149,7 @@ public class LobbyServer extends Thread {
 	private void getInContact(LobbyServerProtocol lsp) {
 		this.clients.add(lsp);
 		lsp.start();
-		System.out.println("LobbyProtocol started");
 		lsp.sendInformationMessage();
-		System.out.println("Information sended");
 	}
 	/**
 	 * method which will remove a specific server protocol from the server.

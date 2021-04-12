@@ -58,7 +58,9 @@ public class GameFinderController implements LobbyController{
 	 * method to handle the ActionEvent of the joinBtn
 	 */
 	@FXML private void joinAction() {
-		this.clientProtocol.sendJoinMessage();
+		Platform.runLater(()-> {
+			this.clientProtocol.sendJoinMessage();
+		});
 	}
 	
 	/**
@@ -88,7 +90,7 @@ public class GameFinderController implements LobbyController{
 	 * @param port String representation of an user port
 	 * @return boolean about the acceptance of the String parameter
 	 */
-	private boolean checkPortString(String port) {
+	private boolean checkPortString(String port) { //not implemented yet
 		return port.matches("\\d{2,}");
 	}
 	
@@ -110,14 +112,14 @@ public class GameFinderController implements LobbyController{
 			stage.setResizable(false);
 			stage.show();
 			*/
-			this.clientProtocol.shutdownProtocol(); //shutdown when in GameFinder screen
-			goInMenu();
+			this.clientProtocol.shutdownProtocol(true); //shutdown when in GameFinder screen
+			openMenu();
 	}
 
-	public void goInMenu(){
+	public void openMenu(){
 		Platform.runLater(()-> {
 			try {
-				FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Menu.fxml"));
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("Menu.fxml"));
 				Parent root = loader.load();
 				Stage stage = (Stage) this.backButton.getScene().getWindow();
 				stage.setScene(new Scene(root, 900, 700));
@@ -134,21 +136,20 @@ public class GameFinderController implements LobbyController{
 	 * specific port is accessible. 
 	 */
 	@FXML private void initialize() {
-		try {
 			clientProtocol = new LobbyClientProtocol(this);
-			System.out.println("GameFinderProtokol consructed");
 			clientProtocol.start();
-			System.out.println("GameFinderProtocol started");
+	}
+	public void connectSucessful() {
+		Platform.runLater(()->{
 			this.joinBtn.setDisable(false);
-		} catch (IOException e) { //using of own exception needed
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-			System.out.println("Exception");
+		});
+	}
+	public void connectNotSucessful() {
+		Platform.runLater(()-> {
 			this.statusLabel.setText("No game at standart port");
 			this.useOwnPort.setDisable(false);
-		}
+		});
 	}
-	
 	/**
 	 * handles the useOwnPort ActionEvents and activates or deactivates the controls for an user input
 	 */
@@ -190,8 +191,7 @@ public class GameFinderController implements LobbyController{
 	@Override
 	public void shutdown() {
 		if(this.clientProtocol != null) {
-			this.clientProtocol.sendShutdownMsg();
-			this.clientProtocol.shutdownProtocol();
+			this.clientProtocol.shutdownProtocol(true);
 			System.out.println("Controller Shutdown");
 		}
 		

@@ -2,6 +2,8 @@ package scrabble.network;
 
 import java.util.ArrayList;
 
+import scrabble.model.HumanPlayer;
+import scrabble.model.Player;
 import scrabble.GameLobbyController;
 import scrabble.model.GameInformationController;
 
@@ -10,9 +12,14 @@ public class LobbyHostProtocol implements NetworkPlayer{
 	 * Dummy protocol of an host which handle the screen update in an lobby/game
 	 * @author Hendrik Diehl
 	 */
+	/** controller of the gameLobby */
 	private GameLobbyController gameLobby;
+	/** controller for game information */
 	private GameInformationController gameInfoController;
-	
+	/** player instance of the protocol host are a human player */
+	private HumanPlayer player;
+	/** Variable to compare the position in the list to create a game sequence of human player */
+	private int sequencePos;
 	/**
 	 * Constructor
 	 * @param gameLobby controller of the screen
@@ -20,6 +27,15 @@ public class LobbyHostProtocol implements NetworkPlayer{
 	public LobbyHostProtocol(GameLobbyController gameLobby, GameInformationController gameInfo) {
 		this.gameLobby = gameLobby;
 		this.gameInfoController = gameInfo;
+		this.loadPlayer();
+	}
+	/**
+	 * method to get Player from Database
+	 */
+	private void loadPlayer() {
+		this.player = new HumanPlayer();
+		this.player.setName("Host"); //dummy representation
+		
 	}
 	@Override
 	public void transformProtocol() {
@@ -31,21 +47,17 @@ public class LobbyHostProtocol implements NetworkPlayer{
 	 * method to get the player class instance.
 	 */
 	@Override
-	public String getPlayer() {
-		return null;
-		// TODO Auto-generated method stub
-		
+	public Player getPlayer() {
+		return this.player;
 	}
 	/**
 	 * method to update the player profiles on the screen.
 	 */
 	@Override
-	public void updateLobbyinformation(ArrayList<String> players) {
-		for(int i = 0; i < 4; i++) {
-			gameLobby.setProfileNotVisible(i);
-		}
+	public void updateLobbyinformation(ArrayList<Player> players) {
+		this.gameLobby.resetProfileVisibility();
 		for(int i = 0; i < players.size(); i++) {
-			gameLobby.setProfileVisible(i, players.get(i));
+			gameLobby.setProfileVisible(i, players.get(i).getName());
 		}
 		
 	}
@@ -58,6 +70,27 @@ public class LobbyHostProtocol implements NetworkPlayer{
 			this.gameInfoController.kickPlayer(i);
 		}
 		
+	}
+	
+	/**
+	 * method to adding points to the internal positions in the game
+	 */
+	public void addSequence(int i) {
+		this.sequencePos += i;
+		
+	}
+	/**
+	 * method to return the number representing the sequence election points
+	 */
+	public int getSequencePos() {
+		return this.sequencePos;
+	}
+	/**
+	 * starting the lobby maximum procedure
+	 */
+	public void sendFullMessage() {
+		this.gameLobby.startTimer();
+		//do the game things -> not implemented yet
 	}
 
 }

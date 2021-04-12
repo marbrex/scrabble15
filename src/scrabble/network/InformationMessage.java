@@ -4,6 +4,7 @@ import java.io.Serializable;
 
 import scrabble.model.GameStatusType;
 import scrabble.model.MessageType;
+import scrabble.model.Player;
 
 public class InformationMessage extends Message implements Serializable{
 	/**
@@ -20,7 +21,7 @@ public class InformationMessage extends Message implements Serializable{
 	 * @param status status of the lobby = in lobby or in game
 	 * @param amount amount of the players in a lobby
 	 */
-	public InformationMessage(MessageType type, String owner, GameStatusType status, int amount) {
+	public InformationMessage(MessageType type, Player owner, GameStatusType status, int amount) {
 		super(type, owner);
 		this.status = status;
 		this.lobbyPlayers = amount;

@@ -2,6 +2,8 @@ package scrabble.network;
 
 import java.util.ArrayList;
 
+import scrabble.model.Player;
+
 public interface NetworkPlayer {
 	/**
 	 * Interface for a network player. Can be a lobby or game client or a game/lobby host.
@@ -9,6 +11,9 @@ public interface NetworkPlayer {
 	 * @author Hendrik Diehl
 	 */
 	public void transformProtocol();
-	public String getPlayer();
-	public void updateLobbyinformation(ArrayList<String> playersArrayList);
+	public Player getPlayer();
+	public void updateLobbyinformation(ArrayList<Player> playersArrayList);
+	public void addSequence(int i);
+	public int getSequencePos();
+	public void sendFullMessage();
 }

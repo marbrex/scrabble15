@@ -6,4 +6,5 @@ public interface LobbyController {
 	 * @author Hendrik Diehl  
 	 */
 	public void shutdown();
+	public void openMenu();
 }

@@ -28,7 +28,7 @@
                <children>
                   <Label fx:id="timeLabel" text="Time">
                      <font>
-                        <Font size="18.0" />
+                        <Font size="24.0" />
                      </font></Label>
                </children>
             </VBox>
@@ -117,7 +117,8 @@
             <JFXButton fx:id="backButton" buttonType="RAISED" onAction="#backAction" opacity="0.5" text="Back" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
             <HBox alignment="BOTTOM_CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="50.0" AnchorPane.rightAnchor="50.0">
                <children>
-                  <JFXButton fx:id="configureButton" buttonType="RAISED" disable="true" opacity="0.5" prefHeight="50.0" prefWidth="100.0" text="Configure" visible="false" />
+                  <JFXButton fx:id="startButton" buttonType="RAISED" disable="true" onAction="#startButtonAction" opacity="0.5" prefHeight="50.0" prefWidth="100.0" text="Start" visible="false" />
+                  <JFXButton fx:id="configureButton" buttonType="RAISED" disable="true" onAction="#configureButtonAction" opacity="0.5" prefHeight="50.0" prefWidth="100.0" text="Configure" visible="false" />
                </children>
             </HBox>
          </children>
