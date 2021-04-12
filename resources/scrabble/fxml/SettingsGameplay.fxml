@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #E4C59D #E4C59D; -fx-border-color: #783F04 #783F04; -fx-border-width: 13;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.SettingsGameplayController">
+   <top>
+      <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox prefHeight="100.0" prefWidth="402.0">
+               <children>
+                  <Label text="Settings -&gt; Gameplay">
+                     <font>
+                        <Font size="41.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <JFXButton fx:id="backGame" onAction="#goToMainPage" style="-fx-border-color: black;" text="Back">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </JFXButton>
+               </children>
+            </HBox>
+         </children>
+      </HBox>
+   </top>
+   <left>
+      <VBox prefHeight="201.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <JFXButton fx:id="videoGam" onAction="#switchToVideo" prefHeight="341.0" prefWidth="100.0" style="-fx-border-color: black; -fx-background-color: grey;" text="Video" />
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <JFXButton prefHeight="341.0" prefWidth="100.0" text="Gameplay" />
+               </children>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <JFXButton fx:id="soundGam" onAction="#switchToSound" prefHeight="341.0" prefWidth="100.0" style="-fx-border-color: black; -fx-background-color: grey;" text="Sound" />
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label text="AI Difficulty">
+                     <font>
+                        <Font size="43.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <JFXCheckBox fx:id="hardBox" onAction="#switchToEasy" prefHeight="18.0" prefWidth="178.0" text="Hard">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </JFXCheckBox>
+                  <JFXCheckBox fx:id="easyBox" onAction="#switchToHard" prefHeight="18.0" prefWidth="44.0" selected="true" text="Easy">
+                     <font>
+                        <Font size="26.0" />
+                     </font>
+                  </JFXCheckBox>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </center>
+</BorderPane>

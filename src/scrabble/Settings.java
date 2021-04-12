@@ -5,16 +5,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
+/** Test class*/
 public class Settings extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("fxml/Settings.fxml"));
+            loader.setLocation(getClass().getResource("fxml/SettingsVideo.fxml"));
             Pane root = loader.load();
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -23,7 +25,6 @@ public class Settings extends Application {
             e.printStackTrace();
         }
     }
-
     public static void main(String[] args) {
         launch(args);
     }
