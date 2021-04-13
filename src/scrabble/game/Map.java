@@ -5,12 +5,22 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import scrabble.ScrabbleApp;
 
+/**
+ * <h1>scrabble.game.Map</h1>
+ *
+ * <p>This class represents a grid of Multipliers (DW,DL,TW,TL,NO)</p>
+ *
+ * @author Eldar Kasmamytov
+ */
 public class Map {
 
   private ArrayList<Multiplier> cells;
   private final String path;
   private int size;
 
+  /**
+   * Default Constructor.
+   */
   Map() {
     cells = new ArrayList<Multiplier>();
     path = "maps/default-map.txt";
@@ -18,6 +28,12 @@ public class Map {
     loadMap();
   }
 
+  /**
+   * Constructor that loads a Map from the specified text file. This file should follow some
+   * formatting rules (see "maps/default-map.txt" for an example)
+   *
+   * @param path Path to the file in resources
+   */
   Map(String path) {
     cells = new ArrayList<Multiplier>();
     this.path = path;
@@ -25,6 +41,10 @@ public class Map {
     loadMap();
   }
 
+  /**
+   * Loads the default map. This file should follow some formatting rules (see
+   * "maps/default-map.txt" for an example)
+   */
   private void loadMap() {
     try {
       File file = new File(ScrabbleApp.class.getResource(path).getPath());
@@ -66,17 +86,23 @@ public class Map {
     }
   }
 
+  /**
+   * Get the Multiplier at global index "index"
+   *
+   * @param index Global Index
+   * @return Multiplier
+   */
   public Multiplier getMultiplier(int index) {
     return cells.get(index);
   }
 
+  /**
+   * Get the size of the Map, number of cells (height=width)
+   *
+   * @return Number of cells on each side (height=width)
+   */
   public int getSize() {
     return size;
-  }
-
-  public static void main(String[] args) {
-    Map m = new Map();
-    System.out.println("Size: " + m.getSize());
   }
 
 }

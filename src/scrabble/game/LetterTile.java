@@ -10,6 +10,13 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import scrabble.GameController;
 
+/**
+ * <h1>scrabble.game.LetterTile</h1>
+ *
+ * <p>This class represents Tiles with letters and points.</p>
+ *
+ * @author Eldar Kasmamytov
+ */
 class LetterTile {
 
   final GameController controller;
@@ -22,11 +29,18 @@ class LetterTile {
 
   Slot slot;
 
+  // Neighbours
   private LetterTile top;
   private LetterTile right;
   private LetterTile bottom;
   private LetterTile left;
 
+  /**
+   * Initiates the FRONT-end part (AnchorPane with 2 Labels inside)
+   *
+   * @param ltr Letter to put inside the tile
+   * @param pts Points
+   */
   private void initShape(char ltr, int pts) {
 
     DropShadow ds = new DropShadow();
@@ -159,6 +173,11 @@ class LetterTile {
     });
   }
 
+  /**
+   * Constructor, that takes a GameController in parameters
+   *
+   * @param controller GameController
+   */
   public LetterTile(GameController controller) {
     cellSize = 50;
 
@@ -167,6 +186,14 @@ class LetterTile {
     initShape((char) 0, 0);
   }
 
+  /**
+   * Constructor
+   *
+   * @param letter     Letter to put inside the tile
+   * @param points     Points
+   * @param cellSize   Tile's size (in pixels)
+   * @param controller GameController
+   */
   public LetterTile(char letter, int points, double cellSize, GameController controller) {
     this.cellSize = cellSize;
 
@@ -175,38 +202,83 @@ class LetterTile {
     initShape(letter, points);
   }
 
+  /**
+   * Sets the top neighbour
+   *
+   * @param top Top neighbour (LetterTile)
+   */
   public void setTop(LetterTile top) {
     this.top = top;
   }
 
+  /**
+   * Sets the right neighbour
+   *
+   * @param right right neighbour (LetterTile)
+   */
   public void setRight(LetterTile right) {
     this.right = right;
   }
 
+  /**
+   * Sets the bottom neighbour
+   *
+   * @param bottom bottom neighbour (LetterTile)
+   */
   public void setBottom(LetterTile bottom) {
     this.bottom = bottom;
   }
 
+  /**
+   * Sets the left neighbour
+   *
+   * @param left left neighbour (LetterTile)
+   */
   public void setLeft(LetterTile left) {
     this.left = left;
   }
 
+  /**
+   * Get the top neighbour
+   *
+   * @return Top neighbour (LetterTile)
+   */
   public LetterTile getTop() {
     return top;
   }
 
+  /**
+   * Get the right neighbour
+   *
+   * @return right neighbour (LetterTile)
+   */
   public LetterTile getRight() {
     return right;
   }
 
+  /**
+   * Get the bottom neighbour
+   *
+   * @return bottom neighbour (LetterTile)
+   */
   public LetterTile getBottom() {
     return bottom;
   }
 
+  /**
+   * Get the left neighbour
+   *
+   * @return left neighbour (LetterTile)
+   */
   public LetterTile getLeft() {
     return left;
   }
 
+  /**
+   * Get the most top existing neighbour
+   *
+   * @return The most top neighbour (LetterTile)
+   */
   public LetterTile getMostTop() {
     LetterTile current = this;
     while (current.top != null) {
@@ -215,6 +287,11 @@ class LetterTile {
     return current;
   }
 
+  /**
+   * Get the most right existing neighbour
+   *
+   * @return The most right neighbour (LetterTile)
+   */
   public LetterTile getMostRight() {
     LetterTile current = this;
     while (current.right != null) {
@@ -223,6 +300,11 @@ class LetterTile {
     return current;
   }
 
+  /**
+   * Get the most bottom existing neighbour
+   *
+   * @return The most bottom neighbour (LetterTile)
+   */
   public LetterTile getMostBottom() {
     LetterTile current = this;
     while (current.bottom != null) {
@@ -231,6 +313,11 @@ class LetterTile {
     return current;
   }
 
+  /**
+   * Get the most left existing neighbour
+   *
+   * @return The most left neighbour (LetterTile)
+   */
   public LetterTile getMostLeft() {
     LetterTile current = this;
     while (current.left != null) {
@@ -239,34 +326,74 @@ class LetterTile {
     return current;
   }
 
+  /**
+   * Adds a Tile at the top of the most top existing neighbour
+   *
+   * @param top Tile to be added (LetterTile)
+   */
   public void addTop(LetterTile top) {
     getMostTop().top = top;
   }
 
+  /**
+   * Adds a Tile at the right of the most right existing neighbour
+   *
+   * @param right Tile to be added (LetterTile)
+   */
   public void addRight(LetterTile right) {
     getMostRight().right = right;
   }
 
+  /**
+   * Adds a Tile at the bottom of the most bottom existing neighbour
+   *
+   * @param bottom Tile to be added (LetterTile)
+   */
   public void addBottom(LetterTile bottom) {
     getMostBottom().bottom = bottom;
   }
 
+  /**
+   * Adds a Tile at the left of the most left existing neighbour
+   *
+   * @param left Tile to be added (LetterTile)
+   */
   public void addLeft(LetterTile left) {
     getMostLeft().left = left;
   }
 
+  /**
+   * Set Tile's letter
+   *
+   * @param letter Letter to set
+   */
   public void setLetter(char letter) {
     this.letter.setText(String.valueOf(letter));
   }
 
+  /**
+   * Set Tile's points
+   *
+   * @param points Letter to set
+   */
   public void setPoints(int points) {
     this.points.setText(String.valueOf(points));
   }
 
+  /**
+   * Get Tile's letter
+   *
+   * @return Letter
+   */
   public char getLetter() {
     return letter.getText().charAt(0);
   }
 
+  /**
+   * Get Tile's points
+   *
+   * @return Points
+   */
   public int getPoints() {
     return Integer.parseInt(points.getText());
   }

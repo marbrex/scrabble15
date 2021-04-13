@@ -21,12 +21,12 @@ import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
 
 /**
- * <h1>The Main Controller linked with "interface.fxml" file.</h1>
+ * <h1>The Main Game Controller linked with "interface.fxml" file.</h1>
  *
  * <h2>Main functions:</h2>
  * <ul>
- * <li>Initialize cells (Rectangle) of the 15x15 grid (GridPane).
- * <li>Initialize proposed letters.
+ * <li>Initialize cells (Rectangle) of the 15x15 grid (GridPane).</li>
+ * <li>Initialize proposed letters.</li>
  * </ul>
  *
  * @author Eldar Kasmamytov
@@ -34,7 +34,8 @@ import scrabble.model.Player;
 public class GameController {
 
   /* Some reminders:
-   * - @FXML annotation on a member declares that the FXML loader can access the member even if it is private.
+   * - @FXML annotation on a member declares that the FXML loader can
+   * access the member even if it is private.
    * - Only one controller is allowed per FXML document (must be specified on the root element).
    * - If the name of an accessible instance variable matches the fx:id attribute of an element,
    * the object reference from FXML is automatically copied into the controller instance variable.

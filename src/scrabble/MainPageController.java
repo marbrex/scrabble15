@@ -30,6 +30,12 @@ import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
 import scrabble.model.HumanPlayer;
 
+/**
+ * <h1>The Main Controller linked with "MainPage.fxml" file.</h1>
+ *
+ * @author Eldar Kasmamytov
+ * @author Sergen Keskincelik
+ */
 public class MainPageController implements Initializable {
 
   @FXML
@@ -54,9 +60,9 @@ public class MainPageController implements Initializable {
   private BorderPane root;
 
   Collection<JFXButton> mainMenuButtons;
-  
+
   private static boolean checkNetworkMode;
-  
+
   private HumanPlayer player;
 
   /*
@@ -64,11 +70,11 @@ public class MainPageController implements Initializable {
    * this.soundButton.fitHeightProperty().bind(stage.heightProperty());
    * this.soundButton.fitWidthProperty().bind(stage.widthProperty()); }
    */
-  
+
   public static void setNetworkMode(boolean check) {
     checkNetworkMode = check;
   }
-  
+
   public static boolean isNetwork() {
     return checkNetworkMode;
   }
@@ -83,8 +89,7 @@ public class MainPageController implements Initializable {
           this.root.getScene().getHeight());
       scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
       stage.setScene(scene);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       e.printStackTrace();
       System.err.println("Error: " + e.getMessage());
     }
@@ -147,7 +152,7 @@ public class MainPageController implements Initializable {
     }));
 
     settingsBtn.setOnMouseClicked(event -> {
-      changeScene("fxml/SettingsGameplay.fxml", "css/settings.css", event);
+      changeScene("fxml/Settings.fxml", "css/settings.css", event);
     });
 
     changeProfileBtn.setOnMouseClicked(event -> {

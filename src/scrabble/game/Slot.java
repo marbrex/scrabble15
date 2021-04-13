@@ -9,6 +9,16 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import scrabble.GameController;
 
+/**
+ * <h1>scrabble.game.Slot</h1>
+ *
+ * <p>
+ * This class represents a Slot, in which a LetterTile can be placed. Used in the Grid and LetterBar
+ * classes.
+ * </p>
+ *
+ * @author Eldar Kasmamytov
+ */
 public class Slot {
 
   GameController controller;
@@ -22,6 +32,9 @@ public class Slot {
 
   StackPane container;
 
+  /**
+   * Initiates the FRONT-end part (StackPane)
+   */
   private void initShape() {
 
     InnerShadow is = new InnerShadow();
@@ -150,7 +163,7 @@ public class Slot {
           if (!controller.grid.getSlot(topX, topY).isFree()) {
             top = true;
             topY--;
-          } else if (topY != 0) {
+          } else {
             topY++;
             break;
           }
@@ -159,7 +172,7 @@ public class Slot {
           if (!controller.grid.getSlot(rightX, rightY).isFree()) {
             right = true;
             rightX++;
-          } else if (rightX != controller.grid.size-1) {
+          } else {
             rightX--;
             break;
           }
@@ -168,7 +181,7 @@ public class Slot {
           if (!controller.grid.getSlot(bottomX, bottomY).isFree()) {
             bottom = true;
             bottomY++;
-          } else if (bottomX != controller.grid.size-1) {
+          } else {
             bottomY--;
             break;
           }
@@ -177,7 +190,7 @@ public class Slot {
           if (!controller.grid.getSlot(leftX, leftY).isFree()) {
             left = true;
             leftX--;
-          } else if (leftX != 0) {
+          } else {
             leftX++;
             break;
           }
@@ -225,6 +238,11 @@ public class Slot {
     container.setViewOrder(2);
   }
 
+  /**
+   * Constructor
+   *
+   * @param controller GameController
+   */
   public Slot(GameController controller) {
     size = 30;
     isFree = true;
@@ -234,6 +252,12 @@ public class Slot {
     initShape();
   }
 
+  /**
+   * Constructor
+   *
+   * @param multiplier Set the multiplier on creation
+   * @param controller GameController
+   */
   public Slot(Multiplier multiplier, GameController controller) {
     size = 30;
     isFree = true;
@@ -244,6 +268,12 @@ public class Slot {
     initShape();
   }
 
+  /**
+   * Constructor
+   *
+   * @param tile       Set the Tile on creation
+   * @param controller GameController
+   */
   public Slot(LetterTile tile, GameController controller) {
     size = 30;
     isFree = true;
@@ -255,6 +285,13 @@ public class Slot {
     setContent(tile);
   }
 
+  /**
+   * Constructor
+   *
+   * @param tile       LetterTile
+   * @param multiplier Multiplier
+   * @param controller GameController
+   */
   public Slot(LetterTile tile, Multiplier multiplier, GameController controller) {
     size = 30;
     isFree = true;
@@ -267,6 +304,12 @@ public class Slot {
     setContent(tile);
   }
 
+  /**
+   * Constructor
+   *
+   * @param size       Size (number of cells, width=height)
+   * @param controller GameController
+   */
   public Slot(double size, GameController controller) {
     this.size = size;
     isFree = true;
@@ -276,6 +319,13 @@ public class Slot {
     initShape();
   }
 
+  /**
+   * Constructor
+   *
+   * @param size       Size (number of cells, width=height)
+   * @param tile       LetterTile
+   * @param controller GameController
+   */
   public Slot(double size, LetterTile tile, GameController controller) {
     this.size = size;
     isFree = true;
@@ -287,10 +337,18 @@ public class Slot {
     setContent(tile);
   }
 
+  /**
+   * Checks whether the slot has content.
+   *
+   * @return TRUE if has content, FALSE otherwise
+   */
   public boolean isFree() {
     return content == null;
   }
 
+  /**
+   * Removes the content of the Slot
+   */
   public void removeContent() {
     if (!container.getChildren().isEmpty()) {
       container.getChildren().clear();
@@ -302,6 +360,12 @@ public class Slot {
     isFree = true;
   }
 
+  /**
+   * Sets the content of the Slot (re-write)
+   *
+   * @param tile LetterTile
+   * @see scrabble.game.LetterTile
+   */
   public void setContent(LetterTile tile) {
     removeContent();
     container.getChildren().add(tile.container);
@@ -310,10 +374,22 @@ public class Slot {
     isFree = false;
   }
 
+  /**
+   * Sets the Multiplier
+   *
+   * @param multiplier Multiplier
+   * @see scrabble.game.Multiplier
+   */
   public void setMultiplier(Multiplier multiplier) {
     this.multiplier = multiplier;
   }
 
+  /**
+   * Get the Multiplier
+   *
+   * @return Multiplier
+   * @see scrabble.game.Multiplier
+   */
   public Multiplier getMultiplier() {
     return multiplier;
   }

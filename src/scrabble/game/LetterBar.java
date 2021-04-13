@@ -5,7 +5,9 @@ import javafx.scene.input.Dragboard;
 import scrabble.GameController;
 
 /**
- * LetterBar class is an internal state of the letter bar at the bottom.
+ * <h1>scrabble.game.LetterBar</h1>
+ *
+ * <p>LetterBar class is an internal state of the letter bar at the bottom.</p>
  *
  * @author Eldar Kasmamytov
  */
@@ -23,6 +25,10 @@ public class LetterBar {
    */
   private Slot[] slots;
 
+  /**
+   * Initiates the FRONT-end part. Creates a Slot and a LetterTile and puts the slot in
+   * "lettersBlock" (HBox)
+   */
   public void initBar() {
 
     // This alphabet will be used to pick letters from
@@ -71,7 +77,9 @@ public class LetterBar {
   }
 
   /**
-   * Default Constructor. Sets the "size" of the bar to 7.
+   * Constructor that sets the "size" of the bar to 7.
+   *
+   * @param controller GameController
    */
   public LetterBar(GameController controller) {
     size = 7;
@@ -85,7 +93,8 @@ public class LetterBar {
   /**
    * Constructor which sets the number of slots to "size".
    *
-   * @param size The number of slots
+   * @param size       The number of slots
+   * @param controller GameController
    */
   public LetterBar(int size, GameController controller) {
     this.size = size;
@@ -96,11 +105,19 @@ public class LetterBar {
     initBar();
   }
 
+  /**
+   * Default Constructor.
+   */
   public LetterBar() {
     size = 7;
     slots = new Slot[size];
   }
 
+  /**
+   * Constructor without need to specify "GameController"
+   *
+   * @param size The number of Slots
+   */
   public LetterBar(int size) {
     this.size = size;
     slots = new Slot[size];
@@ -142,19 +159,31 @@ public class LetterBar {
   }
 
   /**
-   * Getter for a slot.
+   * Get a Slot.
    *
    * @param index Index of the slot
-   * @return Cell
+   * @return Slot
    */
   public Slot getSlot(int index) {
     return slots[index];
   }
 
+  /**
+   * Set a Slot.
+   *
+   * @param index Index of the slot
+   * @param slot  Slot
+   */
   public void setSlot(int index, Slot slot) {
     slots[index] = slot;
   }
 
+  /**
+   * Get a Slot that contains the specified LetterTile
+   *
+   * @param tile LetterTile
+   * @return Slot
+   */
   public Slot getSlotThatContains(LetterTile tile) {
     for (int i = 0; i < size; i++) {
       if (slots[i].content == tile) {

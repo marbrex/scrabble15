@@ -5,7 +5,9 @@ import javafx.scene.layout.GridPane;
 import scrabble.GameController;
 
 /**
- * scrabble.game.Grid class is used to stock the internal state of the letters grid.
+ * <h1>scrabble.game.Grid</h1>
+ *
+ * <p>Class is used to stock the internal state of the letters grid.</p>
  *
  * @author Eldar Kasmamytov
  */
@@ -26,6 +28,9 @@ public class Grid {
 
   GridPane container;
 
+  /**
+   * Initiates GridPane's settings
+   */
   private void initGrid() {
 
     // setting the padding of the entire grid
@@ -35,6 +40,9 @@ public class Grid {
     container.setVgap(padSize);
   }
 
+  /**
+   * Initiates slots (StackPanes) of the GridPane
+   */
   public void initCells() {
     for (int row = 0; row < size; row++) {
       for (int column = 0; column < size; column++) {
@@ -48,7 +56,9 @@ public class Grid {
   /**
    * Constructor that creates a square grid.
    *
-   * @param size Width and Height of the grid
+   * @param grid       GridPane from the GameController
+   * @param size       GridPane's width and height
+   * @param controller GameController
    */
   public Grid(GridPane grid, int size, GameController controller) {
     this.size = size;
@@ -71,7 +81,10 @@ public class Grid {
   /**
    * Constructor that creates a square grid.
    *
-   * @param size Width and Height of the grid
+   * @param grid       GridPane from the GameController
+   * @param mapPath    Path to a map ".txt" file in resources folder
+   * @param size       GridPane's width and height
+   * @param controller GameController
    */
   public Grid(GridPane grid, String mapPath, int size, GameController controller) {
     this.size = size;
@@ -103,37 +116,50 @@ public class Grid {
   }
 
   /**
-   * Getter for the cell which uses global index.
+   * Get a Slot's content (LetterTile) using global index.
    *
    * @param globalIndex global index of the cell
-   * @return Cell
+   * @return LetterTile
    * @see #getGlobalIndex(int, int)
    */
   public LetterTile getSlotContent(int globalIndex) {
     return slots[globalIndex].content;
   }
 
+  /**
+   * Get a Slot using global index.
+   *
+   * @param globalIndex global index of the cell
+   * @return Slot
+   */
   public Slot getSlot(int globalIndex) {
     return slots[globalIndex];
   }
 
   /**
-   * Getter for the cell which uses X/Y indexes.
+   * Get a Slot's content (LetterTile) using row/column indexes.
    *
    * @param row    Row
    * @param column Column
-   * @return Cell
+   * @return LetterTile
    */
   public LetterTile getSlotContent(int row, int column) {
     return slots[getGlobalIndex(row, column)].content;
   }
 
+  /**
+   * Get a Slot using row/column indexes.
+   *
+   * @param row    Row
+   * @param column Column
+   * @return Slot
+   */
   public Slot getSlot(int row, int column) {
     return slots[getGlobalIndex(row, column)];
   }
 
   /**
-   * Sets the specified cell.
+   * Sets the specified Slot's content.
    *
    * @param row    Row of the cell to be set
    * @param column Column of the cell to be set
@@ -145,12 +171,19 @@ public class Grid {
     slots[getGlobalIndex(row, column)].content.setPoints(points);
   }
 
+  /**
+   * Sets the specified Slot's content with an LetterTile object.
+   *
+   * @param row    Row of the cell to be set
+   * @param column Column of the cell to be set
+   * @param tile   LetterTile
+   */
   public void setSlotContent(int row, int column, LetterTile tile) {
     slots[getGlobalIndex(row, column)].setContent(tile);
   }
 
   /**
-   * Displays the current internal state of the grid.
+   * Displays the current internal state of the grid in the console.
    */
   public void display() {
     System.out.println("\nInternal State: ");
@@ -173,9 +206,9 @@ public class Grid {
   }
 
   /**
-   * Returns a Global Index of the specified Cell.
+   * Returns a Global Index of the specified Slot.
    *
-   * @param slot slot
+   * @param slot Slot
    * @return Global Index if the Cell is in the Grid, -1 otherwise.
    */
   public int getCellIndex(Slot slot) {
@@ -187,6 +220,12 @@ public class Grid {
     return -1;
   }
 
+  /**
+   * Returns a Global Index of the specified LetterTile.
+   *
+   * @param tile LetterTile
+   * @return Global Index if the Cell is in the Grid, -1 otherwise.
+   */
   public int getCellIndex(LetterTile tile) {
     for (int i = 0; i < globalSize; i++) {
       if (tile == slots[i].content) {
@@ -197,7 +236,7 @@ public class Grid {
   }
 
   /**
-   * Returns an X coordinate of a specififed cell
+   * Returns an X coordinate of a specified cell
    *
    * @param tile Tile that is in Grid
    * @return X coordinate (Column)
@@ -234,14 +273,30 @@ public class Grid {
     return -1;
   }
 
+  /**
+   * Get the size of the square GridPane (height=width)
+   *
+   * @return Number of Slots on each side (height=width)
+   */
   public int getSize() {
     return size;
   }
 
+  /**
+   * Get the Global Size of the Grid
+   *
+   * @return Total number of Slots
+   */
   public int getGlobalSize() {
     return globalSize;
   }
 
+  /**
+   * Get a Slot that contains the specified LetterTile
+   *
+   * @param tile Slot's content, LetterTile
+   * @return Slot
+   */
   public Slot getSlotThatContains(LetterTile tile) {
     for (int i = 0; i < globalSize; i++) {
       if (slots[i].content == tile) {
@@ -251,6 +306,11 @@ public class Grid {
     return null;
   }
 
+  /**
+   * Removes the specified Slot's content (based on the Slot object)
+   *
+   * @param slot Slot, the content of which should be removed
+   */
   public void removeSlotContent(Slot slot) {
     for (int i = 0; i < globalSize; i++) {
       if (slots[i] == slot) {
@@ -259,10 +319,23 @@ public class Grid {
     }
   }
 
+  /**
+   * Removes the specified Slot's content (based on Row/Column indexes)
+   *
+   * @param row    Row (Y index)
+   * @param column Column (X index)
+   */
   public void removeSlotContent(int row, int column) {
     slots[getGlobalIndex(row, column)].removeContent();
   }
 
+  /**
+   * Adds a Slot to the specified cell
+   *
+   * @param slot   Slot
+   * @param row    Row (Y)
+   * @param column Column (X)
+   */
   public void addSlot(Slot slot, int row, int column) {
     int index = getGlobalIndex(row, column);
 

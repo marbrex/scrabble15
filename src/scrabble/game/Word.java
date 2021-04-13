@@ -8,7 +8,9 @@ import scrabble.GameController;
 import scrabble.model.Dictionary;
 
 /**
- * Word class that is needed to detect, store and verify words.
+ * <h1>scrabble.game.Word</h1>
+ *
+ * <p>Word class that is needed to detect, store and verify words.</p>
  *
  * @author Eldar Kasmamytov
  */
@@ -29,6 +31,9 @@ public class Word {
   AnchorPane container;
   Label pointsLabel;
 
+  /**
+   * Initiates the FRONT-end part (AnchorPane that contains a Label of points)
+   */
   private void initShape() {
     System.out.println("@ initShape()");
 
@@ -111,6 +116,8 @@ public class Word {
 
   /**
    * Default Constructor.
+   *
+   * @param controller GameController
    */
   public Word(GameController controller) {
     w = new LinkedList<LetterTile>();
@@ -184,13 +191,11 @@ public class Word {
             Multiplier mult = controller.grid.getSlot(i, startY).getMultiplier();
             if (mult.getScope().equals("LETTER")) {
               points += controller.grid.getSlotContent(i, startY).getPoints() * mult.getValue();
-            }
-            else if (mult.getScope().equals("WORD")) {
+            } else if (mult.getScope().equals("WORD")) {
               multiplier = true;
               multiplierValue *= mult.getValue();
               points += controller.grid.getSlotContent(i, startY).getPoints();
-            }
-            else {
+            } else {
               points += controller.grid.getSlotContent(i, startY).getPoints();
             }
 
@@ -246,13 +251,11 @@ public class Word {
             Multiplier mult = controller.grid.getSlot(startX, j).getMultiplier();
             if (mult.getScope().equals("LETTER")) {
               points += controller.grid.getSlotContent(startX, j).getPoints() * mult.getValue();
-            }
-            else if (mult.getScope().equals("WORD")) {
+            } else if (mult.getScope().equals("WORD")) {
               multiplier = true;
               multiplierValue *= mult.getValue();
               points += controller.grid.getSlotContent(startX, j).getPoints();
-            }
-            else {
+            } else {
               points += controller.grid.getSlotContent(startX, j).getPoints();
             }
 
@@ -286,6 +289,12 @@ public class Word {
     initShape();
   }
 
+  /**
+   * Checks whether thw Word contains the specified tile
+   *
+   * @param tile LetterTile
+   * @return TRUE if contains, FALSE otherwise
+   */
   public boolean contains(LetterTile tile) {
     for (int i = 0; i < wordLength; i++) {
       if (w.get(i) == tile) {
@@ -295,10 +304,22 @@ public class Word {
     return false;
   }
 
+  /**
+   * Get a LetterTile at index "i"
+   *
+   * @param i Index in the Word
+   * @return LetterTile at position "i"
+   */
   public LetterTile getLetter(int i) {
     return w.get(i);
   }
 
+  /**
+   * Checks whether the Word is part of another Word.
+   *
+   * @param word Word (length should be >= of this Word)
+   * @return TRUE if is part, FALSE otherwise
+   */
   public boolean isPartOf(Word word) {
     boolean result = false;
     if (this.wordLength <= word.getWordLength()) {
@@ -321,6 +342,12 @@ public class Word {
     return result;
   }
 
+  /**
+   * Checks whether the Word contains another Word.
+   *
+   * @param word Word (length should be <= of this Word)
+   * @return TRUE if contains, FALSE otherwise
+   */
   public boolean containsWord(Word word) {
     boolean result = false;
     if (this.wordLength >= word.getWordLength()) {
@@ -329,6 +356,12 @@ public class Word {
     return result;
   }
 
+  /**
+   * Returns a common LetterTile of two Words.
+   *
+   * @param word Another Word
+   * @return Common LetterTile
+   */
   public LetterTile getCommonLetter(Word word) {
     if (!containsWord(word) || !isPartOf(word)) {
       for (int i = 0; i < wordLength; i++) {
@@ -427,10 +460,20 @@ public class Word {
     return isVertical;
   }
 
+  /**
+   * Get First LetterTile
+   *
+   * @return First LetterTile
+   */
   public LetterTile getFirst() {
     return w.getFirst();
   }
 
+  /**
+   * Get Last LetterTile
+   *
+   * @return Last LetterTile
+   */
   public LetterTile getLast() {
     return w.getLast();
   }

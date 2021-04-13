@@ -8,7 +8,7 @@ import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
 
 /**
- * <h1>scrabble.game.LeaderBoard class</h1>
+ * <h1>scrabble.game.LeaderBoard</h1>
  *
  * @author Eldar Kasmamytov
  */
