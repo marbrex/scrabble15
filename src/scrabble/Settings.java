@@ -16,7 +16,7 @@ public class Settings extends Application {
     public void start(Stage stage) throws Exception {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("fxml/SettingsVideo.fxml"));
+            loader.setLocation(getClass().getResource("fxml/Settings.fxml"));
             Pane root = loader.load();
             Scene scene = new Scene(root);
             stage.setScene(scene);
