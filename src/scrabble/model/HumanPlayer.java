@@ -9,7 +9,7 @@ import java.io.Serializable;
  * @author Sergen Keskincelik
  */
 
-public class HumanPlayer extends Player implements Serializable{
+public class HumanPlayer extends Player implements Serializable {
 
   /** Amount of games won for statistics -> HumanPlayer */
   private int gamesWon;
