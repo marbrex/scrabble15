@@ -22,10 +22,19 @@
 
 
 /* Game Block (Grid) */
+#main-block {
+  /*-fx-background-color: red;*/
+}
+
+#grid-wrapper {
+  /*-fx-background-color: blue;*/
+  -fx-padding: 10px;
+}
+
 #game-block {
   -fx-alignment: center;
   /*-fx-grid-lines-visible: true;*/
-  -fx-background-color: WHITESMOKE;
+  -fx-background-color: ANTIQUEWHITE;
   -fx-background-radius: 7px;
 }
 
@@ -46,41 +55,36 @@
 }
 
 .word-points-label {
-  -fx-border-radius: 10px;
+  -fx-border-radius: 12px;
   -fx-border-color: green;
   -fx-border-width: 3px;
-  -fx-background-radius: 10px;
-  -fx-background-color: white;
+  -fx-background-radius: 12px;
+  -fx-background-color: whitesmoke;
   -fx-text-fill: green;
   -fx-font-size: 15px;
   -fx-font-weight: bold;
   -fx-alignment: center;
-  -fx-wrap-text: true;
-  -fx-min-width: 20px;
-  -fx-pref-width: 20px;
-  -fx-max-width: 20px;
-  -fx-min-height: 20px;
-  -fx-pref-height: 20px;
-  -fx-max-height: 20px;
+  -fx-min-width: 25px;
+  -fx-max-width: 25px;
+  -fx-min-height: 25px;
+  -fx-max-height: 25px;
   -fx-padding: -5px;
 }
 
 .word-points-label-invalid {
-  -fx-border-radius: 10px;
+  -fx-border-radius: 12px;
   -fx-border-color: crimson;
   -fx-border-width: 3px;
-  -fx-background-radius: 10px;
-  -fx-background-color: white;
+  -fx-background-radius: 12px;
+  -fx-background-color: whitesmoke;
   -fx-text-fill: crimson;
   -fx-font-size: 15px;
   -fx-font-weight: bold;
   -fx-alignment: center;
-  -fx-min-width: 20px;
-  -fx-pref-width: 20px;
-  -fx-max-width: 20px;
-  -fx-min-height: 20px;
-  -fx-pref-height: 20px;
-  -fx-max-height: 20px;
+  -fx-min-width: 25px;
+  -fx-max-width: 25px;
+  -fx-min-height: 25px;
+  -fx-max-height: 25px;
   -fx-padding: -5px;
 }
 

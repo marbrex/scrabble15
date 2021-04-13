@@ -79,6 +79,9 @@ public class GameController {
   @FXML
   public StackPane gridWrapper;
 
+  @FXML
+  public StackPane mainBlock;
+
   /**
    * The actual data of the letter grid will be stocked here.
    */
@@ -140,6 +143,16 @@ public class GameController {
 
     shuffleBtn.setOnMouseClicked(event -> {
       letterBar.shuffle();
+    });
+
+    // Binding GridPane Wrapper's Height to be always equal to its Width
+    gridWrapper.widthProperty().addListener((observable, oldValue, newValue) -> {
+      gridWrapper.setMaxHeight(newValue.doubleValue());
+    });
+
+    // Binding GridPane Wrapper's Width to be always equal to its Parent Node's Height
+    mainBlock.heightProperty().addListener((observable, oldValue, newValue) -> {
+      gridWrapper.setMaxWidth(newValue.doubleValue());
     });
 
   }

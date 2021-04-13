@@ -15,8 +15,8 @@ import javafx.stage.Stage;
  */
 public class GameMain extends Application {
 
-  final private double windowWidth = 800;
-  final private double windowHeight = 600;
+  final private double windowWidth = 900;
+  final private double windowHeight = 700;
 
   final private double windowMinWidth = 620;
   final private double windowMinHeight = 500;

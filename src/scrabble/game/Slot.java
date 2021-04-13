@@ -150,7 +150,7 @@ public class Slot {
           if (!controller.grid.getSlot(topX, topY).isFree()) {
             top = true;
             topY--;
-          } else {
+          } else if (topY != 0) {
             topY++;
             break;
           }
@@ -159,7 +159,7 @@ public class Slot {
           if (!controller.grid.getSlot(rightX, rightY).isFree()) {
             right = true;
             rightX++;
-          } else {
+          } else if (rightX != controller.grid.size-1) {
             rightX--;
             break;
           }
@@ -168,7 +168,7 @@ public class Slot {
           if (!controller.grid.getSlot(bottomX, bottomY).isFree()) {
             bottom = true;
             bottomY++;
-          } else {
+          } else if (bottomX != controller.grid.size-1) {
             bottomY--;
             break;
           }
@@ -177,7 +177,7 @@ public class Slot {
           if (!controller.grid.getSlot(leftX, leftY).isFree()) {
             left = true;
             leftX--;
-          } else {
+          } else if (leftX != 0) {
             leftX++;
             break;
           }
@@ -312,5 +312,9 @@ public class Slot {
 
   public void setMultiplier(Multiplier multiplier) {
     this.multiplier = multiplier;
+  }
+
+  public Multiplier getMultiplier() {
+    return multiplier;
   }
 }

@@ -1,6 +1,7 @@
 package scrabble.game;
 
 import java.util.LinkedList;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import scrabble.GameController;
@@ -22,6 +23,9 @@ public class Word {
   private boolean isHorizontal;
   private boolean isVertical;
 
+  private int multiplierValue;
+  private boolean multiplier;
+
   AnchorPane container;
   Label pointsLabel;
 
@@ -36,7 +40,7 @@ public class Word {
       for (int k = 0; k < controller.wordsInGrid.size(); k++) {
         if (this.containsWord(controller.wordsInGrid.get(k))) {
           System.out.println("@ initShape() - the word contains " + k + "th word in wordsGrid");
-          controller.grid.container.getChildren().remove(controller.wordsInGrid.get(k).container);
+          controller.gridWrapper.getChildren().remove(controller.wordsInGrid.get(k).container);
           createNewBox = true;
         }
       }
@@ -46,135 +50,62 @@ public class Word {
 
       System.out.println("@ initShape() - createNewBox");
       LetterTile firstLetter = w.get(0);
+      LetterTile lastLetter = w.getLast();
 
-      if (isHorizontal) {
-        // Creating a highlighting effect for the word
-        System.out.println("HORIZONTAL - Creating a highlighting effect for the word");
-
-        container = new AnchorPane();
-        if (this.isValid()) {
-          container.getStyleClass().add("valid-word");
-        } else {
-          container.getStyleClass().add("invalid-word");
-        }
-
-        // Creating a label with word's points
-        pointsLabel = new Label(String.valueOf(this.getPoints()));
-        if (this.isValid()) {
-          pointsLabel.getStyleClass().add("word-points-label");
-        } else {
-          pointsLabel.getStyleClass().add("word-points-label-invalid");
-        }
-        pointsLabel.setPrefSize(30, 30);
-
-        // Adjusting the size of the highlighted word box
-        double sizeX = this.getWordLength() * firstLetter.container.getMaxWidth()
-            + (this.getWordLength() - 1) * controller.grid.padSize;
-        double sizeY = firstLetter.container.getMaxWidth();
-        container.setPrefSize(sizeX, sizeY);
-        container.setMinSize(sizeX, sizeY);
-        container.setMaxSize(sizeX, sizeY);
-
-        firstLetter.container.widthProperty().addListener((observable, oldValue, newValue) -> {
-          double newWidth = this.getWordLength() * newValue.doubleValue()
-              + (this.getWordLength() - 1) * controller.grid.padSize;
-          container.setMinWidth(newWidth);
-          container.setPrefWidth(newWidth);
-          container.setMaxWidth(newWidth);
-        });
-
-        firstLetter.container.heightProperty().addListener((observable, oldValue, newValue) -> {
-          container.setMinHeight(newValue.doubleValue());
-          container.setPrefHeight(newValue.doubleValue());
-          container.setMaxHeight(newValue.doubleValue());
-        });
-
-        System.out.println("\nfirstLetter width: " + firstLetter.container.getMaxWidth());
-        System.out.println("firstLetter height: " + firstLetter.container.getMaxHeight());
-
-        System.out.println("\nwidth: " + container.getWidth());
-        System.out.println("height: " + container.getHeight());
-
-        // Adjusting position of the Highlighted Box
-        container
-            .setTranslateX(container.getMaxWidth() / 2 - firstLetter.container.getMaxWidth() / 2);
-
-        // Adding Points Label to Highlighted Box
-        container.getChildren().add(pointsLabel);
-        // Adjusting The Points Label position in the Highlighted Box
-        AnchorPane.setRightAnchor(pointsLabel, -15.0);
-        AnchorPane.setTopAnchor(pointsLabel, -15.0);
-
-        container.setMouseTransparent(true);
-
-        // Adding the Highlighted Box to the Grid Pane
-        Slot slot = controller.grid.getSlotThatContains(firstLetter);
-        slot.container.getChildren().add(container);
-
-        controller.wordsInGrid.add(this);
+      // Creating a highlighting effect for the word
+      container = new AnchorPane();
+      if (this.isValid()) {
+        container.getStyleClass().add("valid-word");
+      } else {
+        container.getStyleClass().add("invalid-word");
       }
 
-      if (isVertical) {
-        // Creating a highlighting effect for the word
-        container = new AnchorPane();
-        if (this.isValid()) {
-          container.getStyleClass().add("valid-word");
-        } else {
-          container.getStyleClass().add("invalid-word");
-        }
-
-        // Creating a label with word's points
-        pointsLabel = new Label(String.valueOf(this.getPoints()));
-        if (this.isValid()) {
-          pointsLabel.getStyleClass().add("word-points-label");
-        } else {
-          pointsLabel.getStyleClass().add("word-points-label-invalid");
-        }
-        pointsLabel.setPrefSize(30, 30);
-
-        // Adjusting the size of the highlighted word box
-        double sizeX = firstLetter.container.getMaxWidth();
-        double sizeY = this.getWordLength() * firstLetter.container.getMaxWidth()
-            + (this.getWordLength() - 1) * controller.grid.padSize;
-        container.setPrefSize(sizeX, sizeY);
-        container.setMinSize(sizeX, sizeY);
-        container.setMaxSize(sizeX, sizeY);
-
-        firstLetter.container.widthProperty().addListener((observable, oldValue, newValue) -> {
-          container.setMinWidth(newValue.doubleValue());
-          container.setPrefWidth(newValue.doubleValue());
-          container.setMaxWidth(newValue.doubleValue());
-        });
-
-        firstLetter.container.heightProperty().addListener((observable, oldValue, newValue) -> {
-          double newHeight = this.getWordLength() * newValue.doubleValue()
-              + (this.getWordLength() - 1) * controller.grid.padSize;
-          container.setMinHeight(newHeight);
-          container.setPrefHeight(newHeight);
-          container.setMaxHeight(newHeight);
-        });
-
-        System.out.println("\nwidth: " + container.getWidth());
-        System.out.println("height: " + container.getHeight());
-
-        // Adjusting position of the Highlighted Box
-        container
-            .setTranslateY(container.getMaxHeight() / 2 - firstLetter.container.getMaxWidth() / 2);
-
-        // Adding Points Label to Highlighted Box
-        container.getChildren().add(pointsLabel);
-        // Adjusting The Points Label position in the Highlighted Box
-        AnchorPane.setRightAnchor(pointsLabel, -15.0);
-        AnchorPane.setBottomAnchor(pointsLabel, -15.0);
-
-        container.setMouseTransparent(true);
-
-        // Adding the Highlighted Box to the Grid Pane
-        Slot slot = controller.grid.getSlotThatContains(firstLetter);
-        slot.container.getChildren().add(container);
-
-        controller.wordsInGrid.add(this);
+      // Creating a label with word's points
+      pointsLabel = new Label(String.valueOf(this.getPoints()));
+      if (this.isValid()) {
+        pointsLabel.getStyleClass().add("word-points-label");
+      } else {
+        pointsLabel.getStyleClass().add("word-points-label-invalid");
       }
+      pointsLabel.setPrefSize(30, 30);
+
+      Bounds boundsFirst = firstLetter.slot.container.getBoundsInParent();
+      System.out.println("\nBounds First: " + boundsFirst);
+      Bounds boundsLast = lastLetter.slot.container.getBoundsInParent();
+      System.out.println("Bounds Last: " + boundsLast);
+
+      // Adjusting the coordinates (in Pixels) of the highlighted word box
+      container.setTranslateX(boundsFirst.getMinX());
+      container.setTranslateY(boundsFirst.getMinY());
+
+      // Adjusting the size (Width and Height) of the highlighted word box
+      double sizeX = boundsLast.getMaxX() - boundsFirst.getMinX();
+      double sizeY = boundsLast.getMaxY() - boundsFirst.getMinY();
+      container.setPrefSize(sizeX, sizeY);
+      container.setMinSize(sizeX, sizeY);
+      container.setMaxSize(sizeX, sizeY);
+
+      // Bind the position of the box to the first letter's slot
+      firstLetter.slot.container.boundsInParentProperty().addListener((obs, oldValue, newValue) -> {
+        container.setTranslateX(newValue.getMinX());
+        container.setTranslateY(newValue.getMinY());
+      });
+
+      System.out.println("\nwidth: " + container.getWidth());
+      System.out.println("height: " + container.getHeight());
+
+      // Adding Points Label to Highlighted Box
+      container.getChildren().add(pointsLabel);
+      // Adjusting The Points Label position in the Highlighted Box
+      AnchorPane.setRightAnchor(pointsLabel, -15.0);
+      AnchorPane.setTopAnchor(pointsLabel, -15.0);
+
+      container.setMouseTransparent(true);
+
+      // Adding the Highlighted Box to the GridPane's wrapper
+      controller.gridWrapper.getChildren().add(container);
+
+      controller.wordsInGrid.add(this);
     }
   }
 
@@ -188,6 +119,9 @@ public class Word {
     isValid = false;
     isHorizontal = false;
     isVertical = false;
+
+    multiplier = false;
+    multiplierValue = 1;
 
     this.controller = controller;
 
@@ -208,6 +142,9 @@ public class Word {
     points = 0;
     wordLength = 0;
     isValid = false;
+
+    multiplier = false;
+    multiplierValue = 1;
 
     this.controller = controller;
 
@@ -243,7 +180,20 @@ public class Word {
                 .println("\n@Word - HORIZONTAL - Letter: (" + i + ", " + startY + ") is filled in");
             w.add(controller.grid.getSlotContent(i, startY));
             System.out.println("@Word - HORIZONTAL - Added: (" + i + ", " + startY + ")");
-            points += controller.grid.getSlotContent(i, startY).getPoints();
+
+            Multiplier mult = controller.grid.getSlot(i, startY).getMultiplier();
+            if (mult.getScope().equals("LETTER")) {
+              points += controller.grid.getSlotContent(i, startY).getPoints() * mult.getValue();
+            }
+            else if (mult.getScope().equals("WORD")) {
+              multiplier = true;
+              multiplierValue *= mult.getValue();
+              points += controller.grid.getSlotContent(i, startY).getPoints();
+            }
+            else {
+              points += controller.grid.getSlotContent(i, startY).getPoints();
+            }
+
             wordLength++;
             System.out.println(
                 "@Word - HORIZONTAL - Letter (" + i + ", " + startY + ") = " + w.getLast()
@@ -258,6 +208,10 @@ public class Word {
           // => We can proceed to WORD VALIDATION
           System.out.println("\n@Word - HORIZONTAL - Full word");
           System.out.println("@Word - HORIZONTAL - The Word is: " + getWordAsString());
+
+          if (multiplier) {
+            points *= multiplierValue;
+          }
 
           // The Dictionary has to be set only once, otherwise it does not work
           // The Dictionary is already set in "initialize()" function of ScrabbleController
@@ -288,7 +242,20 @@ public class Word {
           } else {
             w.add(controller.grid.getSlotContent(startX, j));
             System.out.println("@Word - VERTICAL - Added: (" + startX + ", " + j + ")");
-            points += controller.grid.getSlotContent(startX, j).getPoints();
+
+            Multiplier mult = controller.grid.getSlot(startX, j).getMultiplier();
+            if (mult.getScope().equals("LETTER")) {
+              points += controller.grid.getSlotContent(startX, j).getPoints() * mult.getValue();
+            }
+            else if (mult.getScope().equals("WORD")) {
+              multiplier = true;
+              multiplierValue *= mult.getValue();
+              points += controller.grid.getSlotContent(startX, j).getPoints();
+            }
+            else {
+              points += controller.grid.getSlotContent(startX, j).getPoints();
+            }
+
             wordLength++;
             System.out.println(
                 "@Word - VERTICAL - Letter (" + startX + ", " + j + ") = " + w.getLast()
@@ -303,6 +270,10 @@ public class Word {
           // => We can proceed to WORD VALIDATION
           System.out.println("\n@Word - VERTICAL - Full word");
           System.out.println("\n@Word - VERTICAL - The Word is: " + getWordAsString());
+
+          if (multiplier) {
+            points *= multiplierValue;
+          }
 
           // The Dictionary has to be set only once, otherwise it does not work
           // The Dictionary is already set in "initialize()" function of ScrabbleController

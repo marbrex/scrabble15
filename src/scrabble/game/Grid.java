@@ -19,6 +19,7 @@ public class Grid {
 
   private Map map;
 
+  double padding;
   double padSize;
   private double paneSize;
   double cellSize;
@@ -29,19 +30,9 @@ public class Grid {
 
     // setting the padding of the entire grid
     // and margins for each cell
-    container.setPadding(new Insets(padSize));
+    container.setPadding(new Insets(padding));
     container.setHgap(padSize);
     container.setVgap(padSize);
-
-    // Binding GridPane's Height to be always equal to its Width
-    container.widthProperty().addListener((observable, oldValue, newValue) -> {
-      container.setPrefHeight(newValue.doubleValue());
-    });
-
-    // Binding GridPane's Width to be always equal to its Height
-    controller.gridWrapper.heightProperty().addListener((observable, oldValue, newValue) -> {
-      container.setPrefWidth(newValue.doubleValue());
-    });
   }
 
   public void initCells() {
@@ -64,6 +55,7 @@ public class Grid {
     globalSize = size * size;
     slots = new Slot[globalSize];
 
+    padding = 10;
     paneSize = 825;
     padSize = 3;
     cellSize = paneSize / size - padSize;
@@ -90,6 +82,7 @@ public class Grid {
     padSize = 3;
     cellSize = paneSize / size - padSize;
 
+    padding = 10;
     this.controller = controller;
     this.container = grid;
 
