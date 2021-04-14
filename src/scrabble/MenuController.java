@@ -28,7 +28,7 @@ public class MenuController {
   @FXML
   private void backButtonAction() {
     try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Mainpage.fxml"));
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/MainPage.fxml"));
       Parent root = loader.load();
       Stage stage = (Stage) this.backButton.getScene().getWindow();
       stage.setScene(new Scene(root));
