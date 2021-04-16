@@ -43,19 +43,21 @@ class LetterTile {
    */
   private void initShape(char ltr, int pts) {
 
+    /*
     DropShadow ds = new DropShadow();
     ds.setHeight(20);
     ds.setWidth(20);
     ds.setOffsetY(-3);
     ds.setOffsetX(3);
     ds.setColor(Color.GRAY);
+    */
 
     container = new AnchorPane();
     container.getStyleClass().add("letter-btn");
     container.setPrefSize(cellSize, cellSize);
     container.setMinSize(cellSize, cellSize);
     container.setMaxSize(cellSize, cellSize);
-    container.setEffect(ds);
+    // container.setEffect(ds);
 
     letter = new Label(String.valueOf(ltr));
     letter.getStyleClass().add("letter-label");
@@ -134,14 +136,14 @@ class LetterTile {
     AnchorPane.setLeftAnchor(letter, 0.0);
     AnchorPane.setTopAnchor(letter, 0.0);
 
-    AnchorPane.setRightAnchor(points, container.getWidth() * 0.05);
-    AnchorPane.setBottomAnchor(points, container.getWidth() * 0.05);
+    AnchorPane.setRightAnchor(points, container.getWidth() * 0.03);
+    AnchorPane.setBottomAnchor(points, container.getWidth() * 0.03);
 
     container.widthProperty().addListener((observable, oldValue, newValue) -> {
       letter.setPrefSize(newValue.doubleValue(), newValue.doubleValue());
 
-      AnchorPane.setRightAnchor(points, newValue.doubleValue() * 0.05);
-      AnchorPane.setBottomAnchor(points, newValue.doubleValue() * 0.05);
+      AnchorPane.setRightAnchor(points, newValue.doubleValue() * 0.03);
+      AnchorPane.setBottomAnchor(points, newValue.doubleValue() * 0.03);
     });
 
     // Changing size of the Letter according to size of the Grid

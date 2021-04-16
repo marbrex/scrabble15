@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
@@ -25,7 +26,7 @@ import scrabble.model.HumanPlayer;
 
 /**
  * scrabble.ChooseProfileController class to select or create a profile
- * 
+ *
  * @author Sergen Keskincelik
  */
 
@@ -68,6 +69,8 @@ public class ChooseProfileController implements Initializable {
   private static HumanPlayer player;
 
   private List<HumanPlayer> players;
+
+  private int profilesize;
 
   @FXML
   private BorderPane root;
@@ -112,12 +115,33 @@ public class ChooseProfileController implements Initializable {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
   }
+
+  /** Changing the scene to the Registration Scene */
+  public void changeToRegistration(Event event) {
+    Pane newRoot;
+    if (profilesize < 4) {
+      try {
+        System.out.println(getClass().getResource("fxml/createProfile.fxml"));
+        newRoot = FXMLLoader.load(getClass().getResource("fxml/createProfile.fxml"));
+        Button btn = ((Button) event.getSource());
+        Stage stage = (Stage) btn.getScene().getWindow();
+        Scene scene =
+            new Scene(newRoot, this.root.getScene().getWidth(), this.root.getScene().getHeight());
+        scene.getStylesheets().add(getClass().getResource("css/createProfile.css").toExternalForm());
+        stage.setScene(scene);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }
+  }
+
 
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
     Database.connectToDB();
+    Database.createTables();
     labels = new ArrayList<Label>();
     labels.add(profileoneLabel);
     labels.add(profiletwoLabel);
@@ -128,8 +152,8 @@ public class ChooseProfileController implements Initializable {
     circles.add(profileTwo);
     circles.add(profileThree);
     circles.add(profileFour);
-    player = DBInformation.loadProfile(0);
-    profileoneLabel.setText(player.getName());
+    // player = DBInformation.loadProfile(0);
+    // profileoneLabel.setText(player.getName());
     players = DBInformation.getPlayerProfiles();
     for (int i = 0; i < labels.size(); i++) {
       if (i <= players.size() - 1) {
@@ -139,6 +163,7 @@ public class ChooseProfileController implements Initializable {
         labels.get(i).setTextFill(Color.web("#FF0000", 0.8));
       }
     }
+    profilesize = DBInformation.getProfileSize();
     Database.disconnectDB();
 
   }

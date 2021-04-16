@@ -1,10 +1,25 @@
 .button {
-  -fx-border-color: black;
-  -fx-background-color: #DEB887;
+  -fx-border-radius: 5px;
+  -fx-background-color: rgb(50,50,50);
+  -fx-background-radius: 5px;
+  -fx-text-fill: silver;
   -fx-font-weight: bold;
   -fx-padding: 5px;
   -fx-alignment: center;
   -fx-font-size: 20px;
   -fx-min-width: 100px;
   -fx-pref-width: 250px;
+  -fx-opacity: 1;
+}
+
+.button:hover {
+  -fx-cursor: hand;
+  -fx-background-color: silver;
+  -fx-text-fill: rgb(50,50,50);
+}
+
+#root {
+  -fx-background-color: #DEB887;
+  -fx-border-color: #783F04;
+  -fx-border-width: 13;
 }

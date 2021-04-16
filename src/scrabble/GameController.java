@@ -81,7 +81,10 @@ public class GameController {
   public StackPane gridWrapper;
 
   @FXML
-  public StackPane mainBlock;
+  public HBox mainBlock;
+
+  @FXML
+  public BorderPane sideBar;
 
   /**
    * The actual data of the letter grid will be stocked here.
@@ -155,6 +158,14 @@ public class GameController {
     mainBlock.heightProperty().addListener((observable, oldValue, newValue) -> {
       gridWrapper.setMaxWidth(newValue.doubleValue());
     });
+
+
+
+//    gridPaneUI.heightProperty().addListener((observable, oldValue, newValue) -> {
+//      sideBar.setMaxHeight(newValue.doubleValue());
+//    });
+
+    sideBar.maxHeightProperty().bind(mainBlock.heightProperty());
 
   }
 }

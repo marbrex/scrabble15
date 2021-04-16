@@ -28,7 +28,7 @@ public class ScrabbleApp extends Application {
     Parent root = loader.load();
 
     Scene scene = new Scene(root, windowWidth, windowHeight);
-    scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
 
     Image appIcon = new Image(getClass().getResourceAsStream("img/scrabble-icon-dark.png"));
 
