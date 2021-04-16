@@ -70,9 +70,9 @@ public class DBInformation {
   public static boolean containsIdentification(int id) {
     try {
       stmt = Database.getConnection().createStatement();
-      ResultSet rs = stmt.executeQuery("SELECT Statistic_Id FROM Statistics;");
+      ResultSet rs = stmt.executeQuery("SELECT SettingsId FROM Settings;");
       while (rs.next()) {
-        if (id == rs.getInt("Statistic_Id")) {
+        if (id == rs.getInt("SettingsId")) {
           return true;
         }
       }
@@ -107,6 +107,46 @@ public class DBInformation {
   /** Returns the amount of player profiles */
   public static int getProfileSize() {
     return getPlayerProfiles().size();
+  }
+
+  /** Returns the Ratio of Win-/Loserate */
+  public double ratioWnL(HumanPlayer player) {
+    double ratio = 0.0;
+    double winR = 0.0;
+    double lossR = 0.0;
+    if (containsName(player.getName())) {
+      try {
+        stmt = Database.getConnection().createStatement();
+        ResultSet rs = stmt.executeQuery(
+            "SELECT GamesWon, GamesLost FROM Players WHERE = '" + player.getName() + "';");
+        while (rs.next()) {
+          winR = (rs.getInt("GamesWon") / totGamePlayed(player.getName())) * 100;
+          lossR = (rs.getInt("GamesLost") / totGamePlayed(player.getName())) * 100;
+          ratio = (winR + lossR) / 2;
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+    return ratio;
+  }
+
+  /** Returns the total game played by any player */
+  public int totGamePlayed(String name) {
+    int gamePlayed = 0;
+    if (!containsName(name)) {
+      try {
+        stmt = Database.getConnection().createStatement();
+        ResultSet rs =
+            stmt.executeQuery("SELECT GamesWon, GamesLost FROM Players WHERE = '" + name + "';");
+        while (rs.next()) {
+          gamePlayed = gamePlayed + rs.getInt("GamesWon") + rs.getInt("GamesLost");
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+    return gamePlayed;
   }
 
 }
