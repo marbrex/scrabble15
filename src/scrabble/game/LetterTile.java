@@ -17,7 +17,7 @@ import scrabble.GameController;
  *
  * @author Eldar Kasmamytov
  */
-class LetterTile {
+public class LetterTile {
 
   final GameController controller;
 
