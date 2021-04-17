@@ -13,6 +13,8 @@ import scrabble.game.LetterBar;
 
 public abstract class Player implements Serializable {
 
+  /** Identification of the Player */
+  private int id;
   /** Name of the Player */
   private String name;
   /** Amount of points which a player has received in the game */
@@ -27,6 +29,16 @@ public abstract class Player implements Serializable {
   /** Constructor of the Player class */
   public Player() {
     this.score = 0;
+  }
+  
+  /** Setting the ID for the Player */
+  public void setID(int id) {
+    this.id = id;
+  }
+  
+  /** Returns the identification number of the Player */
+  public int getID() {
+    return this.id;
   }
 
   /** Setting your Rack in the beginning or while choosing the options 'exchange' or 'play' */
