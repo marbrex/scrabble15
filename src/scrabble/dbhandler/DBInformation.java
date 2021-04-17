@@ -29,6 +29,7 @@ public class DBInformation {
         player.setName(rs.getString("Name"));
         player.setGamesWon(rs.getInt("GamesWon"));
         player.setGamesLost(rs.getInt("GamesLost"));
+        player.setImage(rs.getInt("Image"));
         playerProfiles.add(player);
       }
       return playerProfiles;
@@ -88,6 +89,7 @@ public class DBInformation {
     List<HumanPlayer> playerProfiles = getPlayerProfiles();
     HumanPlayer player = playerProfiles.get(index);
     if (player != null) {
+      player.setImage(index);
       return player;
     } else {
       return null;

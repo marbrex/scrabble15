@@ -55,10 +55,10 @@ public class Database {
         "CREATE TABLE IF NOT EXISTS Statistics (Statistic_Id INT PRIMARY KEY, Player_Id references Players (Id));");
     sqlstatements.add(
         "CREATE TABLE IF NOT EXISTS Settings (SettingsId INT PRIMARY KEY, SoundOn BOOLEAN NOT NULL,"
-            + "SoundLevel INT NOT NULL,  SceneHeight DOUBLE NOT NULL, SceneWidth DOUBLE NOT NULL, SceneMode VARCHAR(25) NOT NULL, AIDifficulty VARCHAR(25) NOT NULL);");
+            + "SoundLevel INT NOT NULL, SceneMode VARCHAR(25) NOT NULL, AIDifficulty VARCHAR(25) NOT NULL);");
     sqlstatements
         .add("CREATE TABLE IF NOT EXISTS Players (Id INT PRIMARY KEY, Name VARCHAR(15) NOT NULL, "
-            + " GamesWon INT NOT NULL, GamesLost INT NOT NULL, Winrate DOUBLE NOT NULL, Image VARCHAR(25), SettingsId references Settings (Id));");
+            + " GamesWon INT NOT NULL, GamesLost INT NOT NULL, Winrate DOUBLE NOT NULL, Image INT NOT NULL, SettingsId references Settings (Id));");
     try {
       stmt = connection.createStatement();
       for (String sql : sqlstatements) {
@@ -113,16 +113,17 @@ public class Database {
   }
 
   /** Fills in player table with Player Data */
-  private static void fillPlayerTable(int id, String name) {
+  private static void fillPlayerTable(int id, String name, int imageindex) {
     try {
       pstmt = connection.prepareStatement(
-          "INSERT INTO Players (Id,Name,GamesWon,GamesLost,Winrate,SettingsId) VALUES (?,?,?,?,?,?);");
+          "INSERT INTO Players (Id,Name,GamesWon,GamesLost,Winrate,Image,SettingsId) VALUES (?,?,?,?,?,?,?);");
       pstmt.setInt(1, id);
       pstmt.setString(2, name);
       pstmt.setInt(3, 0);
       pstmt.setInt(4, 0);
       pstmt.setDouble(5, 0.0);
-      pstmt.setInt(6, id);
+      pstmt.setInt(6, imageindex);
+      pstmt.setInt(7, id);
       pstmt.executeUpdate();
 
     } catch (SQLException e) {
@@ -135,14 +136,12 @@ public class Database {
   private static void fillSettingsTable(int id) {
     try {
       pstmt = connection.prepareStatement(
-          "INSERT INTO Settings (SettingsId,SoundOn,SoundLevel,SceneHeight,SceneWidth,SceneMode,AIDifficulty) VALUES (?,?,?,?,?,?,?);");
+          "INSERT INTO Settings (SettingsId,SoundOn,SoundLevel,SceneMode,AIDifficulty) VALUES (?,?,?,?,?);");
       pstmt.setInt(1, id);
       pstmt.setBoolean(2, true);
       pstmt.setInt(3, 50);
-      pstmt.setDouble(4, 800);
-      pstmt.setDouble(5, 800);
-      pstmt.setString(6, "Fullscreen");
-      pstmt.setString(7, "Easy");
+      pstmt.setString(4, "Fullscreen");
+      pstmt.setString(5, "Easy");
       pstmt.executeUpdate();
 
     } catch (SQLException e) {
@@ -152,9 +151,9 @@ public class Database {
   }
 
   /** Filling all tables */
-  public static void fillTables(int id, String name) {
+  public static void fillTables(int id, String name, int imageindex) {
     fillSettingsTable(id);
-    fillPlayerTable(id, name);
+    fillPlayerTable(id, name, imageindex);
     System.out.println("All tables filled successfully");
   }
 
@@ -243,18 +242,6 @@ public class Database {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-    }
-  }
-
-  /** Updates the Resolution of the screen */
-  public void updateResolution(int settings_id, double height, double width) {
-    try {
-      stmt = connection.createStatement();
-      stmt.executeUpdate("UPDATE Settings SET SceneHeight = " + height + ", SceneWidth =  " + width
-          + " WHERE Settings_Id = " + settings_id + ";");
-    } catch (SQLException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     }
   }
 
