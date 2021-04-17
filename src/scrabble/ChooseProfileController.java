@@ -15,9 +15,12 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
@@ -88,6 +91,7 @@ public class ChooseProfileController implements Initializable {
         if (!labels.get(i).getTextFill().equals(Color.web("FF0000", 0.8))) {
           player = players.get(i);
           System.out.println(player.getName());
+          System.out.println(player.getImage());
         } else {
           player = null;
         }
@@ -128,7 +132,8 @@ public class ChooseProfileController implements Initializable {
         Stage stage = (Stage) btn.getScene().getWindow();
         Scene scene =
             new Scene(newRoot, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-        scene.getStylesheets().add(getClass().getResource("css/createProfile.css").toExternalForm());
+        scene.getStylesheets()
+            .add(getClass().getResource("css/createProfile.css").toExternalForm());
         stage.setScene(scene);
       } catch (IOException e) {
         // TODO Auto-generated catch block
@@ -141,6 +146,7 @@ public class ChooseProfileController implements Initializable {
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
     Database.connectToDB();
+//  Database.dropAllTables();
     Database.createTables();
     labels = new ArrayList<Label>();
     labels.add(profileoneLabel);
@@ -158,6 +164,9 @@ public class ChooseProfileController implements Initializable {
     for (int i = 0; i < labels.size(); i++) {
       if (i <= players.size() - 1) {
         labels.get(i).setText(players.get(i).getName());
+        circles.get(i).setFill(new ImagePattern((new Image(
+            "file:" + System.getProperty("user.dir") + "\\resources\\scrabble\\img\\"
+                + players.get(i).getImage()))));
       } else {
         labels.get(i).setText("Empty");
         labels.get(i).setTextFill(Color.web("#FF0000", 0.8));
