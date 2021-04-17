@@ -9,7 +9,10 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
-/** Test class*/
+/** Test class to launch Settings
+ *
+ * @author astarche
+ * */
 public class Settings extends Application {
 
     @Override

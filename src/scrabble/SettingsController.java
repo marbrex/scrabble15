@@ -26,9 +26,9 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 /**
- * Controller of the SettingsVideo.fxml
+ * Controller of the Settings.fxml
  *
- * @author Alexander Starchenkov
+ * @author astarche
  */
 public class SettingsController implements Initializable {
 
@@ -50,6 +50,9 @@ public class SettingsController implements Initializable {
     @FXML
     private VBox mainBlock;
 
+    @FXML
+    private HBox switchSection;
+
     private static boolean fullScreen = false;
     private static boolean difficult = false;
     private static boolean sound = true;
@@ -57,9 +60,16 @@ public class SettingsController implements Initializable {
     /** Switch  to gameplay settings screen*/
     @FXML
     public void switchToGameplay() {
-        videoVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
-        soundVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
-        gameplayVid.setStyle(null);
+        for (Node n : switchSection.getChildren()) {
+            if (n instanceof JFXButton) {
+                n.getStyleClass().removeAll("section-btn-left-current",
+                    "section-btn-mid-current", "section-btn-right-current");
+            }
+        }
+        gameplayVid.getStyleClass().add("section-btn-mid-current");
+//        videoVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
+//        soundVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
+//        gameplayVid.setStyle(null);
         title.setText("Settings -> Gameplay");
         mainBlock.getChildren().clear();
         Label gameplayLabel = new Label("AI Difficulty");
@@ -106,10 +116,17 @@ public class SettingsController implements Initializable {
     /** Switch  to sound settings screen*/
     @FXML
     public void switchToSound() {
+        for (Node n : switchSection.getChildren()) {
+            if (n instanceof JFXButton) {
+                n.getStyleClass().removeAll("section-btn-left-current",
+                    "section-btn-mid-current", "section-btn-right-current");
+            }
+        }
+        soundVid.getStyleClass().add("section-btn-right-current");
         title.setText("Settings -> Sound");
-        videoVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
-        gameplayVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
-        soundVid.setStyle(null);
+//        videoVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
+//        gameplayVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
+//        soundVid.setStyle(null);
         title.setText("Settings -> Sound");
         mainBlock.getChildren().clear();
         JFXToggleButton toggle = new JFXToggleButton();
@@ -158,11 +175,18 @@ public class SettingsController implements Initializable {
     /** Switch to video settings screen*/
     @FXML
     public void switchToVideo(ActionEvent event){
+        for (Node n : switchSection.getChildren()) {
+            if (n instanceof JFXButton) {
+                n.getStyleClass().removeAll("section-btn-left-current",
+                    "section-btn-mid-current", "section-btn-right-current");
+            }
+        }
+        videoVid.getStyleClass().add("section-btn-left-current");
         mainBlock.getChildren().clear();
         title.setText("Settings -> Video");
-        videoVid.setStyle(null);
-        gameplayVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
-        soundVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
+//        videoVid.setStyle(null);
+//        gameplayVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
+//        soundVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
         initialize(null, null);
     }
 
@@ -187,6 +211,7 @@ public class SettingsController implements Initializable {
     /** Initialize with video settings screen*/
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        videoVid.getStyleClass().add("section-btn-left-current");
         HBox upperBlockMain = new HBox();
         upperBlockMain.setAlignment(Pos.CENTER);
         upperBlockMain.setPrefWidth(200);
