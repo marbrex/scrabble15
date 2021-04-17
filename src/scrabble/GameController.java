@@ -2,16 +2,24 @@ package scrabble;
 
 import com.jfoenix.controls.JFXButton;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import javafx.event.Event;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import scrabble.game.Grid;
 import scrabble.game.LeaderBoard;
 import scrabble.game.LetterBar;
@@ -86,6 +94,9 @@ public class GameController {
   @FXML
   public BorderPane sideBar;
 
+  @FXML
+  public ImageView quitGame;
+
   /**
    * The actual data of the letter grid will be stocked here.
    */
@@ -128,6 +139,22 @@ public class GameController {
     Dictionary.setDictionary(dict);
   }
 
+  public void changeScene(String resource, String style, Event event) {
+    try {
+      System.out.println(resource);
+      Parent root = FXMLLoader.load(getClass().getResource(resource));
+      ImageView btn = ((ImageView) event.getSource());
+      Stage stage = (Stage) btn.getScene().getWindow();
+      Scene scene = new Scene(root, this.root.getScene().getWidth(),
+          this.root.getScene().getHeight());
+      scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
+      stage.setScene(scene);
+    } catch (IOException e) {
+      e.printStackTrace();
+      System.err.println("Error: " + e.getMessage());
+    }
+  }
+
   public void initPlayers(List<Player> players) {
     leaderBoard = new LeaderBoard(players);
   }
@@ -166,6 +193,10 @@ public class GameController {
 //    });
 
     sideBar.maxHeightProperty().bind(mainBlock.heightProperty());
+
+    quitGame.setOnMouseClicked(event -> {
+      changeScene("fxml/MainPage.fxml", "css/mainMenu.css", event);
+    });
 
   }
 }

@@ -11,6 +11,21 @@
   -fx-border-radius: 7px;
 }
 
+#exit-btn {
+  -fx-border-color: black;
+  -fx-background-color: crimson;
+  -fx-font-weight: bold;
+  -fx-font-size: 12px;
+  -fx-text-alignment: center;
+  -fx-text-fill: black;
+  -fx-opacity: 1;
+}
+
+#exit-btn:hover {
+  -fx-cursor: hand;
+  -fx-opacity: 0.6;
+}
+
 #time-block {
   /*-fx-background-color: orange;*/
 }

@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" prefHeight="905.0" prefWidth="1075.0"
+<BorderPane fx:id="root" prefHeight="673.0" prefWidth="889.0"
   xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="scrabble.GameController">
   <center>
@@ -64,20 +64,26 @@
         </StackPane>
         <BorderPane id="side-panel" fx:id="sideBar" minWidth="200.0">
           <top>
-            <HBox id="time-block" fx:id="timeBlock" alignment="CENTER" fillHeight="false"
-              minHeight="40.0" minWidth="200.0" prefHeight="37.0" prefWidth="200.0" spacing="10.0"
-              BorderPane.alignment="CENTER">
-              <children>
-                <Label id="time" text="12:34">
+            <BorderPane BorderPane.alignment="CENTER">
+              <left>
+                <Label id="time" text="12:34" BorderPane.alignment="CENTER">
                   <font>
                     <Font name="System Bold" size="15.0"/>
                   </font>
                 </Label>
-              </children>
+              </left>
               <padding>
-                <Insets bottom="10.0" top="10.0"/>
+                <Insets bottom="10.0" left="35.0" right="30.0" top="10.0"/>
               </padding>
-            </HBox>
+              <right>
+                <ImageView id="exit-btn" fx:id="quitGame" fitHeight="50.0" fitWidth="20.0"
+                  pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
+                  <image>
+                    <Image url="@../img/quit-the-game.png"/>
+                  </image>
+                </ImageView>
+              </right>
+            </BorderPane>
           </top>
           <bottom>
             <VBox id="chat-block" fx:id="chatBlock" alignment="CENTER" fillWidth="false"
