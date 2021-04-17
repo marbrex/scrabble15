@@ -7,29 +7,40 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+/**
+ * scrabble.ScrabbleApp class is the main class and the starting point of the application. Main
+ * function is to initialize and launch the application.
+ *
+ * @author Eldar Kasmamytov
+ */
 public class ScrabbleApp extends Application {
 
-    private double windowWidth = 1075;
-    private double windowHeight = 905;
+  final private double windowWidth = 900;
+  final private double windowHeight = 700;
 
-    @Override
-    public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("fxml/interface.fxml"));
-        Parent root = loader.load();
+  final private double windowMinWidth = 620;
+  final private double windowMinHeight = 500;
 
-        Scene scene = new Scene(root, windowWidth, windowHeight);
-        scene.getStylesheets().add(ScrabbleApp.class.getResource("css/style.css").toExternalForm());
+  @Override
+  public void start(Stage primaryStage) throws Exception {
+    FXMLLoader loader = new FXMLLoader();
+    loader.setLocation(getClass().getResource("fxml/Register.fxml"));
+    Parent root = loader.load();
 
-        Image appIcon = new Image(ScrabbleApp.class.getResourceAsStream("img/scrabble-icon-dark.png"));
+    Scene scene = new Scene(root, windowWidth, windowHeight);
+    scene.getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
 
-        primaryStage.setTitle("Scrabble");
-        primaryStage.getIcons().add(appIcon);
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
+    Image appIcon = new Image(getClass().getResourceAsStream("img/scrabble-icon-dark.png"));
 
-    public static void main(String[] args) {
-        launch(args);
-    }
+    primaryStage.setMinWidth(windowMinWidth);
+    primaryStage.setMinHeight(windowMinHeight);
+    primaryStage.setTitle("Scrabble");
+    primaryStage.getIcons().add(appIcon);
+    primaryStage.setScene(scene);
+    primaryStage.show();
+  }
+
+  public static void main(String[] args) {
+    launch(args);
+  }
 }

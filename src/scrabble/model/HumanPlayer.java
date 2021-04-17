@@ -1,42 +1,67 @@
 package scrabble.model;
 
-public class HumanPlayer extends Player {
+import java.io.Serializable;
 
-	// Amount of games won for statistics -> HumanPlayer
-	private int gamesWon;
-	// Amount of games lost for statistics -> HumanPlayer
-	private int gamesLost;
-	// Your average Win-Rate for statistics -> HumanPlayer
-	private double winrate;
+/**
+ * scrabble.model.HumanPlayer class extends from the scrabble.model.Player class and contains game
+ * statistics, which is only necessary for the HumanPlayer
+ * 
+ * @author Sergen Keskincelik
+ */
 
-	public HumanPlayer() {
-		super();
-		this.gamesWon = 0;
-		this.gamesLost = 0;
-		this.winrate = 0.0;
-	}
+public class HumanPlayer extends Player implements Serializable {
 
-	public void setWinRate(double winrate) {
-		this.winrate = winrate;
-	}
+  /** Amount of games won for statistics -> HumanPlayer */
+  private int gamesWon;
+  /** Amount of games lost for statistics -> HumanPlayer */
+  private int gamesLost;
+  /** Determine, whether a human player is a host or not */
+  private boolean host;
 
-	public double getWinRate() {
-		return this.winrate;
-	}
+  /** Constructor of the Humanplayer class */
+  public HumanPlayer() {
+    super();
+    this.gamesWon = 0;
+    this.gamesLost = 0;
+  }
 
-	public int getGamesLost() {
-		return gamesLost;
-	}
+  /** Returns Win-Rate of the player */
+  public double getWinRate() {
+    if (gamesLost != 0) {
+      return Math.round((gamesWon * 100.0) / gamesLost) / 100.0;
+    } else {
+      return (double) gamesWon;
+    }
+  }
 
-	public void setGamesLost(int gamesLost) {
-		this.gamesLost = gamesLost;
-	}
+  /** Returns the amount of games lost in total */
+  public int getGamesLost() {
+    return gamesLost;
+  }
 
-	public int getGamesWon() {
-		return this.gamesWon;
-	}
+  /** Setting the amount of games lost in total -> Database */
+  public void setGamesLost(int gamesLost) {
+    this.gamesLost = gamesLost;
+  }
 
-	public void setGamesWon(int gamesWon) {
-		this.gamesWon = gamesWon;
-	}
+  /** Returns the amount of games won in total */
+  public int getGamesWon() {
+    return this.gamesWon;
+  }
+
+  /** Setting the amount of games won in total -> Database */
+  public void setGamesWon(int gamesWon) {
+    this.gamesWon = gamesWon;
+  }
+
+  /** Deciding to make human player a host */
+  public void setHost(boolean host) {
+    this.host = host;
+  }
+
+  /** Returns a truth value, if a human player is a host or not */
+  public boolean isHost() {
+    return this.host;
+  }
+
 }

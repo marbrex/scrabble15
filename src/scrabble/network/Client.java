@@ -14,11 +14,15 @@ public class Client extends Thread {
 	private BufferedReader fromServer = null;
 	private PrintWriter toServer = null;
 	private ChatController chatcontroller;
+	private ArrayList<ChatController> allController = new ArrayList<ChatController>();
+	private String username;
 
-	public Client(ChatController cc) {
+	public Client(ChatController cc, String username) {
 		this.hostName = "localhost";
 		this.port = 2222;
 		this.chatcontroller = cc;
+		this.allController.add(chatcontroller);
+		this.username = username;
 	}
 
 	public void connect() {
@@ -34,11 +38,27 @@ public class Client extends Thread {
 	}
 
 	public void sendMessageToServer(String message) {
-		System.out.println("Client: " + message);
+		System.out.println("[" + username + "] " + message);
 		toServer.println(message);
 		toServer.flush();
+		/*
+		 * try { String text = fromServer.readLine(); for (ChatController cc :
+		 * this.allController) { cc.applyMessageToArea(clientNumber + " : " + text); }
+		 * 
+		 * } catch (IOException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); }
+		 */
 	}
-	
+
+	/*
+	 * public String sendMessageToServer(String message) {
+	 * System.out.println("Client: " + message); toServer.println(message);
+	 * toServer.flush(); try { String text = fromServer.readLine(); return message;
+	 * 
+	 * } catch (IOException e) { // TODO Auto-generated catch block
+	 * e.printStackTrace(); return null; } }
+	 */
+
 	public void disconnect() {
 		try {
 			this.toServer.close();
@@ -50,16 +70,16 @@ public class Client extends Thread {
 	}
 
 	public void run() {
-		while (true) {
-			try {
+		try {
+			toServer.println(this.username);
+			while (true) {
 				String msg = fromServer.readLine();
-		//		System.out.println("Third Message: " + msg);
+				System.out.println("Third Message: " + msg);
 				this.chatcontroller.applyMessageToArea(msg);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-
 }

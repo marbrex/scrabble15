@@ -2,10 +2,6 @@ package scrabble;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import com.sun.glass.events.KeyEvent;
-
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,8 +17,21 @@ public class ChatController implements Initializable {
 	private TextField insertionField;
 	@FXML
 	private Button enterButton;
+
+//	private String text;
+
+	private static ChatController cl;
 	
 	private Client myClient;
+	
+	protected static String username;
+	
+	
+	
+	
+//	public void setUsername(String username) {
+//		this.username = username;
+//	}
 	
 	
 	@FXML
@@ -37,7 +46,7 @@ public class ChatController implements Initializable {
 
 	public void applyMessageToArea(String message) {
 		System.out.println("Third message: " + message);
-		this.chatArea.appendText("Client Nr. " + message + "\n");
+		this.chatArea.appendText(message + "\n");
 
 
 	}
@@ -47,9 +56,14 @@ public class ChatController implements Initializable {
 		
 	}
 
+	
+	public static ChatController getChatController() {
+		return cl;
+	}
+
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		myClient = new Client(this);
+		myClient = new Client(this, username);
 		myClient.connect();
 		myClient.start();
 		

@@ -1,0 +1,40 @@
+.section-btn {
+    -fx-border-style: solid none solid solid;
+    -fx-border-color: black;
+    -fx-border-width: 1px;
+    -fx-min-width: 80px;
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+    -fx-background-color: gray;
+}
+
+/*.section-btn-left {*/
+/*    -fx-border-style: solid none solid solid;*/
+/*}*/
+
+/*.section-btn-mid {*/
+/*    -fx-border-style: solid none solid none;*/
+/*}*/
+
+.section-btn-right {
+    -fx-border-style: solid;
+}
+
+.section-btn-left-current {
+    -fx-border-style: solid none none solid;
+    -fx-background-color: lightgray;
+}
+
+.section-btn-mid-current {
+    -fx-border-style: solid none none solid;
+    -fx-background-color: lightgray;
+}
+
+.section-btn-right-current {
+    -fx-border-style: solid solid none solid;
+    -fx-background-color: lightgray;
+}
+
+#main-block {
+    -fx-background-color: lightgray;
+}

@@ -8,3 +8,7 @@
 /scrabble15.iml
 # IntelliJ IDEA output files
 /out
+/bin/
+
+# Database file
+resources/scrabble/db/Scrabble15.db
