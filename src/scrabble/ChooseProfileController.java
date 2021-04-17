@@ -165,8 +165,8 @@ public class ChooseProfileController implements Initializable {
       if (i <= players.size() - 1) {
         labels.get(i).setText(players.get(i).getName());
         circles.get(i).setFill(new ImagePattern((new Image(
-            "file:" + System.getProperty("user.dir") + "\\resources\\scrabble\\img\\"
-                + players.get(i).getImage()))));
+            "file:" + System.getProperty("user.dir") + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + 
+            "scrabble" + System.getProperty("file.separator") + "img" + System.getProperty("file.separator") + players.get(i).getImage()))));
       } else {
         labels.get(i).setText("Empty");
         labels.get(i).setTextFill(Color.web("#FF0000", 0.8));

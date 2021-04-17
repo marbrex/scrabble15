@@ -87,22 +87,26 @@ public class CreateProfileController {
   private void initialize() {
     Database.connectToDB();
     ImageView im = new ImageView(new Image(
-        "file:" + System.getProperty("user.dir") + "\\resources\\scrabble\\img\\male.png"));
+        "file:" + System.getProperty("user.dir") + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + 
+        "scrabble" + System.getProperty("file.separator") + "img" + System.getProperty("file.separator") + "male.png"));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(0)).getChildren().add(im);
     im = new ImageView(new Image(
-        "file:" + System.getProperty("user.dir") + "\\resources\\scrabble\\img\\female.png"));
+        "file:" + System.getProperty("user.dir") + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + 
+        "scrabble" + System.getProperty("file.separator") + "img" + System.getProperty("file.separator") + "female.png"));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(1)).getChildren().add(im);
     im = new ImageView(new Image(
-        "file:" + System.getProperty("user.dir") + "\\resources\\scrabble\\img\\anonyms.png"));
+        "file:" + System.getProperty("user.dir") + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + 
+        "scrabble" + System.getProperty("file.separator") + "img" + System.getProperty("file.separator") + "anonyms.png"));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(2)).getChildren().add(im);
     im = new ImageView(new Image(
-        "file:" + System.getProperty("user.dir") + "\\resources\\scrabble\\img\\animal.png"));
+        "file:" + System.getProperty("user.dir") + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + 
+        "scrabble" + System.getProperty("file.separator") + "img" + System.getProperty("file.separator") + "animal.png"));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(3)).getChildren().add(im);
