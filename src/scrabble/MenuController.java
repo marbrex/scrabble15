@@ -8,6 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 public class MenuController {
@@ -23,7 +24,8 @@ public class MenuController {
   private JFXButton hostGameButton;
   @FXML
   private JFXButton backButton;
-
+  @FXML
+  private StackPane root;
 
   @FXML
   private void backButtonAction() {
@@ -31,7 +33,9 @@ public class MenuController {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/MainPage.fxml"));
       Parent root = loader.load();
       Stage stage = (Stage) this.backButton.getScene().getWindow();
-      stage.setScene(new Scene(root));
+      Scene scene = new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
+      scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+      stage.setScene(scene);
     } catch (IOException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();

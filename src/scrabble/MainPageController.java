@@ -52,6 +52,8 @@ public class MainPageController implements Initializable {
 
   @FXML
   private JFXButton changeProfileBtn;
+  
+  @FXML JFXButton profileBtn;
 
   @FXML
   private JFXButton exitAppBtn;
@@ -150,7 +152,11 @@ public class MainPageController implements Initializable {
       buttonsBlock.getChildren().clear();
       buttonsBlock.getChildren().setAll(getPlayButtons());
     }));
-
+    
+    profileBtn.setOnMouseClicked(event -> {
+      changeScene("fxml/Statistics.fxml", "css/style.css", event);
+    });
+    
     settingsBtn.setOnMouseClicked(event -> {
       changeScene("fxml/Settings.fxml", "css/settings.css", event);
     });

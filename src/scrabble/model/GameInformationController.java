@@ -55,7 +55,7 @@ public class GameInformationController {
    * @return information about the success of add procedure
    */
   public synchronized boolean addPlayer(NetworkPlayer player) { // problem of
-    if (this.players.size() <= 4) {
+    if (this.players.size() < 4) {
       this.players.add(player);
       return true; // player added
     } else {
