@@ -21,6 +21,8 @@ public abstract class Player implements Serializable {
   private LetterBar rack;
   /** Necessary to determine, if one player used more than 10 minutes of overtime */
   private Date usedOvertime;
+  /** ImageURL to set the image for the Player */
+  private String imageurl;
 
   /** Constructor of the Player class */
   public Player() {
@@ -65,6 +67,32 @@ public abstract class Player implements Serializable {
   /** Returns the used Overtime of the Player */
   public Date getOvertime() {
     return this.usedOvertime;
+  }
+
+  /** Settings the Image for the player */
+  public void setImage(int imageindex) {
+    switch (imageindex) {
+      case 0:
+        this.imageurl = "male.png";
+        break;
+      case 1:
+        this.imageurl = "female.png";
+        break;
+      case 2:
+        this.imageurl = "anonyms.png";
+        break;
+      case 3:
+        this.imageurl = "animal.png";
+        break;
+      default:
+        this.imageurl = "male.png";
+        break;
+    }
+  }
+
+  /** Returns the Image-URL */
+  public String getImage() {
+    return this.imageurl;
   }
 
 }
