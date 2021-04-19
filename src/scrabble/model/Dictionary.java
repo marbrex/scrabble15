@@ -21,9 +21,9 @@ public class Dictionary {
   private static List<String> definitions = new ArrayList<String>();
 
   /** Setting the Dictionary -> following the Format is necessary! */
-  public static void setDictionary(File file) {
+  public static void setDictionary(InputStream file) {
     try {
-      in = new BufferedReader(new FileReader(file));
+      in = new BufferedReader(new InputStreamReader(file));
       char[] c;
       in.readLine();
       in.readLine();

@@ -2,7 +2,9 @@ package scrabble;
 
 import com.jfoenix.controls.JFXButton;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -129,14 +131,16 @@ public class GameController {
     // Setting the Dictionary (should be set only once, an error otherwise)
     URL dictURL = getClass().getResource(dictPath);
     File dict = new File(dictURL.getFile());
-    Dictionary.setDictionary(dict);
+    InputStream in = getClass().getResourceAsStream(dictPath);
+    Dictionary.setDictionary(in);
   }
 
   public void initDictionary() {
     // Setting the Dictionary (should be set only once, an error otherwise)
     URL dictPath = getClass().getResource("dictionaries/english-default.txt");
     File dict = new File(dictPath.getFile());
-    Dictionary.setDictionary(dict);
+    InputStream in = getClass().getResourceAsStream("/scrabble/dictionaries/english-default.txt");
+    Dictionary.setDictionary(in);
   }
 
   public void changeScene(String resource, String style, Event event) {
