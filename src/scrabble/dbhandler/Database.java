@@ -1,5 +1,6 @@
 package scrabble.dbhandler;
 
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,8 +26,11 @@ public class Database {
   public static void connectToDB() {
     try {
       Class.forName("org.sqlite.JDBC");
-      connection = DriverManager.getConnection("jdbc:sqlite:" + System.getProperty("user.dir")
-          + "\\resources\\" + "scrabble\\db\\Scrabble15.db");
+      new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".Scrabble").mkdir();
+   //   connection = DriverManager.getConnection("jdbc:sqlite:" + System.getProperty("user.dir")
+   //       + "\\resources\\" + "scrabble\\db\\Scrabble15.db");
+        connection = DriverManager.getConnection("jdbc:sqlite:" + System.getProperty("user.home") + System.getProperty("file.separator") +
+            ".Scrabble" + System.getProperty("file.separator") + "Scrabble15.db");
     } catch (Exception e) {
       // TODO Auto-generated catch block
       System.out.println("Connection failed!");
