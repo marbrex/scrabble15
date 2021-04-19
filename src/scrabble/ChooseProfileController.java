@@ -146,7 +146,7 @@ public class ChooseProfileController implements Initializable {
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
     Database.connectToDB();
-//  Database.dropAllTables();
+    // Database.dropAllTables();
     Database.createTables();
     labels = new ArrayList<Label>();
     labels.add(profileoneLabel);
@@ -164,9 +164,8 @@ public class ChooseProfileController implements Initializable {
     for (int i = 0; i < labels.size(); i++) {
       if (i <= players.size() - 1) {
         labels.get(i).setText(players.get(i).getName());
-        circles.get(i).setFill(new ImagePattern((new Image(
-            "file:" + System.getProperty("user.dir") + System.getProperty("file.separator") + "resources" + System.getProperty("file.separator") + 
-            "scrabble" + System.getProperty("file.separator") + "img" + System.getProperty("file.separator") + players.get(i).getImage()))));
+        circles.get(i).setFill(new ImagePattern(new Image(
+            getClass().getResourceAsStream("/scrabble/img/" + players.get(i).getImage()))));
       } else {
         labels.get(i).setText("Empty");
         labels.get(i).setTextFill(Color.web("#FF0000", 0.8));
