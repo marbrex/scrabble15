@@ -137,8 +137,8 @@ public class GameController {
 
   public void initDictionary() {
     // Setting the Dictionary (should be set only once, an error otherwise)
-    URL dictPath = getClass().getResource("dictionaries/english-default.txt");
-    File dict = new File(dictPath.getFile());
+//    URL dictPath = getClass().getResource("/dictionaries/english-default.txt");
+//    File dict = new File(dictPath.getFile());
     InputStream in = getClass().getResourceAsStream("/scrabble/dictionaries/english-default.txt");
     Dictionary.setDictionary(in);
   }
