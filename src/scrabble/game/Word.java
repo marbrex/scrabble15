@@ -36,17 +36,30 @@ public class Word {
    */
   private void initShape() {
     System.out.println("@ initShape()");
+    System.out.println("@ initShape() - the word is: ");
+    display();
+    System.out.print("\n");
 
     boolean createNewBox = true;
-    if (!controller.wordsInGrid.isEmpty()) {
+    if (!controller.grid.words.isEmpty()) {
 
       System.out.println("@ initShape() - wordsGrid NOT empty");
 
-      for (int k = 0; k < controller.wordsInGrid.size(); k++) {
-        if (this.containsWord(controller.wordsInGrid.get(k))) {
-          System.out.println("@ initShape() - the word contains " + k + "th word in wordsGrid");
-          controller.gridWrapper.getChildren().remove(controller.wordsInGrid.get(k).container);
-          createNewBox = true;
+      for (int k = 0; k < controller.grid.words.size(); k++) {
+        System.out.println("@ initShape() - " + k + "th word in wordsGrid: ");
+        controller.grid.words.get(k).display();
+        System.out.print("\n");
+        if ((this.isVertical && controller.grid.words.get(k).isVertical) || (this.isHorizontal
+            && controller.grid.words.get(k).isHorizontal)) {
+          if (this.getCommonLetter(controller.grid.words.get(k)) != null) {
+            System.out.print("@ initShape() - in 1st IF");
+            if (this.containsWord(controller.grid.words.get(k))) {
+              System.out.println("@ initShape() - the word contains " + k + "th word in wordsGrid");
+              controller.gridWrapper.getChildren().remove(controller.grid.words.get(k).container);
+              controller.grid.words.remove(k);
+              createNewBox = true;
+            }
+          }
         }
       }
     }
@@ -110,7 +123,7 @@ public class Word {
       // Adding the Highlighted Box to the GridPane's wrapper
       controller.gridWrapper.getChildren().add(container);
 
-      controller.wordsInGrid.add(this);
+      controller.grid.words.add(this);
     }
   }
 
@@ -322,12 +335,30 @@ public class Word {
    */
   public boolean isPartOf(Word word) {
     boolean result = false;
+    System.out.println("\n@isPartOf()");
     if (this.wordLength <= word.getWordLength()) {
       int matchLetters = 0;
-      for (int i = 0; i < word.getWordLength(); i++) {
-        if (word.getLetter(i) == this.getLetter(i % this.wordLength)) {
+      int ixFirstLtr = 0;
+      System.out.println("@isPartOf() - ixFirstLtr = " + ixFirstLtr);
+      System.out.println("@isPartOf() - size of outer = " + word.getWordLength());
+      while (word.getLetter(ixFirstLtr) != this.getLetter(0)) {
+        if (ixFirstLtr < word.getWordLength()) {
+          ixFirstLtr++;
+        }
+        System.out.println("@isPartOf() - ixFirstLtr = " + ixFirstLtr);
+      }
+      System.out.println("\n@isPartOf() - starting index: " + ixFirstLtr);
+      for (int i = 0; i < this.getWordLength(); i++) {
+        System.out
+            .println("\n@isPartOf() - Outer word's next letter = " + word.getLetter(i).getLetter());
+        System.out.println(
+            "@isPartOf() - Inner word's next letter = " + getLetter(i % this.wordLength)
+                .getLetter());
+        if (word.getLetter(ixFirstLtr).getLetter() == this.getLetter(i).getLetter()) {
           matchLetters++;
+          System.out.println("@isPartOf() - +1 match letters (" + matchLetters + ")");
           if (matchLetters == this.wordLength) {
+            System.out.println("@isPartOf() - True!");
             result = true;
             break;
           }
@@ -337,6 +368,7 @@ public class Word {
           }
           result = false;
         }
+        ixFirstLtr++;
       }
     }
     return result;
@@ -350,7 +382,9 @@ public class Word {
    */
   public boolean containsWord(Word word) {
     boolean result = false;
+    System.out.println("\n@containsWord()");
     if (this.wordLength >= word.getWordLength()) {
+      System.out.println("\n@containsWord() - words' lengths are ok");
       result = word.isPartOf(this);
     }
     return result;
@@ -363,16 +397,23 @@ public class Word {
    * @return Common LetterTile
    */
   public LetterTile getCommonLetter(Word word) {
-    if (!containsWord(word) || !isPartOf(word)) {
-      for (int i = 0; i < wordLength; i++) {
-        for (int j = 0; j < word.wordLength; i++) {
-          if (w.get(i) == word.w.get(j)) {
-            return w.get(i);
-          }
+    System.out.println("@getCommonLetter");
+//    if (!containsWord(word) || !isPartOf(word)) {
+    for (int i = 0; i < wordLength; i++) {
+      for (int j = 0; j < word.wordLength; j++) {
+        if (w.get(i) == word.w.get(j)) {
+          return w.get(i);
         }
       }
     }
+//    }
     return null;
+  }
+
+  public void display() {
+    for (LetterTile l : w) {
+      System.out.print(l.getLetter());
+    }
   }
 
   /**

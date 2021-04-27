@@ -106,15 +106,12 @@ public class GameController {
 
   public LetterBar letterBar;
 
-  public ArrayList<Word> wordsInGrid;
-
   public LeaderBoard leaderBoard;
 
   /**
    * Default constructor.
    */
   public GameController() {
-    wordsInGrid = new ArrayList<Word>();
   }
 
   public void initGrid(String mapPath) {
@@ -129,16 +126,12 @@ public class GameController {
 
   public void initDictionary(String dictPath) {
     // Setting the Dictionary (should be set only once, an error otherwise)
-    URL dictURL = getClass().getResource(dictPath);
-    File dict = new File(dictURL.getFile());
     InputStream in = getClass().getResourceAsStream(dictPath);
     Dictionary.setDictionary(in);
   }
 
   public void initDictionary() {
     // Setting the Dictionary (should be set only once, an error otherwise)
-//    URL dictPath = getClass().getResource("/dictionaries/english-default.txt");
-//    File dict = new File(dictPath.getFile());
     InputStream in = getClass().getResourceAsStream("/scrabble/dictionaries/english-default.txt");
     Dictionary.setDictionary(in);
   }
@@ -189,8 +182,6 @@ public class GameController {
     mainBlock.heightProperty().addListener((observable, oldValue, newValue) -> {
       gridWrapper.setMaxWidth(newValue.doubleValue());
     });
-
-
 
 //    gridPaneUI.heightProperty().addListener((observable, oldValue, newValue) -> {
 //      sideBar.setMaxHeight(newValue.doubleValue());

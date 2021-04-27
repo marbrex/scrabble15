@@ -1,5 +1,7 @@
 package scrabble.game;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
 import scrabble.GameController;
@@ -25,6 +27,8 @@ public class Grid {
   double padSize;
   private double paneSize;
   double cellSize;
+
+  ArrayList<Word> words;
 
   GridPane container;
 
@@ -75,6 +79,8 @@ public class Grid {
 
     map = new Map();
 
+    words = new ArrayList<>();
+
     initGrid();
   }
 
@@ -100,6 +106,8 @@ public class Grid {
     this.container = grid;
 
     map = new Map(mapPath);
+
+    words = new ArrayList<>();
 
     initGrid();
   }
@@ -301,6 +309,56 @@ public class Grid {
     for (int i = 0; i < globalSize; i++) {
       if (slots[i].content == tile) {
         return slots[i];
+      }
+    }
+    return null;
+  }
+
+  public ArrayList<LetterTile> getTilesInGrid() {
+    ArrayList<LetterTile> list = new ArrayList<>();
+    for (int i = 0; i < globalSize; i++) {
+      if (slots[i].content != null) {
+        list.add(slots[i].content);
+      }
+    }
+    return list;
+  }
+
+  public LetterTile getNeighbourCell(LetterTile tile, String neighbour) {
+    int glInd;
+    for (int row = 0; row < size; row++) {
+      for (int column = 0; column < size; column++) {
+        glInd = getGlobalIndex(row, column);
+        if (tile == slots[glInd].content) {
+          switch (neighbour) {
+            case "top":
+              if (column != 0) {
+                return getSlotContent(row, column - 1);
+              } else {
+                return null;
+              }
+            case "right":
+              if (row != size) {
+                return getSlotContent(row + 1, column);
+              } else {
+                return null;
+              }
+            case "bottom":
+              if (column != size) {
+                return getSlotContent(row, column + 1);
+              } else {
+                return null;
+              }
+            case "left":
+              if (row != 0) {
+                return getSlotContent(row - 1, column);
+              } else {
+                return null;
+              }
+            default:
+              return null;
+          }
+        }
       }
     }
     return null;

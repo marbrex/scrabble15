@@ -1,5 +1,6 @@
 package scrabble.game;
 
+import java.util.ArrayList;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -121,6 +122,17 @@ public class LetterTile {
         if (slot != null) {
           System.out.println("Removing the LetterTile");
           slot.removeContent();
+        }
+
+        ArrayList<Word> wordsToRemove = new ArrayList<>();
+        for (Word word : controller.grid.words) {
+          if (word.contains(this)) {
+            wordsToRemove.add(word);
+            controller.gridWrapper.getChildren().remove(word.container);
+          }
+        }
+        for (Word word : wordsToRemove) {
+          controller.grid.words.remove(word);
         }
 
         controller.grid.display();

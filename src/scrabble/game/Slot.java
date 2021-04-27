@@ -358,6 +358,9 @@ public class Slot {
     }
     content = null;
     isFree = true;
+    if (multiplier != null && multiplier != Multiplier.NO) {
+      container.getChildren().add(new Label(multiplier.getAsString()));
+    }
   }
 
   /**
