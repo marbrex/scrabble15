@@ -26,7 +26,12 @@ import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
 
 
-/** scrabble.CreateProfileController to manage profile creation  */
+/** 
+ * scrabble.CreateProfileController to manage profile creation  
+ * 
+ * @author skeskinc
+ * @author ekstamy
+ */
 public class CreateProfileController {
 
   @FXML
@@ -85,7 +90,6 @@ public class CreateProfileController {
   /** Setting avatars and handling events */
   @FXML
   private void initialize() {
-    Database.connectToDB();
     ImageView im = new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/male.png")));
     im.setFitHeight(50);
     im.setFitWidth(50);
@@ -115,7 +119,6 @@ public class CreateProfileController {
       int id = generateId();
       if (!name.isEmpty() && !DBInformation.containsName(name) && name.length() <= 15) {
         Database.fillTables(id, name, this.imageindex);
-        Database.disconnectDB();
         changeScene("fxml/ChooseProfileScene.fxml", "css/mainMenu.css", event);
       }
     });

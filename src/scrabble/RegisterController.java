@@ -86,14 +86,14 @@ public class RegisterController implements Initializable {
 
   private int generateId() {
     int id = 0;
-    Database.connectToDB();
+//    Database.connectToDB();
     for (int i = 1; i < 5; i++) {
       if (!DBInformation.containsIdentification(i)) {
         id = i;
         break;
       }
     }
-    Database.disconnectDB();
+//    Database.disconnectDB();
     /*
      * return (int) Math.floor(Math.random()*(9999-10+1)+10);
      */

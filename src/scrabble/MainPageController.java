@@ -29,6 +29,7 @@ import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
 import scrabble.model.HumanPlayer;
+import scrabble.model.Profile;
 
 /**
  * <h1>The Main Controller linked with "MainPage.fxml" file.</h1>
@@ -132,14 +133,10 @@ public class MainPageController implements Initializable {
 
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
-    Database.connectToDB();
-    Database.createTables();
-
 //    Database.fillPlayerTable(playersData);
 //    HumanPlayer player = DBInformation.loadProfile(0);
-    player = ChooseProfileController.getPlayer();
-    this.idLabel.setText("Welcome back, " + player.getName());
-    Database.disconnectDB();
+    player = Profile.getPlayer();
+    this.idLabel.setText("Welcome back, " + Profile.getPlayer().getName());
     //	setSize();
 
     // Save main menu buttons into a collection
@@ -162,10 +159,12 @@ public class MainPageController implements Initializable {
     });
 
     changeProfileBtn.setOnMouseClicked(event -> {
+      Profile.setPlayer(null);
       changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
     });
 
     exitAppBtn.setOnMouseClicked(event -> {
+      Database.disconnectDB();
       Stage stage = (Stage) exitAppBtn.getScene().getWindow();
       stage.close();
     });
