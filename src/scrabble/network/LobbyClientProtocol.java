@@ -17,7 +17,7 @@ import scrabble.GameLobbyController;
 import scrabble.model.GameStatusType;
 import scrabble.model.MessageType;
 
-public class LobbyClientProtocol extends Thread {
+public class LobbyClientProtocol extends Thread implements NetworkScreen {
   /**
    * Class of a client which handle the communication with a server.
    * 
@@ -41,6 +41,8 @@ public class LobbyClientProtocol extends Thread {
   private boolean isRunning;
   /** list of all Players in the lobby */
   private ArrayList<Player> lobbyPlayers;
+  /** boolean to avoid port connection on windows after slow connect try and fast screen leave */
+  private boolean notConnected = true;
   // Gui
   /** controller of the gameFinder screen */
   private GameFinderController gameFinderController;
@@ -48,6 +50,8 @@ public class LobbyClientProtocol extends Thread {
   private GameLobbyController gameLobbyController;
   /** player instance of the client is allays human player */
   private HumanPlayer player;
+  /** chat client for sending/receiving messages */
+  private Client chat;
 
 
 
@@ -79,15 +83,15 @@ public class LobbyClientProtocol extends Thread {
    * @throws ConnectException
    */
   private void setSocket() throws PortsOccupiedException { // change to ports occupied exception
-    while (!this.isRunning) {
+    while (!this.isRunning && this.notConnected) {
       try {
         this.server = new Socket(adress, port);
         this.in = new ObjectInputStream(server.getInputStream());
         this.out = new ObjectOutputStream(server.getOutputStream());
         this.isRunning = true;
-        System.out.println("Connected with socket : " + this.port);
+        System.out.println("CLIENT PROTOCOL : Connected with socket : " + this.port);
       } catch (ConnectException e) {
-        System.out.println("No connection at port " + this.port);
+        System.out.println("CLIENT PROTOCOL : No connection at port " + this.port);
         if (this.port < 11131) { // In connection with the standart port (+20)
           this.port++;
         } else {
@@ -127,6 +131,7 @@ public class LobbyClientProtocol extends Thread {
    * an specific MessageType
    */
   public void run() {
+    System.out.println("CLIENT PROTOCOL : Protocol started");
     try {
       this.setSocket();
       this.gameFinderController.connectSucessful();
@@ -171,6 +176,12 @@ public class LobbyClientProtocol extends Thread {
         case FULL:
           this.reactToFullMessage(message);
           break;
+        case START:
+          this.reactToStartMessage(message);
+          break;
+        case GAME:
+          this.reactToGameMessage(message);
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -188,14 +199,50 @@ public class LobbyClientProtocol extends Thread {
   }
 
   /**
+   * Message to react to an Game Message. After this Message the lobby will be left to get into a
+   * GameScreen
+   * 
+   * @param message Message from the Server
+   */
+  private void reactToGameMessage(Message message) {
+    System.out.println("CLIENT PROTOCOL : Game-Message received");
+    if (this.gameLobbyController != null) {
+      this.gameLobbyController.setTimeLabel("Game started");
+    }
+  }
+
+  /**
+   * Method to react to the start message of the server which will be send when the server wants the
+   * chosen player sequence
+   * 
+   * @param message Message from the Server
+   */
+  private void reactToStartMessage(Message message) {
+    System.out.println("CLIENT PROTOCOL : Start-Message received");
+    try {
+      if (this.gameLobbyController != null) {
+        StartMessage msg = new StartMessage(MessageType.START, this.player,
+            this.gameLobbyController.getPositionList());
+        this.out.writeObject(msg);
+        this.out.flush();
+      }
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+
+  /**
    * method to react to the start of an full lobby procedure
    * 
    * @param message message from the server
    */
   private void reactToFullMessage(Message message) {
+    System.out.println("CLIENT PROTOCOL : Full-Message received");
     if (this.gameLobbyController != null) {
-      this.gameLobbyController.startTimer();
-      // start procedure -> not implemented yet
+      // System.err.println("Election procedure started");
+      this.gameLobbyController.startElection();
     }
 
   }
@@ -206,12 +253,13 @@ public class LobbyClientProtocol extends Thread {
    * @param message message of the server
    */
   private void reactRejected(Message message) {
+    System.out.println("CLIENT PROTOCOL : Reject-Message received");
     this.shutdownProtocol(true);
 
   }
 
   private void reactToKick(Message message) {
-    System.out.println("Kick message received");
+    System.out.println("CLIENT PROTOCOL : Kick-Message received");
     this.shutdownProtocol(false);
     if (this.gameLobbyController != null) {
       this.gameLobbyController.openMenu();
@@ -224,6 +272,7 @@ public class LobbyClientProtocol extends Thread {
    * method to react to a shutdown message, no response expected
    */
   private void reactToShutdown() {
+    System.out.println("CLIENT PROTOCOL : Shutdown-Message received");
     this.shutdownProtocol(false);
     if (this.gameLobbyController != null) {
       this.gameLobbyController.openMenu();
@@ -239,12 +288,11 @@ public class LobbyClientProtocol extends Thread {
    * @param message
    */
   private void reactToLobby(Message message) {
-    // TODO Auto-generated method stub
-    // System.out.println("Lobby information received");
+    System.out.println("CLIENT PROTOCOL : Lobby-Message received");
     LobbyInformationMessage msg = (LobbyInformationMessage) message;
     // this.gameFinderController.goInLobby();
     this.lobbyPlayers = msg.getPlayers();
-    System.err.println("LOBBY UPDATE : " + this.lobbyPlayers.size());
+    // System.err.println("LOBBY UPDATE : " + this.lobbyPlayers.size());
     if (msg.getPlayers() == null) {
       System.err.println("null list from server !!!!!!!11");
     }
@@ -262,9 +310,11 @@ public class LobbyClientProtocol extends Thread {
    * @param message
    */
   private void reactToAcepted(Message message) {
-    // TODO Auto-generated method stub
-    // System.out.println("Join acceptence received");
+    System.out.println("CLIENT PROTOCOL : Accept-Message received");
     this.gameFinderController.goInLobby();
+    // starting a chat client
+    AceptedMessage msg = (AceptedMessage) message;
+    this.startChatClient(msg.getPort());
   }
 
   /**
@@ -273,9 +323,12 @@ public class LobbyClientProtocol extends Thread {
    * @param message message from the server which will be castes to the specific type
    */
   private void reactToInformation(Message message) {
-    // System.out.println("Information Message received");
+    System.out.println("CLIENT PROTOCOL : Information-Message received");
     InformationMessage iM = (InformationMessage) message;
-    GameStatusType status = iM.getStatus();
+    GameStatusType status = iM.getStatus(); // if in Game next port should be tried
+    if (iM.getStatus() == GameStatusType.GAME) {
+      // inform player and ask for own port --> to do
+    }
     int amount = iM.getLobbyPlayers();
     this.gameFinderController.setStatusLabel("In : " + status.name());
     this.gameFinderController.setStatusLabel2("Amount of Players : " + amount);
@@ -301,14 +354,15 @@ public class LobbyClientProtocol extends Thread {
   /**
    * method to end the running thread and close the connection
    */
-  public void shutdownProtocol(boolean selfcall) { // In future change to an approach with an
+  public void shutdownProtocol(boolean selfcall) { // In future change to an approach with an,
                                                    // boolean condition about call or selfcall
+    this.notConnected = false;
     this.isRunning = false;
     if (selfcall) {
       this.sendShutdownMsg(); // last message
     }
     this.closeConnection();
-    System.out.println("GameFinderProtocol shutdown");
+    // System.out.println("GameFinderProtocol shutdown");
   }
 
   /**
@@ -331,7 +385,7 @@ public class LobbyClientProtocol extends Thread {
   private void updateLobbyinformation() {
     this.gameLobbyController.resetProfileVisibility();
     for (int i = 0; i < lobbyPlayers.size(); i++) {
-      System.err.println("Update gui :" + i);
+      // System.err.println("Update gui :" + i);
       this.gameLobbyController.setProfileVisible(i, lobbyPlayers.get(i).getName());
     }
 
@@ -345,6 +399,7 @@ public class LobbyClientProtocol extends Thread {
     try {
       this.out.writeObject(msg);
       this.out.flush();
+      System.out.println("CLIENT PROTOCOL : Join-Message sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -363,11 +418,55 @@ public class LobbyClientProtocol extends Thread {
         if (!this.server.isClosed()) {
           this.out.writeObject(msg);
           this.out.flush();
+          System.out.println("CLIENT PROTOCOL : Shutdown-Message sended");
         }
       }
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Method to send a chat message with the chat client to the Chat server
+   * 
+   * @param message message of the chat client which will be send to the server
+   */
+  public void sendChatMessage(String message) {
+    if (this.gameLobbyController != null) {
+      this.chat.sendMessageToServer(message);
+    }
+  }
+
+  /**
+   * Method to handle an incoming chat message and print them on the GameLobbyScreen or the
+   * GameScreen itself
+   * 
+   * @param message message from the chat server
+   */
+  public void printChatMessage(String message) {
+    if (this.gameLobbyController != null) {
+      this.gameLobbyController.printChatMessage(message);
+    }
+  }
+
+  /**
+   * Method to create a Chat Client with an port given by the ServerProtocol
+   * 
+   * @param port port of the Chat server started by the Main Server
+   */
+  private void startChatClient(int port) {
+    this.chat = new Client(this, port, this.player.getName());
+    this.chat.connect();
+    this.chat.start();
+    // this.sendChatMessage("Hi i am in "); //sending first message for testing purpose
+  }
+
+  /**
+   * Method to get the the amount of players in the lobby, used by the GameLobbyController to set up
+   * the position election
+   */
+  public int getPlayerAmount() {
+    return this.lobbyPlayers.size();
   }
 }

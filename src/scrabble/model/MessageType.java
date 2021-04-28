@@ -15,4 +15,6 @@ public enum MessageType {
   LOBBY, // information about the lobby
   KICK, // kicking a player from the Lobby
   FULL, // lobby maximum is reached
+  START, //the game is about to start and the sequence should be transmitted
+  GAME, //the game starts 
 }

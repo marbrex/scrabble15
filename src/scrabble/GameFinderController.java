@@ -14,6 +14,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import scrabble.network.LobbyClientProtocol;
 
@@ -37,6 +39,8 @@ public class GameFinderController implements LobbyController {
   private JFXButton backButton;
   @FXML
   private Label statusLabel2;
+  @FXML
+  private ImageView background;
   private LobbyClientProtocol clientProtocol;
 
 
@@ -135,7 +139,6 @@ public class GameFinderController implements LobbyController {
         Parent root = loader.load();
         Stage stage = (Stage) this.backButton.getScene().getWindow();
         stage.setScene(new Scene(root, 900, 700));
-        stage.setResizable(false);
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -150,6 +153,7 @@ public class GameFinderController implements LobbyController {
    */
   @FXML
   private void initialize() {
+    this.loadBackground();
     clientProtocol = new LobbyClientProtocol(this);
     clientProtocol.start();
   }
@@ -254,8 +258,7 @@ public class GameFinderController implements LobbyController {
         lobbyController.setProtocol(this.clientProtocol);
         this.clientProtocol.setLobbyController(lobbyController);
         Stage stage = (Stage) this.joinBtn.getScene().getWindow();
-        stage.setScene(new Scene(root, 900, 700));
-        stage.setResizable(false);
+        stage.setScene(new Scene(root, 900, 750));
         stage.setOnHidden(e -> {
           lobbyController.shutdown();
         });
@@ -266,4 +269,10 @@ public class GameFinderController implements LobbyController {
     });
   }
 
+  /**
+   * Method to set the background image
+   */
+  private void loadBackground() {
+    this.background.setImage(new Image(getClass().getResourceAsStream("img/GameFinder.jpg")));
+  }
 }

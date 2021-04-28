@@ -22,4 +22,9 @@ public interface NetworkPlayer {
   public int getSequencePos();
 
   public void sendFullMessage();
+
+  public void sendStartMessage();
+
+  public void sendGameMessage();
+  
 }

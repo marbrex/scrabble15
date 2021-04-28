@@ -26,6 +26,10 @@ public class LobbyServer extends Thread {
   private boolean isRunning;
   /** Corresponding controller of an GameLobby */
   private GameLobbyController gameLobby;
+  /** ChatServer for lobby and game communication */
+  private Server chat;
+  /** port on which the chatServer is running */
+  private int chatPort;
   // Control
   /** controller of the game information */
   private GameInformationController gameInfoController;
@@ -59,6 +63,7 @@ public class LobbyServer extends Thread {
     this.host = new LobbyHostProtocol(gameLobby, gameInfoController);
     // Perhaps the host initializing in the run thread because of the DB connection (slow ?)
     this.gameLobby.setHostProtocol(this.host);
+    this.gameLobby.setChatUser(this.host);
     this.gameInfoController.addPlayer(host);
     this.gameLobby.setProfileVisible(0, this.host.getPlayer().getName()); // change to protocol call
                                                                           // in future??
@@ -77,7 +82,7 @@ public class LobbyServer extends Thread {
       try {
         this.server = new ServerSocket(port);
         this.isRunning = true; // breaking loop
-        System.out.println("GameLobbyServer Constructor choosen port : " + this.port);
+        System.err.println("SERVER : Choosen port : " + this.port);
       } catch (SocketException e) {
         // Socket in use
         if (this.port < 11131) { // try standard ports
@@ -99,6 +104,7 @@ public class LobbyServer extends Thread {
   public void run() {
     try {
       this.setServer();
+      this.startChatServer();
     } catch (PortsOccupiedException e) {
       this.gameLobby.setTimeLabel(e.getMessage());
       // Here own port control should be allowed
@@ -116,6 +122,7 @@ public class LobbyServer extends Thread {
   private void react() {
     try {
       Socket s = this.server.accept();
+      System.out.println("SERVER : Client accepted");
       LobbyServerProtocol lobbyProtocol = new LobbyServerProtocol(s, this, gameInfoController);
       this.getInContact(lobbyProtocol);
     } catch (SocketException e) {
@@ -145,7 +152,6 @@ public class LobbyServer extends Thread {
     this.isRunning = false;
     this.closeAllProtocols();
     this.closeConnection();
-
   }
 
   /**
@@ -178,4 +184,25 @@ public class LobbyServer extends Thread {
     }
   }
 
+  /**
+   * Method to start the chat server
+   */
+  private void startChatServer() {
+    this.chat = new Server();
+    this.chat.start();
+    this.chatPort = this.chat.getServerPort(); // Perhaps the port isn't set yet ?
+    System.out.println("SERVER : Chat server started on port : " + this.chatPort);
+    this.host.startChatClient(this.chatPort); // Port isn't set, because thread start is slower than
+                                              // main execution
+  }
+
+  /**
+   * Method to get the port the chat server is running in reason to send it to a client joining the
+   * lobby
+   * 
+   * @return
+   */
+  protected Integer getChatPort() {
+    return this.chatPort;
+  }
 }

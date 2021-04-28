@@ -39,7 +39,7 @@ public class ServerProtocol extends Thread {
 			String message = "";
 			while (true) {
 				message = fromClient.readLine();
-				System.out.println("Second Message: " + message);
+				//System.out.println("Second Message: " + message);
 //					System.out.println("Size of Clients: " + Server.allClients.size());
 				for (ServerProtocol sp : Server.allClients) {
 					toClient = new PrintWriter(sp.socket.getOutputStream());

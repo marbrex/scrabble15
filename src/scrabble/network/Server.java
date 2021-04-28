@@ -6,50 +6,71 @@ import java.net.*;
 import java.util.ArrayList;
 import scrabble.network.*;
 
-public class Server {
+public class Server extends Thread {
 
-	private ServerSocket serversocket;
-	private Socket clientsocket;
-	private int port, maxPlayers;
-	static ArrayList<ServerProtocol> allClients = new ArrayList<ServerProtocol>();
-	private int counter = 0;
+  private ServerSocket serversocket;
+  private Socket clientsocket;
+  private int port, maxPlayers;
+  static ArrayList<ServerProtocol> allClients = new ArrayList<ServerProtocol>();
+  private int counter = 0;
+  /**
+   * Constructor initializing the serverSocket
+   */
+  public Server() {
+    this.maxPlayers = 4;
+    try {
+      this.serversocket = new ServerSocket(0);
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
 
-	public Server() {
-		this.port = 2222;
-		this.maxPlayers = 4;
-		startServer(port, maxPlayers);
-	}
+  /**
+   * Method to get the connected Port after a Server was created
+   * 
+   * @return port of the Chat server, 0 if serverSocket isn't created
+   * @author hendiehl
+   */
+  protected int getServerPort() {
+    if (this.serversocket != null) {
+      return this.serversocket.getLocalPort();
+    } else {
+      return 0;
+    }
+  }
 
-	public void startServer(int port, int maxPlayers) {
-		this.maxPlayers = maxPlayers;
-		this.port = port;
-		try {
-			this.serversocket = new ServerSocket(port);
-			System.out.println("Server is running!");
-			while (true) {
-				this.clientsocket = serversocket.accept();
-				
-				ServerProtocol sp = new ServerProtocol(this, clientsocket, ++counter);
-				allClients.add(sp);
-				sp.start();
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ArrayIndexOutOfBoundsException ae) {
-			System.out.println("No valid port found.");
-		}
+  public void startServer() {
+    try {
+      System.out.println("Server is running!");
+      while (true) {
+        this.clientsocket = serversocket.accept();
 
-	}
+        ServerProtocol sp = new ServerProtocol(this, clientsocket, ++counter);
+        allClients.add(sp);
+        sp.start();
+      }
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (ArrayIndexOutOfBoundsException ae) {
+      System.out.println("No valid port found.");
+    }
 
-	public void stopServer() {
-		try {
-			if (!this.serversocket.isClosed()) {
-				this.serversocket.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+  }
+
+  public void stopServer() {
+    try {
+      if (!this.serversocket.isClosed()) {
+        this.serversocket.close();
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+  
+  public void run() {
+    this.startServer();
+  }
 
 }

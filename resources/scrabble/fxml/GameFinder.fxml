@@ -14,13 +14,9 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.GameFinderController">
+<StackPane fx:id="root" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: #9e846b;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.GameFinderController">
    <children>
-      <ImageView fitHeight="700.0" fitWidth="900.0" pickOnBounds="true" preserveRatio="true">
-         <image>
-            <Image url="@../img/GameFinder.jpg" />
-         </image>
-      </ImageView>
+      <ImageView fx:id="background" fitHeight="344.0" fitWidth="391.0" pickOnBounds="true" preserveRatio="true" />
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0">
          <children>
             <JFXButton fx:id="backButton" buttonType="RAISED" onAction="#backButtonAction" opacity="0.5" text="Back" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />

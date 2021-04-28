@@ -61,7 +61,6 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       this.isRunning = true;
       this.player = new HumanPlayer(); // need to be changed !!!!!!!!!!!!!!!!!!!!!!future -> getting
                                        // from first Join message
-      // System.out.println("Lobby server protocol created");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -72,15 +71,18 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * run method of the thread which waits for an client message and react to specific MessageTypes
    */
   public void run() {
+    System.err.println("SERVER PROTOCOL : Protocol started");
     while (isRunning) {
       react();
     }
+    System.err.println("SERVER PROTOCOL OUTRUN");
   }
 
   private void react() {
     try { // after Server closed the loop is executed ?
       // System.out.println("Protocol run pass");
       Object o = in.readObject();
+      // System.err.println("SERVER PROTOCOL : Message received");
       Message message = (Message) o;
       switch (message.getType()) {
         case JOIN:
@@ -88,6 +90,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
           break;
         case SHUTDOWN:
           this.reactToShutdown();
+          break;
+        case START:
+          this.reactToStart(message);
           break;
       }
     } catch (EOFException e) {
@@ -105,10 +110,22 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
+   * Method to react to an incoming start Message of a client which transmit the chosen player
+   * sequence
+   * 
+   * @param message Message of the client, type : StartMessage
+   */
+  private void reactToStart(Message message) {
+    System.err.println("SERVER PROTOCOL : Start-Message received");
+    StartMessage msg = (StartMessage) message;
+    this.gameInfoController.addSequence(msg.getSequence(), this);
+  }
+
+  /**
    * method to react to a client which ends the connection
    */
   private void reactToShutdown() {
-    // System.out.println("Client shutdown message received");
+    System.out.println("SERVER PROTOCOL : Shutdown-Message received");
     this.deletePlayer();
     // need to be deleted from server list
   }
@@ -131,10 +148,11 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * @param message message which will be casted to the specific MessageType to get information
    */
   private void reactToJoin(Message message) {
-    // System.out.println("Client Join Message received");
+    System.out.println("SERVER PROTOCOL : Join-Message received");
     if (this.gameInfoController.addPlayer(this)) {
-      this.player = (HumanPlayer) message.getOwner(); // here have to be human player
+      this.player = (HumanPlayer) message.getOwner();
       this.sendLobbyInformation();
+      this.gameInfoController.checkLobbySize();
       // Implement if for error code 5
     } else {
       this.sendRejectInfomation(); // should the protocol be shutdown ?
@@ -145,11 +163,11 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * method to send an rejection information to a client, a shutdown message is expected.
    */
   private void sendRejectInfomation() { // after this a protocol should be shutdown !!!!!!!!!!!!!!!!
-    // TODO Auto-generated method stub
     Message msg = new Message(MessageType.REJECTED, this.player);
     try {
       this.out.writeObject(msg);
       this.out.flush();
+      System.out.println("SERVER PROTOCOL : Reject-Message sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -160,12 +178,14 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * method to send information about the Lobby to the client and also inform all players in the
    * lobby about the joining, also himself
    */
-  private void sendLobbyInformation() { // !!!!!!!!!!!!!!!!!!!!!!!!
+  public void sendLobbyInformation() { // !!!!!!!!!!!!!!!!!!!!!!!!
     // System.out.println("Send lobby information after client add");
-    Message msg = new Message(MessageType.ACEPTED, this.player);
+    Message msg =
+        new AceptedMessage(MessageType.ACEPTED, this.player, this.corespondingServer.getChatPort());
     try {
       this.out.writeObject(msg); // only acceptence message
       this.out.flush();
+      System.out.println("SERVER PROTOCOL : Accept-Message sended");
       // other Message from here onwards
       // Update all Lobbys
       this.gameInfoController.updateAllLobbys(); // here the new list is send to all players
@@ -181,11 +201,15 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   public void sendInformationMessage() {
     // System.out.println("Send basic lobby information");
-    InformationMessage iM = new InformationMessage(MessageType.INFORMATION, this.player,
+    InformationMessage iM = new InformationMessage(MessageType.INFORMATION, this.player, // here
+                                                                                         // perhaps
+                                                                                         // null
+                                                                                         // pointer
         this.gameInfoController.getStatus(), this.gameInfoController.getPlayerAmount());
     try {
       this.out.writeObject(iM);
       this.out.flush();
+      System.out.println("SERVER PROTOCOL : Information-Message sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -222,13 +246,12 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * No respond expected.
    */
   public void sendShutdownMsg() { // critical
-    System.out.println("Send shutdown message");
     Message msg = new Message(MessageType.SHUTDOWN, this.player);
     try {
       if (this.client != null && !this.client.isClosed()) { // Doesn't go in here ??????ß
         this.out.writeObject(msg);
         this.out.flush();
-        System.out.println("Shutdown sended");
+        System.out.println("SERVER PROTOCOL : Shutdown-Message sended");
       } else { // only trying purpose !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Here problem in
                // kick procedure
         this.out.writeObject(msg);
@@ -265,6 +288,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     try {
       this.out.writeObject(msg);
       this.out.flush();
+      System.out.println("SERVER PROTOCOL : Lobby-Message sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -276,6 +300,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       Message msg = new Message(MessageType.KICK, this.player);
       this.out.writeObject(msg);
       this.out.flush();
+      System.out.println("SERVER PROTOCOL : Kick-Message sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -305,6 +330,40 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       Message msg = new Message(MessageType.FULL, this.player);
       this.out.writeObject(msg);
       this.out.flush();
+      System.out.println("SERVER PROTOCOL : Full-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to inform the clients that the game is about to start A sequence Message is expected,
+   * except of the host protocol
+   */
+  @Override
+  public void sendStartMessage() {
+    try {
+      Message msg = new Message(MessageType.START, this.player);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : Start-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to inform the lobby member that the lobby will be changed to gameField
+   */
+  @Override
+  public void sendGameMessage() {
+    try {
+      Message msg = new Message(MessageType.GAME, this.player); // just Testing purpose
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : Game-Message sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
