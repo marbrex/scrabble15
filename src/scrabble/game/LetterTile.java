@@ -120,7 +120,7 @@ public class LetterTile {
 
         Slot slot = this.slot;
         if (slot != null) {
-          System.out.println("Removing the LetterTile");
+          System.out.println("@LetterTile onDragDone - Removing the LetterTile");
           slot.removeContent();
         }
 
@@ -133,6 +133,13 @@ public class LetterTile {
         }
         for (Word word : wordsToRemove) {
           controller.grid.words.remove(word);
+        }
+
+        if (!controller.letterBar.isFull()) {
+          controller.okBtn.setText("OK");
+        }
+        else {
+          controller.okBtn.setText("PASS");
         }
 
         controller.grid.display();

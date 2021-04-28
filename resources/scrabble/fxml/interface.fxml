@@ -201,10 +201,10 @@
         <HBox id="letters-block" fx:id="lettersBlock" alignment="CENTER" fillHeight="false"
           prefHeight="80.0" prefWidth="589.0" spacing="10.0"/>
         <HBox id="ok-btn-block" alignment="CENTER" fillHeight="false" prefHeight="80.0"
-          prefWidth="159.0">
+          prefWidth="235.0">
           <children>
-            <JFXButton id="ok-btn" fx:id="okBtn" alignment="CENTER" prefHeight="50.0"
-              prefWidth="50.0" text="OK">
+            <JFXButton id="ok-btn" fx:id="okBtn" alignment="CENTER" minWidth="80.0"
+              prefHeight="50.0" prefWidth="80.0" text="PASS">
               <font>
                 <Font name="System Bold" size="20.0"/>
               </font>

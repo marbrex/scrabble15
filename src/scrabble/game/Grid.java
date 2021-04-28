@@ -1,10 +1,16 @@
 package scrabble.game;
 
+import com.jfoenix.controls.JFXButton;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import scrabble.GameController;
+import scrabble.model.Letter;
 
 /**
  * <h1>scrabble.game.Grid</h1>
@@ -399,6 +405,144 @@ public class Grid {
 
     container.add(slot.container, row, column);
     slots[getGlobalIndex(row, column)] = slot;
+  }
+
+  /**
+   * Verifies whether placed words are valid. Generates a pop-up window in case of an invalid
+   * input.
+   *
+   * @return True if input is valid, False otherwise
+   */
+  public boolean verifyWordsValidity() {
+    boolean res = false;
+
+    ArrayList<Slot> validStartingSlots = new ArrayList<>();
+
+    if (controller.roundCounter == 0) {
+      validStartingSlots.add(getSlot(size / 2, size / 2));
+    }
+
+    int validWords = 0;
+    int wordsUsingStartSlot = 0;
+    boolean startingSlotUsed = false;
+
+    int nbHorizontal = 0;
+    int nbVertical = 0;
+
+    for (Word word : words) {
+      // verifying if all words present in the grid are valid
+      // (by counting the number of valid words and comparing it to number of all words)
+      if (word.isValid()) {
+        validWords++;
+      }
+
+      if (word.isHorizontal()) {
+        nbHorizontal++;
+      }
+      if (word.isVertical()) {
+        nbVertical++;
+      }
+
+      for (Slot slot : validStartingSlots) {
+        // we want to find out whether at least one starting slot is used by a word
+        if (!slot.isFree() && word.contains(slot.content)) {
+          startingSlotUsed = true;
+          wordsUsingStartSlot++;
+          break;
+        }
+      }
+    }
+
+    boolean noSingleTiles = true;
+    for (Slot slot : slots) {
+      if (!slot.isFree()) {
+        if (getNeighbourCell(slot.content, "top") == null &&
+            getNeighbourCell(slot.content, "right") == null &&
+            getNeighbourCell(slot.content, "bottom") == null &&
+            getNeighbourCell(slot.content, "left") == null) {
+          noSingleTiles = false;
+          break;
+        }
+      }
+    }
+
+    String errorMessage = "";
+    if (noSingleTiles) {
+      // there is no single placed letter tiles
+      System.out.println("ALL WORDS HAVE LENGTH >= 2 !");
+
+      if (validWords == words.size()) {
+        // All words present in the grid are valid
+        System.out.println("ALL WORDS ARE VALID !");
+
+        if (wordsUsingStartSlot == words.size()) {
+          // at least one of the previous letters is used by ALL new words
+          System.out.println("ALL WORDS ARE USING AT LEAST 1 OF PREVIOUS LETTERS !");
+
+          if (nbHorizontal == words.size() || nbVertical == words.size()) {
+            // All words have the same direction
+            System.out.println("ALL WORDS HAVE THE SAME DIRECTION !");
+
+          } else {
+            errorMessage = "ALL WORDS SHOULD BE IN THE SAME DIRECTION !";
+            System.err.println(errorMessage);
+          }
+
+        } else {
+
+//        if (startingSlotUsed) {
+//          // at least one of the previous letters is used by a word
+//          System.out.println("AT LEAST 1 OF PREVIOUS LETTERS IS USED !");
+//        }
+//        else {
+//          System.err.println("USE AT LEAST 1 OF PREVIOUS LETTERS TO MAKE A WORD !");
+//        }
+
+          errorMessage = "ALL WORDS SHOULD USE AT LEAST 1 OF PREVIOUS LETTERS !";
+          System.err.println(errorMessage);
+        }
+
+      } else {
+        errorMessage = "ALL NEW WORDS SHOULD BE VALID !";
+        System.err.println(errorMessage);
+      }
+
+    } else {
+      errorMessage = "ALL WORDS SHOULD HAVE LENGTH >= 2 !";
+      System.err.println(errorMessage);
+    }
+
+    if (!errorMessage.equals("")) {
+      // there is an error
+
+      BorderPane popup = new BorderPane();
+      popup.getStyleClass().add("popup-error-block");
+      popup.setOnMouseClicked(event -> {
+        controller.gridWrapper.getChildren().remove(popup);
+        controller.okBtn.setDisable(false);
+      });
+
+      Label errorLabel = new Label(errorMessage);
+      errorLabel.setAlignment(Pos.CENTER);
+      errorLabel.getStyleClass().add("popup-error-message");
+      errorLabel.setOnMouseClicked(event -> {
+        controller.gridWrapper.getChildren().remove(popup);
+        controller.okBtn.setDisable(false);
+      });
+
+      popup.setCenter(errorLabel);
+
+      controller.gridWrapper.getChildren().add(popup);
+      controller.okBtn.setDisable(true);
+
+    } else {
+      // everything is OK
+      System.out.println("ROUND OVER\nWORD-S ARE VALIDATED\nPROCEEDING TO THE NEXT PLAYER...");
+
+      res = true;
+    }
+
+    return res;
   }
 
 

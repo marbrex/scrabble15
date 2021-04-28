@@ -147,6 +147,29 @@
   -fx-font-weight: bold;
 }
 
+.popup-error-block {
+  -fx-border-radius: 7px;
+  -fx-background-radius: 7px;
+  -fx-background-color: rgba(100, 100, 100, 0.5);
+}
+
+.popup-error-message {
+  -fx-border-width: 3px;
+  -fx-border-color: #ff3300;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+  -fx-background-color: #5d5d5d;
+  -fx-padding: 10px;
+  -fx-text-fill: #ff3300;
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
+  -fx-effect: dropshadow(one-pass-box, dimgray, 30, 0, 5, 5);
+}
+
+.popup-error-message:hover {
+  -fx-cursor: hand;
+}
+
 
 /* Bottom Block */
 #bottom-block {

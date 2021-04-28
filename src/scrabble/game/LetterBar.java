@@ -133,13 +133,41 @@ public class LetterBar {
 
     for (int i = 0; i < size; i++) {
       int randomIndexToSwap = rand.nextInt(size);
+      while (randomIndexToSwap == i) {
+        randomIndexToSwap = rand.nextInt(size);
+      }
+      System.out.println("\n@shuffle - Swapping " + i + " with " + randomIndexToSwap);
       LetterTile temp = slots[randomIndexToSwap].content;
       slots[randomIndexToSwap].setContent(slots[i].content);
       slots[i].setContent(temp);
+      System.out.println("@shuffle - " + i + " is now " + slots[i].content.getLetter());
+      System.out.println("@shuffle - " + i + " slot " + slots[i]);
+      System.out.println("@shuffle - " + i + " slot of tile " + slots[i].content.slot);
+      System.out.println(
+          "@shuffle - " + randomIndexToSwap + " is now " + slots[randomIndexToSwap].content
+              .getLetter());
+      System.out.println("@shuffle - " + randomIndexToSwap + " slot " + slots[randomIndexToSwap]);
+      System.out.println("@shuffle - " + randomIndexToSwap + " slot of tile "
+          + slots[randomIndexToSwap].content.slot);
+      display();
     }
 
     System.out.println("New Letter order in LetterBar: ");
     display();
+  }
+
+  /**
+   * Checks whether all slots of the Letter Bar are occupied
+   *
+   * @return True if full, False otherwise
+   */
+  public boolean isFull() {
+    int counter = 0;
+    for (Slot slot : slots) {
+      if (!slot.isFree()) counter++;
+    }
+
+    return counter == size;
   }
 
   /**
@@ -148,8 +176,13 @@ public class LetterBar {
   public void display() {
     System.out.println("\nLetter Bar: ");
     for (int i = 0; i < size; i++) {
-      System.out
-          .print("[" + slots[i].content.getLetter() + "|" + slots[i].content.getPoints() + "]");
+      if (slots[i].content != null) {
+        System.out
+            .print("[" + slots[i].content.getLetter() + "|" + slots[i].content.getPoints() + "]");
+      } else {
+        System.out
+            .print("[   ]");
+      }
       if (i == size - 1) {
         System.out.print("\n\n");
       } else {

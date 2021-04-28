@@ -370,11 +370,13 @@ public class Slot {
    * @see scrabble.game.LetterTile
    */
   public void setContent(LetterTile tile) {
-    removeContent();
-    container.getChildren().add(tile.container);
-    content = tile;
-    tile.slot = this;
-    isFree = false;
+    if (tile != null) {
+      removeContent();
+      container.getChildren().add(tile.container);
+      content = tile;
+      tile.slot = this;
+      isFree = false;
+    }
   }
 
   /**

@@ -108,10 +108,13 @@ public class GameController {
 
   public LeaderBoard leaderBoard;
 
+  public int roundCounter;
+
   /**
    * Default constructor.
    */
   public GameController() {
+    roundCounter = 0;
   }
 
   public void initGrid(String mapPath) {
@@ -191,6 +194,10 @@ public class GameController {
 
     quitGame.setOnMouseClicked(event -> {
       changeScene("fxml/MainPage.fxml", "css/mainMenu.css", event);
+    });
+
+    okBtn.setOnMouseClicked(event -> {
+      grid.verifyWordsValidity();
     });
 
   }
