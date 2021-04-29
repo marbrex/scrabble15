@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import scrabble.GameController;
 import scrabble.model.Letter;
 
@@ -420,27 +421,43 @@ public class Grid {
 
     if (controller.roundCounter == 0) {
       validStartingSlots.add(getSlot(size / 2, size / 2));
+    } else {
+      for (Word word : words) {
+        for (int j = 0; j < word.getWordLength(); j++) {
+          validStartingSlots.add(word.getLetter(j).slot);
+        }
+      }
     }
 
     int validWords = 0;
     int wordsUsingStartSlot = 0;
+    int frozenWordsCounter = 0;
     boolean startingSlotUsed = false;
 
     int nbHorizontal = 0;
     int nbVertical = 0;
 
     for (Word word : words) {
+      System.out.println("@verifyWordsValidity - current word: ");
+      word.display();
+      System.out.print("\n");
+      System.out.println("@verifyWordsValidity - is frozen: " + word.frozen);
+
       // verifying if all words present in the grid are valid
       // (by counting the number of valid words and comparing it to number of all words)
       if (word.isValid()) {
         validWords++;
       }
 
-      if (word.isHorizontal()) {
-        nbHorizontal++;
-      }
-      if (word.isVertical()) {
-        nbVertical++;
+      if (!word.frozen) {
+        if (word.isHorizontal()) {
+          nbHorizontal++;
+        }
+        if (word.isVertical()) {
+          nbVertical++;
+        }
+      } else {
+        frozenWordsCounter++;
       }
 
       for (Slot slot : validStartingSlots) {
@@ -467,19 +484,20 @@ public class Grid {
     }
 
     String errorMessage = "";
-    if (noSingleTiles) {
-      // there is no single placed letter tiles
-      System.out.println("ALL WORDS HAVE LENGTH >= 2 !");
+    if (wordsUsingStartSlot == words.size()) {
+      // at least one of the previous letters is used by ALL new words
+      System.out.println("ALL WORDS ARE USING AT LEAST 1 OF PREVIOUS LETTERS !");
 
-      if (validWords == words.size()) {
-        // All words present in the grid are valid
-        System.out.println("ALL WORDS ARE VALID !");
+      if (noSingleTiles) {
+        // there is no single placed letter tiles
+        System.out.println("ALL WORDS HAVE LENGTH >= 2 !");
 
-        if (wordsUsingStartSlot == words.size()) {
-          // at least one of the previous letters is used by ALL new words
-          System.out.println("ALL WORDS ARE USING AT LEAST 1 OF PREVIOUS LETTERS !");
+        if (validWords == words.size()) {
+          // All words present in the grid are valid
+          System.out.println("ALL WORDS ARE VALID !");
 
-          if (nbHorizontal == words.size() || nbVertical == words.size()) {
+          if (nbHorizontal == words.size() - frozenWordsCounter
+              || nbVertical == words.size() - frozenWordsCounter) {
             // All words have the same direction
             System.out.println("ALL WORDS HAVE THE SAME DIRECTION !");
 
@@ -498,17 +516,17 @@ public class Grid {
 //          System.err.println("USE AT LEAST 1 OF PREVIOUS LETTERS TO MAKE A WORD !");
 //        }
 
-          errorMessage = "ALL WORDS SHOULD USE AT LEAST 1 OF PREVIOUS LETTERS !";
+          errorMessage = "ALL NEW WORDS SHOULD BE VALID !";
           System.err.println(errorMessage);
         }
 
       } else {
-        errorMessage = "ALL NEW WORDS SHOULD BE VALID !";
+        errorMessage = "ALL WORDS SHOULD HAVE LENGTH >= 2 !";
         System.err.println(errorMessage);
       }
 
     } else {
-      errorMessage = "ALL WORDS SHOULD HAVE LENGTH >= 2 !";
+      errorMessage = "ALL WORDS SHOULD USE AT LEAST 1 OF PREVIOUS LETTERS !";
       System.err.println(errorMessage);
     }
 
@@ -540,9 +558,107 @@ public class Grid {
       System.out.println("ROUND OVER\nWORD-S ARE VALIDATED\nPROCEEDING TO THE NEXT PLAYER...");
 
       res = true;
+
+      controller.roundCounter++;
+
+      freezeWords();
     }
 
     return res;
+  }
+
+  private void freezeWords() {
+
+    for (int w = 0; w < words.size(); w++) {
+      // words present in the grid
+
+      for (int l = 0; l < words.get(w).getWordLength(); l++) {
+        // letter tiles of the current word
+
+        words.get(w).getLetter(l).container.getStyleClass().clear();
+        words.get(w).getLetter(l).container.getStyleClass().add("letter-btn");
+
+        if (words.get(w).isHorizontal()) {
+
+          if (l == 0) {
+            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-hor-min");
+          } else if (l < words.get(w).getWordLength() - 1) {
+            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-hor-mid");
+          } else if (l == words.get(w).getWordLength() - 1) {
+            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-hor-max");
+          }
+
+          if (l < words.get(w).getWordLength() - 1) {
+            StackPane gap = new StackPane();
+            gap.setPrefSize(padSize + 1, words.get(w).getLetter(l).container.getHeight());
+            gap.setMinSize(padSize + 1, words.get(w).getLetter(l).container.getHeight());
+            gap.setMaxSize(padSize + 1, words.get(w).getLetter(l).container.getHeight());
+            gap.getStyleClass().add("gap-hor");
+
+            controller.gridWrapper.getChildren().add(gap);
+
+            gap.setTranslateX(
+                words.get(w).getLetter(l).slot.container.getBoundsInParent().getMaxX() - 1);
+            gap.setTranslateY(
+                words.get(w).getLetter(l).slot.container.getBoundsInParent().getMinY());
+
+            words.get(w).getLetter(l).slot.container.boundsInParentProperty()
+                .addListener((obs, oldValue, newValue) -> {
+                  gap.setTranslateX(newValue.getMaxX() - 1);
+                  gap.setTranslateY(newValue.getMinY());
+                });
+
+            gap.prefHeightProperty().bind(words.get(w).getLetter(l).container.heightProperty());
+            gap.minHeightProperty().bind(words.get(w).getLetter(l).container.heightProperty());
+            gap.maxHeightProperty().bind(words.get(w).getLetter(l).container.heightProperty());
+          }
+
+        } else if (words.get(w).isVertical()) {
+
+          if (l == 0) {
+            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-ver-min");
+          } else if (l < words.get(w).getWordLength() - 1) {
+            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-ver-mid");
+          } else if (l == words.get(w).getWordLength() - 1) {
+            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-ver-max");
+          }
+
+          if (l < words.get(w).getWordLength() - 1) {
+            StackPane gap = new StackPane();
+            gap.setPrefSize(words.get(w).getLetter(l).container.getWidth(), padSize + 1);
+            gap.setMinSize(words.get(w).getLetter(l).container.getWidth(), padSize + 1);
+            gap.setMaxSize(words.get(w).getLetter(l).container.getWidth(), padSize + 1);
+            gap.getStyleClass().add("gap-ver");
+
+            controller.gridWrapper.getChildren().add(gap);
+
+            gap.setTranslateX(
+                words.get(w).getLetter(l).slot.container.getBoundsInParent().getMinX() + 1);
+            gap.setTranslateY(
+                words.get(w).getLetter(l).slot.container.getBoundsInParent().getMaxY() - 1);
+
+            words.get(w).getLetter(l).slot.container.boundsInParentProperty()
+                .addListener((obs, oldValue, newValue) -> {
+                  gap.setTranslateX(newValue.getMinX() + 1);
+                  gap.setTranslateY(newValue.getMaxY() - 1);
+                });
+
+            gap.prefWidthProperty().bind(words.get(w).getLetter(l).container.widthProperty());
+            gap.minWidthProperty().bind(words.get(w).getLetter(l).container.widthProperty());
+            gap.maxWidthProperty().bind(words.get(w).getLetter(l).container.widthProperty());
+          }
+
+        }
+
+        words.get(w).getLetter(l).slot.container.setEffect(null);
+        words.get(w).getLetter(l).container.setMouseTransparent(true);
+      }
+
+      words.get(w).frozen = true;
+//      controller.gridWrapper.getChildren().remove(words.get(w).container);
+      words.get(w).container.getStyleClass().clear();
+      words.get(w).container.getChildren().clear();
+    }
   }
 
 

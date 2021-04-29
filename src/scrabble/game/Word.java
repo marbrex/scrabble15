@@ -24,6 +24,7 @@ public class Word {
   private boolean isValid;
   private boolean isHorizontal;
   private boolean isVertical;
+  boolean frozen;
 
   private int multiplierValue;
   private boolean multiplier;
@@ -139,6 +140,7 @@ public class Word {
     isValid = false;
     isHorizontal = false;
     isVertical = false;
+    frozen = false;
 
     multiplier = false;
     multiplierValue = 1;
@@ -162,6 +164,7 @@ public class Word {
     points = 0;
     wordLength = 0;
     isValid = false;
+    frozen = false;
 
     multiplier = false;
     multiplierValue = 1;

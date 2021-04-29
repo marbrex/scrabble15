@@ -30,6 +30,7 @@ public class LetterTile {
 
   Slot slot;
 
+
   // Neighbours
   private LetterTile top;
   private LetterTile right;
@@ -137,8 +138,7 @@ public class LetterTile {
 
         if (!controller.letterBar.isFull()) {
           controller.okBtn.setText("OK");
-        }
-        else {
+        } else {
           controller.okBtn.setText("PASS");
         }
 
