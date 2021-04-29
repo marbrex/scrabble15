@@ -11,8 +11,10 @@ public class Server extends Thread {
   private ServerSocket serversocket;
   private Socket clientsocket;
   private int port, maxPlayers;
+  private boolean running;
   static ArrayList<ServerProtocol> allClients = new ArrayList<ServerProtocol>();
   private int counter = 0;
+
   /**
    * Constructor initializing the serverSocket
    */
@@ -42,8 +44,9 @@ public class Server extends Thread {
 
   public void startServer() {
     try {
+      this.running = true;
       System.out.println("Server is running!");
-      while (true) {
+      while (running) {
         this.clientsocket = serversocket.accept();
 
         ServerProtocol sp = new ServerProtocol(this, clientsocket, ++counter);
@@ -61,6 +64,7 @@ public class Server extends Thread {
 
   public void stopServer() {
     try {
+      this.running = false;
       if (!this.serversocket.isClosed()) {
         this.serversocket.close();
       }
@@ -68,7 +72,7 @@ public class Server extends Thread {
       e.printStackTrace();
     }
   }
-  
+
   public void run() {
     this.startServer();
   }

@@ -16,6 +16,7 @@ public class Client extends Thread {
   private ChatController chatcontroller;
   private ArrayList<ChatController> allController = new ArrayList<ChatController>();
   private String username;
+  private boolean running;
   /** protocol instance for an corresponding chat */
   private NetworkScreen client;
 
@@ -49,15 +50,26 @@ public class Client extends Thread {
       System.out.println("Client started!");
       this.fromServer = new BufferedReader(new InputStreamReader(c.getInputStream()));
       this.toServer = new PrintWriter(c.getOutputStream(), true);
+      running = true;
     } catch (IOException e) {
       e.printStackTrace();
       this.disconnect();
     }
   }
 
+  public void sendKickToServer() {
+    toServer.println(" has been kicked of the Lobby.");
+    toServer.flush();
+  }
+
+  public void sendShutdownToServer() {
+    toServer.println(" has left the Lobby.");
+    toServer.flush();
+  }
+
   public void sendMessageToServer(String message) {
     System.out.println("[" + username + "] " + message);
-    toServer.println(message);
+    toServer.println(": " + message);
     toServer.flush();
     /*
      * try { String text = fromServer.readLine(); for (ChatController cc : this.allController) {
@@ -78,6 +90,7 @@ public class Client extends Thread {
 
   public void disconnect() {
     try {
+      this.running = false;
       this.toServer.close();
       this.fromServer.close();
       this.c.close();
@@ -86,14 +99,30 @@ public class Client extends Thread {
     }
   }
 
+  /**
+   * 
+   * @param msg for the current message
+   * @return the message replaced by emoticons.
+   * @author skeskinc
+   */
+  public String useEmoticons(String msg) {
+    msg = msg.replaceAll(":D", "😁");
+    msg = msg.replaceAll(":'D", "😂");
+    msg = msg.replaceAll("D:", "😩");
+    msg = msg.replaceAll(":clap", "🙏");
+    return msg;
+  }
+
   public void run() {
     try {
       toServer.println(this.username);
-      while (true) {
+      while (running) {
         String msg = fromServer.readLine();
-        //System.out.println("Third Message: " + msg);
-        //this.chatcontroller.applyMessageToArea(msg);
-        this.client.printChatMessage(msg); //printing 
+        // System.out.println("Third Message: " + msg);
+        // this.chatcontroller.applyMessageToArea(msg);
+        msg = useEmoticons(msg);
+        this.client.printChatMessage(msg); // printing
+
       }
     } catch (IOException e) {
       // TODO Auto-generated catch block
