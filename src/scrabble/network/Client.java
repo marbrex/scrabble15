@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import scrabble.ChatController;
 import javafx.application.Platform;
 
+
 public class Client extends Thread {
   private String hostName;
   private int port;
@@ -57,19 +58,40 @@ public class Client extends Thread {
     }
   }
 
+  /**
+   * Sends a message to everyone, that a player got kicked from the lobby.
+   * 
+   * @author skeskinc
+   */
   public void sendKickToServer() {
-    toServer.println(" has been kicked of the Lobby.");
+    toServer.println(username + " has been kicked from the Lobby.");
     toServer.flush();
   }
 
-  public void sendShutdownToServer() {
-    toServer.println(" has left the Lobby.");
+  /**
+   * Sends a message to everyone, that a player has left the lobby.
+   * 
+   * @author skeskinc
+   */
+  public void sendLeaveMessageToServer() {
+    toServer.println(username + " has left the Lobby.");
     toServer.flush();
   }
 
+  /**
+   * Sends a message to everyone, that a player has joined the lobby
+   * 
+   * @author skeskinc
+   */
+  public void sendJoinMessageToServer() {
+    toServer.println(username + " has joined the Lobby.");
+    toServer.flush();
+  }
+
+  
   public void sendMessageToServer(String message) {
     System.out.println("[" + username + "] " + message);
-    toServer.println(": " + message);
+    toServer.println(username + ": " + message);
     toServer.flush();
     /*
      * try { String text = fromServer.readLine(); for (ChatController cc : this.allController) {
@@ -115,7 +137,7 @@ public class Client extends Thread {
 
   public void run() {
     try {
-      toServer.println(this.username);
+      // toServer.println(this.username);
       while (running) {
         String msg = fromServer.readLine();
         // System.out.println("Third Message: " + msg);

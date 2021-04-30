@@ -37,7 +37,7 @@ public class ServerProtocol extends Thread {
 
   public void run() {
     try {
-      String username = fromClient.readLine();
+//      String username = fromClient.readLine();
       String message = "";
       while (running) {
         message = fromClient.readLine();
@@ -45,7 +45,7 @@ public class ServerProtocol extends Thread {
         // System.out.println("Size of Clients: " + Server.allClients.size());
         for (ServerProtocol sp : Server.allClients) {
           toClient = new PrintWriter(sp.socket.getOutputStream());
-          toClient.println(username + message);
+          toClient.println("" + message);
           toClient.flush();
         }
 

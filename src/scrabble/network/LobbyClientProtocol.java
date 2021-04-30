@@ -260,6 +260,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   private void reactToKick(Message message) {
     System.out.println("CLIENT PROTOCOL : Kick-Message received");
+    this.chat.sendKickToServer();
     this.shutdownProtocol(false);
     if (this.gameLobbyController != null) {
       this.gameLobbyController.openMenu();
@@ -459,6 +460,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     this.chat = new Client(this, port, this.player.getName());
     this.chat.connect();
     this.chat.start();
+    this.chat.sendJoinMessageToServer();
     // this.sendChatMessage("Hi i am in "); //sending first message for testing purpose
   }
 
