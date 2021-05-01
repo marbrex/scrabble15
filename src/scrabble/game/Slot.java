@@ -1,5 +1,6 @@
 package scrabble.game;
 
+import java.util.Locale;
 import javafx.scene.control.Label;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.input.Dragboard;
@@ -107,6 +108,7 @@ public class Slot {
       // show to the user that it is an actual gesture target
       if (event.getGestureSource() != container &&
           event.getDragboard().hasString()) {
+        container.getStyleClass().removeAll("slot-dl", "slot-tl", "slot-dw", "slot-tw");
         container.getStyleClass().add("slot-on-drag-entered");
       }
 
@@ -118,6 +120,10 @@ public class Slot {
 
       // mouse moved away, remove the graphical cues
       container.getStyleClass().removeAll("slot-on-drag-entered");
+      if (multiplier != null && multiplier != Multiplier.NO) {
+        String style = "slot-" + multiplier.getAsString().toLowerCase(Locale.ROOT);
+        container.getStyleClass().add(style);
+      }
 
       event.consume();
     });
