@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
+import scrabble.model.Profile;
 import scrabble.GameFinderController;
 import scrabble.GameLobbyController;
 import scrabble.model.GameStatusType;
@@ -72,8 +73,8 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * method to get player instance from DB
    */
   private void loadPlayer() { // not implemented yet
-    this.player = new HumanPlayer();
-    this.player.setName("Client");
+    this.player = Profile.getPlayer();
+//    this.player.setName("Client");
     // dummy
   }
 
@@ -414,6 +415,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   public void sendShutdownMsg() {
     // System.out.println("Send shutdown message");
     Message msg = new Message(MessageType.SHUTDOWN, this.player);
+    this.chat.sendLeaveMessageToServer();
     try {
       if (this.server != null) {
         if (!this.server.isClosed()) {

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
+import scrabble.model.Profile;
 import scrabble.GameLobbyController;
 import scrabble.model.GameInformationController;
 
@@ -43,8 +44,8 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * method to get Player from Database
    */
   private void loadPlayer() {
-    this.player = new HumanPlayer();
-    this.player.setName("Host"); // dummy representation
+    this.player = Profile.getPlayer();
+//    this.player.setName("Host"); // dummy representation
 
   }
 
