@@ -10,11 +10,6 @@ import java.util.ArrayList;
 
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
-import scrabble.network.InformationMessage;
-import scrabble.network.LobbyInformationMessage;
-import scrabble.network.LobbyServer;
-import scrabble.network.Message;
-import scrabble.GameLobbyController;
 import scrabble.model.GameInformationController;
 import scrabble.model.MessageType;
 
@@ -71,7 +66,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * run method of the thread which waits for an client message and react to specific MessageTypes
    */
   public void run() {
-    System.err.println("SERVER PROTOCOL : Protocol started");
+    System.out.println("SERVER PROTOCOL : Protocol started");
     while (isRunning) {
       react();
     }
@@ -94,6 +89,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
         case START:
           this.reactToStart(message);
           break;
+        case END:
+          this.reactToEnd(message);
+          break;
       }
     } catch (EOFException e) {
       this.isRunning = false;
@@ -110,13 +108,23 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
+   * Method to react to an End Message received when a player wants to end his turn
+   * 
+   * @param message
+   */
+  private synchronized void reactToEnd(Message message) {
+    System.out.println("SERVER PROTOCOL : End-Message received");
+    this.gameInfoController.endMoveForTime(); // did he go in or not ?
+  }
+
+  /**
    * Method to react to an incoming start Message of a client which transmit the chosen player
    * sequence
    * 
    * @param message Message of the client, type : StartMessage
    */
   private void reactToStart(Message message) {
-    System.err.println("SERVER PROTOCOL : Start-Message received");
+    System.out.println("SERVER PROTOCOL : Start-Message received");
     StartMessage msg = (StartMessage) message;
     this.gameInfoController.addSequence(msg.getSequence(), this);
   }
@@ -263,12 +271,6 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     }
   }
 
-  @Override
-  public void transformProtocol() {
-    // TODO Auto-generated method stub
-    // Implement
-  }
-
   // here Problem with the null Pointer, player have to be set after first contact
   /**
    * method to get the specific player class of a client.
@@ -368,5 +370,39 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Method to inform a player that his move has started
+   */
+  @Override
+  public void startMove() {
+    try {
+      Message msg = new Message(MessageType.MOVE, this.player);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : Move-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+
+  /**
+   * Message to inform a player that his move has ended
+   */
+  @Override
+  public void endMove() {
+    try {
+      Message msg = new Message(MessageType.END, this.player);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : End-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
   }
 }

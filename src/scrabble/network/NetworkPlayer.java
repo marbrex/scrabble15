@@ -11,7 +11,6 @@ public interface NetworkPlayer {
    * 
    * @author hendiehl
    */
-  public void transformProtocol();
 
   public Player getPlayer();
 
@@ -26,5 +25,9 @@ public interface NetworkPlayer {
   public void sendStartMessage();
 
   public void sendGameMessage();
-  
+
+  public void startMove();
+
+  public void endMove();
+
 }

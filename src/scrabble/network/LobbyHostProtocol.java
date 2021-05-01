@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
 import scrabble.model.Profile;
+import scrabble.GameController;
 import scrabble.GameLobbyController;
 import scrabble.model.GameInformationController;
 
@@ -24,8 +25,10 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   private int sequencePos;
   /** chat client for sending/receiving messages */
   private Client chat;
-  /** list of the chosen player sequence */
-  private int[] sequnece;
+
+
+  // Only testing !!!!!!!!!!!!!!!!!!!!!!!!!!
+  private GameController gameScreen;
 
 
   /**
@@ -45,14 +48,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    */
   private void loadPlayer() {
     this.player = Profile.getPlayer();
-//    this.player.setName("Host"); // dummy representation
-
-  }
-
-  @Override
-  public void transformProtocol() {
-    // TODO Auto-generated method stub
-    // implement ?
+    // this.player.setName("Host"); // dummy representation
   }
 
   /**
@@ -107,7 +103,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * starting the lobby maximum procedure
    */
   public void sendFullMessage() {
-    System.err.println("Election procedure started");
+    System.out.println("HOST PROTOCOL : START ELECTION");
     this.gameLobby.startElection();
   }
 
@@ -179,5 +175,34 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   public void startGame() {
     System.out.println("HOST PROTOCOL : Start game");
     this.gameInfoController.lobbyFull();
+  }
+
+  @Override
+  public void startMove() {
+    if (this.gameScreen != null) { // be aware of not loading gameScreen
+      // this.gameScreen.startMove();
+    }
+
+  }
+
+  @Override
+  public void endMove() {
+    if (this.gameScreen != null) {
+      // this.gameScreen.endMove();
+    }
+
+  }
+
+  public void setGameScreen(GameController gameScreen) {
+    this.gameScreen = gameScreen;
+  }
+
+  /**
+   * Method to inform the Server that a player ended his move in Time
+   */
+  @Override
+  public synchronized void sendEndMessage() {
+    System.out.println("HOST PROTOCOL : End move by self");
+    this.gameInfoController.endMoveForTime();// he didn't go in ???????????????????
   }
 }

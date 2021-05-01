@@ -168,7 +168,6 @@ public class GameLobbyController implements LobbyController {
         Parent root = loader.load();
         Stage stage = (Stage) this.backButton.getScene().getWindow();
         stage.setScene(new Scene(root, 900, 700));
-        stage.setResizable(false);
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -431,9 +430,9 @@ public class GameLobbyController implements LobbyController {
   private void initializeSequencepositions() {
     // Items should be set in dependence of the player amount
     this.positions = FXCollections.observableArrayList("None");
-    System.out.println("PlayerAmount : " + this.chatUser.getPlayerAmount());
+    // System.out.println("PlayerAmount : " + this.chatUser.getPlayerAmount());
     for (int i = 0; i < this.chatUser.getPlayerAmount(); i++) {
-      System.out.println(String.valueOf(i + 1)); // here problem
+      // System.out.println(String.valueOf(i + 1)); // here problem
       this.positions.add(String.valueOf(i + 1));
     }
     // setting the items in the boxes -> all a set but not all available.
@@ -467,7 +466,7 @@ public class GameLobbyController implements LobbyController {
   private void changedBoxAction(ActionEvent e) {
     JFXComboBox<String> box = (JFXComboBox<String>) e.getSource();
     String choosen = box.getValue();
-    System.out.println(choosen);
+    // System.out.println(choosen);
     if (choosen.matches("\\d")) {
       this.positionSetted(choosen, box);
     } else {
@@ -494,7 +493,7 @@ public class GameLobbyController implements LobbyController {
       }
     }
     this.values.replace(box, i);
-    System.out.println("Changed");
+    // System.out.println("Changed");
   }
 
   /**
@@ -522,7 +521,7 @@ public class GameLobbyController implements LobbyController {
    * Message to start the Game
    */
   public void startGame() {
-    this.setTimeLabel("Game started");
+    this.goInGameScreen();
   }
 
   /**
@@ -537,20 +536,52 @@ public class GameLobbyController implements LobbyController {
    */
   public void setProfilePicture(int number, String picturePath) {
     Platform.runLater(() -> {
-       switch (number) {
-         case 0:
-           profilePicture1.setImage(new Image(getClass().getResourceAsStream(picturePath)));
-           break;
-         case 1:
-           profilePicture2.setImage(new Image(getClass().getResourceAsStream(picturePath)));
-           break;
-         case 2:
-           profilePicture3.setImage(new Image(getClass().getResourceAsStream(picturePath)));
-           break;
-         case 3:
-           profilePicture4.setImage(new Image(getClass().getResourceAsStream(picturePath)));
-           break;
-       }
+      switch (number) {
+        case 0:
+          profilePicture1.setImage(new Image(getClass().getResourceAsStream(picturePath)));
+          break;
+        case 1:
+          profilePicture2.setImage(new Image(getClass().getResourceAsStream(picturePath)));
+          break;
+        case 2:
+          profilePicture3.setImage(new Image(getClass().getResourceAsStream(picturePath)));
+          break;
+        case 3:
+          profilePicture4.setImage(new Image(getClass().getResourceAsStream(picturePath)));
+          break;
+      }
     });
+  }
+
+  /**
+   * Method to change into the GameScreen
+   */
+  public void goInGameScreen() { // Just Testing Purpose with TestScreen !!!!!!!!!!!!!!!!!!!!!!!!!!!
+    Platform.runLater(() -> {
+      try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/interface.fxml"));
+        if (this.host != null) {
+          loader.setControllerFactory(c -> {
+            return new GameController();
+          });
+        } else {
+          loader.setControllerFactory(c -> {
+            return new GameController();
+          });
+        }
+        Parent root = loader.load();
+        GameController gameScreen = loader.<GameController>getController();
+        if (this.host != null) {
+          this.host.setGameScreen(gameScreen);
+        } else {
+          this.client.setGameScreen(gameScreen);
+        }
+        Stage stage = (Stage) this.backButton.getScene().getWindow();
+        stage.setScene(new Scene(root, 900, 750));
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    }); // change protocol condition to a interface !!!!!!!!!!!!!!!!
   }
 }

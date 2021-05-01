@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import scrabble.model.GameStatusType;
+import scrabble.network.GameHandler;
 import scrabble.network.LobbyServer;
 import scrabble.network.LobbyServerProtocol;
 import scrabble.network.NetworkPlayer;
@@ -21,6 +22,9 @@ public class GameInformationController {
   private GameStatusType status; // status => Lobby or Game
   private int gamePort; // port to the GameServer
   private HashMap<NetworkPlayer, Boolean> check; 
+  private GameHandler gameHandler;//responsible for move organization
+  /** Int representation of ten minutes*/
+  private static final int tenMin = 600000;
 
   /**
    * constructor which initialize the class
@@ -153,10 +157,10 @@ public class GameInformationController {
   public synchronized void updateAllLobbys() {
     ArrayList<Player> playersArrayList = this.getPlayersInformation();
     for (NetworkPlayer player : this.players) {
-      System.err.println("Update all ");
+      //System.err.println("Update all ");
       player.updateLobbyinformation(playersArrayList);
     }
-    System.err.println("LOBBY UPDATE : " + playersArrayList.size());
+    //System.err.println("LOBBY UPDATE : " + playersArrayList.size());
   }
 
   /**
@@ -218,6 +222,7 @@ public class GameInformationController {
    * @param pos position array of the user election
    */
   public synchronized void addSequence(int[] pos, NetworkPlayer caller) { // need to implement a callback, so the position can be calculated.
+    System.out.println("GAME INFO : Player sequence received");
     this.check.replace(caller, true);
     for(int i = 0; i < this.players.size(); i++) {
        this.players.get(i).addSequence(pos[i]); //adding a elected position to a protocol 
@@ -232,8 +237,9 @@ public class GameInformationController {
     for(NetworkPlayer player : this.players) {
       checker &= this.check.get(player);
     }
+    System.out.println("GAME INFO : Check game start");
     if(checker) {
-      System.err.println("Game starts from GameInformation controller");
+      System.out.println("GAME INFO : Start Game");
       this.startGame();
     }
   }
@@ -242,8 +248,16 @@ public class GameInformationController {
    */
   private void startGame() {
     this.setPlayerSequence();
-    System.err.println("Game Messages will be sended");
+    System.out.println("GAME INFO : Invoke Game");
     this.sendGameMessage();
+    try {
+      this.wait(1000); //For testing perhaps change to a finish approach
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    this.gameHandler = new GameHandler(this, this.players);
+    this.gameHandler.startGame();
   }
   /**
    * Inform the players that the Game starts
@@ -253,4 +267,30 @@ public class GameInformationController {
       player.sendGameMessage();
     }
   }
+  /**
+   * Method to end a player move before the maximum time goes by 
+   */
+  public void endMoveForTime() { //here freeze
+    System.out.println("GAME INFO : Interupt play move");
+    this.gameHandler.endMoveForTime(); //Perhaps controlling the interaction so that only the player onMove can notify ?
+  }
+  /**
+   * Method to shutdown a Lobby or game
+   */
+  public void shutdown() {
+    if(this.gameHandler != null) {
+      this.gameHandler.shutdown();
+    }
+  }
+  /**
+   * Method to fill the list for a Network game with AIPLayers if the lobby isn't full
+   */
+  private void fillGame() {
+    if(this.players.size() < 4) {
+      for(int i = this.players.size(); i < 4; i++) {
+        //Filling the list with AI-Protocols, but how implement the NetworkPlayer ?
+      }
+    }
+  }
+
 }

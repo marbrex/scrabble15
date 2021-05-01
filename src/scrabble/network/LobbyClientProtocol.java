@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
 import scrabble.model.Profile;
+import scrabble.GameController;
 import scrabble.GameFinderController;
 import scrabble.GameLobbyController;
 import scrabble.model.GameStatusType;
@@ -54,6 +55,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   /** chat client for sending/receiving messages */
   private Client chat;
 
+  // Only testing
+  private GameController gameScreen;
+
 
 
   /**
@@ -74,7 +78,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   private void loadPlayer() { // not implemented yet
     this.player = Profile.getPlayer();
-//    this.player.setName("Client");
+    // this.player.setName("Client");
     // dummy
   }
 
@@ -183,6 +187,12 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case GAME:
           this.reactToGameMessage(message);
           break;
+        case MOVE:
+          this.reactToMove(message);
+          break;
+        case END:
+          this.reactToEnd(message);
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -200,6 +210,33 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
+   * Method to react to an incoming end Message which inform the player that his move ended
+   * 
+   * @param message End message
+   */
+  private void reactToEnd(Message message) {
+    System.out.println("CLIENT PROTOCOL : End-Message received");
+    if (this.gameScreen != null) {
+      //this.gameScreen.endMove();
+    }
+
+  }
+
+  /**
+   * Method to react to an incoming Move message which inform the player that he is on move
+   * 
+   * @param message Move message
+   */
+  private void reactToMove(Message message) {
+    System.out.println("CLIENT PROTOCOL : Move-Message received");
+    if (this.gameScreen != null) { // Perhaps the screen isn't loaded
+      System.err.println("Game Screen not null");
+      //this.gameScreen.startMove();
+    }
+
+  }
+
+  /**
    * Message to react to an Game Message. After this Message the lobby will be left to get into a
    * GameScreen
    * 
@@ -208,7 +245,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   private void reactToGameMessage(Message message) {
     System.out.println("CLIENT PROTOCOL : Game-Message received");
     if (this.gameLobbyController != null) {
-      this.gameLobbyController.setTimeLabel("Game started");
+      this.gameLobbyController.startGame();
     }
   }
 
@@ -472,5 +509,27 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   public int getPlayerAmount() {
     return this.lobbyPlayers.size();
+  }
+
+  public void setGameScreen(GameController gameScreen) {
+    this.gameScreen = gameScreen;
+
+  }
+
+  /**
+   * Method to inform the server that a player finished his move in time
+   */
+  @Override
+  public void sendEndMessage() {
+    try {
+      Message msg = new Message(MessageType.END, this.player);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("CLIENT PROTOCOL : End-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
   }
 }

@@ -6,9 +6,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-import scrabble.network.LobbyHostProtocol;
-import scrabble.network.LobbyServerProtocol;
-import scrabble.network.PortsOccupiedException;
 import scrabble.GameLobbyController;
 import scrabble.model.GameInformationController;
 
@@ -150,6 +147,7 @@ public class LobbyServer extends Thread {
    */
   public void shutdown() { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! critical
     this.isRunning = false;
+    this.gameInfoController.shutdown();
     this.closeAllProtocols();
     this.closeConnection();
   }

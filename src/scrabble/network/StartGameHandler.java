@@ -13,8 +13,10 @@ public class StartGameHandler extends Thread{
    */
   public void run() {
     try {
+      System.out.println("START HANDLER : Started");
       this.game.sendFullMessages(); //inform the lobby that no other members will join 
       StartGameHandler.sleep(60000); //sleeping the election time.
+      System.out.println("START HANDLER : Time finished");
       this.game.sendStartMessage(); //inform the players the game will start --> sequence Messages expected
       //after that the lobby protocol take the last step --> perhaps change to an other approach in the future();
     } catch (InterruptedException e) {
