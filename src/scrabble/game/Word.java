@@ -67,7 +67,11 @@ public class Word {
 
     if (createNewBox) {
 
-      System.out.println("@ initShape() - createNewBox");
+      System.out.println("@initShape() - createNewBox");
+
+      for (LetterTile l : w) {
+        System.out.println("@initShape() - next letter: " + l.getLetter());
+      }
       LetterTile firstLetter = w.get(0);
       LetterTile lastLetter = w.getLast();
 
@@ -171,12 +175,12 @@ public class Word {
 
     this.controller = controller;
 
-    int startX = controller.grid.getCellRow(start);
-    int startY = controller.grid.getCellColumn(start);
+    int startX = controller.grid.getCellColumn(start);
+    int startY = controller.grid.getCellRow(start);
     System.out.println("\n@Word - Start Cell (" + startX + ", " + startY + ")");
 
-    int endX = controller.grid.getCellRow(end);
-    int endY = controller.grid.getCellColumn(end);
+    int endX = controller.grid.getCellColumn(end);
+    int endY = controller.grid.getCellRow(end);
     System.out.println("@Word - End Cell (" + endX + ", " + endY + ")");
 
     if (startY == endY) {
@@ -206,10 +210,16 @@ public class Word {
 
             Multiplier mult = controller.grid.getSlot(i, startY).getMultiplier();
             if (mult.getScope().equals("LETTER")) {
-              points += controller.grid.getSlotContent(i, startY).getPoints() * mult.getValue();
+              if (!controller.grid.getSlot(i, startY).container.isMouseTransparent()) {
+                points += controller.grid.getSlotContent(i, startY).getPoints() * mult.getValue();
+              } else {
+                points += controller.grid.getSlotContent(i, startY).getPoints();
+              }
             } else if (mult.getScope().equals("WORD")) {
-              multiplier = true;
-              multiplierValue *= mult.getValue();
+              if (!controller.grid.getSlot(i, startY).container.isMouseTransparent()) {
+                multiplier = true;
+                multiplierValue *= mult.getValue();
+              }
               points += controller.grid.getSlotContent(i, startY).getPoints();
             } else {
               points += controller.grid.getSlotContent(i, startY).getPoints();
@@ -266,10 +276,16 @@ public class Word {
 
             Multiplier mult = controller.grid.getSlot(startX, j).getMultiplier();
             if (mult.getScope().equals("LETTER")) {
-              points += controller.grid.getSlotContent(startX, j).getPoints() * mult.getValue();
+              if (!controller.grid.getSlot(startX, j).container.isMouseTransparent()) {
+                points += controller.grid.getSlotContent(startX, j).getPoints() * mult.getValue();
+              } else {
+                points += controller.grid.getSlotContent(startX, j).getPoints();
+              }
             } else if (mult.getScope().equals("WORD")) {
-              multiplier = true;
-              multiplierValue *= mult.getValue();
+              if (!controller.grid.getSlot(startX, j).container.isMouseTransparent()) {
+                multiplier = true;
+                multiplierValue *= mult.getValue();
+              }
               points += controller.grid.getSlotContent(startX, j).getPoints();
             } else {
               points += controller.grid.getSlotContent(startX, j).getPoints();

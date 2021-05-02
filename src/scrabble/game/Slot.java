@@ -140,7 +140,7 @@ public class Slot {
         // Getting the coordinates of the placeholder rectangle
         int x = GridPane.getColumnIndex(container);
         int y = GridPane.getRowIndex(container);
-        int index = y + controller.grid.size * x;
+        int index = x + controller.grid.size * y;
 
         // Getting the letter tile's data transferred by D&D
         char letter = db.getString().charAt(0);
@@ -153,87 +153,35 @@ public class Slot {
         this.setContent(tile);
 
         // Checking if there are any Neighbours
-        boolean top = false;
-        boolean right = false;
-        boolean bottom = false;
-        boolean left = false;
-        int topX = x;
-        int topY = y - 1;
-        int rightX = x + 1;
-        int rightY = y;
-        int bottomX = x;
-        int bottomY = y + 1;
-        int leftX = x - 1;
-        int leftY = y;
-        while (topY >= 0) {
-          if (!controller.grid.getSlot(topX, topY).isFree()) {
-            top = true;
-            topY--;
-          } else {
-            topY++;
-            break;
-          }
-        }
-        while (rightX < controller.grid.size) {
-          if (!controller.grid.getSlot(rightX, rightY).isFree()) {
-            right = true;
-            rightX++;
-          } else {
-            rightX--;
-            break;
-          }
-        }
-        while (bottomY < controller.grid.size) {
-          if (!controller.grid.getSlot(bottomX, bottomY).isFree()) {
-            bottom = true;
-            bottomY++;
-          } else {
-            bottomY--;
-            break;
-          }
-        }
-        while (leftX >= 0) {
-          if (!controller.grid.getSlot(leftX, leftY).isFree()) {
-            left = true;
-            leftX--;
-          } else {
-            leftX++;
-            break;
-          }
-        }
+        // Getting First and Last letter, both for Horizontal and Vertical
+        LetterTile mostTop = controller.grid.getMostTopOf(tile);
+        LetterTile mostRight = controller.grid.getMostRightOf(tile);
+        LetterTile mostBottom = controller.grid.getMostBottomOf(tile);
+        LetterTile mostLeft = controller.grid.getMostLeftOf(tile);
 
-        if (left || right) {
+        System.out.println(this + " - Most Top: " + mostTop.getLetter());
+        System.out.println(this + " - Most Right: " + mostRight.getLetter());
+        System.out.println(this + " - Most Bottom: " + mostBottom.getLetter());
+        System.out.println(this + " - Most Left: " + mostLeft.getLetter());
+
+        if (mostLeft != tile || mostRight != tile) {
           // There are HORIZONTAL neighbours
-
-          // Getting First and Last letter (Y is the same for all letters on this row)
-          // We don't know yet if there are empty gaps between these 2 letters.
-          int minX = Math.min(leftX, rightX);
-          int maxX = Math.max(leftX, rightX);
-          System.out.println("\nHORIZONTAL - Min Cell (" + minX + ", " + leftY + ")");
-          System.out.println("\nHORIZONTAL - Max Cell (" + maxX + ", " + leftY + ")");
 
           // Creating a Word.
           // Fills in all data members of the Word class.
           // It checks whether the word has no empty gaps, i.e. the word is FULL.
           // If thw word is full, then it checks if the word is VALID.
-          Word word = new Word(controller.grid.getSlot(minX, leftY).content,
-              controller.grid.getSlot(maxX, leftY).content, controller);
+          Word word = new Word(mostLeft, mostRight, controller);
         }
 
-        if (top || bottom) {
+        if (mostTop != tile || mostBottom != tile) {
           // There are VERTICAL neighbours
-
-          int minY = Math.min(topY, bottomY);
-          int maxY = Math.max(topY, bottomY);
-          System.out.println("\nVERTICAL - Min Cell (" + topX + ", " + minY + ")");
-          System.out.println("\nVERTICAL - Max Cell (" + topX + ", " + maxY + ")");
-
-          Word word = new Word(controller.grid.getSlot(topX, minY).content,
-              controller.grid.getSlot(topX, maxY).content, controller);
+          Word word = new Word(mostTop, mostBottom, controller);
         }
 
         success = true;
       }
+
       /* let the source know whether the string was successfully
        * transferred and used */
       event.setDropCompleted(success);

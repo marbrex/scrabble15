@@ -121,7 +121,7 @@ public class LetterTile {
 
         Slot slot = this.slot;
         if (slot != null) {
-          System.out.println("@LetterTile onDragDone - Removing the LetterTile");
+          System.out.println(this + " - onDragDone - Removing the LetterTile");
           slot.removeContent();
         }
 
@@ -129,11 +129,48 @@ public class LetterTile {
         for (Word word : controller.grid.words) {
           if (word.contains(this)) {
             wordsToRemove.add(word);
+
+            // Removing the highlighting box of the Word that was containing the moved LetterTile
             controller.gridWrapper.getChildren().remove(word.container);
           }
         }
         for (Word word : wordsToRemove) {
+          // Removing the Word that was containing the moved LetterTile (BACK-END)
           controller.grid.words.remove(word);
+
+          // Shrinking the word if the removed LetterTile is first or last letter of the word
+          if (this == word.getFirst() && word.getWordLength() > 2) {
+
+            // Finding out whether the shrank word is entirely frozen
+            // in that case, a new Word will not be created
+            boolean frozenWord = true;
+            for (int i = 1; i < word.getWordLength(); i++) {
+              if (!word.getLetter(i).container.isMouseTransparent()) {
+                frozenWord = false;
+                break;
+              }
+            }
+
+            if (!frozenWord) {
+              Word newWord = new Word(word.getLetter(1), word.getLast(), controller);
+            }
+          }
+
+          if (this == word.getLast() && word.getWordLength() > 2) {
+
+            boolean frozenWord = true;
+            for (int i = 0; i < word.getWordLength() - 1; i++) {
+              if (!word.getLetter(i).container.isMouseTransparent()) {
+                frozenWord = false;
+                break;
+              }
+            }
+
+            if (!frozenWord) {
+              int ltrIdx = word.getWordLength() - 2;
+              Word newWord = new Word(word.getFirst(), word.getLetter(ltrIdx), controller);
+            }
+          }
         }
 
         if (!controller.letterBar.isFull()) {
@@ -341,8 +378,10 @@ public class LetterTile {
    */
   public LetterTile getMostLeft() {
     LetterTile current = this;
+    System.out.println("@getMostLeft() - Current: " + current.getLetter());
     while (current.left != null) {
       current = current.left;
+      System.out.println("@getMostLeft() - Left: " + current.getLetter());
     }
     return current;
   }

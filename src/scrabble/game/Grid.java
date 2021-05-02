@@ -1,17 +1,13 @@
 package scrabble.game;
 
-import com.jfoenix.controls.JFXButton;
 import java.util.ArrayList;
-import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import scrabble.GameController;
-import scrabble.model.Letter;
 
 /**
  * <h1>scrabble.game.Grid</h1>
@@ -55,11 +51,11 @@ public class Grid {
    * Initiates slots (StackPanes) of the GridPane
    */
   public void initCells() {
-    for (int row = 0; row < size; row++) {
-      for (int column = 0; column < size; column++) {
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
 
-        Slot slot = new Slot(map.getMultiplier(getGlobalIndex(row, column)), controller);
-        addSlot(slot, row, column);
+        Slot slot = new Slot(map.getMultiplier(getGlobalIndex(column, row)), controller);
+        addSlot(slot, column, row);
       }
     }
   }
@@ -122,12 +118,12 @@ public class Grid {
   /**
    * Returns the global index (index in 1D array). of the specified cell.
    *
-   * @param row    Row of the cell
    * @param column Column of the cell
+   * @param row    Row of the cell
    * @return Global Index
    */
-  public int getGlobalIndex(int row, int column) {
-    return row + size * column;
+  public int getGlobalIndex(int column, int row) {
+    return column + size * row;
   }
 
   /**
@@ -152,49 +148,49 @@ public class Grid {
   }
 
   /**
-   * Get a Slot's content (LetterTile) using row/column indexes.
+   * Get a Slot's content (LetterTile) using column/row indexes.
    *
-   * @param row    Row
    * @param column Column
+   * @param row    Row
    * @return LetterTile
    */
-  public LetterTile getSlotContent(int row, int column) {
-    return slots[getGlobalIndex(row, column)].content;
+  public LetterTile getSlotContent(int column, int row) {
+    return slots[getGlobalIndex(column, row)].content;
   }
 
   /**
-   * Get a Slot using row/column indexes.
+   * Get a Slot using column/row indexes.
    *
-   * @param row    Row
    * @param column Column
+   * @param row    Row
    * @return Slot
    */
-  public Slot getSlot(int row, int column) {
-    return slots[getGlobalIndex(row, column)];
+  public Slot getSlot(int column, int row) {
+    return slots[getGlobalIndex(column, row)];
   }
 
   /**
    * Sets the specified Slot's content.
    *
-   * @param row    Row of the cell to be set
    * @param column Column of the cell to be set
+   * @param row    Row of the cell to be set
    * @param letter Letter
    * @param points Points
    */
-  public void setSlotContent(int row, int column, char letter, int points) {
-    slots[getGlobalIndex(row, column)].content.setLetter(letter);
-    slots[getGlobalIndex(row, column)].content.setPoints(points);
+  public void setSlotContent(int column, int row, char letter, int points) {
+    slots[getGlobalIndex(column, row)].content.setLetter(letter);
+    slots[getGlobalIndex(column, row)].content.setPoints(points);
   }
 
   /**
    * Sets the specified Slot's content with an LetterTile object.
    *
-   * @param row    Row of the cell to be set
    * @param column Column of the cell to be set
+   * @param row    Row of the cell to be set
    * @param tile   LetterTile
    */
-  public void setSlotContent(int row, int column, LetterTile tile) {
-    slots[getGlobalIndex(row, column)].setContent(tile);
+  public void setSlotContent(int column, int row, LetterTile tile) {
+    slots[getGlobalIndex(column, row)].setContent(tile);
   }
 
   /**
@@ -251,16 +247,16 @@ public class Grid {
   }
 
   /**
-   * Returns an X coordinate of a specified cell
+   * Returns an Y coordinate of a specified cell
    *
    * @param tile Tile that is in Grid
-   * @return X coordinate (Column)
+   * @return Y coordinate (Row)
    */
   public int getCellRow(LetterTile tile) {
     int glInd;
-    for (int row = 0; row < size; row++) {
-      for (int column = 0; column < size; column++) {
-        glInd = getGlobalIndex(row, column);
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
+        glInd = getGlobalIndex(column, row);
         if (tile == slots[glInd].content) {
           return row;
         }
@@ -270,16 +266,16 @@ public class Grid {
   }
 
   /**
-   * Returns an Y coordinate of a specififed cell
+   * Returns an X coordinate of a specififed cell
    *
    * @param tile Tile that is in Grid
-   * @return Y coordinate (Row)
+   * @return X coordinate (Column)
    */
   public int getCellColumn(LetterTile tile) {
     int glInd;
-    for (int row = 0; row < size; row++) {
-      for (int column = 0; column < size; column++) {
-        glInd = getGlobalIndex(row, column);
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
+        glInd = getGlobalIndex(column, row);
         if (tile == slots[glInd].content) {
           return column;
         }
@@ -333,32 +329,32 @@ public class Grid {
 
   public LetterTile getNeighbourCell(LetterTile tile, String neighbour) {
     int glInd;
-    for (int row = 0; row < size; row++) {
-      for (int column = 0; column < size; column++) {
-        glInd = getGlobalIndex(row, column);
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
+        glInd = getGlobalIndex(column, row);
         if (tile == slots[glInd].content) {
           switch (neighbour) {
             case "top":
-              if (column != 0) {
-                return getSlotContent(row, column - 1);
+              if (row != 0) {
+                return getSlotContent(column, row - 1);
               } else {
                 return null;
               }
             case "right":
-              if (row != size) {
-                return getSlotContent(row + 1, column);
+              if (column != size) {
+                return getSlotContent(column + 1, row);
               } else {
                 return null;
               }
             case "bottom":
-              if (column != size) {
-                return getSlotContent(row, column + 1);
+              if (row != size) {
+                return getSlotContent(column, row + 1);
               } else {
                 return null;
               }
             case "left":
-              if (row != 0) {
-                return getSlotContent(row - 1, column);
+              if (column != 0) {
+                return getSlotContent(column - 1, row);
               } else {
                 return null;
               }
@@ -369,6 +365,90 @@ public class Grid {
       }
     }
     return null;
+  }
+
+  /**
+   * Get the most top existing neighbour
+   *
+   * @return The most top neighbour (LetterTile)
+   */
+  public LetterTile getMostTopOf(LetterTile tile) {
+    LetterTile current = tile;
+    int col = getCellColumn(tile);
+    int row = getCellRow(tile);
+    System.out.println("@getMostTopOf() - Current: " + current.getLetter());
+    if (0 <= col && col < size && 0 < row && row < size) {
+      int i = 1;
+      while (row - i >= 0 && slots[getGlobalIndex(col, row - i)].content != null) {
+        current = slots[getGlobalIndex(col, row - i)].content;
+        System.out.println("@getMostTopOf() - Top: " + current.getLetter());
+        i++;
+      }
+    }
+    return current;
+  }
+
+  /**
+   * Get the most right existing neighbour
+   *
+   * @return The most right neighbour (LetterTile)
+   */
+  public LetterTile getMostRightOf(LetterTile tile) {
+    LetterTile current = tile;
+    int col = getCellColumn(tile);
+    int row = getCellRow(tile);
+    System.out.println("@getMostRightOf() - Current: " + current.getLetter());
+    if (0 <= col && col < size - 1 && 0 <= row && row < size) {
+      int i = 1;
+      while (col + i <= size - 1 && slots[getGlobalIndex(col + i, row)].content != null) {
+        current = slots[getGlobalIndex(col + i, row)].content;
+        System.out.println("@getMostRightOf() - Right: " + current.getLetter());
+        i++;
+      }
+    }
+    return current;
+  }
+
+  /**
+   * Get the most bottom existing neighbour
+   *
+   * @return The most bottom neighbour (LetterTile)
+   */
+  public LetterTile getMostBottomOf(LetterTile tile) {
+    LetterTile current = tile;
+    int col = getCellColumn(tile);
+    int row = getCellRow(tile);
+    System.out.println("@getMostBottomOf() - Current: " + current.getLetter());
+    if (0 <= col && col < size && 0 <= row && row < size - 1) {
+      int i = 1;
+      while (row + i <= size - 1 && slots[getGlobalIndex(col, row + i)].content != null) {
+        current = slots[getGlobalIndex(col, row + i)].content;
+        System.out.println("@getMostBottomOf() - Bottom: " + current.getLetter());
+        i++;
+      }
+    }
+    return current;
+  }
+
+  /**
+   * Get the most left existing neighbour
+   *
+   * @return The most left neighbour (LetterTile)
+   */
+  public LetterTile getMostLeftOf(LetterTile tile) {
+    LetterTile current = tile;
+    int col = getCellColumn(tile);
+    int row = getCellRow(tile);
+    System.out.println("@getMostLeftOf() - Current: " + current.getLetter());
+    if (0 < col && col < size && 0 <= row && row < size) {
+      int i = 1;
+      while (col - i >= 0 && slots[getGlobalIndex(col - i, row)].content != null) {
+        current = slots[getGlobalIndex(col - i, row)].content;
+        System.out.println("@getMostLeftOf() - Left: " + current.getLetter());
+        i++;
+      }
+    }
+    return current;
   }
 
   /**
@@ -385,27 +465,27 @@ public class Grid {
   }
 
   /**
-   * Removes the specified Slot's content (based on Row/Column indexes)
+   * Removes the specified Slot's content (based on Column/Row indexes)
    *
-   * @param row    Row (Y index)
    * @param column Column (X index)
+   * @param row    Row (Y index)
    */
-  public void removeSlotContent(int row, int column) {
-    slots[getGlobalIndex(row, column)].removeContent();
+  public void removeSlotContent(int column, int row) {
+    slots[getGlobalIndex(column, row)].removeContent();
   }
 
   /**
    * Adds a Slot to the specified cell
    *
    * @param slot   Slot
-   * @param row    Row (Y)
    * @param column Column (X)
+   * @param row    Row (Y)
    */
-  public void addSlot(Slot slot, int row, int column) {
-    int index = getGlobalIndex(row, column);
+  public void addSlot(Slot slot, int column, int row) {
+    int index = getGlobalIndex(column, row);
 
-    container.add(slot.container, row, column);
-    slots[getGlobalIndex(row, column)] = slot;
+    container.add(slot.container, column, row);
+    slots[getGlobalIndex(column, row)] = slot;
   }
 
   /**
@@ -651,6 +731,7 @@ public class Grid {
         }
 
         words.get(w).getLetter(l).slot.container.setEffect(null);
+        words.get(w).getLetter(l).slot.container.setMouseTransparent(true);
         words.get(w).getLetter(l).container.setMouseTransparent(true);
       }
 
