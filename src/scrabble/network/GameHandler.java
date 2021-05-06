@@ -9,11 +9,17 @@ public class GameHandler extends Thread {
    * game
    */
   private GameInformationController game;
-  /** boolean to controll the execution of the thread */
+  /** boolean to control the execution of the thread */
   private boolean gameIsOn;
   /** working on a reference copy because of a deadlock */
   private ArrayList<NetworkPlayer> players;
-
+  /** counter for turns without action */
+  private int actionlessMove;
+  /** Int representation of ten minutes*/
+  private static final int tenMin = 600000;
+  /** actual player which is on Move */
+  private NetworkPlayer actual;
+  //should i control a specific notify call ?
   /**
    * Constructor for the GameHandler which setting the corresponding GameInformationController
    * 
@@ -59,13 +65,38 @@ public class GameHandler extends Thread {
    */
   private void makeATurn() {
     for (NetworkPlayer player : this.players) {
+      if(!this.gameIsOn) {
+        break;
+      }
+      this.checkRunning();
       System.out.println("GAME HANDLER : Player turn");
-      player.startMove();
-      this.waitMazimumTime(); // change to approach only by HumanPlayer
-      player.endMove(); // doing it all the Time and only inform the Thread or ending itself and not
-                        // send the Message ?
+      if (player instanceof LobbyServerProtocol || player instanceof LobbyHostProtocol) {
+        this.actual = player;
+        player.startMove();
+        this.waitMazimumTime(); // change to approach only by HumanPlayer
+        player.endMove(); // doing it all the Time and only inform the Thread or ending itself and
+                          // not
+                          // send the Message ?
+        this.getMoveInfo();
+      } else {
+        // AI calculating
+      }
     }
 
+  }
+  /**
+   * method to break the loop if the game should stop
+   */
+  private void checkRunning() {
+   //check specific game ending tasks;
+  }
+
+  /**
+   * Method to get the Information of a player turn
+   */
+  private void getMoveInfo() {
+    // TODO Auto-generated method stub
+    
   }
 
   /**
@@ -87,11 +118,12 @@ public class GameHandler extends Thread {
    */
   public synchronized void endMoveForTime() {
     System.out.println("GAME HANDLER : End move in time");
+    //Perhaps here adding the move information because they should be ready
     this.notify();
   }
-  
+
   public void shutdown() {
     this.gameIsOn = false;
-    //Need of braking the inner loop ?
+    // Need of braking the inner loop ?
   }
 }

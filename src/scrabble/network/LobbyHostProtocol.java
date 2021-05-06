@@ -1,7 +1,7 @@
 package scrabble.network;
 
 import java.util.ArrayList;
-
+import java.util.Arrays;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
 import scrabble.model.Profile;
@@ -41,6 +41,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     this.gameInfoController = gameInfo;
     this.loadPlayer();
     System.out.println("HOST PROTOCOL : Protocol created");
+    this.updateLobbyinformation(new ArrayList<Player>(Arrays.asList(this.player)));
   }
 
   /**
@@ -48,7 +49,11 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    */
   private void loadPlayer() {
     this.player = Profile.getPlayer();
-    // this.player.setName("Host"); // dummy representation
+    System.out.println("HOST PROTOCOL : Loading player");
+    if(this.player != null) {
+      System.err.println("Player is not null");
+      System.err.println(player.getName());
+    }
   }
 
   /**
@@ -66,7 +71,8 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   public void updateLobbyinformation(ArrayList<Player> players) {
     this.gameLobby.resetProfileVisibility();
     for (int i = 0; i < players.size(); i++) {
-      gameLobby.setProfileVisible(i, players.get(i).getName());
+      this.gameLobby.setProfileVisible(i, players.get(i).getName());
+      this.gameLobby.setProfilePicture(i, "img/" + players.get(i).getImage());
     }
 
   }
@@ -139,6 +145,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     this.chat = new Client(this, port, this.player.getName());
     this.chat.connect();
     this.chat.start();
+    System.out.println("HOST PROTOCOL : Chat client started");
     // this.sendChatMessage("Hi i am in "); //sending first message for testing purpose
   }
 
@@ -204,5 +211,22 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   public synchronized void sendEndMessage() {
     System.out.println("HOST PROTOCOL : End move by self");
     this.gameInfoController.endMoveForTime();// he didn't go in ???????????????????
+  }
+  /**
+   * Method to shut down the complete server
+   */
+  public void shutdown() {
+    System.out.println("HOST PROTOCOL : Prepare shutdown");
+    this.gameInfoController.shutdown();
+  }
+  /**
+   * Method to shutdown the chat protocol
+   */
+  @Override
+  public void stopChatClient() {
+    if(this.chat != null) {
+      this.chat.disconnect();
+      System.out.println("HOST PROTOCOL : Chat client stopped");
+    }
   }
 }

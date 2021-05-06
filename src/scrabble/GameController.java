@@ -29,6 +29,9 @@ import scrabble.game.Word;
 import scrabble.model.Dictionary;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
+import scrabble.network.LobbyClientProtocol;
+import scrabble.network.LobbyHostProtocol;
+import scrabble.network.NetworkScreen;
 
 /**
  * <h1>The Main Game Controller linked with "interface.fxml" file.</h1>
@@ -109,12 +112,45 @@ public class GameController {
   public LeaderBoard leaderBoard;
 
   public int roundCounter;
+  
+  /** protocol for Network communication during a Network Game */
+  private NetworkScreen protocol;
+  
+  /** boolean variable to control Host specific actions in a network game */
+  private boolean isHost;
 
   /**
    * Default constructor.
    */
   public GameController() {
     roundCounter = 0;
+  }
+  
+  /**
+   * Constructor for Network games
+   * 
+   * @param protocol protocol for server communication
+   * @param isHost variable for host detection
+   * @author hendiehl
+   */
+  public GameController(NetworkScreen protocol, boolean isHost) {
+    this.roundCounter = 0;
+    this.protocol = protocol;
+    this.isHost = isHost;
+  }
+
+  /**
+   * Method to shutdown the network protocol
+   * 
+   * @author hendiehl
+   */
+  public void shutdown() {
+    if (this.protocol instanceof LobbyClientProtocol) {
+      ((LobbyClientProtocol) this.protocol).shutdownProtocol(true);
+    } else if (this.protocol instanceof LobbyHostProtocol) {
+      ((LobbyHostProtocol) this.protocol).shutdown();
+
+    }
   }
 
   public void initGrid(String mapPath) {

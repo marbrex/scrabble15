@@ -242,6 +242,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * method to shutdown the protocol
    */
   public void shutdownProtocol(boolean selfcall) { // change !!!!!!!!!!!!!!!!!!!
+    System.out.println("SERVER PROTOCOL : Shutdown");
     this.isRunning = false;
     if (selfcall) {
       this.sendShutdownMsg();

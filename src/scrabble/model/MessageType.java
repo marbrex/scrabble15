@@ -19,4 +19,5 @@ public enum MessageType {
   GAME, // the game starts
   MOVE, // inform a player that he is on move
   END, // inform player or Server that the move has been ended.
+  EXCHANGE, //exchange letters during a network game
 }

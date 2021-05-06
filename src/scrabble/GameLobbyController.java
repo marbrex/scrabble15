@@ -179,8 +179,9 @@ public class GameLobbyController implements LobbyController {
    * method which shutdown the server
    */
   public void shutdown() { // Can also be used if no host
-    if (server != null) {
-      server.shutdown();
+    System.out.println("GAME LOBBY : Shutdown");
+    if (this.host != null) {
+      this.host.shutdown();
     } else if (this.client != null) {
       this.client.shutdownProtocol(true);
     }
@@ -400,7 +401,20 @@ public class GameLobbyController implements LobbyController {
    */
   @FXML
   private void configureButtonAction() {
-    // to do
+    try {
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/LobbyConfigure.fxml"));
+      loader.setControllerFactory(c -> {
+        return new LobbyConfigureController(server, this);
+      });
+      Parent root1 = (Parent) loader.load();
+      Stage stage = new Stage();
+      stage.setScene(new Scene(root1, 600, 500));
+      stage.show();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
   }
 
   /**
@@ -562,11 +576,11 @@ public class GameLobbyController implements LobbyController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/interface.fxml"));
         if (this.host != null) {
           loader.setControllerFactory(c -> {
-            return new GameController();
+            return new GameController(this.host, this.isHost);
           });
         } else {
           loader.setControllerFactory(c -> {
-            return new GameController();
+            return new GameController(this.client, this.isHost);
           });
         }
         Parent root = loader.load();
@@ -577,11 +591,19 @@ public class GameLobbyController implements LobbyController {
           this.client.setGameScreen(gameScreen);
         }
         Stage stage = (Stage) this.backButton.getScene().getWindow();
-        stage.setScene(new Scene(root, 900, 750));
+        Scene scene = new Scene(root, 900, 700);
+        scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
+        stage.setScene(scene);
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }); // change protocol condition to a interface !!!!!!!!!!!!!!!!
+  }
+  /**
+   * Method to set a new Server after changing it in configure Screen
+   */
+  public void setNewServer(LobbyServer newOne) {
+    this.server = newOne;
   }
 }

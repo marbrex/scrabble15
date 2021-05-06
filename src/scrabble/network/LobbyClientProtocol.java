@@ -37,7 +37,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   /** network address for local network connections */
   private String adress = "localhost";
   /** own port number if wanted */
-  private int ownPort;
+  private boolean ownPort;
   // Control
   /** Control boolean for run method */
   private boolean isRunning;
@@ -66,7 +66,6 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * contact the calling GameFinderController
    * 
    * @param controller Controller of the GameFinder screen
-   * @throws ConnectException thrown if connection on the known ports are not possible
    */
   public LobbyClientProtocol(GameFinderController controller) {
     this.gameFinderController = controller;
@@ -129,6 +128,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     this.in = new ObjectInputStream(server.getInputStream());
     this.out = new ObjectOutputStream(server.getOutputStream());
     this.isRunning = true;
+    this.port = ownPort;
+    this.ownPort = true;
+    this.loadPlayer();
   }
 
   /**
@@ -138,8 +140,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   public void run() {
     System.out.println("CLIENT PROTOCOL : Protocol started");
     try {
-      this.setSocket();
-      this.gameFinderController.connectSucessful();
+      if(!ownPort) {
+        this.setSocket();
+        //this.gameFinderController.connectSucessful();
+      }
     } catch (PortsOccupiedException e1) {
       this.gameFinderController.connectNotSucessful();
     }
@@ -365,13 +369,18 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     System.out.println("CLIENT PROTOCOL : Information-Message received");
     InformationMessage iM = (InformationMessage) message;
     GameStatusType status = iM.getStatus(); // if in Game next port should be tried
-    if (iM.getStatus() == GameStatusType.GAME) {
-      // inform player and ask for own port --> to do
+    if (iM.getStatus() != GameStatusType.GAME) {
+      int amount = iM.getLobbyPlayers();
+      this.gameFinderController.setStatusLabel("In : " + status.name());
+      this.gameFinderController.setStatusLabel2("Amount of Players : " + amount);
+      this.gameFinderController.setPortInformation(this.port);
+      this.gameFinderController.connectSucessful();
+    } else {
+      this.gameFinderController.connectNotSucessful();
+      this.gameFinderController.setStatusLabel("In : " + status.name());
+      this.gameFinderController.setStatusLabel2("Sorry the game started");
+      this.gameFinderController.setPortInformation(this.port);
     }
-    int amount = iM.getLobbyPlayers();
-    this.gameFinderController.setStatusLabel("In : " + status.name());
-    this.gameFinderController.setStatusLabel2("Amount of Players : " + amount);
-    this.gameFinderController.setPortInformation(this.port);
   }
 
   /**
@@ -395,12 +404,14 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   public void shutdownProtocol(boolean selfcall) { // In future change to an approach with an,
                                                    // boolean condition about call or selfcall
+    System.out.println("CLIENT PROTOCOL : Shutdown");
     this.notConnected = false;
     this.isRunning = false;
     if (selfcall) {
       this.sendShutdownMsg(); // last message
     }
     this.closeConnection();
+    this.stopChatClient();
     // System.out.println("GameFinderProtocol shutdown");
   }
 
@@ -423,9 +434,13 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   private void updateLobbyinformation() {
     this.gameLobbyController.resetProfileVisibility();
+    if(this.lobbyPlayers == null) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      System.err.println("PLayers null");
+    }
     for (int i = 0; i < lobbyPlayers.size(); i++) {
       // System.err.println("Update gui :" + i);
       this.gameLobbyController.setProfileVisible(i, lobbyPlayers.get(i).getName());
+      this.gameLobbyController.setProfilePicture(i, "img/" + lobbyPlayers.get(i).getImage());
     }
 
   }
@@ -452,7 +467,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   public void sendShutdownMsg() {
     // System.out.println("Send shutdown message");
     Message msg = new Message(MessageType.SHUTDOWN, this.player);
-    this.chat.sendLeaveMessageToServer();
+    if(this.chat != null) {
+      this.chat.sendLeaveMessageToServer();
+    }
     try {
       if (this.server != null) {
         if (!this.server.isClosed()) {
@@ -495,11 +512,12 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * 
    * @param port port of the Chat server started by the Main Server
    */
-  private void startChatClient(int port) {
+  public void startChatClient(int port) {
     this.chat = new Client(this, port, this.player.getName());
     this.chat.connect();
     this.chat.start();
     this.chat.sendJoinMessageToServer();
+    System.out.println("CLIENT PROTOCOL : Chat client started");
     // this.sendChatMessage("Hi i am in "); //sending first message for testing purpose
   }
 
@@ -531,5 +549,15 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
       e.printStackTrace();
     }
 
+  }
+  /**
+   * Method to shutdown the chat protocol
+   */
+  @Override
+  public void stopChatClient() {
+    if(this.chat != null) {
+      this.chat.disconnect();
+      System.out.println("CLIENT PROTOCOL : Chat client stopped");
+    }
   }
 }
