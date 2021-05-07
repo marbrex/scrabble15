@@ -266,7 +266,7 @@ public class Grid {
   }
 
   /**
-   * Returns an X coordinate of a specififed cell
+   * Returns an X coordinate of a specified cell
    *
    * @param tile Tile that is in Grid
    * @return X coordinate (Column)
@@ -485,7 +485,7 @@ public class Grid {
     int index = getGlobalIndex(column, row);
 
     container.add(slot.container, column, row);
-    slots[getGlobalIndex(column, row)] = slot;
+    slots[index] = slot;
   }
 
   /**
@@ -502,9 +502,14 @@ public class Grid {
     if (controller.roundCounter == 0) {
       validStartingSlots.add(getSlot(size / 2, size / 2));
     } else {
+      System.out.println("Frozen words: ");
       for (Word word : words) {
-        for (int j = 0; j < word.getWordLength(); j++) {
-          validStartingSlots.add(word.getLetter(j).slot);
+        if (word.frozen) {
+          word.display();
+          System.out.print("\n");
+          for (int j = 0; j < word.getWordLength(); j++) {
+            validStartingSlots.add(word.getLetter(j).slot);
+          }
         }
       }
     }
@@ -512,7 +517,6 @@ public class Grid {
     int validWords = 0;
     int wordsUsingStartSlot = 0;
     int frozenWordsCounter = 0;
-    boolean startingSlotUsed = false;
 
     int nbHorizontal = 0;
     int nbVertical = 0;
@@ -543,7 +547,6 @@ public class Grid {
       for (Slot slot : validStartingSlots) {
         // we want to find out whether at least one starting slot is used by a word
         if (!slot.isFree() && word.contains(slot.content)) {
-          startingSlotUsed = true;
           wordsUsingStartSlot++;
           break;
         }
@@ -649,96 +652,96 @@ public class Grid {
 
   private void freezeWords() {
 
-    for (int w = 0; w < words.size(); w++) {
+    for (Word word : words) {
       // words present in the grid
 
-      for (int l = 0; l < words.get(w).getWordLength(); l++) {
+      for (int l = 0; l < word.getWordLength(); l++) {
         // letter tiles of the current word
 
-        words.get(w).getLetter(l).container.getStyleClass().clear();
-        words.get(w).getLetter(l).container.getStyleClass().add("letter-btn");
+        word.getLetter(l).container.getStyleClass().clear();
+        word.getLetter(l).container.getStyleClass().add("letter-btn");
 
-        if (words.get(w).isHorizontal()) {
+        if (word.isHorizontal()) {
 
           if (l == 0) {
-            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-hor-min");
-          } else if (l < words.get(w).getWordLength() - 1) {
-            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-hor-mid");
-          } else if (l == words.get(w).getWordLength() - 1) {
-            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-hor-max");
+            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-min");
+          } else if (l < word.getWordLength() - 1) {
+            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-mid");
+          } else if (l == word.getWordLength() - 1) {
+            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-max");
           }
 
-          if (l < words.get(w).getWordLength() - 1) {
+          if (l < word.getWordLength() - 1) {
             StackPane gap = new StackPane();
-            gap.setPrefSize(padSize + 1, words.get(w).getLetter(l).container.getHeight());
-            gap.setMinSize(padSize + 1, words.get(w).getLetter(l).container.getHeight());
-            gap.setMaxSize(padSize + 1, words.get(w).getLetter(l).container.getHeight());
+            gap.setPrefSize(padSize + 1, word.getLetter(l).container.getHeight());
+            gap.setMinSize(padSize + 1, word.getLetter(l).container.getHeight());
+            gap.setMaxSize(padSize + 1, word.getLetter(l).container.getHeight());
             gap.getStyleClass().add("gap-hor");
 
             controller.gridWrapper.getChildren().add(gap);
 
             gap.setTranslateX(
-                words.get(w).getLetter(l).slot.container.getBoundsInParent().getMaxX() - 1);
+                word.getLetter(l).slot.container.getBoundsInParent().getMaxX() - 1);
             gap.setTranslateY(
-                words.get(w).getLetter(l).slot.container.getBoundsInParent().getMinY());
+                word.getLetter(l).slot.container.getBoundsInParent().getMinY());
 
-            words.get(w).getLetter(l).slot.container.boundsInParentProperty()
+            word.getLetter(l).slot.container.boundsInParentProperty()
                 .addListener((obs, oldValue, newValue) -> {
                   gap.setTranslateX(newValue.getMaxX() - 1);
                   gap.setTranslateY(newValue.getMinY());
                 });
 
-            gap.prefHeightProperty().bind(words.get(w).getLetter(l).container.heightProperty());
-            gap.minHeightProperty().bind(words.get(w).getLetter(l).container.heightProperty());
-            gap.maxHeightProperty().bind(words.get(w).getLetter(l).container.heightProperty());
+            gap.prefHeightProperty().bind(word.getLetter(l).container.heightProperty());
+            gap.minHeightProperty().bind(word.getLetter(l).container.heightProperty());
+            gap.maxHeightProperty().bind(word.getLetter(l).container.heightProperty());
           }
 
-        } else if (words.get(w).isVertical()) {
+        } else if (word.isVertical()) {
 
           if (l == 0) {
-            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-ver-min");
-          } else if (l < words.get(w).getWordLength() - 1) {
-            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-ver-mid");
-          } else if (l == words.get(w).getWordLength() - 1) {
-            words.get(w).getLetter(l).container.getStyleClass().add("letter-btn-ver-max");
+            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-min");
+          } else if (l < word.getWordLength() - 1) {
+            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-mid");
+          } else if (l == word.getWordLength() - 1) {
+            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-max");
           }
 
-          if (l < words.get(w).getWordLength() - 1) {
+          if (l < word.getWordLength() - 1) {
             StackPane gap = new StackPane();
-            gap.setPrefSize(words.get(w).getLetter(l).container.getWidth(), padSize + 1);
-            gap.setMinSize(words.get(w).getLetter(l).container.getWidth(), padSize + 1);
-            gap.setMaxSize(words.get(w).getLetter(l).container.getWidth(), padSize + 1);
+            gap.setPrefSize(word.getLetter(l).container.getWidth(), padSize + 1);
+            gap.setMinSize(word.getLetter(l).container.getWidth(), padSize + 1);
+            gap.setMaxSize(word.getLetter(l).container.getWidth(), padSize + 1);
             gap.getStyleClass().add("gap-ver");
 
             controller.gridWrapper.getChildren().add(gap);
 
             gap.setTranslateX(
-                words.get(w).getLetter(l).slot.container.getBoundsInParent().getMinX() + 1);
+                word.getLetter(l).slot.container.getBoundsInParent().getMinX() + 1);
             gap.setTranslateY(
-                words.get(w).getLetter(l).slot.container.getBoundsInParent().getMaxY() - 1);
+                word.getLetter(l).slot.container.getBoundsInParent().getMaxY() - 1);
 
-            words.get(w).getLetter(l).slot.container.boundsInParentProperty()
+            word.getLetter(l).slot.container.boundsInParentProperty()
                 .addListener((obs, oldValue, newValue) -> {
                   gap.setTranslateX(newValue.getMinX() + 1);
                   gap.setTranslateY(newValue.getMaxY() - 1);
                 });
 
-            gap.prefWidthProperty().bind(words.get(w).getLetter(l).container.widthProperty());
-            gap.minWidthProperty().bind(words.get(w).getLetter(l).container.widthProperty());
-            gap.maxWidthProperty().bind(words.get(w).getLetter(l).container.widthProperty());
+            gap.prefWidthProperty().bind(word.getLetter(l).container.widthProperty());
+            gap.minWidthProperty().bind(word.getLetter(l).container.widthProperty());
+            gap.maxWidthProperty().bind(word.getLetter(l).container.widthProperty());
           }
 
         }
 
-        words.get(w).getLetter(l).slot.container.setEffect(null);
-        words.get(w).getLetter(l).slot.container.setMouseTransparent(true);
-        words.get(w).getLetter(l).container.setMouseTransparent(true);
+        word.getLetter(l).slot.container.setEffect(null);
+        word.getLetter(l).slot.container.setMouseTransparent(true);
+        word.getLetter(l).container.setMouseTransparent(true);
       }
 
-      words.get(w).frozen = true;
+      word.frozen = true;
 //      controller.gridWrapper.getChildren().remove(words.get(w).container);
-      words.get(w).container.getStyleClass().clear();
-      words.get(w).container.getChildren().clear();
+      word.container.getStyleClass().clear();
+      word.container.getChildren().clear();
     }
   }
 

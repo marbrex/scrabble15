@@ -41,7 +41,6 @@ public class Word {
     display();
     System.out.print("\n");
 
-    boolean createNewBox = true;
     if (!controller.grid.words.isEmpty()) {
 
       System.out.println("@ initShape() - wordsGrid NOT empty");
@@ -58,78 +57,74 @@ public class Word {
               System.out.println("@ initShape() - the word contains " + k + "th word in wordsGrid");
               controller.gridWrapper.getChildren().remove(controller.grid.words.get(k).container);
               controller.grid.words.remove(k);
-              createNewBox = true;
             }
           }
         }
       }
     }
 
-    if (createNewBox) {
+    System.out.println("@initShape() - createNewBox");
 
-      System.out.println("@initShape() - createNewBox");
-
-      for (LetterTile l : w) {
-        System.out.println("@initShape() - next letter: " + l.getLetter());
-      }
-      LetterTile firstLetter = w.get(0);
-      LetterTile lastLetter = w.getLast();
-
-      // Creating a highlighting effect for the word
-      container = new AnchorPane();
-      if (this.isValid()) {
-        container.getStyleClass().add("valid-word");
-      } else {
-        container.getStyleClass().add("invalid-word");
-      }
-
-      // Creating a label with word's points
-      pointsLabel = new Label(String.valueOf(this.getPoints()));
-      if (this.isValid()) {
-        pointsLabel.getStyleClass().add("word-points-label");
-      } else {
-        pointsLabel.getStyleClass().add("word-points-label-invalid");
-      }
-      pointsLabel.setPrefSize(30, 30);
-
-      Bounds boundsFirst = firstLetter.slot.container.getBoundsInParent();
-      System.out.println("\nBounds First: " + boundsFirst);
-      Bounds boundsLast = lastLetter.slot.container.getBoundsInParent();
-      System.out.println("Bounds Last: " + boundsLast);
-
-      // Adjusting the coordinates (in Pixels) of the highlighted word box
-      container.setTranslateX(boundsFirst.getMinX());
-      container.setTranslateY(boundsFirst.getMinY());
-
-      // Adjusting the size (Width and Height) of the highlighted word box
-      double sizeX = boundsLast.getMaxX() - boundsFirst.getMinX();
-      double sizeY = boundsLast.getMaxY() - boundsFirst.getMinY();
-      container.setPrefSize(sizeX, sizeY);
-      container.setMinSize(sizeX, sizeY);
-      container.setMaxSize(sizeX, sizeY);
-
-      // Bind the position of the box to the first letter's slot
-      firstLetter.slot.container.boundsInParentProperty().addListener((obs, oldValue, newValue) -> {
-        container.setTranslateX(newValue.getMinX());
-        container.setTranslateY(newValue.getMinY());
-      });
-
-      System.out.println("\nwidth: " + container.getWidth());
-      System.out.println("height: " + container.getHeight());
-
-      // Adding Points Label to Highlighted Box
-      container.getChildren().add(pointsLabel);
-      // Adjusting The Points Label position in the Highlighted Box
-      AnchorPane.setRightAnchor(pointsLabel, -15.0);
-      AnchorPane.setTopAnchor(pointsLabel, -15.0);
-
-      container.setMouseTransparent(true);
-
-      // Adding the Highlighted Box to the GridPane's wrapper
-      controller.gridWrapper.getChildren().add(container);
-
-      controller.grid.words.add(this);
+    for (LetterTile l : w) {
+      System.out.println("@initShape() - next letter: " + l.getLetter());
     }
+    LetterTile firstLetter = w.get(0);
+    LetterTile lastLetter = w.getLast();
+
+    // Creating a highlighting effect for the word
+    container = new AnchorPane();
+    if (this.isValid()) {
+      container.getStyleClass().add("valid-word");
+    } else {
+      container.getStyleClass().add("invalid-word");
+    }
+
+    // Creating a label with word's points
+    pointsLabel = new Label(String.valueOf(this.getPoints()));
+    if (this.isValid()) {
+      pointsLabel.getStyleClass().add("word-points-label");
+    } else {
+      pointsLabel.getStyleClass().add("word-points-label-invalid");
+    }
+    pointsLabel.setPrefSize(30, 30);
+
+    Bounds boundsFirst = firstLetter.slot.container.getBoundsInParent();
+    System.out.println("\nBounds First: " + boundsFirst);
+    Bounds boundsLast = lastLetter.slot.container.getBoundsInParent();
+    System.out.println("Bounds Last: " + boundsLast);
+
+    // Adjusting the coordinates (in Pixels) of the highlighted word box
+    container.setTranslateX(boundsFirst.getMinX());
+    container.setTranslateY(boundsFirst.getMinY());
+
+    // Adjusting the size (Width and Height) of the highlighted word box
+    double sizeX = boundsLast.getMaxX() - boundsFirst.getMinX();
+    double sizeY = boundsLast.getMaxY() - boundsFirst.getMinY();
+    container.setPrefSize(sizeX, sizeY);
+    container.setMinSize(sizeX, sizeY);
+    container.setMaxSize(sizeX, sizeY);
+
+    // Bind the position of the box to the first letter's slot
+    firstLetter.slot.container.boundsInParentProperty().addListener((obs, oldValue, newValue) -> {
+      container.setTranslateX(newValue.getMinX());
+      container.setTranslateY(newValue.getMinY());
+    });
+
+    System.out.println("\nwidth: " + container.getWidth());
+    System.out.println("height: " + container.getHeight());
+
+    // Adding Points Label to Highlighted Box
+    container.getChildren().add(pointsLabel);
+    // Adjusting The Points Label position in the Highlighted Box
+    AnchorPane.setRightAnchor(pointsLabel, -15.0);
+    AnchorPane.setTopAnchor(pointsLabel, -15.0);
+
+    container.setMouseTransparent(true);
+
+    // Adding the Highlighted Box to the GridPane's wrapper
+    controller.gridWrapper.getChildren().add(container);
+
+    controller.grid.words.add(this);
   }
 
   /**
@@ -138,7 +133,7 @@ public class Word {
    * @param controller GameController
    */
   public Word(GameController controller) {
-    w = new LinkedList<LetterTile>();
+    w = new LinkedList<>();
     points = 0;
     wordLength = 0;
     isValid = false;
@@ -164,7 +159,7 @@ public class Word {
    * @param controller Controller
    */
   public Word(LetterTile start, LetterTile end, GameController controller) {
-    w = new LinkedList<LetterTile>();
+    w = new LinkedList<>();
     points = 0;
     wordLength = 0;
     isValid = false;
@@ -210,19 +205,25 @@ public class Word {
 
             Multiplier mult = controller.grid.getSlot(i, startY).getMultiplier();
             if (mult.getScope().equals("LETTER")) {
-              if (!controller.grid.getSlot(i, startY).container.isMouseTransparent()) {
-                points += controller.grid.getSlotContent(i, startY).getPoints() * mult.getValue();
-              } else {
-                points += controller.grid.getSlotContent(i, startY).getPoints();
+              if (!controller.grid.getSlotContent(i, startY).isBlank) {
+                if (!controller.grid.getSlot(i, startY).container.isMouseTransparent()) {
+                  points += controller.grid.getSlotContent(i, startY).getPoints() * mult.getValue();
+                } else {
+                  points += controller.grid.getSlotContent(i, startY).getPoints();
+                }
               }
             } else if (mult.getScope().equals("WORD")) {
               if (!controller.grid.getSlot(i, startY).container.isMouseTransparent()) {
                 multiplier = true;
                 multiplierValue *= mult.getValue();
               }
-              points += controller.grid.getSlotContent(i, startY).getPoints();
+              if (!controller.grid.getSlotContent(i, startY).isBlank) {
+                points += controller.grid.getSlotContent(i, startY).getPoints();
+              }
             } else {
-              points += controller.grid.getSlotContent(i, startY).getPoints();
+              if (!controller.grid.getSlotContent(i, startY).isBlank) {
+                points += controller.grid.getSlotContent(i, startY).getPoints();
+              }
             }
 
             wordLength++;
@@ -276,19 +277,25 @@ public class Word {
 
             Multiplier mult = controller.grid.getSlot(startX, j).getMultiplier();
             if (mult.getScope().equals("LETTER")) {
-              if (!controller.grid.getSlot(startX, j).container.isMouseTransparent()) {
-                points += controller.grid.getSlotContent(startX, j).getPoints() * mult.getValue();
-              } else {
-                points += controller.grid.getSlotContent(startX, j).getPoints();
+              if (!controller.grid.getSlotContent(startX, j).isBlank) {
+                if (!controller.grid.getSlot(startX, j).container.isMouseTransparent()) {
+                  points += controller.grid.getSlotContent(startX, j).getPoints() * mult.getValue();
+                } else {
+                  points += controller.grid.getSlotContent(startX, j).getPoints();
+                }
               }
             } else if (mult.getScope().equals("WORD")) {
               if (!controller.grid.getSlot(startX, j).container.isMouseTransparent()) {
                 multiplier = true;
                 multiplierValue *= mult.getValue();
               }
-              points += controller.grid.getSlotContent(startX, j).getPoints();
+              if (!controller.grid.getSlotContent(startX, j).isBlank) {
+                points += controller.grid.getSlotContent(startX, j).getPoints();
+              }
             } else {
-              points += controller.grid.getSlotContent(startX, j).getPoints();
+              if (!controller.grid.getSlotContent(startX, j).isBlank) {
+                points += controller.grid.getSlotContent(startX, j).getPoints();
+              }
             }
 
             wordLength++;
@@ -468,7 +475,7 @@ public class Word {
    * @return Word as "String"
    */
   public String getWordAsString() {
-    String str = new String("");
+    String str = "";
     for (int i = 0; i < wordLength; i++) {
       str += w.get(i).getLetter();
     }

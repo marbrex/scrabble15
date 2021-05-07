@@ -159,6 +159,23 @@
   -fx-font-weight: bold;
 }
 
+.popup-blank-block {
+  -fx-border-radius: 7px;
+  -fx-background-radius: 7px;
+  -fx-background-color: rgba(100, 100, 100, 0.5);
+  -fx-padding: 100px;
+}
+
+.popup-blank-message {
+  -fx-border-width: 3px;
+  -fx-border-color: orange;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+  -fx-background-color: #5d5d5d;
+  -fx-padding: 10px;
+  -fx-effect: dropshadow(one-pass-box, dimgray, 30, 0, 5, 5);
+}
+
 .popup-error-block {
   -fx-border-radius: 7px;
   -fx-background-radius: 7px;

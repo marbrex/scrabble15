@@ -1,10 +1,16 @@
 package scrabble.game;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -137,46 +143,115 @@ public class Slot {
       boolean success = false;
       if (db.hasString()) {
 
-        // Getting the coordinates of the placeholder rectangle
-        int x = GridPane.getColumnIndex(container);
-        int y = GridPane.getRowIndex(container);
-        int index = x + controller.grid.size * y;
-
         // Getting the letter tile's data transferred by D&D
-        char letter = db.getString().charAt(0);
-        int points = Character.getNumericValue(db.getString().charAt(1));
-
-        // Creating a new Letter Tile
-        LetterTile tile = new LetterTile(letter, points, size, controller);
-
-        // Adding the Letter to the Slot
-        this.setContent(tile);
-
-        // Checking if there are any Neighbours
-        // Getting First and Last letter, both for Horizontal and Vertical
-        LetterTile mostTop = controller.grid.getMostTopOf(tile);
-        LetterTile mostRight = controller.grid.getMostRightOf(tile);
-        LetterTile mostBottom = controller.grid.getMostBottomOf(tile);
-        LetterTile mostLeft = controller.grid.getMostLeftOf(tile);
-
-        System.out.println(this + " - Most Top: " + mostTop.getLetter());
-        System.out.println(this + " - Most Right: " + mostRight.getLetter());
-        System.out.println(this + " - Most Bottom: " + mostBottom.getLetter());
-        System.out.println(this + " - Most Left: " + mostLeft.getLetter());
-
-        if (mostLeft != tile || mostRight != tile) {
-          // There are HORIZONTAL neighbours
-
-          // Creating a Word.
-          // Fills in all data members of the Word class.
-          // It checks whether the word has no empty gaps, i.e. the word is FULL.
-          // If thw word is full, then it checks if the word is VALID.
-          Word word = new Word(mostLeft, mostRight, controller);
+        Map<String, String> params = new HashMap<>();
+        String paramsString = db.getString();
+        String[] pairs = paramsString.split("&");
+        for (String p : pairs) {
+          String[] pair = p.split("=");
+          params.put(pair[0], pair[1]);
         }
 
-        if (mostTop != tile || mostBottom != tile) {
-          // There are VERTICAL neighbours
-          Word word = new Word(mostTop, mostBottom, controller);
+        char letter = params.get("letter").charAt(0);
+        int points = Integer.parseInt(params.get("points"));
+        boolean isBlank = Boolean.parseBoolean(params.get("isBlank"));
+
+        if (isBlank) {
+          // blank letterTile
+
+          // Creating a new Letter letterTile
+          BorderPane popup = new BorderPane();
+          popup.setViewOrder(-2);
+          popup.getStyleClass().add("popup-blank-block");
+
+          FlowPane tiles = new FlowPane();
+          tiles.setAlignment(Pos.CENTER);
+          tiles.setHgap(5);
+          tiles.setVgap(5);
+          tiles.setPrefWrapLength(7);
+          tiles.getStyleClass().add("popup-blank-message");
+
+          LetterBag bag = LetterBag.getInstance();
+          for (int i = 0; i < bag.getAlphabetSize(); i++) {
+            char l = bag.getLetterInAlphabet(i);
+            int v = bag.getValueInAlphabet(i);
+            LetterTile ltrTile = new LetterTile(l, v, size, controller);
+            ltrTile.setPointsVisible(false);
+            ltrTile.isBlank = true;
+            tiles.getChildren().add(ltrTile.container);
+            ltrTile.container.setOnMouseClicked(clickEvent -> {
+
+              // Creating a new Letter letterTile
+              LetterTile tile = new LetterTile(l, v, controller.grid.cellSize, controller);
+
+              tile.setLetterVisible(true);
+              tile.setPointsVisible(false);
+              tile.isBlank = true;
+
+              controller.gridWrapper.getChildren().remove(popup);
+              controller.okBtn.setDisable(false);
+
+              // Adding the Letter to the Slot
+              this.setContent(tile);
+
+              // Checking if there are any Neighbours
+              // Getting First and Last letter, both for Horizontal and Vertical
+              LetterTile mostTop = controller.grid.getMostTopOf(tile);
+              LetterTile mostRight = controller.grid.getMostRightOf(tile);
+              LetterTile mostBottom = controller.grid.getMostBottomOf(tile);
+              LetterTile mostLeft = controller.grid.getMostLeftOf(tile);
+
+              if (mostLeft != tile || mostRight != tile) {
+                // There are HORIZONTAL neighbours
+                new Word(mostLeft, mostRight, controller);
+              }
+
+              if (mostTop != tile || mostBottom != tile) {
+                // There are VERTICAL neighbours
+                new Word(mostTop, mostBottom, controller);
+              }
+            });
+            ltrTile.container.setOnDragDetected(null);
+            ltrTile.container.setOnDragDone(null);
+          }
+
+          popup.setCenter(tiles);
+
+          controller.gridWrapper.getChildren().add(popup);
+          controller.okBtn.setDisable(true);
+        } else {
+          // regular letterTile
+
+          // Creating a new Letter letterTile
+          LetterTile tile = new LetterTile(letter, points, controller.grid.cellSize, controller);
+
+          tile.setVisible(true);
+          tile.isBlank = false;
+
+          // Adding the Letter to the Slot
+          this.setContent(tile);
+
+          // Checking if there are any Neighbours
+          // Getting First and Last letter, both for Horizontal and Vertical
+          LetterTile mostTop = controller.grid.getMostTopOf(tile);
+          LetterTile mostRight = controller.grid.getMostRightOf(tile);
+          LetterTile mostBottom = controller.grid.getMostBottomOf(tile);
+          LetterTile mostLeft = controller.grid.getMostLeftOf(tile);
+
+          if (mostLeft != tile || mostRight != tile) {
+            // There are HORIZONTAL neighbours
+
+            // Creating a Word.
+            // Fills in all data members of the Word class.
+            // It checks whether the word has no empty gaps, i.e. the word is FULL.
+            // If thw word is full, then it checks if the word is VALID.
+            new Word(mostLeft, mostRight, controller);
+          }
+
+          if (mostTop != tile || mostBottom != tile) {
+            // There are VERTICAL neighbours
+            new Word(mostTop, mostBottom, controller);
+          }
         }
 
         success = true;

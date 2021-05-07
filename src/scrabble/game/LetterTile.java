@@ -27,9 +27,9 @@ public class LetterTile {
   AnchorPane container;
   private Label letter;
   private Label points;
+  boolean isBlank;
 
   Slot slot;
-
 
   // Neighbours
   private LetterTile top;
@@ -62,37 +62,45 @@ public class LetterTile {
     // container.setEffect(ds);
 
     letter = new Label(String.valueOf(ltr));
+    if (ltr == '\0') {
+      letter.setVisible(false);
+      this.isBlank = true;
+    }
     letter.getStyleClass().add("letter-label");
     letter.setLabelFor(container);
     letter.setPrefSize(cellSize, cellSize);
 
     points = new Label(String.valueOf(pts));
+    if (pts == 0) {
+      points.setVisible(false);
+      this.isBlank = true;
+    }
     points.getStyleClass().add("points-label");
     points.setLabelFor(container);
 
-    container.setOnMousePressed(event -> {
-      System.out
-          .println("Event.getScene: (" + event.getSceneX() + ", " + event.getSceneY() + ")");
-      System.out.println("Event.get: (" + event.getX() + ", " + event.getY() + ")\n");
-    });
+//    container.setOnMousePressed(event -> {
+//      System.out
+//          .println("Event.getScene: (" + event.getSceneX() + ", " + event.getSceneY() + ")");
+//      System.out.println("Event.get: (" + event.getX() + ", " + event.getY() + ")\n");
+//    });
 
-    container.setOnMouseDragged(mouseEvent -> {
-      container.toFront();
-      container.setCursor(Cursor.CLOSED_HAND);
-      container.setStyle("-fx-opacity: 0.6");
+//    container.setOnMouseDragged(mouseEvent -> {
+//      container.toFront();
+//      container.setCursor(Cursor.CLOSED_HAND);
+//      container.setStyle("-fx-opacity: 0.6");
+//
+//      container.setLayoutX(mouseEvent.getX() + container.getLayoutX() - container.getWidth() / 2);
+//      container.setLayoutY(mouseEvent.getY() + container.getLayoutY() - container.getHeight() / 2);
+//
+//      mouseEvent.consume();
+//    });
 
-      container.setLayoutX(mouseEvent.getX() + container.getLayoutX() - container.getWidth() / 2);
-      container.setLayoutY(mouseEvent.getY() + container.getLayoutY() - container.getHeight() / 2);
-
-      mouseEvent.consume();
-    });
-
-    container.setOnMouseReleased(mouseEvent -> {
-      container.setCursor(Cursor.DEFAULT);
-      container.setStyle("-fx-opacity: 1");
-
-      mouseEvent.consume();
-    });
+//    container.setOnMouseReleased(mouseEvent -> {
+//      container.setCursor(Cursor.DEFAULT);
+//      container.setStyle("-fx-opacity: 1");
+//
+//      mouseEvent.consume();
+//    });
 
     container.setOnMouseEntered(event -> container.setStyle("-fx-opacity: 0.8"));
     container.setOnMouseExited(event -> container.setStyle("-fx-opacity: 1"));
@@ -106,7 +114,8 @@ public class LetterTile {
 
       // put a string on drag board
       ClipboardContent content = new ClipboardContent();
-      content.putString(letter.getText() + points.getText());
+      content.putString("letter=" + letter.getText() + "&points=" + points.getText() + "&isBlank="
+          + this.isBlank);
       db.setContent(content);
 
       event.consume();
@@ -152,7 +161,7 @@ public class LetterTile {
             }
 
             if (!frozenWord) {
-              Word newWord = new Word(word.getLetter(1), word.getLast(), controller);
+              new Word(word.getLetter(1), word.getLast(), controller);
             }
           }
 
@@ -168,7 +177,7 @@ public class LetterTile {
 
             if (!frozenWord) {
               int ltrIdx = word.getWordLength() - 2;
-              Word newWord = new Word(word.getFirst(), word.getLetter(ltrIdx), controller);
+              new Word(word.getFirst(), word.getLetter(ltrIdx), controller);
             }
           }
         }
@@ -258,6 +267,19 @@ public class LetterTile {
     this.controller = controller;
 
     initShape(letter, points);
+  }
+
+  public void setVisible(boolean val) {
+    setLetterVisible(val);
+    setPointsVisible(val);
+  }
+
+  public void setPointsVisible(boolean val) {
+    points.setVisible(val);
+  }
+
+  public void setLetterVisible(boolean val) {
+    letter.setVisible(val);
   }
 
   /**
