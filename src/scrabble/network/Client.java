@@ -88,7 +88,7 @@ public class Client extends Thread {
     toServer.flush();
   }
 
-  
+
   public void sendMessageToServer(String message) {
     System.out.println("[" + username + "] " + message);
     toServer.println(username + ": " + message);
@@ -111,14 +111,15 @@ public class Client extends Thread {
    */
 
   public void disconnect() {
-    try {
       this.running = false;
-      this.toServer.close();
-      this.fromServer.close();
-      this.c.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+      try {
+        if(!this.c.isClosed()) {
+        this.c.close();
+        }
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
   }
 
   /**
@@ -128,27 +129,30 @@ public class Client extends Thread {
    * @author skeskinc
    */
   public String useEmoticons(String msg) {
-    msg = msg.replaceAll(":D", "😁");
-    msg = msg.replaceAll(":'D", "😂");
-    msg = msg.replaceAll("D:", "😩");
-    msg = msg.replaceAll(":clap", "🙏");
+    msg = msg.replaceAll(":D", "ðŸ˜�");
+    msg = msg.replaceAll(":'D", "ðŸ˜‚");
+    msg = msg.replaceAll("D:", "ðŸ˜©");
+    msg = msg.replaceAll(":clap", "ðŸ™�");
     return msg;
   }
 
   public void run() {
     try {
       // toServer.println(this.username);
+      String msg;
       while (running) {
-        String msg = fromServer.readLine();
-        // System.out.println("Third Message: " + msg);
-        // this.chatcontroller.applyMessageToArea(msg);
-        msg = useEmoticons(msg);
+        msg = fromServer.readLine();
         this.client.printChatMessage(msg); // printing
 
       }
-    } catch (IOException e) {
+    }catch (SocketException e) {
+  //    e.printStackTrace();
+      } 
+    catch (IOException e) {
       // TODO Auto-generated catch block
+      this.running = false;
       e.printStackTrace();
     }
+    
   }
 }

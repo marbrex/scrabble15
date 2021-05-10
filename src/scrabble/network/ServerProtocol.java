@@ -37,20 +37,37 @@ public class ServerProtocol extends Thread {
 
   public void run() {
     try {
-//      String username = fromClient.readLine();
-      String message = "";
+      // String username = fromClient.readLine();
+      String  message;
       while (running) {
         message = fromClient.readLine();
         // System.out.println("Second Message: " + message);
         // System.out.println("Size of Clients: " + Server.allClients.size());
-        for (ServerProtocol sp : Server.allClients) {
-          toClient = new PrintWriter(sp.socket.getOutputStream());
-          toClient.println("" + message);
-          toClient.flush();
+        if(message != null) {
+          for (ServerProtocol sp : Server.allClients) {
+            toClient = new PrintWriter(sp.socket.getOutputStream());
+            toClient.println("" + message);
+            toClient.flush();
+          }
+        } else {
+          this.disconnect();
+          Server.allClients.remove(this);
         }
-
       }
 
+    } catch(SocketException e) {
+      this.disconnect();
+      e.printStackTrace();
+    }
+    catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+  
+  public void closeSocket() {
+    try {
+      this.socket.close();
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -58,13 +75,15 @@ public class ServerProtocol extends Thread {
   }
 
   public void disconnect() {
-    try {
-      this.running = false;
-      this.toClient.close();
-      this.fromClient.close();
-      this.socket.close();
-    } catch (IOException e) {
-      e.printStackTrace();
+    this.running = false;
+    if(!this.socket.isClosed()) {
+      try {
+        this.socket.close();
+      } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     }
+  
   }
 }
