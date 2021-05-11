@@ -159,40 +159,43 @@ public class Slot {
         if (isBlank) {
           // blank letterTile
 
-          // Creating a new Letter letterTile
-          BorderPane popup = new BorderPane();
-          popup.setViewOrder(-2);
-          popup.getStyleClass().add("popup-blank-block");
-
-          FlowPane tiles = new FlowPane();
-          tiles.setAlignment(Pos.CENTER);
-          tiles.setHgap(5);
-          tiles.setVgap(5);
-          tiles.setPrefWrapLength(7);
-          tiles.getStyleClass().add("popup-blank-message");
+          // Setting visible a popup window
+          controller.popupBlankBlock.setVisible(true);
+          controller.popupBlankBlock.setViewOrder(-2);
 
           LetterBag bag = LetterBag.getInstance();
           for (int i = 0; i < bag.getAlphabetSize(); i++) {
             char l = bag.getLetterInAlphabet(i);
             int v = bag.getValueInAlphabet(i);
+
             LetterTile ltrTile = new LetterTile(l, v, size, controller);
             ltrTile.setPointsVisible(false);
             ltrTile.isBlank = true;
-            tiles.getChildren().add(ltrTile.container);
+            ltrTile.container.setOnDragDetected(null);
+            ltrTile.container.setOnDragDone(null);
             ltrTile.container.setOnMouseClicked(clickEvent -> {
+              System.out.println(ltrTile + " - @onMouseClicked");
 
               // Creating a new Letter letterTile
               LetterTile tile = new LetterTile(l, v, controller.grid.cellSize, controller);
+
+              System.out.println(ltrTile + " - @onMouseClicked - created a tile");
 
               tile.setLetterVisible(true);
               tile.setPointsVisible(false);
               tile.isBlank = true;
 
-              controller.gridWrapper.getChildren().remove(popup);
+              System.out.println(ltrTile + " - @onMouseClicked - set the tile");
+
+              controller.popupBlankBlock.setVisible(false);
               controller.okBtn.setDisable(false);
+
+              System.out.println(ltrTile + " - @onMouseClicked - removed popup and turned on OK btn");
 
               // Adding the Letter to the Slot
               this.setContent(tile);
+
+              System.out.println(ltrTile + " - @onMouseClicked - Added the Letter to the Slot");
 
               // Checking if there are any Neighbours
               // Getting First and Last letter, both for Horizontal and Vertical
@@ -201,23 +204,33 @@ public class Slot {
               LetterTile mostBottom = controller.grid.getMostBottomOf(tile);
               LetterTile mostLeft = controller.grid.getMostLeftOf(tile);
 
+              System.out.println(ltrTile + " - @onMouseClicked - got the neighbours");
+
+              System.out.println(ltrTile + " - @onMouseClicked - mostTop=" + mostTop);
+              System.out.println(ltrTile + " - @onMouseClicked - mostRight=" + mostRight);
+              System.out.println(ltrTile + " - @onMouseClicked - mostBottom=" + mostBottom);
+              System.out.println(ltrTile + " - @onMouseClicked - mostLeft=" + mostLeft);
+              System.out.println(ltrTile + " - @onMouseClicked - tile=" + tile);
+
               if (mostLeft != tile || mostRight != tile) {
                 // There are HORIZONTAL neighbours
+                System.out.println(ltrTile + " - @onMouseClicked - creating a horizontal word");
                 new Word(mostLeft, mostRight, controller);
               }
 
               if (mostTop != tile || mostBottom != tile) {
                 // There are VERTICAL neighbours
+                System.out.println(ltrTile + " - @onMouseClicked - creating a vertical word");
                 new Word(mostTop, mostBottom, controller);
               }
+
+              controller.popupBlankMessage.getChildren().clear();
+              System.out.println(ltrTile + " - @onMouseClicked - finish");
             });
-            ltrTile.container.setOnDragDetected(null);
-            ltrTile.container.setOnDragDone(null);
+
+            controller.popupBlankMessage.getChildren().add(ltrTile.container);
           }
 
-          popup.setCenter(tiles);
-
-          controller.gridWrapper.getChildren().add(popup);
           controller.okBtn.setDisable(true);
         } else {
           // regular letterTile

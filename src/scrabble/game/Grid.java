@@ -500,8 +500,13 @@ public class Grid {
     ArrayList<Slot> validStartingSlots = new ArrayList<>();
 
     if (controller.roundCounter == 0) {
+      // It's 1st round
+      // Adding the center slot as Starting Point
       validStartingSlots.add(getSlot(size / 2, size / 2));
+
     } else {
+      // It's 2nd+ round
+      // Searching all frozen words and adding them into Starting Slots Array
       System.out.println("Frozen words: ");
       for (Word word : words) {
         if (word.frozen) {
@@ -517,7 +522,6 @@ public class Grid {
     int validWords = 0;
     int wordsUsingStartSlot = 0;
     int frozenWordsCounter = 0;
-
     int nbHorizontal = 0;
     int nbVertical = 0;
 
@@ -533,6 +537,7 @@ public class Grid {
         validWords++;
       }
 
+      // Counting the number of frozen words, current horizontal and vertical words
       if (!word.frozen) {
         if (word.isHorizontal()) {
           nbHorizontal++;
@@ -554,6 +559,7 @@ public class Grid {
     }
 
     boolean noSingleTiles = true;
+    // Checking if there are Single LetterTiles in the Grid
     for (Slot slot : slots) {
       if (!slot.isFree()) {
         if (getNeighbourCell(slot.content, "top") == null &&

@@ -8,6 +8,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
@@ -60,6 +61,14 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
               </rowConstraints>
             </GridPane>
+            <BorderPane fx:id="popupBlankBlock" prefHeight="200.0" prefWidth="200.0"
+              styleClass="popup-blank-block" visible="false">
+              <center>
+                <FlowPane fx:id="popupBlankMessage" alignment="CENTER" columnHalignment="CENTER"
+                  hgap="5.0" prefHeight="200.0" prefWidth="200.0" styleClass="popup-blank-message"
+                  vgap="5.0" BorderPane.alignment="CENTER"/>
+              </center>
+            </BorderPane>
           </children>
         </StackPane>
         <BorderPane id="side-panel" fx:id="sideBar" minWidth="200.0">

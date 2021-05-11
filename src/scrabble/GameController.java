@@ -11,6 +11,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -95,6 +96,12 @@ public class GameController {
 
   @FXML
   public ImageView quitGame;
+
+  @FXML
+  public BorderPane popupBlankBlock;
+
+  @FXML
+  public FlowPane popupBlankMessage;
 
   /**
    * The actual data of the letter grid will be stocked here.
