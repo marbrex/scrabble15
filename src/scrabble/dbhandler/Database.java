@@ -10,8 +10,8 @@ import scrabble.model.*;
  * scrabble.dbhandler.Database class to connect to the Database, creating and being able to delete
  * tables and updating player statistics
  * 
- * @author Sergen Keskincelik
- * @author Moritz Raucher
+ * @author mraucher
+ * @author skeskinc  
  */
 
 public class Database {
@@ -22,47 +22,54 @@ public class Database {
 
   /**
    * Connecting to DB and creating DB File if it doesn't exist (SQLite .jar file needed!)
+   * 
+   * @author mraucher
    */
   public static void connectToDB() {
     try {
       Class.forName("org.sqlite.JDBC");
-      new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".Scrabble").mkdir();
-   //   connection = DriverManager.getConnection("jdbc:sqlite:" + System.getProperty("user.dir")
-   //       + "\\resources\\" + "scrabble\\db\\Scrabble15.db");
-        connection = DriverManager.getConnection("jdbc:sqlite:" + System.getProperty("user.home") + System.getProperty("file.separator") +
-            ".Scrabble" + System.getProperty("file.separator") + "Scrabble15.db");
+      new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".Scrabble")
+          .mkdir();
+      // connection = DriverManager.getConnection("jdbc:sqlite:" + System.getProperty("user.dir")
+      // + "\\resources\\" + "scrabble\\db\\Scrabble15.db");
+      connection = DriverManager.getConnection(
+          "jdbc:sqlite:" + System.getProperty("user.home") + System.getProperty("file.separator")
+              + ".Scrabble" + System.getProperty("file.separator") + "Scrabble15.db");
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       System.out.println("Connection failed!");
       System.exit(0);
     }
     System.out.println("Successfully connected to DB!");
   }
 
-  /** Disconnecting from DB */
+  /** Disconnecting from DB 
+   * 
+   * @author mraucher
+   */
   public static void disconnectDB() {
     try {
       stmt = null;
       pstmt = null;
       connection.close();
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
     System.out.println("Disconnected from DB");
   }
 
-  /** Creating tables for the Database */
+  /** Creating tables for the Database 
+   * 
+   * @author mraucher
+   */
   public static void createTables() {
     List<String> sqlstatements = new ArrayList<String>();
     sqlstatements.add(
-        "CREATE TABLE IF NOT EXISTS Statistics (Statistic_Id INT PRIMARY KEY, Player_Id references Players (Id));");
+        "CREATE TABLE IF NOT EXISTS Statistics (Statistic_Id INT PRIMARY KEY, Player_Name references Players (Name));");
     sqlstatements.add(
         "CREATE TABLE IF NOT EXISTS Settings (SettingsId INT PRIMARY KEY, SoundOn BOOLEAN NOT NULL,"
             + "SoundLevel INT NOT NULL, SceneMode VARCHAR(25) NOT NULL, AIDifficulty VARCHAR(25) NOT NULL);");
-    sqlstatements
-        .add("CREATE TABLE IF NOT EXISTS Players (Id INT PRIMARY KEY, Name VARCHAR(15) NOT NULL, "
-            + " GamesWon INT NOT NULL, GamesLost INT NOT NULL, Winrate DOUBLE NOT NULL, Image INT NOT NULL, SettingsId references Settings (Id));");
+    sqlstatements.add("CREATE TABLE IF NOT EXISTS Players (Name VARCHAR(15) PRIMARY KEY NOT NULL, "
+        + " GamesWon INT NOT NULL, GamesLost INT NOT NULL, Winrate DOUBLE NOT NULL, Image INT NOT NULL, SettingsId references Settings (Id));");
     try {
       stmt = connection.createStatement();
       for (String sql : sqlstatements) {
@@ -70,12 +77,14 @@ public class Database {
       }
       System.out.println("All tables created successfully");
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  /** Deleting all tables which are present in our Database */
+  /** Deleting all tables which are present in the Database 
+   * 
+   * @author mraucher
+   */
   public static void dropAllTables() {
     dropPlayerTable();
     dropStatisticsTable();
@@ -83,60 +92,76 @@ public class Database {
     System.out.println("All tables dropped.");
   }
 
-  /** Dropping Statistics Table */
+  /** Dropping Statistics Table 
+   *
+   * @author mraucher
+   */
   private static void dropStatisticsTable() {
     try {
       stmt = connection.createStatement();
       stmt.executeUpdate("DROP TABLE Statistics;");
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  /** Dropping Player table */
+  /** Dropping Player table 
+   * 
+   * @author mraucher
+   */
   private static void dropPlayerTable() {
     try {
       stmt = connection.createStatement();
       stmt.executeUpdate("DROP TABLE Players;");
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  /** Dropping Statistic table */
+  /** Dropping Statistic table 
+   * 
+   * @author mraucher
+   */
   private static void dropSettingsTable() {
     try {
       stmt = connection.createStatement();
       stmt.executeUpdate("DROP TABLE Settings;");
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  /** Fills in player table with Player Data */
-  private static void fillPlayerTable(int id, String name, int imageindex) {
+  /**
+   * Fills in player table with Player Data
+   * 
+   * @param settingsId the id for the settings table
+   * @param name name of the player
+   * @param imageindex index of the image of the player
+   * @author mraucher
+   */
+  private static void fillPlayerTable(int settingsId, String name, int imageindex) {
     try {
       pstmt = connection.prepareStatement(
-          "INSERT INTO Players (Id,Name,GamesWon,GamesLost,Winrate,Image,SettingsId) VALUES (?,?,?,?,?,?,?);");
-      pstmt.setInt(1, id);
-      pstmt.setString(2, name);
+          "INSERT INTO Players (Name,GamesWon,GamesLost,Winrate,Image,SettingsId) VALUES (?,?,?,?,?,?);");
+      pstmt.setString(1, name);
+      pstmt.setInt(2, 0);
       pstmt.setInt(3, 0);
-      pstmt.setInt(4, 0);
-      pstmt.setDouble(5, 0.0);
-      pstmt.setInt(6, imageindex);
-      pstmt.setInt(7, id);
+      pstmt.setDouble(4, 0.0);
+      pstmt.setInt(5, imageindex);
+      pstmt.setInt(6, settingsId);
       pstmt.executeUpdate();
 
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  /** Fills in settings table with default values */
+  /**
+   * Fills in settings table with default values
+   * 
+   * @param id settingsId
+   * @author mraucher
+   */
   private static void fillSettingsTable(int id) {
     try {
       pstmt = connection.prepareStatement(
@@ -149,12 +174,18 @@ public class Database {
       pstmt.executeUpdate();
 
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  /** Filling all tables */
+  /**
+   * Filling all tables
+   * 
+   * @param id SettingsId and PlayerId
+   * @param name player name
+   * @param imageindex index of the image of the player
+   * @author mraucher
+   */
   public static void fillTables(int id, String name, int imageindex) {
     fillSettingsTable(id);
     fillPlayerTable(id, name, imageindex);
@@ -166,6 +197,7 @@ public class Database {
    * Fills in statistics table with Statistic Data
    * 
    * @throws SQLException
+   * @author mraucher
    */
   public static void fillStatisticTable(String[][] statisticData) throws SQLException {
     pstmt = connection
@@ -178,7 +210,10 @@ public class Database {
   }
 
   /**
-   * Updating the amount of games won in your Database and in the player's object
+   * Updating the amount of games won in the Database and in the player's object
+   * 
+   * @param player the human player to be updated
+   * @author mraucher
    */
   public static void updateGamesWon(HumanPlayer player) {
     try {
@@ -194,13 +229,15 @@ public class Database {
       }
       updateWinRate(player);
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
   /**
-   * Updating the amount of games lost in your Database and in the player's object
+   * Updating the amount of games lost in the Database and in the player's object
+   * 
+   * @param player the human player to be updated
+   * @author mraucher
    */
   public static void updateGamesLost(HumanPlayer player) {
     try {
@@ -216,12 +253,16 @@ public class Database {
       }
       updateWinRate(player);
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  /** Updating the Win-Rate in the Database */
+  /**
+   * Updating the Win-Rate in the Database
+   * 
+   * @param player the human player to be updated
+   * @author mraucher
+   */
   public static void updateWinRate(HumanPlayer player) {
     try {
       pstmt = connection.prepareStatement(
@@ -229,12 +270,17 @@ public class Database {
       pstmt.setDouble(1, player.getWinRate());
       pstmt.executeUpdate();
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  /** Updating the Name if Player wants to change it */
+  /**
+   * Updating the name of the player in the database and the player's object
+   * 
+   * @param player the human player to be updated
+   * @param newName the new name of the human player
+   * @author mraucher
+   */
   public static void updatePlayerName(HumanPlayer player, String newName) {
     if (!DBInformation.containsName(newName)) {
       try {
@@ -243,65 +289,92 @@ public class Database {
             "UPDATE Players SET Name = '" + newName + "' WHERE Name = '" + player.getName() + "';");
         player.setName(newName);
       } catch (SQLException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
   }
 
-  /** Updates the AI Difficulty */
+  /**
+   * Updates the AI Difficulty
+   * 
+   * @param settings_id the settingsId to identify the settings entry to be updated
+   * @param difficulty the new difficulty of AI to be updated in the database
+   * @author mraucher
+   */
   public void updateAIDifficulty(int settings_id, String difficulty) {
     try {
       stmt = connection.createStatement();
       stmt.executeUpdate("UPDATE Settings SET AIDifficulty = " + difficulty
           + " WHERE Settings_Id = " + settings_id + ";");
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  /** Updates the Sound-Level of the Game */
+  /**
+   * Updates the Sound-Level of the Game
+   * 
+   * @param settings_id the settingsId to identify the settings entry to be updated
+   * @param the new soundlevel to be updated in the database
+   * @author mraucher
+   */
   public void updateSoundLevel(int settings_id, int soundlevel) {
     try {
       stmt = connection.createStatement();
       stmt.executeUpdate("UPDATE Settings SET SoundLevel = " + soundlevel + " WHERE Settings_Id = "
           + settings_id + ";");
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  /** Updates the Switch sound state */
+  /**
+   * Updates the Switch sound state
+   * 
+   * @param settings_id the settingsId to identify the settings entry to be updated
+   * @param soundOn the new flag for soundOn (=true) / soundOf (=false)
+   * @author mraucher
+   */
   public void updateSoundSwitcher(int settings_id, boolean soundOn) {
     try {
       stmt = connection.createStatement();
       stmt.executeUpdate(
           "UPDATE Settings SET SoundOn = " + soundOn + " WHERE Settings_Id = " + settings_id + ";");
     } catch (SQLException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
 
-  /** Removes Player data from the Database */
-  public static void removePlayer(int id, HumanPlayer player) {
+  /**
+   * Removes Player data from the Database
+   * 
+   * @param player the human player to be deleted from database
+   * @author mraucher
+   */
+  public static void removePlayer(HumanPlayer player) {
     try {
-      pstmt = connection.prepareStatement("DELETE FROM Players WHERE Id =" + id);
+      // delete from table Players - finding player by name
+      pstmt = connection
+          .prepareStatement("DELETE FROM Players WHERE Name = '" + player.getName() + "'");
       pstmt.executeUpdate();
 
-      pstmt = connection.prepareStatement("DELETE FROM Statistics WHERE Player_Id = " + id);
+      // delete from table Statistics - finding statistic by player_name
+      pstmt = connection.prepareStatement(
+          "DELETE FROM Statistics WHERE Player_Name = '" + player.getName() + "'");
       pstmt.executeUpdate();
 
     } catch (SQLException e) {
       e.printStackTrace();
     }
-
   }
 
-  /** Returns the Connection for the DBInformation class */
+  /**
+   * Returns the Connection for the DBInformation class
+   * 
+   * @return the connection
+   * @author mraucher
+   */
   public static Connection getConnection() {
     return connection;
   }
