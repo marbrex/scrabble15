@@ -24,6 +24,7 @@ public class Database {
    * Connecting to DB and creating DB File if it doesn't exist (SQLite .jar file needed!)
    * 
    * @author mraucher
+   * @author skeskinc
    */
   public static void connectToDB() {
     try {
@@ -42,9 +43,11 @@ public class Database {
     System.out.println("Successfully connected to DB!");
   }
 
-  /** Disconnecting from DB 
+  /** 
+   * Disconnecting from DB 
    * 
    * @author mraucher
+   * @author skeskinc
    */
   public static void disconnectDB() {
     try {
@@ -57,9 +60,11 @@ public class Database {
     System.out.println("Disconnected from DB");
   }
 
-  /** Creating tables for the Database 
+  /** 
+   * Creating tables for the Database 
    * 
    * @author mraucher
+   * @author skeskinc
    */
   public static void createTables() {
     List<String> sqlstatements = new ArrayList<String>();
@@ -84,6 +89,7 @@ public class Database {
   /** Deleting all tables which are present in the Database 
    * 
    * @author mraucher
+   * @author skeskinc
    */
   public static void dropAllTables() {
     dropPlayerTable();
@@ -92,9 +98,11 @@ public class Database {
     System.out.println("All tables dropped.");
   }
 
-  /** Dropping Statistics Table 
+  /** 
+   * Dropping Statistics Table 
    *
    * @author mraucher
+   * @author skeskinc
    */
   private static void dropStatisticsTable() {
     try {
@@ -161,6 +169,7 @@ public class Database {
    * 
    * @param id settingsId
    * @author mraucher
+   * @author skeskinc
    */
   private static void fillSettingsTable(int id) {
     try {
@@ -185,6 +194,7 @@ public class Database {
    * @param name player name
    * @param imageindex index of the image of the player
    * @author mraucher
+   * @author skeskinc
    */
   public static void fillTables(int id, String name, int imageindex) {
     fillSettingsTable(id);
@@ -212,8 +222,9 @@ public class Database {
   /**
    * Updating the amount of games won in the Database and in the player's object
    * 
-   * @param player the human player to be updated
+   * @param player The Human-Player to update games won
    * @author mraucher
+   * @author skeskinc
    */
   public static void updateGamesWon(HumanPlayer player) {
     try {
@@ -236,8 +247,9 @@ public class Database {
   /**
    * Updating the amount of games lost in the Database and in the player's object
    * 
-   * @param player the human player to be updated
+   * @param player The Human-Player to update the games lost
    * @author mraucher
+   * @author skeskinc
    */
   public static void updateGamesLost(HumanPlayer player) {
     try {
@@ -260,8 +272,9 @@ public class Database {
   /**
    * Updating the Win-Rate in the Database
    * 
-   * @param player the human player to be updated
+   * @param player Updating Win-Rate of the Human-Player
    * @author mraucher
+   * @author skeskinc
    */
   public static void updateWinRate(HumanPlayer player) {
     try {
@@ -300,6 +313,7 @@ public class Database {
    * @param settings_id the settingsId to identify the settings entry to be updated
    * @param difficulty the new difficulty of AI to be updated in the database
    * @author mraucher
+   * @author skeskinc
    */
   public void updateAIDifficulty(int settings_id, String difficulty) {
     try {
@@ -317,6 +331,7 @@ public class Database {
    * @param settings_id the settingsId to identify the settings entry to be updated
    * @param the new soundlevel to be updated in the database
    * @author mraucher
+   * @author skeskinc
    */
   public void updateSoundLevel(int settings_id, int soundlevel) {
     try {
@@ -334,6 +349,7 @@ public class Database {
    * @param settings_id the settingsId to identify the settings entry to be updated
    * @param soundOn the new flag for soundOn (=true) / soundOf (=false)
    * @author mraucher
+   * @author skeskinc
    */
   public void updateSoundSwitcher(int settings_id, boolean soundOn) {
     try {
@@ -372,8 +388,9 @@ public class Database {
   /**
    * Returns the Connection for the DBInformation class
    * 
-   * @return the connection
+   * @return The current connection to the Database
    * @author mraucher
+   * @author skeskinc
    */
   public static Connection getConnection() {
     return connection;

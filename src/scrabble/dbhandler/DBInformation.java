@@ -10,15 +10,20 @@ import scrabble.model.HumanPlayer;
 /**
  * scrabble.dbhandler.DBInformation class to receive player statistics from the Database
  * 
- * @author Sergen Keskincelik
- * @author Moritz Raucher
+ * @author skeskinc
+ * @author mraucher
  */
 
 public class DBInformation {
 
   private static Statement stmt = null;
 
-  /** Player profiles to choose from in UI */
+  /** 
+   * Player profiles to choose from in UI 
+   * 
+   * @return A list of Player profiles
+   * @author skeskinc 
+   */
   public static List<HumanPlayer> getPlayerProfiles() {
     try {
       List<HumanPlayer> playerProfiles = new ArrayList<HumanPlayer>();
@@ -40,7 +45,12 @@ public class DBInformation {
     }
   }
 
-  /** Checks, if Database contains already the name (e.g. for Player Profile) */
+  /** 
+   * Checks, if Database contains already the name
+   * 
+   * @return true if Player table from Database contains name, else false
+   * @author skeskinc 
+   */
   public static boolean containsName(String name) {
     List<String> playerNames = getPlayerNames();
     if (playerNames.contains(name)) {
@@ -51,7 +61,12 @@ public class DBInformation {
 
   }
 
-  /** Returns a List, which contains all Player names saved in the Database */
+  /** 
+   * Returns a List, which contains all Player names saved in the Database 
+   * 
+   * @return A list of player names in database
+   * @author skeskinc 
+   */
   private static List<String> getPlayerNames() {
     try {
       List<String> playernames = new ArrayList<String>();
@@ -67,7 +82,13 @@ public class DBInformation {
     }
   }
 
-  /** Returns one specific Identification number from Statistics table */
+  /** 
+   * Checks, if one specific Identification number is in Statistics table 
+   * 
+   * @param id checking given id
+   * @return true, if id is in Database, else false
+   * @author skeskinc
+   */
   public static boolean containsIdentification(int id) {
     try {
       stmt = Database.getConnection().createStatement();
@@ -84,7 +105,13 @@ public class DBInformation {
     }
   }
 
-  /** Loads one player profile on given index */
+  /** 
+   * Loads one player profile on given index 
+   * 
+   * @return human-player profile, which was loaded from Database
+   * @param index loading profile regarding given index
+   * @author skeskinc 
+   */
   public static HumanPlayer loadProfile(int index) {
     List<HumanPlayer> playerProfiles = getPlayerProfiles();
     HumanPlayer player = playerProfiles.get(index);
@@ -96,7 +123,13 @@ public class DBInformation {
     }
   }
 
-  /** Returns all statistics of an Player in a List */
+  /** 
+   * Returns all statistics of an Player in a List 
+   * 
+   * @return a list of all player statistics from one player
+   * @param player getting statistics from given human-player
+   * @author skeskinc 
+   */
   public static List<String> getPlayerStatistic(HumanPlayer player) {
     List<String> playerStatistic = new ArrayList<String>();
     playerStatistic.add(player.getName());
@@ -106,12 +139,23 @@ public class DBInformation {
     return playerStatistic;
   }
 
-  /** Returns the amount of player profiles */
+  /** 
+   * Returns the amount of player profiles 
+   * 
+   * @return size of the player-table
+   * @author skeskinc 
+   */
   public static int getProfileSize() {
     return getPlayerProfiles().size();
   }
 
-  /** Returns the Ratio of Win-/Loserate */
+  /** 
+   * Returns the Ratio of Win-/Loserate 
+   * 
+   * @return win-/loserate of a player
+   * @param player current human-player for win-/lose-ratio
+   * @author skeskinc 
+   */
   public double ratioWnL(HumanPlayer player) {
     double ratio = 0.0;
     double winR = 0.0;
@@ -133,7 +177,13 @@ public class DBInformation {
     return ratio;
   }
 
-  /** Returns the total game played by any player */
+  /** 
+   * Returns the total game played by any player 
+   * 
+   * @return total games played of a player
+   * @param name given Name
+   * @author mraucher
+   */
   public int totGamePlayed(String name) {
     int gamePlayed = 0;
     if (!containsName(name)) {
