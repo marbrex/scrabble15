@@ -121,6 +121,14 @@ public class LobbyConfigureController {
       }
     } else {
       System.out.println("Configure Change from ownPort to autoSet");
+      LobbyServer newOne = new LobbyServer(this.corresponding);
+      System.out.println("CONFIGURE : New Server created");
+      newOne.start();
+      System.out.println("CONFIGURE : Prepare to shut down old one");
+      this.server.shutdown(); // shutdown Old
+      System.out.println("CONFIGURE : Replace Server");
+      this.corresponding.setNewServer(newOne);
+      this.close();
     }
   }
 
