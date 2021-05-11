@@ -56,7 +56,7 @@ public class Server extends Thread {
     } catch (SocketException e) {
       // this.closeProtocol();
       this.stopServer();
- //     e.printStackTrace();
+      // e.printStackTrace();
     } catch (IOException e) {
       // TODO Auto-generated catch block
       this.running = false;
@@ -67,14 +67,13 @@ public class Server extends Thread {
 
   }
 
-  public void closeProtocol() {
+  public synchronized void closeProtocol() {
     for (ServerProtocol sp : allClients) {
       sp.disconnect();
     }
     /*
      * for(int i = 0; i < allClients.size(); i++) { allClients.remove(i); }
      */
-    allClients.clear();
   }
 
   public void closeSocket() {
@@ -86,11 +85,16 @@ public class Server extends Thread {
     }
   }
 
-  public void stopServer() {
+  public synchronized void clearProtocol() {
+    allClients.clear();
+  }
+
+  public synchronized void stopServer() {
 
     this.running = false;
     this.closeSocket();
     this.closeProtocol();
+    this.clearProtocol();
   }
 
   public void run() {

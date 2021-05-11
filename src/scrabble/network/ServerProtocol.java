@@ -36,35 +36,32 @@ public class ServerProtocol extends Thread {
   }
 
   public void run() {
-    try {
-      // String username = fromClient.readLine();
-      String  message;
-      while (running) {
+    // String username = fromClient.readLine();
+    String message;
+    while (running) {
+      try {
         message = fromClient.readLine();
         // System.out.println("Second Message: " + message);
         // System.out.println("Size of Clients: " + Server.allClients.size());
-        if(message != null) {
+        if (message != null) {
           for (ServerProtocol sp : Server.allClients) {
             toClient = new PrintWriter(sp.socket.getOutputStream());
             toClient.println("" + message);
             toClient.flush();
           }
-        } else {
-          this.disconnect();
-          Server.allClients.remove(this);
         }
+      } catch (NullPointerException e) {
+        this.disconnect();
+      } catch (SocketException e) {
+        this.disconnect();
+        e.printStackTrace();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
       }
-
-    } catch(SocketException e) {
-      this.disconnect();
-      e.printStackTrace();
-    }
-    catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     }
   }
-  
+
   public void closeSocket() {
     try {
       this.socket.close();
@@ -76,14 +73,16 @@ public class ServerProtocol extends Thread {
 
   public void disconnect() {
     this.running = false;
-    if(!this.socket.isClosed()) {
-      try {
-        this.socket.close();
-      } catch (Exception e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+    try {
+      this.socket.close();
+      // System.out.println("ServerProtocol: disconnect");
+    } catch (SocketException e) {
+      // TODO Auto-generated catch block
+
+      // e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
     }
-  
   }
 }

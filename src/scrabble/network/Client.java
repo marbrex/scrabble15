@@ -111,15 +111,13 @@ public class Client extends Thread {
    */
 
   public void disconnect() {
-      this.running = false;
-      try {
-        if(!this.c.isClosed()) {
-        this.c.close();
-        }
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
+    this.running = false;
+    try {
+      this.c.close();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -137,22 +135,25 @@ public class Client extends Thread {
   }
 
   public void run() {
-    try {
-      // toServer.println(this.username);
-      String msg;
-      while (running) {
+    // toServer.println(this.username);
+    String msg;
+    while (running) {
+      try {
         msg = fromServer.readLine();
-        this.client.printChatMessage(msg); // printing
-
+        if (msg != null) {
+          this.client.printChatMessage(msg); // printing
+        }
+      } catch (NullPointerException e) {
+        this.disconnect();
+      } catch (SocketException e) {
+        this.disconnect();
+        // e.printStackTrace();
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        this.running = false;
+        e.printStackTrace();
       }
-    }catch (SocketException e) {
-  //    e.printStackTrace();
-      } 
-    catch (IOException e) {
-      // TODO Auto-generated catch block
-      this.running = false;
-      e.printStackTrace();
+
     }
-    
   }
 }
