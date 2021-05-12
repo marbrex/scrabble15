@@ -18,11 +18,11 @@ public class DBInformation {
 
   private static Statement stmt = null;
 
-  /** 
-   * Player profiles to choose from in UI 
+  /**
+   * Player profiles to choose from in UI
    * 
    * @return A list of Player profiles
-   * @author skeskinc 
+   * @author skeskinc
    */
   public static List<HumanPlayer> getPlayerProfiles() {
     try {
@@ -45,11 +45,11 @@ public class DBInformation {
     }
   }
 
-  /** 
+  /**
    * Checks, if Database contains already the name
    * 
    * @return true if Player table from Database contains name, else false
-   * @author skeskinc 
+   * @author skeskinc
    */
   public static boolean containsName(String name) {
     List<String> playerNames = getPlayerNames();
@@ -61,11 +61,11 @@ public class DBInformation {
 
   }
 
-  /** 
-   * Returns a List, which contains all Player names saved in the Database 
+  /**
+   * Returns a List, which contains all Player names saved in the Database
    * 
    * @return A list of player names in database
-   * @author skeskinc 
+   * @author skeskinc
    */
   private static List<String> getPlayerNames() {
     try {
@@ -82,8 +82,8 @@ public class DBInformation {
     }
   }
 
-  /** 
-   * Checks, if one specific Identification number is in Statistics table 
+  /**
+   * Checks, if one specific Identification number is in Statistics table
    * 
    * @param id checking given id
    * @return true, if id is in Database, else false
@@ -105,12 +105,12 @@ public class DBInformation {
     }
   }
 
-  /** 
-   * Loads one player profile on given index 
+  /**
+   * Loads one player profile on given index
    * 
    * @return human-player profile, which was loaded from Database
    * @param index loading profile regarding given index
-   * @author skeskinc 
+   * @author skeskinc
    */
   public static HumanPlayer loadProfile(int index) {
     List<HumanPlayer> playerProfiles = getPlayerProfiles();
@@ -123,12 +123,12 @@ public class DBInformation {
     }
   }
 
-  /** 
-   * Returns all statistics of an Player in a List 
+  /**
+   * Returns all statistics of an Player in a List
    * 
    * @return a list of all player statistics from one player
    * @param player getting statistics from given human-player
-   * @author skeskinc 
+   * @author skeskinc
    */
   public static List<String> getPlayerStatistic(HumanPlayer player) {
     List<String> playerStatistic = new ArrayList<String>();
@@ -139,22 +139,43 @@ public class DBInformation {
     return playerStatistic;
   }
 
-  /** 
-   * Returns the amount of player profiles 
+  /**
+   * Gets the Settings-ID of a Player
+   * 
+   * @param player given Human-player to get the id
+   * @return Settings-ID of the given Human-Player
+   * @author skeskinc
+   */
+  public static int getSettingsId(HumanPlayer player) {
+    int id = 0;
+    try {
+      stmt = Database.getConnection().createStatement();
+      ResultSet rs = stmt
+          .executeQuery("SELECT SettingsId FROM Players WHERE Name = '" + player.getName() + "';");
+      id = rs.getInt("SettingsId");
+      return id;
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      return 0;
+    }
+  }
+
+  /**
+   * Returns the amount of player profiles
    * 
    * @return size of the player-table
-   * @author skeskinc 
+   * @author skeskinc
    */
   public static int getProfileSize() {
     return getPlayerProfiles().size();
   }
 
-  /** 
-   * Returns the Ratio of Win-/Loserate 
+  /**
+   * Returns the Ratio of Win-/Loserate
    * 
    * @return win-/loserate of a player
    * @param player current human-player for win-/lose-ratio
-   * @author skeskinc 
+   * @author skeskinc
    */
   public double ratioWnL(HumanPlayer player) {
     double ratio = 0.0;
@@ -177,8 +198,8 @@ public class DBInformation {
     return ratio;
   }
 
-  /** 
-   * Returns the total game played by any player 
+  /**
+   * Returns the total game played by any player
    * 
    * @return total games played of a player
    * @param name given Name

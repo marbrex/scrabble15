@@ -7,8 +7,7 @@ import java.util.List;
 import scrabble.model.*;
 
 /**
- * scrabble.dbhandler.Database class to connect to the Database, creating and being able to delete
- * tables and updating player statistics
+ * scrabble.dbhandler.DBUpdate class to update player statistics and settings
  * 
  * @author mraucher
  * @author skeskinc  
@@ -16,9 +15,8 @@ import scrabble.model.*;
 
 public class DBUpdate {
 
-  protected static Connection connection = null;
-  protected static Statement stmt = null;
-  protected static PreparedStatement pstmt = null;
+  private static Statement stmt = null;
+  private static PreparedStatement pstmt = null;
 
 /**
    * Updating the amount of games won in the Database and in the player's object
@@ -29,8 +27,8 @@ public class DBUpdate {
    */
   public static void updateGamesWon(HumanPlayer player) {
     try {
-      stmt = connection.createStatement();
-      pstmt = connection.prepareStatement(
+      stmt = Database.getConnection().createStatement();
+      pstmt = Database.getConnection().prepareStatement(
           "UPDATE Players SET GamesWon = ? WHERE Name = '" + player.getName() + "';");
       pstmt.setInt(1, player.getGamesWon() + 1);
       pstmt.executeUpdate();
@@ -54,8 +52,8 @@ public class DBUpdate {
    */
   public static void updateGamesLost(HumanPlayer player) {
     try {
-      stmt = connection.createStatement();
-      pstmt = connection.prepareStatement(
+      stmt = Database.getConnection().createStatement();
+      pstmt = Database.getConnection().prepareStatement(
           "UPDATE Players SET GamesLost = ? WHERE Name = '" + player.getName() + "';");
       pstmt.setInt(1, player.getGamesLost() + 1);
       pstmt.executeUpdate();
@@ -79,7 +77,7 @@ public class DBUpdate {
    */
   public static void updateWinRate(HumanPlayer player) {
     try {
-      pstmt = connection.prepareStatement(
+      pstmt = Database.getConnection().prepareStatement(
           "UPDATE Players SET Winrate = ? WHERE Name = '" + player.getName() + "';");
       pstmt.setDouble(1, player.getWinRate());
       pstmt.executeUpdate();
@@ -98,7 +96,7 @@ public class DBUpdate {
   public static void updatePlayerName(HumanPlayer player, String newName) {
     if (!DBInformation.containsName(newName)) {
       try {
-        stmt = connection.createStatement();
+        stmt = Database.getConnection().createStatement();
         stmt.executeUpdate(
             "UPDATE Players SET Name = '" + newName + "' WHERE Name = '" + player.getName() + "';");
         player.setName(newName);
@@ -118,7 +116,7 @@ public class DBUpdate {
    */
   public void updateAIDifficulty(int settings_id, String difficulty) {
     try {
-      stmt = connection.createStatement();
+      stmt = Database.getConnection().createStatement();
       stmt.executeUpdate("UPDATE Settings SET AIDifficulty = " + difficulty
           + " WHERE Settings_Id = " + settings_id + ";");
     } catch (SQLException e) {
@@ -136,7 +134,7 @@ public class DBUpdate {
    */
   public void updateSoundLevel(int settings_id, int soundlevel) {
     try {
-      stmt = connection.createStatement();
+      stmt = Database.getConnection().createStatement();
       stmt.executeUpdate("UPDATE Settings SET SoundLevel = " + soundlevel + " WHERE Settings_Id = "
           + settings_id + ";");
     } catch (SQLException e) {
@@ -154,7 +152,7 @@ public class DBUpdate {
    */
   public void updateSoundSwitcher(int settings_id, boolean soundOn) {
     try {
-      stmt = connection.createStatement();
+      stmt = Database.getConnection().createStatement();
       stmt.executeUpdate(
           "UPDATE Settings SET SoundOn = " + soundOn + " WHERE Settings_Id = " + settings_id + ";");
     } catch (SQLException e) {
