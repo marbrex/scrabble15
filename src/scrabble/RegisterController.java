@@ -83,7 +83,7 @@ public class RegisterController implements Initializable {
         Stage stage = (Stage) this.root.getScene().getWindow();
         Scene scene =
             new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-        scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+        scene.getStylesheets().add(getClass().getResource("css/changeProfil.css").toExternalForm());
         stage.setScene(scene);
       } catch (IOException e) {
         e.printStackTrace();
