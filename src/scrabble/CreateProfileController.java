@@ -109,8 +109,7 @@ public class CreateProfileController {
 
     //Action on Cancel Button
     cancelBtn.setOnMouseClicked(event -> {
-      changeScene("fxml/ChooseProfileScene.fxml", "css/mainMenu.css", event);
-      Database.disconnectDB();
+      changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
     });
 
     //Action on Create Button
@@ -119,7 +118,7 @@ public class CreateProfileController {
       int id = generateId();
       if (!name.isEmpty() && !DBInformation.containsName(name) && name.length() <= 15) {
         Database.fillTables(id, name, this.imageindex);
-        changeScene("fxml/ChooseProfileScene.fxml", "css/mainMenu.css", event);
+        changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
       }
     });
     for (int i = 0; i < avatarsBlock.getChildren().size(); i++) {

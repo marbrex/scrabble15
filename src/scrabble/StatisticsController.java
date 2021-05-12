@@ -12,6 +12,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
 
 import scrabble.dbhandler.DBInformation;
+import scrabble.dbhandler.DBUpdate;
 import scrabble.dbhandler.Database;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Profile;
@@ -102,7 +103,7 @@ public class StatisticsController implements Initializable {
   @FXML
   public void updateBtnOnAction(ActionEvent event) {
     String newName = txtName.getText();
-    Database.updatePlayerName(plyr, newName);
+    DBUpdate.updatePlayerName(plyr, newName);
   }
 
 
