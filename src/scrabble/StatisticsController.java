@@ -77,9 +77,8 @@ public class StatisticsController implements Initializable {
     String basePath = new File("").getAbsolutePath();
     System.out.println(basePath);
     try {
-      this.img
-          .setImage(new Image(new FileInputStream(".\\src\\resources\\scrabble\\img\\male.png")));
-    } catch (FileNotFoundException e) {
+      this.img.setImage(new Image(new FileInputStream(".\\resources\\scrabble\\img\\"+plyr.getImage())));
+      } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
 
