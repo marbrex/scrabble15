@@ -123,7 +123,7 @@ public class StatisticsController implements Initializable {
       Stage stage = (Stage) this.backBtn.getScene().getWindow();
       Scene scene =
           new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-      scene.getStylesheets().add(getClass().getResource("css/changeProfil.css").toExternalForm());
+      scene.getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
       stage.setScene(scene);
     } catch (IOException e) {
       e.printStackTrace();
@@ -143,7 +143,7 @@ public class StatisticsController implements Initializable {
       Stage stage = (Stage) this.backBtn.getScene().getWindow();
       Scene scene =
           new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-      scene.getStylesheets().add(getClass().getResource("css/changeProfil.css").toExternalForm());
+      scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
       stage.setScene(scene);
     } catch (IOException e) {
       e.printStackTrace();
