@@ -2,11 +2,13 @@ package scrabble.model;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-
-import scrabble.model.GameStatusType;
+import java.util.HashMap;
+import scrabble.network.GameHandler;
+import scrabble.network.LobbyAiProtocol;
 import scrabble.network.LobbyServer;
 import scrabble.network.LobbyServerProtocol;
 import scrabble.network.NetworkPlayer;
+import scrabble.network.StartGameHandler;
 
 public class GameInformationController {
   /**
@@ -19,6 +21,9 @@ public class GameInformationController {
   private ArrayList<NetworkPlayer> players; // List of all players, maximum of 4
   private GameStatusType status; // status => Lobby or Game
   private int gamePort; // port to the GameServer
+  private HashMap<NetworkPlayer, Boolean> check;
+  private GameHandler gameHandler;// responsible for move organization
+  private LetterBag letterBag; // Letter Bag for a network game
 
   /**
    * constructor which initialize the class
@@ -27,6 +32,7 @@ public class GameInformationController {
     this.mainServer = mainServer;
     this.players = new ArrayList<NetworkPlayer>();
     this.status = GameStatusType.LOBBY;
+    this.check = new HashMap<NetworkPlayer, Boolean>();
   }
 
   /**
@@ -55,27 +61,41 @@ public class GameInformationController {
    * @return information about the success of add procedure
    */
   public synchronized boolean addPlayer(NetworkPlayer player) { // problem of
-    if (this.players.size() < 4) {
+    if (this.players.size() < 4 && this.status == GameStatusType.LOBBY) {
       this.players.add(player);
+      this.check.put(player, false);
       return true; // player added
     } else {
-      this.lobbyFull(); // Perhaps change the call location because of update procedure
+      // this.lobbyFull(); // Perhaps change the call location because of update procedure
+      // wrong location do it above
       return false; // player not added because game/lobby is full
+    }
+  }
+
+  /**
+   * Method to check maximum player amount in the lobby and activate the game procedure
+   */
+  public void checkLobbySize() {
+    if (this.players.size() == 4) {
+      System.err.println("Maximum Player Amount Joined");
+      this.lobbyFull(); // will be called before the last lobby updates
+                        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     }
   }
 
   /**
    * method to start lobby procedure for full lobby
    */
-  private void lobbyFull() {
-    // TODO Auto-generated method stub
-    this.sendFullMessages();
+  public void lobbyFull() { // do it in the StartHandler thread
+    this.status = GameStatusType.GAME;
+    StartGameHandler starter = new StartGameHandler(this);
+    starter.start(); // start the starting procedure.
   }
 
   /**
    * method to inform the clients that the lobby maximum is reached
    */
-  private void sendFullMessages() {
+  public synchronized void sendFullMessages() {
     for (NetworkPlayer player : this.players) {
       player.sendFullMessage();
     }
@@ -83,10 +103,12 @@ public class GameInformationController {
   }
 
   /**
-   * Method to set the status of the game/lobby.
+   * Method to inform the lobby that the game will start
    */
-  public synchronized void setGameStatusOnGame() {
-    this.status = GameStatusType.GAME;
+  public synchronized void sendStartMessage() {
+    for (NetworkPlayer player : this.players) {
+      player.sendStartMessage();
+    }
   }
 
   /**
@@ -120,6 +142,11 @@ public class GameInformationController {
   private ArrayList<Player> getPlayersInformation() {
     ArrayList<Player> players = new ArrayList<Player>();
     for (NetworkPlayer player : this.players) {
+      if (player.getPlayer() == null) { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        System.err.println("Player instance of Protocol is null in InfoCon");
+      } else {
+        System.err.println(player.getPlayer().getName()); //Player instance of Joiner is null 
+      }
       players.add(player.getPlayer());
     }
     return players;
@@ -131,21 +158,25 @@ public class GameInformationController {
   public synchronized void updateAllLobbys() {
     ArrayList<Player> playersArrayList = this.getPlayersInformation();
     for (NetworkPlayer player : this.players) {
-      System.err.println("Update all ");
+      // System.err.println("Update all ");
       player.updateLobbyinformation(playersArrayList);
     }
-    System.err.println("LOBBY UPDATE : " + playersArrayList.size());
+    // System.err.println("LOBBY UPDATE : " + playersArrayList.size());
   }
 
   /**
    * Method to delete a player from the game/lobby.
    * 
-   * @param player
+   * @param playerthis.wait(1000)
    */
-  public synchronized void deletePlayer(NetworkPlayer player) {
+  public synchronized void deletePlayer(NetworkPlayer player) { // Possibility of a Deadlock,
+                                                                // because of the election
     if (this.players.contains(player)) {
       this.players.remove(player);
+      this.check.remove(player);
       this.updateAllLobbys();
+      this.checkGameStart(); // just in case that a player left the lobby directly after all other
+                             // players send their sequence
     }
   }
 
@@ -168,7 +199,7 @@ public class GameInformationController {
   /**
    * method to sort the list in a specific sequence
    */
-  public void setPlayerSequence() {
+  private void setPlayerSequence() {
     this.players.sort(new Comparator<NetworkPlayer>() {
 
       @Override
@@ -178,10 +209,117 @@ public class GameInformationController {
         } else if (arg0.getSequencePos() < arg1.getSequencePos()) {
           return -1;
         } else {
-          return 0; // case of same amount ?
+          if (players.indexOf(arg0) > players.indexOf(arg1)) {
+            return 1;
+          } else if (players.indexOf(arg0) < players.indexOf(arg1)) {
+            return -1;
+          }
+          return 0;
         }
       }
 
     });
   }
+
+  /**
+   * Method used by Protocols to add the sequence chosen by a member of the Lobby to the protocols
+   * 
+   * @param pos position array of the user election
+   */
+  public synchronized void addSequence(int[] pos, NetworkPlayer caller) { // need to implement a
+                                                                          // callback, so the
+                                                                          // position can be
+                                                                          // calculated.
+    System.out.println("GAME INFO : Player sequence received");
+    this.check.replace(caller, true);
+    for (int i = 0; i < this.players.size(); i++) {
+      this.players.get(i).addSequence(pos[i]); // adding a elected position to a protocol
+    }
+    this.checkGameStart();
+  }
+
+  /**
+   * Method to check if all protocols have send the election sequence;
+   */
+  private void checkGameStart() {
+    boolean checker = true;
+    for (NetworkPlayer player : this.players) {
+      checker &= this.check.get(player);
+    }
+    System.out.println("GAME INFO : Check game start");
+    if (checker) {
+      System.out.println("GAME INFO : Start Game");
+      this.startGame();
+    }
+  }
+
+  /**
+   * Method to start the game itself
+   */
+  private void startGame() {
+    this.setPlayerSequence();
+    System.out.println("GAME INFO : Invoke Game");
+    this.sendGameMessage();
+    try {
+      this.wait(1000); // For testing perhaps change to a finish approach
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    this.letterBag = LetterBag.getLetterBag();
+    this.fillGame(); // Filling slots of missing Players with AiPlayers
+    this.gameHandler = new GameHandler(this, this.players);
+    this.gameHandler.startGame();
+  }
+
+  /**
+   * Inform the players that the Game starts
+   */
+  private void sendGameMessage() {
+    for (NetworkPlayer player : this.players) {
+      player.sendGameMessage();
+    }
+  }
+
+  /**
+   * Method to end a player move before the maximum time goes by
+   */
+  public void endMoveForTime() { // here freeze
+    System.out.println("GAME INFO : Interupt play move");
+    this.gameHandler.endMoveForTime(); // Perhaps controlling the interaction so that only the
+                                       // player onMove can notify ?
+  }
+
+  /**
+   * Method to shutdown a Lobby or game
+   */
+  public void shutdown() {
+    this.mainServer.shutdown();
+    if (this.gameHandler != null) {
+      this.gameHandler.shutdown();
+    }
+  }
+
+  /**
+   * Method to fill the list for a Network game with AIPLayers if the lobby isn't full
+   */
+  private void fillGame() {
+    if (this.players.size() < 4) {
+      for (int i = this.players.size(); i < 4; i++) {
+        LobbyAiProtocol ai = new LobbyAiProtocol();
+        this.players.add(ai);
+      }
+    }
+  }
+
+  /**
+   * Method to use exchange the Letters of a game during a network game
+   * 
+   * @param owner owner of the cells holden by a player during the game
+   * @param cells cells holding a Letter
+   */
+  public void exchangeCells(HumanPlayer owner, Cell[] cells) {
+    this.letterBag.changeLetters(owner, cells);
+  }
+
 }

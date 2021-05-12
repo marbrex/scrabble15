@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 import com.jfoenix.controls.JFXButton;
+import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -26,11 +26,12 @@ import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
 import scrabble.model.HumanPlayer;
+import scrabble.model.Profile;
 
 /**
  * scrabble.ChooseProfileController class to select or create a profile
  *
- * @author Sergen Keskincelik
+ * @author skeskinc
  */
 
 public class ChooseProfileController implements Initializable {
@@ -67,6 +68,9 @@ public class ChooseProfileController implements Initializable {
   @FXML
   private List<Label> labels;
 
+  @FXML
+  private JFXButton deleteButton;
+
   private List<Circle> circles;
 
   private static HumanPlayer player;
@@ -75,25 +79,26 @@ public class ChooseProfileController implements Initializable {
 
   private int profilesize;
 
+
   @FXML
   private BorderPane root;
 
-  /** Returns the player object of the chosen profile */
-  public static HumanPlayer getPlayer() {
-    return player;
-  }
-
-  /** Changing the profile of an Player */
+  /**
+   * Changing the profile of an Player
+   * 
+   * @param event Handling ActionEvent
+   * @author skeskinc
+   */
   public void changeProfile(Event event) {
     for (int i = 0; i < circles.size(); i++) {
       if (((Circle) event.getSource()) == circles.get(i)) {
         circles.get(i).setStroke(Color.web("#000000"));
         if (!labels.get(i).getTextFill().equals(Color.web("FF0000", 0.8))) {
-          player = players.get(i);
-          System.out.println(player.getName());
-          System.out.println(player.getImage());
+          // player = players.get(i);
+          Profile.setPlayer(players.get(i));
         } else {
-          player = null;
+          // player = null;
+          Profile.setPlayer(null);
         }
       } else {
         circles.get(i).setStroke(Color.web("GREY"));
@@ -101,53 +106,79 @@ public class ChooseProfileController implements Initializable {
     }
   }
 
-
-  /** Changing the scene to the Mainmenu */
-  public void changeScene(Event event) {
+  /**
+   * Changing to another Scene regarding the given Resource and Style
+   * 
+   * @param resource Choosing Scene for the Application
+   * @param style Choosing the Style-Sheet for the Scene
+   * @param event Handling Action-Event
+   * @author skeskinc
+   */
+  public void changeScene(String resource, String style, Event event) {
     Parent root;
     try {
-      if (player != null) {
-        root = FXMLLoader.load(getClass().getResource("fxml/MainPage.fxml"));
-        Button btn = ((Button) event.getSource());
-        Stage stage = (Stage) btn.getScene().getWindow();
-        Scene scene =
-            new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-        scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
-        stage.setScene(scene);
-      }
+      root = FXMLLoader.load(getClass().getResource(resource));
+      Button btn = ((Button) event.getSource());
+      Stage stage = (Stage) btn.getScene().getWindow();
+      Scene scene =
+          new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
+      scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
+      stage.setScene(scene);
+
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
 
-  /** Changing the scene to the Registration Scene */
-  public void changeToRegistration(Event event) {
-    Pane newRoot;
-    if (profilesize < 4) {
-      try {
-        System.out.println(getClass().getResource("fxml/createProfile.fxml"));
-        newRoot = FXMLLoader.load(getClass().getResource("fxml/createProfile.fxml"));
-        Button btn = ((Button) event.getSource());
-        Stage stage = (Stage) btn.getScene().getWindow();
-        Scene scene =
-            new Scene(newRoot, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-        scene.getStylesheets()
-            .add(getClass().getResource("css/createProfile.css").toExternalForm());
-        stage.setScene(scene);
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-      }
-    }
-  }
+  /**
+   * Changing the scene to the Mainmenu
+   * 
+   * @param event Handling ActionEvent
+   * @author skeskinc
+   */
+  /*
+   * public void changeScene(Event event) { Parent root; try { if (Profile.getPlayer() != null) {
+   * root = FXMLLoader.load(getClass().getResource("fxml/MainPage.fxml")); Button btn = ((Button)
+   * event.getSource()); Stage stage = (Stage) btn.getScene().getWindow(); Scene scene = new
+   * Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
+   * scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+   * stage.setScene(scene); } } catch (IOException e) { // TODO Auto-generated catch block
+   * e.printStackTrace(); } }
+   */
 
+
+  /**
+   * Changing the scene to the Registration Scene
+   * 
+   * @param event Handling ActionEvent
+   * @author skeskinc
+   */
+  /*
+   * public void changeToRegistration(Event event) { Pane newRoot; if (profilesize < 4) { try {
+   * System.out.println(getClass().getResource("fxml/createProfile.fxml")); newRoot =
+   * FXMLLoader.load(getClass().getResource("fxml/createProfile.fxml")); Button btn = ((Button)
+   * event.getSource()); Stage stage = (Stage) btn.getScene().getWindow(); Scene scene = new
+   * Scene(newRoot, this.root.getScene().getWidth(), this.root.getScene().getHeight());
+   * scene.getStylesheets() .add(getClass().getResource("css/createProfile.css").toExternalForm());
+   * stage.setScene(scene); } catch (IOException e) { // TODO Auto-generated catch block
+   * e.printStackTrace(); } }
+   * 
+   * }
+   */
+
+  /*
+   * @FXML public void changeToDelete(Event event) { BorderPane newRoot; if (Profile.getPlayer() !=
+   * null) { try { newRoot = FXMLLoader.load(getClass().getResource("fxml/DeleteScene.fxml"));
+   * Button btn = ((Button) event.getSource()); Stage stage = (Stage) btn.getScene().getWindow();
+   * Scene scene = new Scene(newRoot, this.root.getScene().getWidth(),
+   * this.root.getScene().getHeight()); scene.getStylesheets()
+   * .add(getClass().getResource("css/createProfile.css").toExternalForm()); stage.setScene(scene);
+   * } catch (IOException e) { // TODO Auto-generated catch block e.printStackTrace(); } } }
+   */
 
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
-    Database.connectToDB();
-    // Database.dropAllTables();
-    Database.createTables();
     labels = new ArrayList<Label>();
     labels.add(profileoneLabel);
     labels.add(profiletwoLabel);
@@ -172,7 +203,29 @@ public class ChooseProfileController implements Initializable {
       }
     }
     profilesize = DBInformation.getProfileSize();
-    Database.disconnectDB();
+    Profile.setPlayer(null);
+
+    continueButton.setOnMouseClicked(event -> {
+      if (Profile.getPlayer() != null) {
+        changeScene("fxml/MainPage.fxml", "css/mainMenu.css", event);
+      }
+    });
+
+    createButton.setOnMouseClicked(event -> {
+      if (profilesize < 4) {
+        changeScene("fxml/createProfile.fxml", "css/createProfile.css", event);
+      }
+    });
+
+    deleteButton.setOnMouseClicked(event -> {
+      if (Profile.getPlayer() != null) {
+        changeScene("fxml/DeleteScene.fxml", "css/createProfile.css", event);
+      }
+    });
+
+
+
+    // Database.disconnectDB();
 
   }
 

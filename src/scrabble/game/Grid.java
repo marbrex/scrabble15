@@ -1,7 +1,12 @@
 package scrabble.game;
 
+import java.util.ArrayList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.StackPane;
 import scrabble.GameController;
 
 /**
@@ -26,6 +31,8 @@ public class Grid {
   private double paneSize;
   double cellSize;
 
+  ArrayList<Word> words;
+
   GridPane container;
 
   /**
@@ -44,11 +51,11 @@ public class Grid {
    * Initiates slots (StackPanes) of the GridPane
    */
   public void initCells() {
-    for (int row = 0; row < size; row++) {
-      for (int column = 0; column < size; column++) {
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
 
-        Slot slot = new Slot(map.getMultiplier(getGlobalIndex(row, column)), controller);
-        addSlot(slot, row, column);
+        Slot slot = new Slot(map.getMultiplier(getGlobalIndex(column, row)), controller);
+        addSlot(slot, column, row);
       }
     }
   }
@@ -74,6 +81,8 @@ public class Grid {
     this.container = grid;
 
     map = new Map();
+
+    words = new ArrayList<>();
 
     initGrid();
   }
@@ -101,18 +110,20 @@ public class Grid {
 
     map = new Map(mapPath);
 
+    words = new ArrayList<>();
+
     initGrid();
   }
 
   /**
    * Returns the global index (index in 1D array). of the specified cell.
    *
-   * @param row    Row of the cell
    * @param column Column of the cell
+   * @param row    Row of the cell
    * @return Global Index
    */
-  public int getGlobalIndex(int row, int column) {
-    return row + size * column;
+  public int getGlobalIndex(int column, int row) {
+    return column + size * row;
   }
 
   /**
@@ -137,49 +148,49 @@ public class Grid {
   }
 
   /**
-   * Get a Slot's content (LetterTile) using row/column indexes.
+   * Get a Slot's content (LetterTile) using column/row indexes.
    *
-   * @param row    Row
    * @param column Column
+   * @param row    Row
    * @return LetterTile
    */
-  public LetterTile getSlotContent(int row, int column) {
-    return slots[getGlobalIndex(row, column)].content;
+  public LetterTile getSlotContent(int column, int row) {
+    return slots[getGlobalIndex(column, row)].content;
   }
 
   /**
-   * Get a Slot using row/column indexes.
+   * Get a Slot using column/row indexes.
    *
-   * @param row    Row
    * @param column Column
+   * @param row    Row
    * @return Slot
    */
-  public Slot getSlot(int row, int column) {
-    return slots[getGlobalIndex(row, column)];
+  public Slot getSlot(int column, int row) {
+    return slots[getGlobalIndex(column, row)];
   }
 
   /**
    * Sets the specified Slot's content.
    *
-   * @param row    Row of the cell to be set
    * @param column Column of the cell to be set
+   * @param row    Row of the cell to be set
    * @param letter Letter
    * @param points Points
    */
-  public void setSlotContent(int row, int column, char letter, int points) {
-    slots[getGlobalIndex(row, column)].content.setLetter(letter);
-    slots[getGlobalIndex(row, column)].content.setPoints(points);
+  public void setSlotContent(int column, int row, char letter, int points) {
+    slots[getGlobalIndex(column, row)].content.setLetter(letter);
+    slots[getGlobalIndex(column, row)].content.setPoints(points);
   }
 
   /**
    * Sets the specified Slot's content with an LetterTile object.
    *
-   * @param row    Row of the cell to be set
    * @param column Column of the cell to be set
+   * @param row    Row of the cell to be set
    * @param tile   LetterTile
    */
-  public void setSlotContent(int row, int column, LetterTile tile) {
-    slots[getGlobalIndex(row, column)].setContent(tile);
+  public void setSlotContent(int column, int row, LetterTile tile) {
+    slots[getGlobalIndex(column, row)].setContent(tile);
   }
 
   /**
@@ -236,16 +247,16 @@ public class Grid {
   }
 
   /**
-   * Returns an X coordinate of a specified cell
+   * Returns an Y coordinate of a specified cell
    *
    * @param tile Tile that is in Grid
-   * @return X coordinate (Column)
+   * @return Y coordinate (Row)
    */
   public int getCellRow(LetterTile tile) {
     int glInd;
-    for (int row = 0; row < size; row++) {
-      for (int column = 0; column < size; column++) {
-        glInd = getGlobalIndex(row, column);
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
+        glInd = getGlobalIndex(column, row);
         if (tile == slots[glInd].content) {
           return row;
         }
@@ -255,16 +266,16 @@ public class Grid {
   }
 
   /**
-   * Returns an Y coordinate of a specififed cell
+   * Returns an X coordinate of a specified cell
    *
    * @param tile Tile that is in Grid
-   * @return Y coordinate (Row)
+   * @return X coordinate (Column)
    */
   public int getCellColumn(LetterTile tile) {
     int glInd;
-    for (int row = 0; row < size; row++) {
-      for (int column = 0; column < size; column++) {
-        glInd = getGlobalIndex(row, column);
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
+        glInd = getGlobalIndex(column, row);
         if (tile == slots[glInd].content) {
           return column;
         }
@@ -306,6 +317,140 @@ public class Grid {
     return null;
   }
 
+  public ArrayList<LetterTile> getTilesInGrid() {
+    ArrayList<LetterTile> list = new ArrayList<>();
+    for (int i = 0; i < globalSize; i++) {
+      if (slots[i].content != null) {
+        list.add(slots[i].content);
+      }
+    }
+    return list;
+  }
+
+  public LetterTile getNeighbourCell(LetterTile tile, String neighbour) {
+    int glInd;
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
+        glInd = getGlobalIndex(column, row);
+        if (tile == slots[glInd].content) {
+          switch (neighbour) {
+            case "top":
+              if (row != 0) {
+                return getSlotContent(column, row - 1);
+              } else {
+                return null;
+              }
+            case "right":
+              if (column != size) {
+                return getSlotContent(column + 1, row);
+              } else {
+                return null;
+              }
+            case "bottom":
+              if (row != size) {
+                return getSlotContent(column, row + 1);
+              } else {
+                return null;
+              }
+            case "left":
+              if (column != 0) {
+                return getSlotContent(column - 1, row);
+              } else {
+                return null;
+              }
+            default:
+              return null;
+          }
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Get the most top existing neighbour
+   *
+   * @return The most top neighbour (LetterTile)
+   */
+  public LetterTile getMostTopOf(LetterTile tile) {
+    LetterTile current = tile;
+    int col = getCellColumn(tile);
+    int row = getCellRow(tile);
+    System.out.println("@getMostTopOf() - Current: " + current.getLetter());
+    if (0 <= col && col < size && 0 < row && row < size) {
+      int i = 1;
+      while (row - i >= 0 && slots[getGlobalIndex(col, row - i)].content != null) {
+        current = slots[getGlobalIndex(col, row - i)].content;
+        System.out.println("@getMostTopOf() - Top: " + current.getLetter());
+        i++;
+      }
+    }
+    return current;
+  }
+
+  /**
+   * Get the most right existing neighbour
+   *
+   * @return The most right neighbour (LetterTile)
+   */
+  public LetterTile getMostRightOf(LetterTile tile) {
+    LetterTile current = tile;
+    int col = getCellColumn(tile);
+    int row = getCellRow(tile);
+    System.out.println("@getMostRightOf() - Current: " + current.getLetter());
+    if (0 <= col && col < size - 1 && 0 <= row && row < size) {
+      int i = 1;
+      while (col + i <= size - 1 && slots[getGlobalIndex(col + i, row)].content != null) {
+        current = slots[getGlobalIndex(col + i, row)].content;
+        System.out.println("@getMostRightOf() - Right: " + current.getLetter());
+        i++;
+      }
+    }
+    return current;
+  }
+
+  /**
+   * Get the most bottom existing neighbour
+   *
+   * @return The most bottom neighbour (LetterTile)
+   */
+  public LetterTile getMostBottomOf(LetterTile tile) {
+    LetterTile current = tile;
+    int col = getCellColumn(tile);
+    int row = getCellRow(tile);
+    System.out.println("@getMostBottomOf() - Current: " + current.getLetter());
+    if (0 <= col && col < size && 0 <= row && row < size - 1) {
+      int i = 1;
+      while (row + i <= size - 1 && slots[getGlobalIndex(col, row + i)].content != null) {
+        current = slots[getGlobalIndex(col, row + i)].content;
+        System.out.println("@getMostBottomOf() - Bottom: " + current.getLetter());
+        i++;
+      }
+    }
+    return current;
+  }
+
+  /**
+   * Get the most left existing neighbour
+   *
+   * @return The most left neighbour (LetterTile)
+   */
+  public LetterTile getMostLeftOf(LetterTile tile) {
+    LetterTile current = tile;
+    int col = getCellColumn(tile);
+    int row = getCellRow(tile);
+    System.out.println("@getMostLeftOf() - Current: " + current.getLetter());
+    if (0 < col && col < size && 0 <= row && row < size) {
+      int i = 1;
+      while (col - i >= 0 && slots[getGlobalIndex(col - i, row)].content != null) {
+        current = slots[getGlobalIndex(col - i, row)].content;
+        System.out.println("@getMostLeftOf() - Left: " + current.getLetter());
+        i++;
+      }
+    }
+    return current;
+  }
+
   /**
    * Removes the specified Slot's content (based on the Slot object)
    *
@@ -320,27 +465,290 @@ public class Grid {
   }
 
   /**
-   * Removes the specified Slot's content (based on Row/Column indexes)
+   * Removes the specified Slot's content (based on Column/Row indexes)
    *
-   * @param row    Row (Y index)
    * @param column Column (X index)
+   * @param row    Row (Y index)
    */
-  public void removeSlotContent(int row, int column) {
-    slots[getGlobalIndex(row, column)].removeContent();
+  public void removeSlotContent(int column, int row) {
+    slots[getGlobalIndex(column, row)].removeContent();
   }
 
   /**
    * Adds a Slot to the specified cell
    *
    * @param slot   Slot
-   * @param row    Row (Y)
    * @param column Column (X)
+   * @param row    Row (Y)
    */
-  public void addSlot(Slot slot, int row, int column) {
-    int index = getGlobalIndex(row, column);
+  public void addSlot(Slot slot, int column, int row) {
+    int index = getGlobalIndex(column, row);
 
-    container.add(slot.container, row, column);
-    slots[getGlobalIndex(row, column)] = slot;
+    container.add(slot.container, column, row);
+    slots[index] = slot;
+  }
+
+  /**
+   * Verifies whether placed words are valid. Generates a pop-up window in case of an invalid
+   * input.
+   *
+   * @return True if input is valid, False otherwise
+   */
+  public boolean verifyWordsValidity() {
+    boolean res = false;
+
+    ArrayList<Slot> validStartingSlots = new ArrayList<>();
+
+    if (controller.roundCounter == 0) {
+      // It's 1st round
+      // Adding the center slot as Starting Point
+      validStartingSlots.add(getSlot(size / 2, size / 2));
+
+    } else {
+      // It's 2nd+ round
+      // Searching all frozen words and adding them into Starting Slots Array
+      System.out.println("Frozen words: ");
+      for (Word word : words) {
+        if (word.frozen) {
+          word.display();
+          System.out.print("\n");
+          for (int j = 0; j < word.getWordLength(); j++) {
+            validStartingSlots.add(word.getLetter(j).slot);
+          }
+        }
+      }
+    }
+
+    int validWords = 0;
+    int wordsUsingStartSlot = 0;
+    int frozenWordsCounter = 0;
+    int nbHorizontal = 0;
+    int nbVertical = 0;
+
+    for (Word word : words) {
+      System.out.println("@verifyWordsValidity - current word: ");
+      word.display();
+      System.out.print("\n");
+      System.out.println("@verifyWordsValidity - is frozen: " + word.frozen);
+
+      // verifying if all words present in the grid are valid
+      // (by counting the number of valid words and comparing it to number of all words)
+      if (word.isValid()) {
+        validWords++;
+      }
+
+      // Counting the number of frozen words, current horizontal and vertical words
+      if (!word.frozen) {
+        if (word.isHorizontal()) {
+          nbHorizontal++;
+        }
+        if (word.isVertical()) {
+          nbVertical++;
+        }
+      } else {
+        frozenWordsCounter++;
+      }
+
+      for (Slot slot : validStartingSlots) {
+        // we want to find out whether at least one starting slot is used by a word
+        if (!slot.isFree() && word.contains(slot.content)) {
+          wordsUsingStartSlot++;
+          break;
+        }
+      }
+    }
+
+    boolean noSingleTiles = true;
+    // Checking if there are Single LetterTiles in the Grid
+    for (Slot slot : slots) {
+      if (!slot.isFree()) {
+        if (getNeighbourCell(slot.content, "top") == null &&
+            getNeighbourCell(slot.content, "right") == null &&
+            getNeighbourCell(slot.content, "bottom") == null &&
+            getNeighbourCell(slot.content, "left") == null) {
+          noSingleTiles = false;
+          break;
+        }
+      }
+    }
+
+    String errorMessage = "";
+    if (wordsUsingStartSlot == words.size()) {
+      // at least one of the previous letters is used by ALL new words
+      System.out.println("ALL WORDS ARE USING AT LEAST 1 OF PREVIOUS LETTERS !");
+
+      if (noSingleTiles) {
+        // there is no single placed letter tiles
+        System.out.println("ALL WORDS HAVE LENGTH >= 2 !");
+
+        if (validWords == words.size()) {
+          // All words present in the grid are valid
+          System.out.println("ALL WORDS ARE VALID !");
+
+          if (nbHorizontal == words.size() - frozenWordsCounter
+              || nbVertical == words.size() - frozenWordsCounter) {
+            // All words have the same direction
+            System.out.println("ALL WORDS HAVE THE SAME DIRECTION !");
+
+          } else {
+            errorMessage = "ALL WORDS SHOULD BE IN THE SAME DIRECTION !";
+            System.err.println(errorMessage);
+          }
+
+        } else {
+
+//        if (startingSlotUsed) {
+//          // at least one of the previous letters is used by a word
+//          System.out.println("AT LEAST 1 OF PREVIOUS LETTERS IS USED !");
+//        }
+//        else {
+//          System.err.println("USE AT LEAST 1 OF PREVIOUS LETTERS TO MAKE A WORD !");
+//        }
+
+          errorMessage = "ALL NEW WORDS SHOULD BE VALID !";
+          System.err.println(errorMessage);
+        }
+
+      } else {
+        errorMessage = "ALL WORDS SHOULD HAVE LENGTH >= 2 !";
+        System.err.println(errorMessage);
+      }
+
+    } else {
+      errorMessage = "ALL WORDS SHOULD USE AT LEAST 1 OF PREVIOUS LETTERS !";
+      System.err.println(errorMessage);
+    }
+
+    if (!errorMessage.equals("")) {
+      // there is an error
+
+      BorderPane popup = new BorderPane();
+      popup.getStyleClass().add("popup-error-block");
+      popup.setOnMouseClicked(event -> {
+        controller.gridWrapper.getChildren().remove(popup);
+        controller.okBtn.setDisable(false);
+      });
+
+      Label errorLabel = new Label(errorMessage);
+      errorLabel.setAlignment(Pos.CENTER);
+      errorLabel.getStyleClass().add("popup-error-message");
+      errorLabel.setOnMouseClicked(event -> {
+        controller.gridWrapper.getChildren().remove(popup);
+        controller.okBtn.setDisable(false);
+      });
+
+      popup.setCenter(errorLabel);
+
+      controller.gridWrapper.getChildren().add(popup);
+      controller.okBtn.setDisable(true);
+
+    } else {
+      // everything is OK
+      System.out.println("ROUND OVER\nWORD-S ARE VALIDATED\nPROCEEDING TO THE NEXT PLAYER...");
+
+      res = true;
+
+      controller.roundCounter++;
+
+      freezeWords();
+    }
+
+    return res;
+  }
+
+  private void freezeWords() {
+
+    for (Word word : words) {
+      // words present in the grid
+
+      for (int l = 0; l < word.getWordLength(); l++) {
+        // letter tiles of the current word
+
+        word.getLetter(l).container.getStyleClass().clear();
+        word.getLetter(l).container.getStyleClass().add("letter-btn");
+
+        if (word.isHorizontal()) {
+
+          if (l == 0) {
+            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-min");
+          } else if (l < word.getWordLength() - 1) {
+            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-mid");
+          } else if (l == word.getWordLength() - 1) {
+            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-max");
+          }
+
+          if (l < word.getWordLength() - 1) {
+            StackPane gap = new StackPane();
+            gap.setPrefSize(padSize + 1, word.getLetter(l).container.getHeight());
+            gap.setMinSize(padSize + 1, word.getLetter(l).container.getHeight());
+            gap.setMaxSize(padSize + 1, word.getLetter(l).container.getHeight());
+            gap.getStyleClass().add("gap-hor");
+
+            controller.gridWrapper.getChildren().add(gap);
+
+            gap.setTranslateX(
+                word.getLetter(l).slot.container.getBoundsInParent().getMaxX() - 1);
+            gap.setTranslateY(
+                word.getLetter(l).slot.container.getBoundsInParent().getMinY());
+
+            word.getLetter(l).slot.container.boundsInParentProperty()
+                .addListener((obs, oldValue, newValue) -> {
+                  gap.setTranslateX(newValue.getMaxX() - 1);
+                  gap.setTranslateY(newValue.getMinY());
+                });
+
+            gap.prefHeightProperty().bind(word.getLetter(l).container.heightProperty());
+            gap.minHeightProperty().bind(word.getLetter(l).container.heightProperty());
+            gap.maxHeightProperty().bind(word.getLetter(l).container.heightProperty());
+          }
+
+        } else if (word.isVertical()) {
+
+          if (l == 0) {
+            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-min");
+          } else if (l < word.getWordLength() - 1) {
+            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-mid");
+          } else if (l == word.getWordLength() - 1) {
+            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-max");
+          }
+
+          if (l < word.getWordLength() - 1) {
+            StackPane gap = new StackPane();
+            gap.setPrefSize(word.getLetter(l).container.getWidth(), padSize + 1);
+            gap.setMinSize(word.getLetter(l).container.getWidth(), padSize + 1);
+            gap.setMaxSize(word.getLetter(l).container.getWidth(), padSize + 1);
+            gap.getStyleClass().add("gap-ver");
+
+            controller.gridWrapper.getChildren().add(gap);
+
+            gap.setTranslateX(
+                word.getLetter(l).slot.container.getBoundsInParent().getMinX() + 1);
+            gap.setTranslateY(
+                word.getLetter(l).slot.container.getBoundsInParent().getMaxY() - 1);
+
+            word.getLetter(l).slot.container.boundsInParentProperty()
+                .addListener((obs, oldValue, newValue) -> {
+                  gap.setTranslateX(newValue.getMinX() + 1);
+                  gap.setTranslateY(newValue.getMaxY() - 1);
+                });
+
+            gap.prefWidthProperty().bind(word.getLetter(l).container.widthProperty());
+            gap.minWidthProperty().bind(word.getLetter(l).container.widthProperty());
+            gap.maxWidthProperty().bind(word.getLetter(l).container.widthProperty());
+          }
+
+        }
+
+        word.getLetter(l).slot.container.setEffect(null);
+        word.getLetter(l).slot.container.setMouseTransparent(true);
+        word.getLetter(l).container.setMouseTransparent(true);
+      }
+
+      word.frozen = true;
+//      controller.gridWrapper.getChildren().remove(words.get(w).container);
+      word.container.getStyleClass().clear();
+      word.container.getChildren().clear();
+    }
   }
 
 

@@ -14,6 +14,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import scrabble.network.LobbyClientProtocol;
 
@@ -37,6 +39,10 @@ public class GameFinderController implements LobbyController {
   private JFXButton backButton;
   @FXML
   private Label statusLabel2;
+  @FXML
+  private ImageView background;
+  @FXML
+  private JFXButton search;
   private LobbyClientProtocol clientProtocol;
 
 
@@ -48,7 +54,9 @@ public class GameFinderController implements LobbyController {
   private void activateOwnPortControlls() {
     this.portField.setDisable(false);
     this.portField.setVisible(true);
-    this.statusLabel.setText("Please Type in port Number");
+    this.setStatusLabel("Please Type in port Number");
+    this.search.setVisible(true);
+    this.search.setDisable(false);
   }
 
   /**
@@ -58,7 +66,9 @@ public class GameFinderController implements LobbyController {
   private void deactivateOwnPortControlls() {
     this.portField.setDisable(true);
     this.portField.setVisible(false);
-    this.setStatusLabel("Press to search in network");
+    this.setStatusLabel("Use Own-Port 0 to AutoSearch");
+    this.search.setVisible(false);
+    this.search.setDisable(true);
   }
 
   /**
@@ -66,7 +76,7 @@ public class GameFinderController implements LobbyController {
    */
   @FXML
   private void joinAction() {
-    Platform.runLater(() -> {
+    Platform.runLater(() -> { // Standard procedure
       this.clientProtocol.sendJoinMessage();
     });
   }
@@ -108,7 +118,19 @@ public class GameFinderController implements LobbyController {
    * @return boolean about the acceptance of the String parameter
    */
   private boolean checkPortString(String port) { // not implemented yet
-    return port.matches("\\d{2,}");
+    System.out.println("String match port " + port.matches("^\\d{3,5}$"));
+    return port.matches("^\\d{3,5}$");
+  }
+
+  /**
+   * Method to activate auto search after a client changed to own port once
+   * 
+   * @param port String representation of 0 for identifying
+   * @return about the acceptance of the String parameter
+   */
+  private boolean checkAutoSearch(String port) {
+    System.out.println("String match 0 " + port.matches("^0$"));
+    return port.matches("^0$");
   }
 
   /**
@@ -135,7 +157,6 @@ public class GameFinderController implements LobbyController {
         Parent root = loader.load();
         Stage stage = (Stage) this.backButton.getScene().getWindow();
         stage.setScene(new Scene(root, 900, 700));
-        stage.setResizable(false);
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -150,6 +171,8 @@ public class GameFinderController implements LobbyController {
    */
   @FXML
   private void initialize() {
+    this.loadBackground();
+    System.out.println("GAME FINDER : Activate auto search");
     clientProtocol = new LobbyClientProtocol(this);
     clientProtocol.start();
   }
@@ -163,7 +186,7 @@ public class GameFinderController implements LobbyController {
   public void connectNotSucessful() {
     Platform.runLater(() -> {
       this.statusLabel.setText("No game at standart port");
-      this.useOwnPort.setDisable(false);
+      this.useOwnPort.setDisable(false); // activate or not
     });
   }
 
@@ -186,21 +209,40 @@ public class GameFinderController implements LobbyController {
    */
   @FXML
   private void searchAction() {
+    System.out.println("GAME FINDER : Own port string = " + this.portField.getText());
     if (this.checkPortString(this.portField.getText())) {
+      System.out.println("GAME FINDER : Port input accepted");
       int port = Integer.valueOf(this.portField.getText());
-      try {
-        clientProtocol = new LobbyClientProtocol(this, port);
-        this.joinBtn.setDisable(false);
-      } catch (ConnectException e) {
-        System.out.println("No connection on own port");
-        this.statusLabel.setText("No connection at this port");
-      } catch (IOException e) {
-        // TODO Auto-generated catch block
-        // e.printStackTrace();
-        System.out.println("No connection on own port");
+      if (port <= 65535) {
+        this.clientProtocol.shutdownProtocol(true);
+        try {
+          this.clientProtocol = new LobbyClientProtocol(this, port);
+          this.clientProtocol.start();
+          System.out.println("GAME FINDER : Connection on port");
+          // this.joinBtn.setDisable(false);
+        } catch (ConnectException e) {
+          System.out.println("GAME FINDER : No connection on own port");
+          this.statusLabel.setText("No connection at this port");
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          // e.printStackTrace();
+          System.out.println("GAME FINDER : No connection on own port");
+          this.statusLabel.setText("No connection at this port");
+          this.setStatusLabel2("");
+        }
+      } else {
+        System.out.println("GAME FINDER : No valid port");
+        this.setStatusLabel2("No valid port");
       }
+    } else if (this.checkAutoSearch(this.portField.getText())) {
+      System.out.println("GAME FINDER : Activate auto search");
+      this.clientProtocol.shutdownProtocol(true);
+      this.clientProtocol = new LobbyClientProtocol(this);
+      this.clientProtocol.start();
+      this.setStatusLabel2("Search Network Game");
     } else {
-      this.setStatusLabel("Not a port");
+      System.out.println("GAME FINDER : No valid port");
+      this.setStatusLabel2("No valid port");
     }
   }
 
@@ -209,9 +251,9 @@ public class GameFinderController implements LobbyController {
    */
   @Override
   public void shutdown() {
+    System.out.println("GAME LOBBY : Shutdown");
     if (this.clientProtocol != null) {
       this.clientProtocol.shutdownProtocol(true);
-      System.out.println("Controller Shutdown");
     }
 
   }
@@ -254,8 +296,7 @@ public class GameFinderController implements LobbyController {
         lobbyController.setProtocol(this.clientProtocol);
         this.clientProtocol.setLobbyController(lobbyController);
         Stage stage = (Stage) this.joinBtn.getScene().getWindow();
-        stage.setScene(new Scene(root, 900, 700));
-        stage.setResizable(false);
+        stage.setScene(new Scene(root, 900, 750));
         stage.setOnHidden(e -> {
           lobbyController.shutdown();
         });
@@ -266,4 +307,10 @@ public class GameFinderController implements LobbyController {
     });
   }
 
+  /**
+   * Method to set the background image
+   */
+  private void loadBackground() {
+    this.background.setImage(new Image(getClass().getResourceAsStream("img/GameFinder.jpg")));
+  }
 }

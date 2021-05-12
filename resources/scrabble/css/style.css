@@ -66,7 +66,7 @@
   -fx-border-color: green;
   -fx-border-width: 5px;
   -fx-background-radius: 7px;
-  -fx-background-color: rgba(0, 0, 0, 0);;
+  -fx-background-color: rgba(0, 0, 0, 0);
 }
 
 .invalid-word {
@@ -75,6 +75,18 @@
   -fx-border-width: 5px;
   -fx-background-radius: 7px;
   -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+.frozen-word {
+  -fx-border-radius: 7px;
+  -fx-border-color: black;
+  -fx-border-width: 1px;
+  -fx-background-radius: 7px;
+  -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+.frozen-word:hover {
+  -fx-cursor: hand;
 }
 
 .word-points-label {
@@ -145,6 +157,47 @@
 
 .slot > Label {
   -fx-font-weight: bold;
+}
+
+.popup-blank-block {
+  -fx-border-radius: 7px;
+  -fx-background-radius: 7px;
+  -fx-background-color: rgba(100, 100, 100, 0.5);
+  -fx-padding: 100px;
+}
+
+.popup-blank-message {
+  -fx-border-width: 3px;
+  -fx-border-color: orange;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+  -fx-background-color: #5d5d5d;
+  -fx-padding: 10px;
+  -fx-effect: dropshadow(one-pass-box, dimgray, 30, 0, 5, 5);
+}
+
+.popup-error-block {
+  -fx-border-radius: 7px;
+  -fx-background-radius: 7px;
+  -fx-background-color: rgba(100, 100, 100, 0.5);
+}
+
+.popup-error-message {
+  -fx-border-width: 3px;
+  -fx-border-color: #ff3300;
+  -fx-border-radius: 10px;
+  -fx-background-radius: 10px;
+  -fx-background-color: #5d5d5d;
+  -fx-padding: 10px;
+  -fx-text-fill: #ff3300;
+  -fx-wrap-text: true;
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
+  -fx-effect: dropshadow(one-pass-box, dimgray, 30, 0, 5, 5);
+}
+
+.popup-error-message:hover {
+  -fx-cursor: hand;
 }
 
 
@@ -251,10 +304,46 @@
   -fx-border-width: 0 1px 1px 1px;
 }
 
-.letter-btn-mid {
+.letter-btn-cross-hor-min {
+  -fx-border-radius: 0;
+  -fx-background-radius: 0;
+  -fx-border-width: 0 0 0 1px;
+}
+
+.letter-btn-cross-mid {
   -fx-border-radius: 0;
   -fx-background-radius: 0;
   -fx-border-width: 0;
+}
+
+.letter-btn-cross-hor-max {
+  -fx-border-radius: 0;
+  -fx-background-radius: 0;
+  -fx-border-width: 0 1px 0 0;
+}
+
+.letter-btn-cross-ver-min {
+  -fx-border-radius: 0;
+  -fx-background-radius: 0;
+  -fx-border-width: 1px 0 0 0;
+}
+
+.letter-btn-cross-ver-max {
+  -fx-border-radius: 0;
+  -fx-background-radius: 0;
+  -fx-border-width: 0 0 1px 0;
+}
+
+.gap-hor {
+  -fx-border-color: gray;
+  -fx-border-width: 1px 0 1px 0;
+  -fx-background-color: #ffe480;
+}
+
+.gap-ver {
+  -fx-border-color: gray;
+  -fx-border-width: 0 1px 0 1px;
+  -fx-background-color: #ffe480;
 }
 
 .letter-btn:hover {

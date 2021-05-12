@@ -1,5 +1,6 @@
 package scrabble.game;
 
+import java.util.ArrayList;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
@@ -26,6 +27,7 @@ public class LetterTile {
   AnchorPane container;
   private Label letter;
   private Label points;
+  boolean isBlank;
 
   Slot slot;
 
@@ -60,37 +62,45 @@ public class LetterTile {
     // container.setEffect(ds);
 
     letter = new Label(String.valueOf(ltr));
+    if (ltr == '\0') {
+      letter.setVisible(false);
+      this.isBlank = true;
+    }
     letter.getStyleClass().add("letter-label");
     letter.setLabelFor(container);
     letter.setPrefSize(cellSize, cellSize);
 
     points = new Label(String.valueOf(pts));
+    if (pts == 0) {
+      points.setVisible(false);
+      this.isBlank = true;
+    }
     points.getStyleClass().add("points-label");
     points.setLabelFor(container);
 
-    container.setOnMousePressed(event -> {
-      System.out
-          .println("Event.getScene: (" + event.getSceneX() + ", " + event.getSceneY() + ")");
-      System.out.println("Event.get: (" + event.getX() + ", " + event.getY() + ")\n");
-    });
+//    container.setOnMousePressed(event -> {
+//      System.out
+//          .println("Event.getScene: (" + event.getSceneX() + ", " + event.getSceneY() + ")");
+//      System.out.println("Event.get: (" + event.getX() + ", " + event.getY() + ")\n");
+//    });
 
-    container.setOnMouseDragged(mouseEvent -> {
-      container.toFront();
-      container.setCursor(Cursor.CLOSED_HAND);
-      container.setStyle("-fx-opacity: 0.6");
+//    container.setOnMouseDragged(mouseEvent -> {
+//      container.toFront();
+//      container.setCursor(Cursor.CLOSED_HAND);
+//      container.setStyle("-fx-opacity: 0.6");
+//
+//      container.setLayoutX(mouseEvent.getX() + container.getLayoutX() - container.getWidth() / 2);
+//      container.setLayoutY(mouseEvent.getY() + container.getLayoutY() - container.getHeight() / 2);
+//
+//      mouseEvent.consume();
+//    });
 
-      container.setLayoutX(mouseEvent.getX() + container.getLayoutX() - container.getWidth() / 2);
-      container.setLayoutY(mouseEvent.getY() + container.getLayoutY() - container.getHeight() / 2);
-
-      mouseEvent.consume();
-    });
-
-    container.setOnMouseReleased(mouseEvent -> {
-      container.setCursor(Cursor.DEFAULT);
-      container.setStyle("-fx-opacity: 1");
-
-      mouseEvent.consume();
-    });
+//    container.setOnMouseReleased(mouseEvent -> {
+//      container.setCursor(Cursor.DEFAULT);
+//      container.setStyle("-fx-opacity: 1");
+//
+//      mouseEvent.consume();
+//    });
 
     container.setOnMouseEntered(event -> container.setStyle("-fx-opacity: 0.8"));
     container.setOnMouseExited(event -> container.setStyle("-fx-opacity: 1"));
@@ -104,7 +114,8 @@ public class LetterTile {
 
       // put a string on drag board
       ClipboardContent content = new ClipboardContent();
-      content.putString(letter.getText() + points.getText());
+      content.putString("letter=" + letter.getText() + "&points=" + points.getText() + "&isBlank="
+          + this.isBlank);
       db.setContent(content);
 
       event.consume();
@@ -119,8 +130,62 @@ public class LetterTile {
 
         Slot slot = this.slot;
         if (slot != null) {
-          System.out.println("Removing the LetterTile");
+          System.out.println(this + " - onDragDone - Removing the LetterTile");
           slot.removeContent();
+        }
+
+        ArrayList<Word> wordsToRemove = new ArrayList<>();
+        for (Word word : controller.grid.words) {
+          if (word.contains(this)) {
+            wordsToRemove.add(word);
+
+            // Removing the highlighting box of the Word that was containing the moved LetterTile
+            controller.gridWrapper.getChildren().remove(word.container);
+          }
+        }
+        for (Word word : wordsToRemove) {
+          // Removing the Word that was containing the moved LetterTile (BACK-END)
+          controller.grid.words.remove(word);
+
+          // Shrinking the word if the removed LetterTile is first or last letter of the word
+          if (this == word.getFirst() && word.getWordLength() > 2) {
+
+            // Finding out whether the shrank word is entirely frozen
+            // in that case, a new Word will not be created
+            boolean frozenWord = true;
+            for (int i = 1; i < word.getWordLength(); i++) {
+              if (!word.getLetter(i).container.isMouseTransparent()) {
+                frozenWord = false;
+                break;
+              }
+            }
+
+            if (!frozenWord) {
+              new Word(word.getLetter(1), word.getLast(), controller);
+            }
+          }
+
+          if (this == word.getLast() && word.getWordLength() > 2) {
+
+            boolean frozenWord = true;
+            for (int i = 0; i < word.getWordLength() - 1; i++) {
+              if (!word.getLetter(i).container.isMouseTransparent()) {
+                frozenWord = false;
+                break;
+              }
+            }
+
+            if (!frozenWord) {
+              int ltrIdx = word.getWordLength() - 2;
+              new Word(word.getFirst(), word.getLetter(ltrIdx), controller);
+            }
+          }
+        }
+
+        if (!controller.letterBar.isFull()) {
+          controller.okBtn.setText("OK");
+        } else {
+          controller.okBtn.setText("PASS");
         }
 
         controller.grid.display();
@@ -202,6 +267,19 @@ public class LetterTile {
     this.controller = controller;
 
     initShape(letter, points);
+  }
+
+  public void setVisible(boolean val) {
+    setLetterVisible(val);
+    setPointsVisible(val);
+  }
+
+  public void setPointsVisible(boolean val) {
+    points.setVisible(val);
+  }
+
+  public void setLetterVisible(boolean val) {
+    letter.setVisible(val);
   }
 
   /**
@@ -322,8 +400,10 @@ public class LetterTile {
    */
   public LetterTile getMostLeft() {
     LetterTile current = this;
+    System.out.println("@getMostLeft() - Current: " + current.getLetter());
     while (current.left != null) {
       current = current.left;
+      System.out.println("@getMostLeft() - Left: " + current.getLetter());
     }
     return current;
   }

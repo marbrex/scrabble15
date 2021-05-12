@@ -1,34 +1,32 @@
 package scrabble;
 
 import com.jfoenix.controls.JFXButton;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import scrabble.game.Grid;
 import scrabble.game.LeaderBoard;
+import scrabble.game.LetterBag;
 import scrabble.game.LetterBar;
-import scrabble.game.Word;
 import scrabble.model.Dictionary;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
+import scrabble.network.LobbyClientProtocol;
+import scrabble.network.LobbyHostProtocol;
+import scrabble.network.NetworkScreen;
 
 /**
  * <h1>The Main Game Controller linked with "interface.fxml" file.</h1>
@@ -99,6 +97,12 @@ public class GameController {
   @FXML
   public ImageView quitGame;
 
+  @FXML
+  public BorderPane popupBlankBlock;
+
+  @FXML
+  public FlowPane popupBlankMessage;
+
   /**
    * The actual data of the letter grid will be stocked here.
    */
@@ -106,15 +110,64 @@ public class GameController {
 
   public LetterBar letterBar;
 
-  public ArrayList<Word> wordsInGrid;
-
   public LeaderBoard leaderBoard;
+
+  public int roundCounter;
+
+  /**
+   * protocol for Network communication during a Network Game
+   */
+  private NetworkScreen protocol;
+
+  /**
+   * boolean variable to control Host specific actions in a network game
+   */
+  private boolean isHost;
+
+  public ArrayList<Player> players;
+
+  public int nbPlayers;
+
+  public LetterBag bag;
 
   /**
    * Default constructor.
    */
   public GameController() {
-    wordsInGrid = new ArrayList<Word>();
+    roundCounter = 0;
+    bag = LetterBag.getInstance();
+  }
+
+  public GameController(LetterBag bag) {
+    roundCounter = 0;
+    this.bag = bag;
+  }
+
+  /**
+   * Constructor for Network games
+   *
+   * @param protocol protocol for server communication
+   * @param isHost   variable for host detection
+   * @author hendiehl
+   */
+  public GameController(NetworkScreen protocol, boolean isHost) {
+    this.roundCounter = 0;
+    this.protocol = protocol;
+    this.isHost = isHost;
+  }
+
+  /**
+   * Method to shutdown the network protocol
+   *
+   * @author hendiehl
+   */
+  public void shutdown() {
+    if (this.protocol instanceof LobbyClientProtocol) {
+      ((LobbyClientProtocol) this.protocol).shutdownProtocol(true);
+    } else if (this.protocol instanceof LobbyHostProtocol) {
+      ((LobbyHostProtocol) this.protocol).shutdown();
+
+    }
   }
 
   public void initGrid(String mapPath) {
@@ -129,16 +182,12 @@ public class GameController {
 
   public void initDictionary(String dictPath) {
     // Setting the Dictionary (should be set only once, an error otherwise)
-    URL dictURL = getClass().getResource(dictPath);
-    File dict = new File(dictURL.getFile());
     InputStream in = getClass().getResourceAsStream(dictPath);
     Dictionary.setDictionary(in);
   }
 
   public void initDictionary() {
     // Setting the Dictionary (should be set only once, an error otherwise)
-    URL dictPath = getClass().getResource("dictionaries/english-default.txt");
-    File dict = new File(dictPath.getFile());
     InputStream in = getClass().getResourceAsStream("/scrabble/dictionaries/english-default.txt");
     Dictionary.setDictionary(in);
   }
@@ -159,7 +208,15 @@ public class GameController {
     }
   }
 
-  public void initPlayers(List<Player> players) {
+  public void initPlayers() {
+    players = new ArrayList<>();
+
+    HumanPlayer host = new HumanPlayer();
+    players.add(host);
+    for (int i = 0; i < nbPlayers - 1; i++) {
+      players.add(new HumanPlayer());
+    }
+
     leaderBoard = new LeaderBoard(players);
   }
 
@@ -176,9 +233,7 @@ public class GameController {
 
     letterBar = new LetterBar(this);
 
-    shuffleBtn.setOnMouseClicked(event -> {
-      letterBar.shuffle();
-    });
+    shuffleBtn.setOnMouseClicked(event -> letterBar.shuffle());
 
     // Binding GridPane Wrapper's Height to be always equal to its Width
     gridWrapper.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -190,8 +245,6 @@ public class GameController {
       gridWrapper.setMaxWidth(newValue.doubleValue());
     });
 
-
-
 //    gridPaneUI.heightProperty().addListener((observable, oldValue, newValue) -> {
 //      sideBar.setMaxHeight(newValue.doubleValue());
 //    });
@@ -201,6 +254,10 @@ public class GameController {
     quitGame.setOnMouseClicked(event -> {
       changeScene("fxml/MainPage.fxml", "css/mainMenu.css", event);
     });
+
+    okBtn.setOnMouseClicked(event -> grid.verifyWordsValidity());
+
+    initPlayers();
 
   }
 }

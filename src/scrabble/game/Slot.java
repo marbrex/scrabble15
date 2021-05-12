@@ -1,9 +1,16 @@
 package scrabble.game;
 
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.effect.InnerShadow;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -107,6 +114,7 @@ public class Slot {
       // show to the user that it is an actual gesture target
       if (event.getGestureSource() != container &&
           event.getDragboard().hasString()) {
+        container.getStyleClass().removeAll("slot-dl", "slot-tl", "slot-dw", "slot-tw");
         container.getStyleClass().add("slot-on-drag-entered");
       }
 
@@ -118,6 +126,10 @@ public class Slot {
 
       // mouse moved away, remove the graphical cues
       container.getStyleClass().removeAll("slot-on-drag-entered");
+      if (multiplier != null && multiplier != Multiplier.NO) {
+        String style = "slot-" + multiplier.getAsString().toLowerCase(Locale.ROOT);
+        container.getStyleClass().add(style);
+      }
 
       event.consume();
     });
@@ -131,103 +143,133 @@ public class Slot {
       boolean success = false;
       if (db.hasString()) {
 
-        // Getting the coordinates of the placeholder rectangle
-        int x = GridPane.getColumnIndex(container);
-        int y = GridPane.getRowIndex(container);
-        int index = y + controller.grid.size * x;
-
         // Getting the letter tile's data transferred by D&D
-        char letter = db.getString().charAt(0);
-        int points = Character.getNumericValue(db.getString().charAt(1));
+        Map<String, String> params = new HashMap<>();
+        String paramsString = db.getString();
+        String[] pairs = paramsString.split("&");
+        for (String p : pairs) {
+          String[] pair = p.split("=");
+          params.put(pair[0], pair[1]);
+        }
 
-        // Creating a new Letter Tile
-        LetterTile tile = new LetterTile(letter, points, size, controller);
+        char letter = params.get("letter").charAt(0);
+        int points = Integer.parseInt(params.get("points"));
+        boolean isBlank = Boolean.parseBoolean(params.get("isBlank"));
 
-        // Adding the Letter to the Slot
-        this.setContent(tile);
+        if (isBlank) {
+          // blank letterTile
 
-        // Checking if there are any Neighbours
-        boolean top = false;
-        boolean right = false;
-        boolean bottom = false;
-        boolean left = false;
-        int topX = x;
-        int topY = y - 1;
-        int rightX = x + 1;
-        int rightY = y;
-        int bottomX = x;
-        int bottomY = y + 1;
-        int leftX = x - 1;
-        int leftY = y;
-        while (topY >= 0) {
-          if (!controller.grid.getSlot(topX, topY).isFree()) {
-            top = true;
-            topY--;
-          } else {
-            topY++;
-            break;
+          // Setting visible a popup window
+          controller.popupBlankBlock.setVisible(true);
+          controller.popupBlankBlock.setViewOrder(-2);
+
+          LetterBag bag = LetterBag.getInstance();
+          for (int i = 0; i < bag.getAlphabetSize(); i++) {
+            char l = bag.getLetterInAlphabet(i);
+            int v = bag.getValueInAlphabet(i);
+
+            LetterTile ltrTile = new LetterTile(l, v, size, controller);
+            ltrTile.setPointsVisible(false);
+            ltrTile.isBlank = true;
+            ltrTile.container.setOnDragDetected(null);
+            ltrTile.container.setOnDragDone(null);
+            ltrTile.container.setOnMouseClicked(clickEvent -> {
+              System.out.println(ltrTile + " - @onMouseClicked");
+
+              // Creating a new Letter letterTile
+              LetterTile tile = new LetterTile(l, v, controller.grid.cellSize, controller);
+
+              System.out.println(ltrTile + " - @onMouseClicked - created a tile");
+
+              tile.setLetterVisible(true);
+              tile.setPointsVisible(false);
+              tile.isBlank = true;
+
+              System.out.println(ltrTile + " - @onMouseClicked - set the tile");
+
+              controller.popupBlankBlock.setVisible(false);
+              controller.okBtn.setDisable(false);
+
+              System.out.println(ltrTile + " - @onMouseClicked - removed popup and turned on OK btn");
+
+              // Adding the Letter to the Slot
+              this.setContent(tile);
+
+              System.out.println(ltrTile + " - @onMouseClicked - Added the Letter to the Slot");
+
+              // Checking if there are any Neighbours
+              // Getting First and Last letter, both for Horizontal and Vertical
+              LetterTile mostTop = controller.grid.getMostTopOf(tile);
+              LetterTile mostRight = controller.grid.getMostRightOf(tile);
+              LetterTile mostBottom = controller.grid.getMostBottomOf(tile);
+              LetterTile mostLeft = controller.grid.getMostLeftOf(tile);
+
+              System.out.println(ltrTile + " - @onMouseClicked - got the neighbours");
+
+              System.out.println(ltrTile + " - @onMouseClicked - mostTop=" + mostTop);
+              System.out.println(ltrTile + " - @onMouseClicked - mostRight=" + mostRight);
+              System.out.println(ltrTile + " - @onMouseClicked - mostBottom=" + mostBottom);
+              System.out.println(ltrTile + " - @onMouseClicked - mostLeft=" + mostLeft);
+              System.out.println(ltrTile + " - @onMouseClicked - tile=" + tile);
+
+              if (mostLeft != tile || mostRight != tile) {
+                // There are HORIZONTAL neighbours
+                System.out.println(ltrTile + " - @onMouseClicked - creating a horizontal word");
+                new Word(mostLeft, mostRight, controller);
+              }
+
+              if (mostTop != tile || mostBottom != tile) {
+                // There are VERTICAL neighbours
+                System.out.println(ltrTile + " - @onMouseClicked - creating a vertical word");
+                new Word(mostTop, mostBottom, controller);
+              }
+
+              controller.popupBlankMessage.getChildren().clear();
+              System.out.println(ltrTile + " - @onMouseClicked - finish");
+            });
+
+            controller.popupBlankMessage.getChildren().add(ltrTile.container);
           }
-        }
-        while (rightX < controller.grid.size) {
-          if (!controller.grid.getSlot(rightX, rightY).isFree()) {
-            right = true;
-            rightX++;
-          } else {
-            rightX--;
-            break;
+
+          controller.okBtn.setDisable(true);
+        } else {
+          // regular letterTile
+
+          // Creating a new Letter letterTile
+          LetterTile tile = new LetterTile(letter, points, controller.grid.cellSize, controller);
+
+          tile.setVisible(true);
+          tile.isBlank = false;
+
+          // Adding the Letter to the Slot
+          this.setContent(tile);
+
+          // Checking if there are any Neighbours
+          // Getting First and Last letter, both for Horizontal and Vertical
+          LetterTile mostTop = controller.grid.getMostTopOf(tile);
+          LetterTile mostRight = controller.grid.getMostRightOf(tile);
+          LetterTile mostBottom = controller.grid.getMostBottomOf(tile);
+          LetterTile mostLeft = controller.grid.getMostLeftOf(tile);
+
+          if (mostLeft != tile || mostRight != tile) {
+            // There are HORIZONTAL neighbours
+
+            // Creating a Word.
+            // Fills in all data members of the Word class.
+            // It checks whether the word has no empty gaps, i.e. the word is FULL.
+            // If thw word is full, then it checks if the word is VALID.
+            new Word(mostLeft, mostRight, controller);
           }
-        }
-        while (bottomY < controller.grid.size) {
-          if (!controller.grid.getSlot(bottomX, bottomY).isFree()) {
-            bottom = true;
-            bottomY++;
-          } else {
-            bottomY--;
-            break;
+
+          if (mostTop != tile || mostBottom != tile) {
+            // There are VERTICAL neighbours
+            new Word(mostTop, mostBottom, controller);
           }
-        }
-        while (leftX >= 0) {
-          if (!controller.grid.getSlot(leftX, leftY).isFree()) {
-            left = true;
-            leftX--;
-          } else {
-            leftX++;
-            break;
-          }
-        }
-
-        if (left || right) {
-          // There are HORIZONTAL neighbours
-
-          // Getting First and Last letter (Y is the same for all letters on this row)
-          // We don't know yet if there are empty gaps between these 2 letters.
-          int minX = Math.min(leftX, rightX);
-          int maxX = Math.max(leftX, rightX);
-          System.out.println("\nHORIZONTAL - Min Cell (" + minX + ", " + leftY + ")");
-          System.out.println("\nHORIZONTAL - Max Cell (" + maxX + ", " + leftY + ")");
-
-          // Creating a Word.
-          // Fills in all data members of the Word class.
-          // It checks whether the word has no empty gaps, i.e. the word is FULL.
-          // If thw word is full, then it checks if the word is VALID.
-          Word word = new Word(controller.grid.getSlot(minX, leftY).content,
-              controller.grid.getSlot(maxX, leftY).content, controller);
-        }
-
-        if (top || bottom) {
-          // There are VERTICAL neighbours
-
-          int minY = Math.min(topY, bottomY);
-          int maxY = Math.max(topY, bottomY);
-          System.out.println("\nVERTICAL - Min Cell (" + topX + ", " + minY + ")");
-          System.out.println("\nVERTICAL - Max Cell (" + topX + ", " + maxY + ")");
-
-          Word word = new Word(controller.grid.getSlot(topX, minY).content,
-              controller.grid.getSlot(topX, maxY).content, controller);
         }
 
         success = true;
       }
+
       /* let the source know whether the string was successfully
        * transferred and used */
       event.setDropCompleted(success);
@@ -358,6 +400,9 @@ public class Slot {
     }
     content = null;
     isFree = true;
+    if (multiplier != null && multiplier != Multiplier.NO) {
+      container.getChildren().add(new Label(multiplier.getAsString()));
+    }
   }
 
   /**
@@ -367,11 +412,13 @@ public class Slot {
    * @see scrabble.game.LetterTile
    */
   public void setContent(LetterTile tile) {
-    removeContent();
-    container.getChildren().add(tile.container);
-    content = tile;
-    tile.slot = this;
-    isFree = false;
+    if (tile != null) {
+      removeContent();
+      container.getChildren().add(tile.container);
+      content = tile;
+      tile.slot = this;
+      isFree = false;
+    }
   }
 
   /**

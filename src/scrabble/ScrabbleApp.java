@@ -1,11 +1,14 @@
 package scrabble;
 
+import java.io.File;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import scrabble.dbhandler.DBInformation;
+import scrabble.dbhandler.Database;
 
 /**
  * scrabble.ScrabbleApp class is the main class and the starting point of the application. Main
@@ -24,7 +27,11 @@ public class ScrabbleApp extends Application {
   @Override
   public void start(Stage primaryStage) throws Exception {
     FXMLLoader loader = new FXMLLoader();
-    loader.setLocation(getClass().getResource("fxml/Register.fxml"));
+    if (DBInformation.getProfileSize() != 0) {
+      loader.setLocation(getClass().getResource("fxml/ChooseProfileScene.fxml"));
+    } else {
+      loader.setLocation(getClass().getResource("fxml/Register.fxml"));
+    }
     Parent root = loader.load();
 
     Scene scene = new Scene(root, windowWidth, windowHeight);
@@ -41,6 +48,8 @@ public class ScrabbleApp extends Application {
   }
 
   public static void main(String[] args) {
+    Database.connectToDB();
+    Database.createTables();
     launch(args);
   }
 }

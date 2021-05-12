@@ -36,7 +36,7 @@ public class LeaderBoard {
    */
   public LeaderBoard(List<Player> playersList) {
     if (playersList.size() <= 4) {
-      this.players = new TreeSet<Player>(new ScoreComparator());
+      this.players = new TreeSet<>(new ScoreComparator());
       this.players.addAll(playersList);
     }
   }
@@ -49,7 +49,7 @@ public class LeaderBoard {
    */
   public LeaderBoard(HumanPlayer host, int nbBots) {
     if (nbBots >= 1 && nbBots <= 3) {
-      this.players = new TreeSet<Player>(new ScoreComparator());
+      this.players = new TreeSet<>(new ScoreComparator());
       this.players.add(host);
       for (int i = 0; i < nbBots; i++) {
         this.players.add(new AiPlayer());
@@ -65,7 +65,7 @@ public class LeaderBoard {
    */
   public LeaderBoard(HumanPlayer host, List<HumanPlayer> guests) {
     if (guests.size() <= 3) {
-      this.players = new TreeSet<Player>(new ScoreComparator());
+      this.players = new TreeSet<>(new ScoreComparator());
       this.players.add(host);
       this.players.addAll(guests);
     }
@@ -80,7 +80,7 @@ public class LeaderBoard {
    */
   public LeaderBoard(HumanPlayer host, List<HumanPlayer> guests, List<AiPlayer> bots) {
     if (guests.size() + bots.size() <= 3) {
-      this.players = new TreeSet<Player>(new ScoreComparator());
+      this.players = new TreeSet<>(new ScoreComparator());
       this.players.add(host);
       this.players.addAll(guests);
       this.players.addAll(bots);

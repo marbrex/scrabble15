@@ -14,7 +14,7 @@ public class LetterBag {
   }
 
   //Singleton Constructor
-  public LetterBag getLetterBag() {
+  public static LetterBag getLetterBag() {
 		if (bagClass == null) {
 			bagClass = new LetterBag();
 		}

@@ -95,18 +95,23 @@
 				<FlowPane alignment="CENTER" hgap="60.0" prefHeight="162.0"
 					prefWidth="762.0">
 					<children>
-						<JFXButton fx:id="createButton"
-							onAction="#changeToRegistration" prefHeight="38.0"
+						<JFXButton fx:id="deleteButton" prefHeight="38.0"
+							prefWidth="200.0" style="-fx-background-color: #FF0000;"
+							text="- Delete profile" textFill="WHITE">
+							<font>
+								<Font name="Consolas" size="19.0" />
+							</font>
+						</JFXButton>
+						<JFXButton fx:id="createButton" prefHeight="38.0"
 							prefWidth="200.0" style="-fx-background-color: #27B53C;"
 							text="+ Create profile" textFill="WHITE">
 							<font>
 								<Font name="Consolas" size="19.0" />
 							</font>
 						</JFXButton>
-						<JFXButton fx:id="continueButton"
-							onAction="#changeScene" prefHeight="38.0" prefWidth="200.0"
-							style="-fx-background-color: black;" text="Continue"
-							textFill="WHITE">
+						<JFXButton fx:id="continueButton" prefHeight="38.0"
+							prefWidth="200.0" style="-fx-background-color: black;"
+							text="Continue" textFill="WHITE">
 							<font>
 								<Font name="Consolas" size="19.0" />
 							</font>

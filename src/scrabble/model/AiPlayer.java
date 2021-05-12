@@ -8,22 +8,30 @@ import java.util.List;
  * scrabble.model.AiPlayer extends from the Player class and is necessary to determine the
  * difficulty of each AI Player
  * 
- * @author Sergen Keskincelik
+ * @author astarche
+ * @author skeskinc
  */
 
 public class AiPlayer extends Player implements Serializable {
 
-  /** Difficulty-Array for the Ai */
   private String[] difficulty = {"easy", "hard"};
-  /** Difficulty chosen for the Ai */
   private String chosenDifficulty;
 
-  /** Constructor of the AiPlayer class */
+  /**
+   * Constructor of the AiPlayer class
+   * 
+   * @author skeskinc
+   */
   public AiPlayer() {
     super();
   }
 
-  /** Setting the difficulty of the AI-Player */
+  /**
+   * Setting the difficulty of the AI-Player
+   * 
+   * @param diff Setting the difficulty of the AI-Player
+   * @author skeskinc
+   */
   public void setDifficulty(String diff) {
     switch (diff) {
       case ("easy"):
@@ -38,7 +46,12 @@ public class AiPlayer extends Player implements Serializable {
     }
   }
 
-  /** Returns the difficulty of the AI-Player */
+  /**
+   * Returns the difficulty of the AI-Player
+   * 
+   * @return Difficulty of the AI-Player
+   * @author skeskinc
+   */
   public String getDifficulty() {
     return this.chosenDifficulty;
   }
@@ -46,7 +59,7 @@ public class AiPlayer extends Player implements Serializable {
   /**
    * Checks if the word can be made with the available letters
    *
-   * @author Alexander Starchenkov
+   * @author astarche
    */
   public boolean findWord(List<Letter> letters, String toFind) {
     boolean found = false;
@@ -63,7 +76,7 @@ public class AiPlayer extends Player implements Serializable {
    * Returns a list with all possible words from the dictionary that can be made with the given
    * letters
    *
-   * @author Alexander Starchenkov
+   * @author astarche
    */
   public List<String> findWords(List<Letter> letters, List<String> words) {
     List<String> foundWords = new ArrayList<String>();
@@ -78,7 +91,7 @@ public class AiPlayer extends Player implements Serializable {
   /**
    * Checks if all letters to make the searched word are present
    *
-   * @author Alexander Starchenkov
+   * @author astarche
    */
   public boolean hasLettersOf(List<Character> currentLetters, String word) {
     boolean res = true;
@@ -94,7 +107,7 @@ public class AiPlayer extends Player implements Serializable {
   /**
    * Returns a list with char values of the letters
    *
-   * @author Alexander Starchenkov
+   * @author astarche
    */
   public List<Character> getValues(List<Letter> letters) {
     List<Character> values = new ArrayList<Character>();
@@ -107,7 +120,7 @@ public class AiPlayer extends Player implements Serializable {
   /**
    * Removes all the letters that are not used in the searched word
    *
-   * @author Alexander Starchenkov
+   * @author astarche
    */
   public String clear(String currentLetters, String word) {
     String cleared = "";

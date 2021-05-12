@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -26,6 +28,13 @@ public class MenuController {
   private JFXButton backButton;
   @FXML
   private StackPane root;
+  @FXML
+  private ImageView background;
+
+  @FXML
+  public void initialize() {
+    this.loadBackground();
+  }
 
   @FXML
   private void backButtonAction() {
@@ -33,7 +42,8 @@ public class MenuController {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/MainPage.fxml"));
       Parent root = loader.load();
       Stage stage = (Stage) this.backButton.getScene().getWindow();
-      Scene scene = new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
+      Scene scene =
+          new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
       scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
       stage.setScene(scene);
     } catch (IOException e1) {
@@ -67,8 +77,7 @@ public class MenuController {
       Parent root = loader.load();
       GameLobbyController lobbyController = loader.<GameLobbyController>getController();
       Stage stage = (Stage) this.hostGameButton.getScene().getWindow();
-      stage.setScene(new Scene(root, 900, 700));
-      stage.setResizable(false);
+      stage.setScene(new Scene(root, 900, 750)); // before 700, but need of space
       stage.setOnHidden(e -> {
         lobbyController.shutdown();
       });
@@ -98,7 +107,6 @@ public class MenuController {
       GameFinderController finderController = loader.<GameFinderController>getController();
       Stage stage = (Stage) this.joinGameButton.getScene().getWindow();
       stage.setScene(new Scene(root, 900, 700));
-      stage.setResizable(false);
       stage.setOnHidden(e -> {
         finderController.shutdown();
       });
@@ -108,4 +116,10 @@ public class MenuController {
     }
   }
 
+  /**
+   * Method to set the background image
+   */
+  private void loadBackground() {
+    this.background.setImage(new Image(getClass().getResourceAsStream("img/Menu.jpg")));
+  }
 }

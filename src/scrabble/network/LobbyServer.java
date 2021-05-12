@@ -1,14 +1,11 @@
 package scrabble.network;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
-
-import scrabble.network.LobbyHostProtocol;
-import scrabble.network.LobbyServerProtocol;
-import scrabble.network.PortsOccupiedException;
 import scrabble.GameLobbyController;
 import scrabble.model.GameInformationController;
 
@@ -26,6 +23,10 @@ public class LobbyServer extends Thread {
   private boolean isRunning;
   /** Corresponding controller of an GameLobby */
   private GameLobbyController gameLobby;
+  /** ChatServer for lobby and game communication */
+  private Server chat;
+  /** port on which the chatServer is running */
+  private int chatPort;
   // Control
   /** controller of the game information */
   private GameInformationController gameInfoController;
@@ -33,6 +34,8 @@ public class LobbyServer extends Thread {
   private ArrayList<LobbyServerProtocol> clients;
   /** protocol of the game host */
   private LobbyHostProtocol host;
+  /** Host chosen port for a Network Game */
+  private int ownPort = 0;
 
 
   // constructor with port assignment if occupied
@@ -40,11 +43,35 @@ public class LobbyServer extends Thread {
    * Constructor which will inform the player if the server can run on a standard port.
    * 
    * @param gameLobby controller of the GameLobby screen
-   * @throws PortsOccupiedException exception thrown if no standard port is available
    */
   public LobbyServer(GameLobbyController gameLobby) {
     // setting up controls
-    initializeParts(gameLobby);
+    this.initializeParts(gameLobby);
+  }
+
+  /*
+   * Constructor for a network server with an own port
+   * 
+   * @param gameLobby controller of the GameLobby screen
+   * 
+   */
+  public LobbyServer(GameLobbyController gameLobby, int ownPort)
+      throws ConnectException, IOException {
+    this.setOwnServer(ownPort);
+    this.initializeParts(gameLobby);
+  }
+
+  /**
+   * Method to set a server with an specific port chosen by Host
+   * 
+   * @param port2 port given by the host
+   */
+  private void setOwnServer(int port2) throws ConnectException, IOException {
+    System.out.println("SERVER : Own port set on " + port2);
+    this.server = new ServerSocket(port2);
+    this.ownPort = port2;
+    this.isRunning = true;
+    System.err.println("SERVER : Choosen own port :" + this.ownPort);
   }
 
   /**
@@ -59,10 +86,33 @@ public class LobbyServer extends Thread {
     this.host = new LobbyHostProtocol(gameLobby, gameInfoController);
     // Perhaps the host initializing in the run thread because of the DB connection (slow ?)
     this.gameLobby.setHostProtocol(this.host);
+    this.gameLobby.setChatUser(this.host);
     this.gameInfoController.addPlayer(host);
-    this.gameLobby.setProfileVisible(0, this.host.getPlayer().getName()); // change to protocol call
-                                                                          // in future??
-    //
+    // this.gameLobby.setProfileVisible(0, this.host.getPlayer().getName()); // change to protocol
+    // call
+    // in future??
+  }
+
+  /**
+   * Method to get the running Port
+   * 
+   * @return port teh server runs on or 0 if server isn't set
+   */
+  public int getRunningPort() {
+    if (this.server != null) { // Pretend calling Method before the server started
+      return this.server.getLocalPort();
+    } else {
+      return 0;
+    }
+  }
+
+  /**
+   * Method to check if a server is launched normally with the standard port or a specific port
+   * 
+   * @return
+   */
+  public boolean portIsAutoSet() {
+    return this.ownPort == 0; // if the ownPort isn't 0 a own Port is chosen
   }
 
   /**
@@ -77,13 +127,13 @@ public class LobbyServer extends Thread {
       try {
         this.server = new ServerSocket(port);
         this.isRunning = true; // breaking loop
-        System.out.println("GameLobbyServer Constructor choosen port : " + this.port);
+        System.err.println("SERVER : Choosen port : " + this.port);
       } catch (SocketException e) {
         // Socket in use
         if (this.port < 11131) { // try standard ports
           this.port++; // increase port number
         } else {
-          throw new PortsOccupiedException("Standart ports are occupied");
+          throw new PortsOccupiedException("Standart ports are occupied, please configure");
         }
       } catch (IOException e) {
         // TODO Auto-generated catch block
@@ -98,7 +148,11 @@ public class LobbyServer extends Thread {
    */
   public void run() {
     try {
-      this.setServer();
+      if (this.ownPort == 0) { // AutoPort is active if no own port is set !!!!!!!
+        System.out.println("SERVER : Auto set");
+        this.setServer(); // In this case the server is set in the constructor
+      }
+      this.startChatServer();
     } catch (PortsOccupiedException e) {
       this.gameLobby.setTimeLabel(e.getMessage());
       // Here own port control should be allowed
@@ -116,6 +170,7 @@ public class LobbyServer extends Thread {
   private void react() {
     try {
       Socket s = this.server.accept();
+      System.out.println("SERVER : Client accepted");
       LobbyServerProtocol lobbyProtocol = new LobbyServerProtocol(s, this, gameInfoController);
       this.getInContact(lobbyProtocol);
     } catch (SocketException e) {
@@ -142,10 +197,13 @@ public class LobbyServer extends Thread {
    * Method which will shutdown the server
    */
   public void shutdown() { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! critical
+    System.out.println("SERVER : Shutdown");
     this.isRunning = false;
+    // this.gameInfoController.shutdown();
     this.closeAllProtocols();
     this.closeConnection();
-
+    this.host.stopChatClient();
+    this.chat.stopServer();
   }
 
   /**
@@ -178,4 +236,25 @@ public class LobbyServer extends Thread {
     }
   }
 
+  /**
+   * Method to start the chat server
+   */
+  private void startChatServer() {
+    this.chat = new Server();
+    this.chat.start();
+    this.chatPort = this.chat.getServerPort(); // Perhaps the port isn't set yet ?
+    System.out.println("SERVER : Chat server started on port : " + this.chatPort);
+    this.host.startChatClient(this.chatPort); // Port isn't set, because thread start is slower than
+                                              // main execution
+  }
+
+  /**
+   * Method to get the port the chat server is running in reason to send it to a client joining the
+   * lobby
+   * 
+   * @return
+   */
+  protected Integer getChatPort() {
+    return this.chatPort;
+  }
 }
