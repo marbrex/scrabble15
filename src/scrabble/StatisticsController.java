@@ -116,7 +116,9 @@ public class StatisticsController implements Initializable {
    */
   @FXML
   public void delBtnOnAction(ActionEvent event) {
+    int id = DBInformation.getSettingsId(plyr);
     Database.removePlayer(plyr);
+    Database.removeSettings(id);
     try {
 
       Parent root = FXMLLoader.load(getClass().getResource("fxml/Register.fxml"));

@@ -26,8 +26,8 @@ import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
 
 
-/** 
- * scrabble.CreateProfileController to manage profile creation  
+/**
+ * scrabble.CreateProfileController to manage profile creation
  * 
  * @author skeskinc
  * @author ekstamy
@@ -58,7 +58,14 @@ public class CreateProfileController {
   @FXML
   public int imageindex;
 
-  /** Changing to the Scene */
+  /**
+   * Changing to the Scene
+   * 
+   * @param resource URL-Resource to another scene
+   * @param style given style-sheet for next scene
+   * @param event Handling MouseEvent
+   * @author ekstamy
+   */
   public void changeScene(String resource, String style, Event event) {
     try {
       System.out.println(resource);
@@ -75,7 +82,12 @@ public class CreateProfileController {
     }
   }
 
-  /** Generating a player id */
+  /**
+   * Generating a player id
+   * 
+   * @return generated Identification number
+   * @author skeskinc
+   */
   private int generateId() {
     int id = 0;
     for (int i = 1; i < 5; i++) {
@@ -87,10 +99,15 @@ public class CreateProfileController {
     return id;
   }
 
-  /** Setting avatars and handling events */
+  /**
+   * Setting avatars and handling events
+   * 
+   * @author skeskinc
+   */
   @FXML
   private void initialize() {
-    ImageView im = new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/male.png")));
+    ImageView im =
+        new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/male.png")));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(0)).getChildren().add(im);
@@ -106,17 +123,19 @@ public class CreateProfileController {
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(3)).getChildren().add(im);
+    this.imageindex = 5;
 
-    //Action on Cancel Button
+    // Action on Cancel Button
     cancelBtn.setOnMouseClicked(event -> {
       changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
     });
 
-    //Action on Create Button
+    // Action on Create Button
     createBtn.setOnMouseClicked(event -> {
       String name = nameField.getText();
       int id = generateId();
-      if (!name.isEmpty() && !DBInformation.containsName(name) && name.length() <= 15) {
+      if (!name.isEmpty() && !DBInformation.containsName(name) && name.length() <= 15
+          && this.imageindex <= 3) {
         Database.fillTables(id, name, this.imageindex);
         changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
       }
