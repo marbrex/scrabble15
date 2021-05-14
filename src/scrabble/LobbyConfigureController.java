@@ -13,6 +13,11 @@ import javafx.stage.Stage;
 import scrabble.network.LobbyServer;
 
 public class LobbyConfigureController {
+	/**
+	 * Controller of the configure screen of a network lobby only accessible by an host.
+	 * Is used to set up specific options of the lobby like the wanted port, new game field extra points or a new dictionary.
+	 * @author hendiehl
+	 */
   @FXML
   private JFXRadioButton autoPort;
   @FXML
@@ -35,7 +40,12 @@ public class LobbyConfigureController {
   private LobbyServer server;
   private String seperator;
   private GameLobbyController corresponding;
-
+  /**
+   * Constructor with the needed informations about the lobby controller for screen access and the actual server of the lobby.
+   * @param server actual corresponding server of the lobby.
+   * @param corresponding controller of the lobby screen.
+   * @author hendiehl
+   */
   public LobbyConfigureController(LobbyServer server, GameLobbyController corresponding) {
     autoSet = server.portIsAutoSet();
     runningPort = server.getRunningPort();
@@ -43,7 +53,10 @@ public class LobbyConfigureController {
     this.seperator = System.lineSeparator();
     this.corresponding = corresponding;
   }
-
+  /**
+   * Initialize method of JavaFx which sets the port controls in dependence of the present selection of the server port.
+   * @author hendiehl
+   */
   @FXML
   private void initialize() {
     if (this.autoSet) { // Server runs on standard port
@@ -60,21 +73,32 @@ public class LobbyConfigureController {
       this.portInfo.setVisible(false);
     }
     this.warning.setText("Warning : Pressing Accept will" + this.seperator
-        + "start an new Server on a other Port." + this.seperator
-        + "This means every player will be" + this.seperator + "kicked from the Lobby.");
+        + "start an new server on a other port." + this.seperator
+        + "This means every player will be" + this.seperator + "kicked from the lobby.");
     this.warning.setVisible(false);
     // Also add a warning if the Running thread is 0 => Problem
   }
-
+  /**
+   * Method which handles the ActionEvent of the cancel button in reason to close the configure screen.
+   * @author hendiehl
+   */
   @FXML
   private void cancelButtonAction() {
     this.close();
   }
-
+  /**
+   * Method to show information about the actual port choosing.
+   * @param s message wants to be shown on the screen
+   * @author hendiehl
+   */
   private void setPortInfo(String s) {
     this.portInfo.setText(s);
   }
-
+  /**
+   * Method which handles the ActionEvent of the accept button.
+   * In dependence of the option chosen by the host a new server will be started or game specific configures will be saved for the game.
+   * @author hendiehl
+   */
   @FXML
   private void acceptButtonAction() {
     if (this.autoSet) {
@@ -133,13 +157,17 @@ public class LobbyConfigureController {
   }
 
   /**
-   * Method to close the window
+   * Method to close the window.
+   * @author hendiehl
    */
   private void close() {
     Stage stage = (Stage) cancel.getScene().getWindow();
     stage.close();
   }
-
+  /**
+   * Method which handles the action event of the port selection and enables the accept button if a other option is chosen than the present option.
+   * @author hendiehl
+   */
   @FXML
   private void autoPortAction() {
     if (this.autoPort.isSelected()) {
@@ -171,15 +199,27 @@ public class LobbyConfigureController {
       }
     }
   }
-
+  /**
+   * Method to make the warning label visible on the screen.
+   * @author hendiehl
+   */
   private void showWarning() {
     this.warning.setVisible(true);
   }
-
+  /**
+   * Method to make the warning label not visible on the screen.
+   * @author hendiehl
+   */
   private void notShowWarning() {
     this.warning.setVisible(false);
   }
-
+  /**
+   * Method to check the user input for a specific port.
+   * The input will be accepted if it is a number in range.
+   * @param s input want to be checked
+   * @return boolean condition about the string acceptance 
+   * @author hendiehl
+   */
   private boolean checkPortString(String s) {
     return s.matches("^\\d{3,5}$");
   }

@@ -15,7 +15,8 @@ import javafx.stage.Stage;
 
 public class MenuController {
   /**
-   * Controller of the network game menu screen
+   * Controller of the network game menu screen, which have the function to give a player the option to choose
+   * between hosting a game or joining a game.
    * 
    * @author hendiehl
    */
@@ -30,12 +31,18 @@ public class MenuController {
   private StackPane root;
   @FXML
   private ImageView background;
-
+  /**
+   * Initialize method of JavaFX which loads the background
+   * @author hendiehl
+   */
   @FXML
   public void initialize() {
     this.loadBackground();
   }
-
+  /**
+   * Method which handles the ActionEvent of the back button in reason to return to the main screen.
+   * @author hendiehl
+   */
   @FXML
   private void backButtonAction() {
     try {
@@ -55,8 +62,9 @@ public class MenuController {
 
 
   /**
-   * method to react to the host game button and open up the GameLobby screen with specific
-   * constructor and setting up a method if the window is closed
+   * Method to react to the host game button and open up the GameLobby screen with specific
+   * constructor and setting up a method if the window is closed.
+   * @author hendiehl
    */
   @FXML
   private void hostGameAction() {
@@ -88,8 +96,9 @@ public class MenuController {
   }
 
   /**
-   * method to react to the join game button and open the GameFinder screen and setting up an method
+   * Method to react to the join game button and open the GameFinder screen and setting up an method
    * if the window is closed.
+   * @author hendiehl
    */
   @FXML
   private void joinGameAction() {
@@ -118,6 +127,7 @@ public class MenuController {
 
   /**
    * Method to set the background image
+   * @author hendiehl
    */
   private void loadBackground() {
     this.background.setImage(new Image(getClass().getResourceAsStream("img/Menu.jpg")));

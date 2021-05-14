@@ -31,7 +31,8 @@ import scrabble.network.PortsOccupiedException;
 
 public class GameLobbyController implements LobbyController {
   /**
-   * GameLobbyController is the controller of the GameLobby.fxml screen
+   * GameLobbyController is the controller of the GameLobby.fxml screen, which has the function to provide a
+   * user interface for a network game before the actual game started.
    * 
    * @author hendiehl
    */
@@ -113,28 +114,32 @@ public class GameLobbyController implements LobbyController {
   private NetworkScreen chatUser;
 
   /**
-   * constructor with information about the type of lobby screen => host or client
+   * Constructor which specify the rights for specific actions with an boolean condition.
+   * If the lobby screen is loaded for a host the parameter is true, which is used to show and enable specific
+   * like a configuration button.
    * 
    * @param isHost true if open by a host
+   * @author hendiehl
    */
   public GameLobbyController(boolean isHost) {
     this.isHost = isHost;
   }
 
   /**
-   * handles the actionEvent of the backButton and calls the openScreen method with the Menu.fxml
-   * file
+   * Method which handles the actionEvent of the backButton in reason to shutdown the corresponding protocol
+   * or server and leave the lobby to return to menu screen.
+   * @author hendiehl
    */
   @FXML
-  private void backAction() { // need implementation of server shutdown, because server Thread is
-                              // running after
+  private void backAction() {
     this.shutdown();
     this.openMenu(); // windows is closed
   }
 
   /**
-   * initialize method from JavaFX, which starts the server procedure if the lobby is opened from a
-   * host
+   * Initialize method from JavaFX, which starts the server procedure if the lobby is opened from a
+   * host, set up a os specific line separator for chat usage and initiliaze screen specific classes
+   * @author hendiehl
    */
   @FXML
   private void initialize() {
@@ -145,15 +150,15 @@ public class GameLobbyController implements LobbyController {
       });
     }
     this.seperator = System.lineSeparator(); // getting the line separator for Unix or Windows
-    // just testing purpose
     this.setUpTimer();
     // this.startTimer();
   }
 
   /**
-   * method for loading a screen from an fxml file
+   * Method to return back to the Menu.fxml for network game options.
    * 
    * @param s path to the fxml file which should be loaded
+   * @author hendiehl
    */
   public void openMenu() {
     /*
@@ -176,7 +181,11 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * method which shutdown the server
+   * Method which shutdown the network classes in dependence of the host condition.
+   * If the host protocol instance is not null, the host shutdown have to be performed with an server shutdown.
+   * If the client protocol instance is not null, the shutdown of the client protocol is performed. A GameLobbyController
+   * has always a corresponding host or client protocol.
+   * @author hendiehl
    */
   public void shutdown() { // Can also be used if no host
     System.out.println("GAME LOBBY : Shutdown");
@@ -189,23 +198,25 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * method which set up the server
+   * Method which sets up host specific actions like activating host controls and starting a server 
+   * @author hendiehl
    */
   private void isHost() {
     this.activateHostControlls();
     this.server = new LobbyServer(this);
     this.server.start();
-    // this.chatUser = this.host; //perhabs to fast because of thread usage ? --> need of set after
-    // finish of
-    // depreciated
   }
-
+  /**
+   * Method to set a host or client protocol instance, mainly for chat actions like sending a chat message.
+   * @param chatUser protocol which have the permission to send chat messages via the chat server.
+   */
   public void setChatUser(NetworkScreen chatUser) {
     this.chatUser = chatUser;
   }
 
   /**
-   * method to show host specific options on the screen
+   * Method to show and enable host specific controls like server configuration and earlier game starting.
+   * @author hendiehl
    */
   public void activateHostControlls() {
     this.configureButton.setDisable(false);
@@ -215,21 +226,19 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * method which sets specific player profiles visible
+   * Method to show player profiles on the lobby screen in dependence of a server intern list sequence.
    * 
    * @param number number of the profile which should be shown
+   * @param name name of the player profile which should be shown
+   * @author hendiehl
    */
-  public void setProfileVisible(int number, String name) { // change to give complete list, to add
-                                                           // the names directly from list ??
+  public void setProfileVisible(int number, String name) {
     Platform.runLater(() -> {
       switch (number) {
         case 0:
           this.profile0.setVisible(true);
           this.profile0.setDisable(false);
           this.label0.setText(name);
-          /*
-           * if(this.isHost) { this.kick0.setVisible(true); this.kick0.setDisable(false); }
-           */
           break;
         case 1:
           this.profile1.setVisible(true);
@@ -263,7 +272,10 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * method which sets all Profiles , normally in order to represent a new arrangement
+   * Method to reset the visibility of all profile fields on the lobby screen.
+   * Because after a lobby leave a complete new instance of a profile list is send to the members it is needed
+   * to reset them before the new ones will shown again.
+   * @author hendiehl
    */
   public void resetProfileVisibility() {
     Platform.runLater(() -> {
@@ -294,9 +306,11 @@ public class GameLobbyController implements LobbyController {
    */
 
   /**
-   * method to set up the timer label (time or other messages)
+   * Method to set up the time label on the top of the lobby screen.
+   * Is mainly used for important messages or the timer when the lobby is about to change to a game.
    * 
    * @param msg message which should be shown at the top of the screen
+   * @author hendiehl
    */
   public void setTimeLabel(String msg) {
     Platform.runLater(() -> {
@@ -305,9 +319,9 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * method to set the protocol of an client if the lobby is entered
-   * 
-   * @param clientProtocol
+   * Method to set up the client protocol after a client find and join a lobby through the finder screen.
+   * @param clientProtocol protocol of an client for network communication.
+   * @author hendiehl
    */
   public void setProtocol(LobbyClientProtocol clientProtocol) {
     this.client = clientProtocol;
@@ -315,7 +329,10 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * method to react to an host who wants to kick an player
+   * Method which handles the ActionEvent of an kick button, clicked by an host in reason to kick
+   * a specific lobby member from the lobby.
+   * @param e ActionEvent of an specific kick button from the screen.
+   * @author hendiehl
    */
   @FXML
   private void kickBtn(ActionEvent e) { // adding the runLater ???
@@ -335,20 +352,23 @@ public class GameLobbyController implements LobbyController {
    * Method to set the Host Protocol in case the Lobby is owned by an host
    * 
    * @param host protocol of the host
+   * @author hendiehl
    */
   public void setHostProtocol(LobbyHostProtocol host) {
     this.host = host;
   }
 
   /**
-   * method to start the lobby timer
+   * Method to start the lobby timer
+   * @author hendiehl
    */
   private void startTimer() {
     this.timer.play();
   }
 
   /**
-   * method to stop the lobby timer
+   * Method to stop the lobby timer
+   * @author hendiehl
    */
   public void stopTimer() { // needed ?
     this.timer.stop();
@@ -356,7 +376,8 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * method to set up the lobby timer
+   * Method to initialize the timer and specify its run time.
+   * @author hendiehl
    */
   private void setUpTimer() {
     this.timer = new Timeline(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
@@ -378,14 +399,17 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * method to start the enter game procedure
+   * Method called by the timer by finishing, which only inform the player about the timer end and the
+   * waiting of server actions.
+   * @author hendiehl
    */
   private void timerFinished() {
     this.setTimeLabel("Wait for other Players");
   }
 
   /**
-   * method to react to the start button accessible from the lobby host
+   * Method which handles the ActionEvent of the start button in reason to start the game procedure earlier. 
+   * @author hendiehl
    */
   @FXML
   private void startButtonAction() {
@@ -396,29 +420,34 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * method to react to the configure button accessible from the lobby host. There should be the
+   * Method to react to the configure button accessible from the lobby host. There should be the
    * option of changing extra points from positions add a dictionary and choose to a own port.
+   * @author hendiehl
    */
   @FXML
   private void configureButtonAction() {
-    try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/LobbyConfigure.fxml"));
-      loader.setControllerFactory(c -> {
-        return new LobbyConfigureController(server, this);
-      });
-      Parent root1 = (Parent) loader.load();
-      Stage stage = new Stage();
-      stage.setScene(new Scene(root1, 600, 500));
-      stage.show();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
+	  if(this.host != null) { //extra host controll
+			 if(this.host.isNotInGame()) {
+			    try {
+			      FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/LobbyConfigure.fxml"));
+			      loader.setControllerFactory(c -> {
+			        return new LobbyConfigureController(server, this);
+			      });
+			      Parent root1 = (Parent) loader.load();
+			      Stage stage = new Stage();
+			      stage.setScene(new Scene(root1, 600, 500));
+			      stage.show();
+			    } catch (IOException e) {
+			      // TODO Auto-generated catch block
+			      e.printStackTrace();
+			    }
+			  }
+	  }
   }
 
   /**
-   * Method to print an chat message on the chat field in the lobby
+   * Method to print an chat message on the chat field in the lobby, called by an host or client protocol.
+   * @author hendiehl
    */
   public void printChatMessage(String message) {
     // TODO Auto-generated method stub
@@ -426,7 +455,11 @@ public class GameLobbyController implements LobbyController {
       this.chatArea.appendText(this.seperator + message); // adding it to the chat
     });
   }
-
+  /**
+   * Method which will be called by JavaFX in order to send a chat message to all lobby members by using functionalities
+   * of a host or client protocol.
+   * @author hendiehl
+   */
   @FXML
   private void chatBtnAction() {
     Platform.runLater(() -> {
@@ -440,6 +473,7 @@ public class GameLobbyController implements LobbyController {
 
   /*
    * Method to activate and initialize the sequence election procedure
+   * @author hendiehl
    */
   private void initializeSequencepositions() {
     // Items should be set in dependence of the player amount
@@ -474,7 +508,8 @@ public class GameLobbyController implements LobbyController {
   /**
    * ActionHandler for the position ComboBoxes, who sets the chosen value in dependence of the item.
    * 
-   * @param e
+   * @param e ActionEvent of an specific ComboBox on the lobby screen.
+   * @author hendiehl
    */
   @FXML
   private void changedBoxAction(ActionEvent e) {
@@ -497,6 +532,7 @@ public class GameLobbyController implements LobbyController {
    * 
    * @param choosen Value the player chosen for a player
    * @param box Corresponding box of the change.
+   * @author hendiehl
    */
   private void positionSetted(String choosen, JFXComboBox<String> box) {
     Integer i = Integer.valueOf(choosen);
@@ -515,6 +551,7 @@ public class GameLobbyController implements LobbyController {
    * 
    * @return List with int representation of the position for each player chosen by the owner of the
    *         lobby
+   * @author hendiehl
    */
   public int[] getPositionList() { // here null pointer
     int[] list = {this.values.get(position1), this.values.get(position2),
@@ -524,6 +561,7 @@ public class GameLobbyController implements LobbyController {
 
   /**
    * Method to start the election of the player sequence.
+   * @author hendiehl
    */
   public void startElection() {
     // TODO Auto-generated method stub
@@ -532,7 +570,8 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Message to start the Game
+   * Method to change the scene to the game screen.
+   * @author hendiehl
    */
   public void startGame() {
     this.goInGameScreen();
@@ -540,6 +579,7 @@ public class GameLobbyController implements LobbyController {
 
   /**
    * Method to set the background image
+   * @author hendiehl
    */
   private void loadBackground() {
     this.background.setImage(new Image(getClass().getResourceAsStream("img/GameLobby.jpg")));
@@ -547,6 +587,7 @@ public class GameLobbyController implements LobbyController {
 
   /**
    * Method to set the profile picture of specific player to the GameLobby
+   * @author hendiehl
    */
   public void setProfilePicture(int number, String picturePath) {
     Platform.runLater(() -> {
@@ -568,7 +609,8 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method to change into the GameScreen
+   * Method to change into the GameScreen with network specific information and set up the game controller in the protocol 
+   * @author hendiehl
    */
   public void goInGameScreen() { // Just Testing Purpose with TestScreen !!!!!!!!!!!!!!!!!!!!!!!!!!!
     Platform.runLater(() -> {
@@ -598,10 +640,11 @@ public class GameLobbyController implements LobbyController {
         // TODO Auto-generated catch block
         e.printStackTrace();
       }
-    }); // change protocol condition to a interface !!!!!!!!!!!!!!!!
+    });
   }
   /**
    * Method to set a new Server after changing it in configure Screen
+   * @author hendiehl
    */
   public void setNewServer(LobbyServer newOne) {
     this.server = newOne;

@@ -21,7 +21,8 @@ import scrabble.network.LobbyClientProtocol;
 
 public class GameFinderController implements LobbyController {
   /**
-   * Controller of the GameFinder.fxml screen
+   * Controller of the GameFinder.fxml screen, which have the function to search specific lobbys in the
+   * network and gave the player the option to join them if possible.
    * 
    * @author hendiehl
    */
@@ -48,8 +49,9 @@ public class GameFinderController implements LobbyController {
 
 
   /**
-   * method to activate the control fields for a specific port given by the user activates an
-   * TextField and show an Message on the screen
+   * Method to activate the control fields for a specific port given by the user and inform the user
+   * that he can know type in a specific port.
+   * @author hendiehl
    */
   private void activateOwnPortControlls() {
     this.portField.setDisable(false);
@@ -60,8 +62,9 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * method to deactivate the control fields for a specific port given by the user deactivates an
-   * TextField and show an Message on the screen
+   * Method to deactivate the control fields for a specific port given by the user and inform the player how
+   * he can activate the normal procedure again.
+   * @author hendiehl
    */
   private void deactivateOwnPortControlls() {
     this.portField.setDisable(true);
@@ -72,7 +75,8 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * method to handle the ActionEvent of the joinBtn
+   * Method to handle the ActionEvent of the joinBtn in reason to join a founded lobby in the network.
+   * @author hendiehl
    */
   @FXML
   private void joinAction() {
@@ -82,9 +86,10 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * method to show an specific string on the statusLabel
+   * Method to show an specific string on the statusLabel
    * 
    * @param message message to be shown
+   * @author hendiehl
    */
   public void setStatusLabel(String message) {
     Platform.runLater(() -> {
@@ -93,9 +98,10 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * method to show an specific string on the statusLabel2
+   * Method to show an specific string on the statusLabel2
    * 
    * @param message message to be shown
+   * @author hendiehl
    */
   public void setStatusLabel2(String message) {
     Platform.runLater(() -> {
@@ -104,7 +110,8 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * method to activate the joinBtn on the screen and show the accessibility on an port
+   * Method to activate the joinBtn on the screen and show the accessibility of an port
+   * @author hendiehl
    */
   public void activateJoin() {
     this.joinBtn.setDisable(false);
@@ -112,14 +119,15 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * method to check if an String matches the characteristics of an port number
+   * Method to check if an String matches the characteristics of an port number, which means that it have to be a number of a minimum length of 4
    * 
    * @param port String representation of an user port
    * @return boolean about the acceptance of the String parameter
+   * @author hendiehl
    */
   private boolean checkPortString(String port) { // not implemented yet
-    System.out.println("String match port " + port.matches("^\\d{3,5}$"));
-    return port.matches("^\\d{3,5}$");
+    System.out.println("String match port " + port.matches("^\\d{4,5}$"));
+    return port.matches("^\\d{4,5}$");
   }
 
   /**
@@ -127,6 +135,7 @@ public class GameFinderController implements LobbyController {
    * 
    * @param port String representation of 0 for identifying
    * @return about the acceptance of the String parameter
+   * @author hendiehl
    */
   private boolean checkAutoSearch(String port) {
     System.out.println("String match 0 " + port.matches("^0$"));
@@ -134,8 +143,8 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * handles the actionEvent of the backButton and calls the openScreen method with the Menu.fxml
-   * file
+   * Method which handles the actionEvent of the backButton and calls the openScreen method with the Menu.fxml and shut down a running client protocol
+   * @author hendiehl
    */
   @FXML
   private void backButtonAction() {
@@ -149,7 +158,10 @@ public class GameFinderController implements LobbyController {
     this.clientProtocol.shutdownProtocol(true); // shutdown when in GameFinder screen
     openMenu();
   }
-
+  /**
+   * Method to change the scene to Menu.fxml for network options.
+   * @author hendiehl 
+   */
   public void openMenu() {
     Platform.runLater(() -> {
       try {
@@ -165,9 +177,9 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * initialize method of javaFx in which the a joinProtokol automatically search for an game Lobby
-   * in an local Network. If an protocol is generated the joinBtn are activated. If not the option
-   * to input a user specific port is accessible.
+   * Initialize method of javaFx in which the joinProtokol automatically search for an game Lobby
+   * in an local Network. If an protocol is generated and found a server informations will be shown.
+   * @author hendiehl
    */
   @FXML
   private void initialize() {
@@ -176,13 +188,19 @@ public class GameFinderController implements LobbyController {
     clientProtocol = new LobbyClientProtocol(this);
     clientProtocol.start();
   }
-
+  /**
+   * Method which will be called after a lobby is found and connected successfully, the join button will then be enabled.
+   * @author hendiehl
+   */
   public void connectSucessful() {
     Platform.runLater(() -> {
       this.joinBtn.setDisable(false);
     });
   }
-
+  /**
+   * Method which will be called when no lobby is founded, the player will be informed that no lobby connection is created.
+   * @author hendiehl
+   */
   public void connectNotSucessful() {
     Platform.runLater(() -> {
       this.statusLabel.setText("No game at standart port");
@@ -191,7 +209,8 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * handles the useOwnPort ActionEvents and activates or deactivates the controls for an user input
+   * Method which handles the useOwnPort ActionEvents and activates or deactivates the controls for an user input
+   * @author hendiehl
    */
   @FXML
   private void ownPortWanted() {
@@ -204,8 +223,11 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * handles the searchButton ActionEvent and try to create an instances of an GameFinderProtocol
-   * with an specific port given by the user
+   * Method which handles the searchButton ActionEvent and try to create an instances of an client protocol
+   * with an specific port given by the user. The input is controlled and checked.
+   * A valid port has to be a port number in range or the 0 for standard port.
+   * The player is informed about the success.
+   * @author hendiehl
    */
   @FXML
   private void searchAction() {
@@ -247,7 +269,8 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * method to shutdown the client protocol
+   * Method to shutdown the client protocol
+   * @author hendiehl
    */
   @Override
   public void shutdown() {
@@ -259,9 +282,10 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * method to show port informations on the screen
+   * Method to show port informations of an successful connections on the screen.
    * 
    * @param port specific port given by the user or one of the standard ports
+   * @author hendiehl
    */
   public void setPortInformation(int port) {
     Platform.runLater(() -> {
@@ -271,7 +295,8 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * method to navigate from the GameFinder screen to the GameLobby screen as client
+   * Method to navigate from the GameFinder screen to the GameLobby screen as a client, which sets also the client protocol for the lobby controller.
+   * @author hendiehl
    */
   public void goInLobby() {
     Platform.runLater(() -> {
@@ -309,6 +334,7 @@ public class GameFinderController implements LobbyController {
 
   /**
    * Method to set the background image
+   * @author hendiehl
    */
   private void loadBackground() {
     this.background.setImage(new Image(getClass().getResourceAsStream("img/GameFinder.jpg")));
