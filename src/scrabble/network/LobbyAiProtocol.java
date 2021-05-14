@@ -6,10 +6,11 @@ import scrabble.model.Player;
 
 public class LobbyAiProtocol implements NetworkPlayer {
   private AiPlayer ai;
-  
+
   public LobbyAiProtocol() {
     this.ai = new AiPlayer();
   }
+
   @Override
   public Player getPlayer() {
     return this.ai;
@@ -17,15 +18,16 @@ public class LobbyAiProtocol implements NetworkPlayer {
 
   @Override
   public void startMove() {
-   
+
   }
 
   @Override
   public void endMove() {
-   
+
   }
-  //--------------------------------------------------------------------------
-  //LobbyAiProtocol is a filler for missing HumanPlayer so the network Messages are not needed
+
+  // --------------------------------------------------------------------------
+  // LobbyAiProtocol is a filler for missing HumanPlayer so the network Messages are not needed
   @Override
   public void updateLobbyinformation(ArrayList<Player> playersArrayList) {
     // Not in use because of Non-Network communication
@@ -53,7 +55,7 @@ public class LobbyAiProtocol implements NetworkPlayer {
   }
 
   @Override
-  public void sendGameMessage() {
+  public void sendGameMessage(ArrayList<Player> players) {
     // Not in use because of Non-Network communication
   }
 }

@@ -24,7 +24,7 @@ public interface NetworkPlayer {
 
   public void sendStartMessage();
 
-  public void sendGameMessage();
+  public void sendGameMessage(ArrayList<Player> players);
 
   public void startMove();
 

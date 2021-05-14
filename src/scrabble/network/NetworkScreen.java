@@ -1,5 +1,8 @@
 package scrabble.network;
 
+import java.util.ArrayList;
+import scrabble.model.Player;
+
 public interface NetworkScreen {
   public void printChatMessage(String message);
   public void sendChatMessage(String message);
@@ -7,4 +10,5 @@ public interface NetworkScreen {
   public void sendEndMessage();
   public void startChatClient(int port);
   public void stopChatClient();
+  public ArrayList<Player> getPlayerList(); //need to send the new list after election
 }

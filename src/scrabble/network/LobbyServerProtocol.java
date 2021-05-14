@@ -361,9 +361,11 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * Method to inform the lobby member that the lobby will be changed to gameField
    */
   @Override
-  public void sendGameMessage() {
+  public void sendGameMessage(ArrayList<Player> players) {
     try {
-      Message msg = new Message(MessageType.GAME, this.player); // just Testing purpose
+      LobbyInformationMessage msg =
+          new LobbyInformationMessage(MessageType.GAME, this.player, players); // just Testing
+                                                                               // purpose
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("SERVER PROTOCOL : Game-Message sended");

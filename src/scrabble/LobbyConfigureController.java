@@ -1,5 +1,9 @@
 package scrabble;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ConnectException;
@@ -9,15 +13,18 @@ import com.jfoenix.controls.JFXTextField;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import scrabble.network.LobbyServer;
 
 public class LobbyConfigureController {
-	/**
-	 * Controller of the configure screen of a network lobby only accessible by an host.
-	 * Is used to set up specific options of the lobby like the wanted port, new game field extra points or a new dictionary.
-	 * @author hendiehl
-	 */
+  /**
+   * Controller of the configure screen of a network lobby only accessible by an host. Is used to
+   * set up specific options of the lobby like the wanted port, new game field extra points or a new
+   * dictionary.
+   * 
+   * @author hendiehl
+   */
   @FXML
   private JFXRadioButton autoPort;
   @FXML
@@ -34,14 +41,26 @@ public class LobbyConfigureController {
   private Label info;
   @FXML
   private Label warning;
+  @FXML
+  private JFXRadioButton dictionary;
+  @FXML
+  private JFXRadioButton multiplier;
+  @FXML
+  private Label dictionaryLabel;
+  @FXML
+  private Label multiplierLabel;
 
   private boolean autoSet;
   private int runningPort;
   private LobbyServer server;
   private String seperator;
   private GameLobbyController corresponding;
+  private String multiplierNorm = "";
+
   /**
-   * Constructor with the needed informations about the lobby controller for screen access and the actual server of the lobby.
+   * Constructor with the needed informations about the lobby controller for screen access and the
+   * actual server of the lobby.
+   * 
    * @param server actual corresponding server of the lobby.
    * @param corresponding controller of the lobby screen.
    * @author hendiehl
@@ -53,8 +72,11 @@ public class LobbyConfigureController {
     this.seperator = System.lineSeparator();
     this.corresponding = corresponding;
   }
+
   /**
-   * Initialize method of JavaFx which sets the port controls in dependence of the present selection of the server port.
+   * Initialize method of JavaFx which sets the port controls in dependence of the present selection
+   * of the server port.
+   * 
    * @author hendiehl
    */
   @FXML
@@ -78,25 +100,33 @@ public class LobbyConfigureController {
     this.warning.setVisible(false);
     // Also add a warning if the Running thread is 0 => Problem
   }
+
   /**
-   * Method which handles the ActionEvent of the cancel button in reason to close the configure screen.
+   * Method which handles the ActionEvent of the cancel button in reason to close the configure
+   * screen.
+   * 
    * @author hendiehl
    */
   @FXML
   private void cancelButtonAction() {
     this.close();
   }
+
   /**
    * Method to show information about the actual port choosing.
+   * 
    * @param s message wants to be shown on the screen
    * @author hendiehl
    */
   private void setPortInfo(String s) {
     this.portInfo.setText(s);
   }
+
   /**
-   * Method which handles the ActionEvent of the accept button.
-   * In dependence of the option chosen by the host a new server will be started or game specific configures will be saved for the game.
+   * Method which handles the ActionEvent of the accept button. In dependence of the option chosen
+   * by the host a new server will be started or game specific configures will be saved for the
+   * game.
+   * 
    * @author hendiehl
    */
   @FXML
@@ -111,16 +141,17 @@ public class LobbyConfigureController {
           // this.server.shutdown(); // shutdown old Server
           // Perhaps load first the new one, if there isn't a connection the old one is still closed
           try {
-            //Problem with the Lobby 
+            // Problem with the Lobby
             LobbyServer newOne = new LobbyServer(this.corresponding, number);
             System.out.println("CONFIGURE : New Server created");
             newOne.start();
             System.out.println("CONFIGURE : Prepare to shut down old one");
             this.server.shutdown(); // shutdown Old
             System.out.println("CONFIGURE : Replace Server");
-            //this.corresponding.resetProfileVisibility(); //reset all Profiles
-            this.corresponding.setNewServer(newOne); //is the Problem the Player ??????????????????????????
-            //this.server = newOne;
+            // this.corresponding.resetProfileVisibility(); //reset all Profiles
+            this.corresponding.setNewServer(newOne); // is the Problem the Player
+                                                     // ??????????????????????????
+            // this.server = newOne;
             this.close();
           } catch (BindException e) {
             this.setPortInfo("Sorry this port isnt available");
@@ -158,14 +189,18 @@ public class LobbyConfigureController {
 
   /**
    * Method to close the window.
+   * 
    * @author hendiehl
    */
   private void close() {
     Stage stage = (Stage) cancel.getScene().getWindow();
     stage.close();
   }
+
   /**
-   * Method which handles the action event of the port selection and enables the accept button if a other option is chosen than the present option.
+   * Method which handles the action event of the port selection and enables the accept button if a
+   * other option is chosen than the present option.
+   * 
    * @author hendiehl
    */
   @FXML
@@ -199,28 +234,69 @@ public class LobbyConfigureController {
       }
     }
   }
+
   /**
    * Method to make the warning label visible on the screen.
+   * 
    * @author hendiehl
    */
   private void showWarning() {
     this.warning.setVisible(true);
   }
+
   /**
    * Method to make the warning label not visible on the screen.
+   * 
    * @author hendiehl
    */
   private void notShowWarning() {
     this.warning.setVisible(false);
   }
+
   /**
-   * Method to check the user input for a specific port.
-   * The input will be accepted if it is a number in range.
+   * Method to check the user input for a specific port. The input will be accepted if it is a
+   * number in range.
+   * 
    * @param s input want to be checked
-   * @return boolean condition about the string acceptance 
+   * @return boolean condition about the string acceptance
    * @author hendiehl
    */
   private boolean checkPortString(String s) {
     return s.matches("^\\d{3,5}$");
+  }
+
+  /**
+   * Method to show a FileChooser if a host want to use a own multiplier specification for the game
+   * field
+   * 
+   * @author hendiehl
+   */
+  private void showMultiplierChooser() {
+    FileChooser multiChooser = new FileChooser();
+    multiChooser.setTitle("Choose a muliplier file");
+    multiChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+    multiChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Txt", "*.txt"));
+    File file = multiChooser.showOpenDialog(this.accept.getScene().getWindow());
+    try {
+      BufferedReader reader = new BufferedReader(new FileReader(file));
+      StringBuffer buffer = new StringBuffer();
+      String line = null;
+      while ((line = reader.readLine()) != null) {
+        buffer.append(line + this.seperator);
+      }
+      reader.close();
+      System.out.println(buffer.toString());
+    } catch (FileNotFoundException e) {
+      e.printStackTrace();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  @FXML
+  private void multiplierAction() {
+    if (this.multiplier.isSelected()) {
+      this.showMultiplierChooser();
+    }
   }
 }

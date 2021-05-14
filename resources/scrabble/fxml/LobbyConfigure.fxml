@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane prefHeight="500.0" prefWidth="600.0" style="-fx-background-color: edeef0;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.LobbyConfigureController">
+<StackPane prefHeight="500.0" prefWidth="600.0" style="-fx-background-color: edeef0;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.LobbyConfigureController">
    <children>
       <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
@@ -44,6 +44,14 @@
                   <JFXButton fx:id="cancel" buttonType="RAISED" onAction="#cancelButtonAction" opacity="0.5" text="Cancel" />
                </children>
             </HBox>
+            <VBox fx:id="choser" prefHeight="200.0" prefWidth="200.0" spacing="20.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <children>
+                  <JFXRadioButton fx:id="dictionary" text="Use own dictionary" />
+                  <Label fx:id="dictionaryLabel" />
+                  <JFXRadioButton fx:id="multiplier" onAction="#multiplierAction" text="Use own multiplier" />
+                  <Label fx:id="multiplierLabel" />
+               </children>
+            </VBox>
          </children>
       </AnchorPane>
    </children>

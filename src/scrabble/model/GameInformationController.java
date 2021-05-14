@@ -27,6 +27,7 @@ public class GameInformationController {
 
   /**
    * Constructor which initialize the class and set up important help classes.
+   * 
    * @param mainServer server started by the host
    * @author hendiehl
    */
@@ -79,6 +80,7 @@ public class GameInformationController {
 
   /**
    * Method to check maximum player amount in the lobby and activate the game procedure
+   * 
    * @author hendiehl
    */
   public void checkLobbySize() {
@@ -90,17 +92,21 @@ public class GameInformationController {
   }
 
   /**
-   * Method to start lobby procedure for a full lobby by starting the handler for a network game and chnaging the lobby status
+   * Method to start lobby procedure for a full lobby by starting the handler for a network game and
+   * chnaging the lobby status
+   * 
    * @author hendiehl
    */
   public void lobbyFull() { // do it in the StartHandler thread
-    this.status = GameStatusType.GAME; //Is it also end to the clients ????????????????????????????????????????????ß
+    this.status = GameStatusType.GAME; // Is it also end to the clients
+                                       // ????????????????????????????????????????????ß
     StartGameHandler starter = new StartGameHandler(this);
     starter.start(); // start the starting procedure.
   }
 
   /**
    * Method to inform the clients that the lobby maximum is reached.
+   * 
    * @author hendiehl
    */
   public synchronized void sendFullMessages() {
@@ -112,6 +118,7 @@ public class GameInformationController {
 
   /**
    * Method to inform the lobby that the game will start
+   * 
    * @author hendiehl
    */
   public synchronized void sendStartMessage() {
@@ -157,7 +164,7 @@ public class GameInformationController {
       if (player.getPlayer() == null) { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         System.err.println("Player instance of Protocol is null in InfoCon");
       } else {
-        System.err.println(player.getPlayer().getName()); //Player instance of Joiner is null 
+        System.err.println(player.getPlayer().getName()); // Player instance of Joiner is null
       }
       players.add(player.getPlayer());
     }
@@ -165,7 +172,9 @@ public class GameInformationController {
   }
 
   /**
-   * Method to update the lobby informations of all players, by sending them a list of all players in the lobby.
+   * Method to update the lobby informations of all players, by sending them a list of all players
+   * in the lobby.
+   * 
    * @author hendiehl
    */
   public synchronized void updateAllLobbys() {
@@ -179,6 +188,7 @@ public class GameInformationController {
 
   /**
    * Method to delete a player from the game/lobby.
+   * 
    * @author hendiehl
    */
   public synchronized void deletePlayer(NetworkPlayer player) { // Possibility of a Deadlock,
@@ -193,7 +203,9 @@ public class GameInformationController {
   }
 
   /**
-   * Method called by an host to kick a specific player in the lobby and deleting them from the list.
+   * Method called by an host to kick a specific player in the lobby and deleting them from the
+   * list.
+   * 
    * @param i number of the player in the lobby
    * @author hendiehl
    */
@@ -204,13 +216,15 @@ public class GameInformationController {
                                                                               // future first
                                                                               // approach.
       player.sendKickMessage();
-      player.deletePlayer(); //will it call deletePlayer ???????????????????????????????????
+      player.deletePlayer(); // will it call deletePlayer ???????????????????????????????????
     }
   }
 
   /**
-   * Method to sort the list in a specific sequence in dependence of all sequence positions given by the lobby members.
-   * In the game the sequence will used because one game turn is one pass through the list.
+   * Method to sort the list in a specific sequence in dependence of all sequence positions given by
+   * the lobby members. In the game the sequence will used because one game turn is one pass through
+   * the list.
+   * 
    * @author hendiehl
    */
   private void setPlayerSequence() {
@@ -241,7 +255,7 @@ public class GameInformationController {
    * @param pos position array of the user election
    * @author hendiehl
    */
-  public synchronized void addSequence(int[] pos, NetworkPlayer caller) { 
+  public synchronized void addSequence(int[] pos, NetworkPlayer caller) {
     System.out.println("GAME INFO : Player sequence received");
     this.check.replace(caller, true);
     for (int i = 0; i < this.players.size(); i++) {
@@ -252,6 +266,7 @@ public class GameInformationController {
 
   /**
    * Method to check if all protocols have send the election sequence;
+   * 
    * @author hendiehl
    */
   private void checkGameStart() {
@@ -267,13 +282,16 @@ public class GameInformationController {
   }
 
   /**
-   * Method to start the game itself by giving the players the opportunity of chose a player sequence
+   * Method to start the game itself by giving the players the opportunity of chose a player
+   * sequence
+   * 
    * @author hendiehl
    */
   private void startGame() {
     this.setPlayerSequence();
+    this.fillGame();
     System.out.println("GAME INFO : Invoke Game");
-    this.sendGameMessage();
+    this.sendGameMessage(this.getPlayersInformation());// here adding new List
     try {
       this.wait(1000); // For testing perhaps change to a finish approach
     } catch (InterruptedException e) {
@@ -281,23 +299,26 @@ public class GameInformationController {
       e.printStackTrace();
     }
     this.letterBag = LetterBag.getLetterBag();
-    this.fillGame(); // Filling slots of missing Players with AiPlayers
+    // this.fillGame(); // Filling slots of missing Players with AiPlayers
     this.gameHandler = new GameHandler(this, this.players);
     this.gameHandler.startGame();
   }
 
   /**
    * Method to inform the players that the Game starts
+   * 
    * @author hendiehl
+   * @param players Player list for the started game
    */
-  private void sendGameMessage() {
+  private void sendGameMessage(ArrayList<Player> players) {
     for (NetworkPlayer player : this.players) {
-      player.sendGameMessage();
+      player.sendGameMessage(players);
     }
   }
 
   /**
    * Method to end a player move before the maximum time goes by
+   * 
    * @author hendiehl
    */
   public void endMoveForTime() { // here freeze
@@ -308,6 +329,7 @@ public class GameInformationController {
 
   /**
    * Method to shutdown a Lobby or game
+   * 
    * @author hendiehl
    */
   public void shutdown() {
@@ -319,6 +341,7 @@ public class GameInformationController {
 
   /**
    * Method to fill the list for a network game with AIPLayers if the lobby isn't full
+   * 
    * @author hendiehl
    */
   private void fillGame() {

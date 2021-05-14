@@ -140,9 +140,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   public void run() {
     System.out.println("CLIENT PROTOCOL : Protocol started");
     try {
-      if(!ownPort) {
+      if (!ownPort) {
         this.setSocket();
-        //this.gameFinderController.connectSucessful();
+        // this.gameFinderController.connectSucessful();
       }
     } catch (PortsOccupiedException e1) {
       this.gameFinderController.connectNotSucessful();
@@ -221,7 +221,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   private void reactToEnd(Message message) {
     System.out.println("CLIENT PROTOCOL : End-Message received");
     if (this.gameScreen != null) {
-      //this.gameScreen.endMove();
+      // this.gameScreen.endMove();
     }
 
   }
@@ -235,7 +235,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     System.out.println("CLIENT PROTOCOL : Move-Message received");
     if (this.gameScreen != null) { // Perhaps the screen isn't loaded
       System.err.println("Game Screen not null");
-      //this.gameScreen.startMove();
+      // this.gameScreen.startMove();
     }
 
   }
@@ -248,6 +248,8 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   private void reactToGameMessage(Message message) {
     System.out.println("CLIENT PROTOCOL : Game-Message received");
+    LobbyInformationMessage msg = (LobbyInformationMessage) message;
+    this.lobbyPlayers = msg.getPlayers();
     if (this.gameLobbyController != null) {
       this.gameLobbyController.startGame();
     }
@@ -434,7 +436,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   private void updateLobbyinformation() {
     this.gameLobbyController.resetProfileVisibility();
-    if(this.lobbyPlayers == null) { //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    if (this.lobbyPlayers == null) { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       System.err.println("PLayers null");
     }
     for (int i = 0; i < lobbyPlayers.size(); i++) {
@@ -467,7 +469,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   public void sendShutdownMsg() {
     // System.out.println("Send shutdown message");
     Message msg = new Message(MessageType.SHUTDOWN, this.player);
-    if(this.chat != null) {
+    if (this.chat != null) {
       this.chat.sendLeaveMessageToServer();
     }
     try {
@@ -550,14 +552,27 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     }
 
   }
+
   /**
    * Method to shutdown the chat protocol
    */
   @Override
   public void stopChatClient() {
-    if(this.chat != null) {
+    if (this.chat != null) {
       this.chat.disconnect();
       System.out.println("CLIENT PROTOCOL : Chat client stopped");
     }
+  }
+
+  /**
+   * Method to get the PlayerList instance of an protocol, mainly to give it to the game field. Is
+   * used to show players on the game field.
+   * 
+   * @return players List of players in the lobby.
+   * @author hendiehl
+   */
+  @Override
+  public ArrayList<Player> getPlayerList() {
+    return this.lobbyPlayers;
   }
 }

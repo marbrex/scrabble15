@@ -163,9 +163,12 @@ public class GameController {
    *
    * @param protocol protocol for server communication
    * @param isHost   variable for host detection
+   * @param pathToField path to a specific field multiplier file
+   * @param player list of the game members
    * @author hendiehl
    */
-  public GameController(NetworkScreen protocol, boolean isHost) {
+  public GameController(NetworkScreen protocol, boolean isHost, String pathToField, ArrayList<Player> players) {
+    this.players = players;
     this.roundCounter = 0;
     this.protocol = protocol;
     this.isHost = isHost;

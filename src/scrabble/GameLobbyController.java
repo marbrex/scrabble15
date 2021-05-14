@@ -31,8 +31,8 @@ import scrabble.network.PortsOccupiedException;
 
 public class GameLobbyController implements LobbyController {
   /**
-   * GameLobbyController is the controller of the GameLobby.fxml screen, which has the function to provide a
-   * user interface for a network game before the actual game started.
+   * GameLobbyController is the controller of the GameLobby.fxml screen, which has the function to
+   * provide a user interface for a network game before the actual game started.
    * 
    * @author hendiehl
    */
@@ -112,11 +112,13 @@ public class GameLobbyController implements LobbyController {
   private String seperator;
   /** interface to send/print Message, a HostProtocol or an LobbyClientProtocol */
   private NetworkScreen chatUser;
+  /** String path to an user specific game field option of multiplier, standard is empty */
+  private String pathToField = "";
 
   /**
-   * Constructor which specify the rights for specific actions with an boolean condition.
-   * If the lobby screen is loaded for a host the parameter is true, which is used to show and enable specific
-   * like a configuration button.
+   * Constructor which specify the rights for specific actions with an boolean condition. If the
+   * lobby screen is loaded for a host the parameter is true, which is used to show and enable
+   * specific like a configuration button.
    * 
    * @param isHost true if open by a host
    * @author hendiehl
@@ -126,8 +128,9 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method which handles the actionEvent of the backButton in reason to shutdown the corresponding protocol
-   * or server and leave the lobby to return to menu screen.
+   * Method which handles the actionEvent of the backButton in reason to shutdown the corresponding
+   * protocol or server and leave the lobby to return to menu screen.
+   * 
    * @author hendiehl
    */
   @FXML
@@ -139,6 +142,7 @@ public class GameLobbyController implements LobbyController {
   /**
    * Initialize method from JavaFX, which starts the server procedure if the lobby is opened from a
    * host, set up a os specific line separator for chat usage and initiliaze screen specific classes
+   * 
    * @author hendiehl
    */
   @FXML
@@ -181,10 +185,11 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method which shutdown the network classes in dependence of the host condition.
-   * If the host protocol instance is not null, the host shutdown have to be performed with an server shutdown.
-   * If the client protocol instance is not null, the shutdown of the client protocol is performed. A GameLobbyController
-   * has always a corresponding host or client protocol.
+   * Method which shutdown the network classes in dependence of the host condition. If the host
+   * protocol instance is not null, the host shutdown have to be performed with an server shutdown.
+   * If the client protocol instance is not null, the shutdown of the client protocol is performed.
+   * A GameLobbyController has always a corresponding host or client protocol.
+   * 
    * @author hendiehl
    */
   public void shutdown() { // Can also be used if no host
@@ -198,7 +203,8 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method which sets up host specific actions like activating host controls and starting a server 
+   * Method which sets up host specific actions like activating host controls and starting a server
+   * 
    * @author hendiehl
    */
   private void isHost() {
@@ -206,8 +212,11 @@ public class GameLobbyController implements LobbyController {
     this.server = new LobbyServer(this);
     this.server.start();
   }
+
   /**
-   * Method to set a host or client protocol instance, mainly for chat actions like sending a chat message.
+   * Method to set a host or client protocol instance, mainly for chat actions like sending a chat
+   * message.
+   * 
    * @param chatUser protocol which have the permission to send chat messages via the chat server.
    */
   public void setChatUser(NetworkScreen chatUser) {
@@ -215,7 +224,9 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method to show and enable host specific controls like server configuration and earlier game starting.
+   * Method to show and enable host specific controls like server configuration and earlier game
+   * starting.
+   * 
    * @author hendiehl
    */
   public void activateHostControlls() {
@@ -226,7 +237,8 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method to show player profiles on the lobby screen in dependence of a server intern list sequence.
+   * Method to show player profiles on the lobby screen in dependence of a server intern list
+   * sequence.
    * 
    * @param number number of the profile which should be shown
    * @param name name of the player profile which should be shown
@@ -272,9 +284,10 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method to reset the visibility of all profile fields on the lobby screen.
-   * Because after a lobby leave a complete new instance of a profile list is send to the members it is needed
-   * to reset them before the new ones will shown again.
+   * Method to reset the visibility of all profile fields on the lobby screen. Because after a lobby
+   * leave a complete new instance of a profile list is send to the members it is needed to reset
+   * them before the new ones will shown again.
+   * 
    * @author hendiehl
    */
   public void resetProfileVisibility() {
@@ -306,8 +319,8 @@ public class GameLobbyController implements LobbyController {
    */
 
   /**
-   * Method to set up the time label on the top of the lobby screen.
-   * Is mainly used for important messages or the timer when the lobby is about to change to a game.
+   * Method to set up the time label on the top of the lobby screen. Is mainly used for important
+   * messages or the timer when the lobby is about to change to a game.
    * 
    * @param msg message which should be shown at the top of the screen
    * @author hendiehl
@@ -319,7 +332,9 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method to set up the client protocol after a client find and join a lobby through the finder screen.
+   * Method to set up the client protocol after a client find and join a lobby through the finder
+   * screen.
+   * 
    * @param clientProtocol protocol of an client for network communication.
    * @author hendiehl
    */
@@ -329,8 +344,9 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method which handles the ActionEvent of an kick button, clicked by an host in reason to kick
-   * a specific lobby member from the lobby.
+   * Method which handles the ActionEvent of an kick button, clicked by an host in reason to kick a
+   * specific lobby member from the lobby.
+   * 
    * @param e ActionEvent of an specific kick button from the screen.
    * @author hendiehl
    */
@@ -360,6 +376,7 @@ public class GameLobbyController implements LobbyController {
 
   /**
    * Method to start the lobby timer
+   * 
    * @author hendiehl
    */
   private void startTimer() {
@@ -368,6 +385,7 @@ public class GameLobbyController implements LobbyController {
 
   /**
    * Method to stop the lobby timer
+   * 
    * @author hendiehl
    */
   public void stopTimer() { // needed ?
@@ -377,6 +395,7 @@ public class GameLobbyController implements LobbyController {
 
   /**
    * Method to initialize the timer and specify its run time.
+   * 
    * @author hendiehl
    */
   private void setUpTimer() {
@@ -399,8 +418,9 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method called by the timer by finishing, which only inform the player about the timer end and the
-   * waiting of server actions.
+   * Method called by the timer by finishing, which only inform the player about the timer end and
+   * the waiting of server actions.
+   * 
    * @author hendiehl
    */
   private void timerFinished() {
@@ -408,7 +428,9 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method which handles the ActionEvent of the start button in reason to start the game procedure earlier. 
+   * Method which handles the ActionEvent of the start button in reason to start the game procedure
+   * earlier.
+   * 
    * @author hendiehl
    */
   @FXML
@@ -422,31 +444,34 @@ public class GameLobbyController implements LobbyController {
   /**
    * Method to react to the configure button accessible from the lobby host. There should be the
    * option of changing extra points from positions add a dictionary and choose to a own port.
+   * 
    * @author hendiehl
    */
   @FXML
   private void configureButtonAction() {
-	  if(this.host != null) { //extra host controll
-			 if(this.host.isNotInGame()) {
-			    try {
-			      FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/LobbyConfigure.fxml"));
-			      loader.setControllerFactory(c -> {
-			        return new LobbyConfigureController(server, this);
-			      });
-			      Parent root1 = (Parent) loader.load();
-			      Stage stage = new Stage();
-			      stage.setScene(new Scene(root1, 600, 500));
-			      stage.show();
-			    } catch (IOException e) {
-			      // TODO Auto-generated catch block
-			      e.printStackTrace();
-			    }
-			  }
-	  }
+    if (this.host != null) { // extra host controll
+      if (this.host.isNotInGame()) {
+        try {
+          FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/LobbyConfigure.fxml"));
+          loader.setControllerFactory(c -> {
+            return new LobbyConfigureController(server, this);
+          });
+          Parent root1 = (Parent) loader.load();
+          Stage stage = new Stage();
+          stage.setScene(new Scene(root1, 600, 500));
+          stage.show();
+        } catch (IOException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      }
+    }
   }
 
   /**
-   * Method to print an chat message on the chat field in the lobby, called by an host or client protocol.
+   * Method to print an chat message on the chat field in the lobby, called by an host or client
+   * protocol.
+   * 
    * @author hendiehl
    */
   public void printChatMessage(String message) {
@@ -455,9 +480,11 @@ public class GameLobbyController implements LobbyController {
       this.chatArea.appendText(this.seperator + message); // adding it to the chat
     });
   }
+
   /**
-   * Method which will be called by JavaFX in order to send a chat message to all lobby members by using functionalities
-   * of a host or client protocol.
+   * Method which will be called by JavaFX in order to send a chat message to all lobby members by
+   * using functionalities of a host or client protocol.
+   * 
    * @author hendiehl
    */
   @FXML
@@ -473,6 +500,7 @@ public class GameLobbyController implements LobbyController {
 
   /*
    * Method to activate and initialize the sequence election procedure
+   * 
    * @author hendiehl
    */
   private void initializeSequencepositions() {
@@ -561,6 +589,7 @@ public class GameLobbyController implements LobbyController {
 
   /**
    * Method to start the election of the player sequence.
+   * 
    * @author hendiehl
    */
   public void startElection() {
@@ -571,6 +600,7 @@ public class GameLobbyController implements LobbyController {
 
   /**
    * Method to change the scene to the game screen.
+   * 
    * @author hendiehl
    */
   public void startGame() {
@@ -579,6 +609,7 @@ public class GameLobbyController implements LobbyController {
 
   /**
    * Method to set the background image
+   * 
    * @author hendiehl
    */
   private void loadBackground() {
@@ -587,6 +618,7 @@ public class GameLobbyController implements LobbyController {
 
   /**
    * Method to set the profile picture of specific player to the GameLobby
+   * 
    * @author hendiehl
    */
   public void setProfilePicture(int number, String picturePath) {
@@ -609,7 +641,9 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method to change into the GameScreen with network specific information and set up the game controller in the protocol 
+   * Method to change into the GameScreen with network specific information and set up the game
+   * controller in the protocol
+   * 
    * @author hendiehl
    */
   public void goInGameScreen() { // Just Testing Purpose with TestScreen !!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -618,11 +652,13 @@ public class GameLobbyController implements LobbyController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/interface.fxml"));
         if (this.host != null) {
           loader.setControllerFactory(c -> {
-            return new GameController(this.host, this.isHost);
+            return new GameController(this.host, this.isHost, this.pathToField,
+                this.host.getPlayerList());
           });
         } else {
           loader.setControllerFactory(c -> {
-            return new GameController(this.client, this.isHost);
+            return new GameController(this.client, this.isHost, this.pathToField,
+                this.client.getPlayerList());
           });
         }
         Parent root = loader.load();
@@ -642,8 +678,10 @@ public class GameLobbyController implements LobbyController {
       }
     });
   }
+
   /**
    * Method to set a new Server after changing it in configure Screen
+   * 
    * @author hendiehl
    */
   public void setNewServer(LobbyServer newOne) {
