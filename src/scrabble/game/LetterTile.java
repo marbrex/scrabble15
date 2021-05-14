@@ -479,4 +479,12 @@ public class LetterTile {
   public int getPoints() {
     return Integer.parseInt(points.getText());
   }
+
+  public void setDisable(boolean value) {
+    container.setDisable(value);
+  }
+
+  public void setMouseTransparent(boolean value) {
+    container.setMouseTransparent(value);
+  }
 }

@@ -75,7 +75,7 @@
           <top>
             <BorderPane BorderPane.alignment="CENTER">
               <left>
-                <Label id="time" text="12:34" BorderPane.alignment="CENTER">
+                <Label id="time" fx:id="timerLabel" text="12:34" BorderPane.alignment="CENTER">
                   <font>
                     <Font name="System Bold" size="15.0"/>
                   </font>

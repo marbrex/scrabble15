@@ -1,14 +1,19 @@
 package scrabble;
 
 import com.jfoenix.controls.JFXButton;
+import java.io.Console;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -16,6 +21,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import scrabble.game.Grid;
 import scrabble.game.LeaderBoard;
@@ -26,6 +32,7 @@ import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
 import scrabble.network.LobbyClientProtocol;
 import scrabble.network.LobbyHostProtocol;
+import scrabble.network.NetworkGame;
 import scrabble.network.NetworkScreen;
 
 /**
@@ -130,6 +137,14 @@ public class GameController {
 
   public LetterBag bag;
 
+  public NetworkGame api;
+
+  public Label timerLabel;
+
+  public Timer timer;
+
+  public final int roundTime = 1;
+
   /**
    * Default constructor.
    */
@@ -168,6 +183,133 @@ public class GameController {
       ((LobbyHostProtocol) this.protocol).shutdown();
 
     }
+  }
+
+  private void initApi() {
+
+    this.api = new NetworkGame() {
+
+      @Override
+      public void startMove() {
+        // TODO: first need to draw tiles from the bag if it's necessary
+
+        // enabling every LetterTile
+        grid.getTilesInGrid().forEach(tile -> {
+          tile.setMouseTransparent(false);
+        });
+        letterBar.getTilesInBar().forEach(tile -> {
+          tile.setMouseTransparent(false);
+        });
+        // enabling every action button
+        okBtn.setMouseTransparent(false);
+        shuffleBtn.setMouseTransparent(false);
+
+        // starting the timer (10 minutes for each turn)
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+          @Override
+          public void run() {
+            // ending the current player's move after the end of the timer
+            endMove();
+          }
+        };
+        timer.schedule(task, 1000 * 60 * roundTime);
+
+        // Every second the Label will decrement
+        timerLabel.setText(roundTime + ":00");
+        TimerTask updateLabel = new TimerTask() {
+          @Override
+          public void run() {
+            Platform.runLater(new Runnable() {
+              @Override
+              public void run() {
+                String[] minSec = timerLabel.getText().split(":");
+                int min = Integer.parseInt(minSec[0]);
+                int sec = Integer.parseInt(minSec[1]);
+                if (min == 0 && sec == 0) {
+                } else {
+                  if (sec - 1 < 0) {
+                    min--;
+                    sec = 59;
+                  } else {
+                    sec--;
+                  }
+                }
+                timerLabel
+                    .setText((min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec));
+                if (min >= 5) {
+                  timerLabel.setTextFill(Paint.valueOf("green"));
+                } else if (min >= 3) {
+                  timerLabel.setTextFill(Paint.valueOf("orange"));
+                } else if (min >= 0) {
+                  timerLabel.setTextFill(Paint.valueOf("red"));
+                }
+              }
+            });
+          }
+        };
+        timer.scheduleAtFixedRate(updateLabel, 0, 1000);
+      }
+
+      @Override
+      public void endMove() {
+
+        // terminating the current player's turn
+        Platform.runLater(new Runnable() {
+          @Override
+          public void run() {
+            // verifying the player's input
+            boolean validInput = grid.verifyWordsValidity();
+
+            if (!validInput) {
+              // if the input is invalid
+
+              System.out.println("Time is over - moving tiles in grid back to bar..");
+              // moving all tiles in grid back to bar
+              letterBar.putTilesBackToBar();
+
+              // disabling every LetterTile in bar
+              letterBar.getTilesInBar().forEach(tile -> {
+                tile.setMouseTransparent(true);
+              });
+            }
+          }
+        });
+
+        // disabling every action button
+        okBtn.setMouseTransparent(true);
+        shuffleBtn.setMouseTransparent(true);
+
+        // TODO: update the LeaderBoard
+        // TODO: pass the turn to the next player
+      }
+
+      @Override
+      public void sendMoveInformation() {
+
+      }
+
+      @Override
+      public void getOpponentsInfo() {
+
+      }
+
+      @Override
+      public void endMoveActions() {
+
+      }
+
+      @Override
+      public void printChatMessage(String message) {
+
+      }
+
+      @Override
+      public void sendChatMessage(String message) {
+
+      }
+
+    };
   }
 
   public void initGrid(String mapPath) {
@@ -258,6 +400,9 @@ public class GameController {
     okBtn.setOnMouseClicked(event -> grid.verifyWordsValidity());
 
     initPlayers();
+
+    initApi();
+    api.startMove();
 
   }
 }

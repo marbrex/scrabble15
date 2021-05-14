@@ -1,6 +1,8 @@
 package scrabble.game;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import javafx.scene.input.Dragboard;
@@ -243,5 +245,51 @@ public class LetterBar {
       }
     }
     return null;
+  }
+
+  public ArrayList<LetterTile> getTilesInBar() {
+    ArrayList<LetterTile> list = new ArrayList<>();
+    for (Slot slot : slots) {
+      if (slot.content != null) {
+        list.add(slot.content);
+      }
+    }
+    return list;
+  }
+
+  public ArrayList<Slot> getEmptySlots() {
+    ArrayList<Slot> list = new ArrayList<>();
+    for (Slot slot : slots) {
+      if (slot.isFree()) {
+        list.add(slot);
+      }
+    }
+    return list;
+  }
+
+  public void putTilesBackToBar() {
+    System.out.println("@LetterBar - putTilesBackToBar()");
+    Iterator<Word> it = controller.grid.words.iterator();
+
+    while (it.hasNext()) {
+      Word word = it.next();
+      if (!word.frozen) {
+        it.remove();
+        controller.gridWrapper.getChildren().remove(word.container);
+      }
+    }
+
+    ArrayList<Slot> emptySlots = getEmptySlots();
+    int i = 0;
+    for (LetterTile tile : controller.grid.getTilesInGrid()) {
+      if (!tile.container.isMouseTransparent()) {
+        System.out.println("@LetterBar - putTilesBackToBar() - " + emptySlots.get(i));
+        LetterTile t = new LetterTile(tile.getLetter(), tile.getPoints(), controller.grid.cellSize,
+            controller);
+        emptySlots.get(i).setContent(t);
+        i++;
+        controller.grid.removeSlotContent(tile.slot);
+      }
+    }
   }
 }
