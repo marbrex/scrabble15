@@ -85,7 +85,9 @@ public class MenuController {
       Parent root = loader.load();
       GameLobbyController lobbyController = loader.<GameLobbyController>getController();
       Stage stage = (Stage) this.hostGameButton.getScene().getWindow();
-      stage.setScene(new Scene(root, 900, 750)); // before 700, but need of space
+      stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight())); // before 700, but need of space
+      stage.setMinWidth(900);
+      stage.setMinHeight(750);
       stage.setOnHidden(e -> {
         lobbyController.shutdown();
       });
@@ -115,7 +117,9 @@ public class MenuController {
       Parent root = loader.load();
       GameFinderController finderController = loader.<GameFinderController>getController();
       Stage stage = (Stage) this.joinGameButton.getScene().getWindow();
-      stage.setScene(new Scene(root, 900, 700));
+      stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
+      stage.setMinWidth(900);
+      stage.setMinHeight(700);
       stage.setOnHidden(e -> {
         finderController.shutdown();
       });

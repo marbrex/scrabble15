@@ -39,7 +39,7 @@
                   <Insets top="10.0" />
                </padding>
             </VBox>
-            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <children>
                   <JFXButton fx:id="cancel" buttonType="RAISED" onAction="#cancelButtonAction" opacity="0.5" text="Back" />
                </children>

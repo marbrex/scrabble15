@@ -16,7 +16,7 @@ public class GameHandler extends Thread {
   /** counter for turns without action */
   private int actionlessMove;
   /** Int representation of ten minutes*/
-  private static final int tenMin = 600000;
+  //private static final int tenMin = 600000; //not in use anymore
   /** actual player which is on Move */
   private NetworkPlayer actual;
   //should i control a specific notify call ?
@@ -25,17 +25,7 @@ public class GameHandler extends Thread {
    * 
    * @param game GameInformationController
    */
-  public GameHandler(GameInformationController game, ArrayList<NetworkPlayer> players) { // GameMessages
-                                                                                         // are send
-                                                                                         // before,
-                                                                                         // but will
-                                                                                         // the
-                                                                                         // Platform.runLater
-                                                                                         // be
-                                                                                         // faster
-                                                                                         // -->
-                                                                                         // implement
-                                                                                         // callback
+  public GameHandler(GameInformationController game, ArrayList<NetworkPlayer> players) {
     this.game = game;
     this.players = players;
   }
@@ -74,10 +64,8 @@ public class GameHandler extends Thread {
         this.actual = player;
         player.startMove();
         this.waitMazimumTime(); // change to approach only by HumanPlayer
-        player.endMove(); // doing it all the Time and only inform the Thread or ending itself and
-                          // not
-                          // send the Message ?
-        this.getMoveInfo();
+        //Here is the action performed after the player informed the server
+   
       } else {
         // AI calculating
       }
@@ -106,8 +94,7 @@ public class GameHandler extends Thread {
   private synchronized void waitMazimumTime() { // here a illegal monitor state exception occurs
     System.out.println("GAME HANDLER : Wait move time");
     try {
-      this.wait(60000); // wait the maximum time for a player move --> only testing replace with
-                        // variable
+      this.wait(); // wait until player inform server 
     } catch (InterruptedException e) {
       // Doing something change to a other approach different message for endTurn and forceEndTurn
     }

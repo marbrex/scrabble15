@@ -16,6 +16,7 @@ import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import scrabble.network.LobbyClientProtocol;
 
@@ -44,6 +45,8 @@ public class GameFinderController implements LobbyController {
   private ImageView background;
   @FXML
   private JFXButton search;
+  @FXML
+  private StackPane root;
   private LobbyClientProtocol clientProtocol;
 
 
@@ -168,7 +171,7 @@ public class GameFinderController implements LobbyController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Menu.fxml"));
         Parent root = loader.load();
         Stage stage = (Stage) this.backButton.getScene().getWindow();
-        stage.setScene(new Scene(root, 900, 700));
+        stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getWidth()));
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -321,7 +324,9 @@ public class GameFinderController implements LobbyController {
         lobbyController.setProtocol(this.clientProtocol);
         this.clientProtocol.setLobbyController(lobbyController);
         Stage stage = (Stage) this.joinBtn.getScene().getWindow();
-        stage.setScene(new Scene(root, 900, 750));
+        stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
+        stage.setMinWidth(900);
+        stage.setMinHeight(750);
         stage.setOnHidden(e -> {
           lobbyController.shutdown();
         });

@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -37,6 +38,8 @@ public class GameLobbyController implements LobbyController {
    * @author hendiehl
    */
   // gui
+  @FXML
+  private StackPane root;
   @FXML
   private Label timeLabel;
   @FXML
@@ -176,7 +179,7 @@ public class GameLobbyController implements LobbyController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Menu.fxml"));
         Parent root = loader.load();
         Stage stage = (Stage) this.backButton.getScene().getWindow();
-        stage.setScene(new Scene(root, 900, 700));
+        stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -479,6 +482,8 @@ public class GameLobbyController implements LobbyController {
           Parent root1 = (Parent) loader.load();
           Stage stage = new Stage();
           stage.setScene(new Scene(root1, 600, 500));
+          stage.setMinHeight(500);
+          stage.setMinWidth(600);
           stage.show();
         } catch (IOException e) {
           // TODO Auto-generated catch block
@@ -689,7 +694,7 @@ public class GameLobbyController implements LobbyController {
           this.client.setGameScreen(gameScreen);
         }
         Stage stage = (Stage) this.backButton.getScene().getWindow();
-        Scene scene = new Scene(root, 900, 700);
+        Scene scene = new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
         scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
         stage.setScene(scene);
       } catch (IOException e) {
