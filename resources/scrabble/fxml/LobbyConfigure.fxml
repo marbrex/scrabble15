@@ -33,6 +33,7 @@
                   <Label fx:id="portInfo" text="Label" />
                   <Separator prefWidth="200.0" />
                   <Label fx:id="warning" />
+                  <JFXButton fx:id="accept" buttonType="RAISED" disable="true" onAction="#acceptButtonAction" opacity="0.5" text="Accept" />
                </children>
                <padding>
                   <Insets top="10.0" />
@@ -40,17 +41,23 @@
             </VBox>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
                <children>
-                  <JFXButton fx:id="accept" buttonType="RAISED" disable="true" onAction="#acceptButtonAction" opacity="0.5" text="Accept" />
-                  <JFXButton fx:id="cancel" buttonType="RAISED" onAction="#cancelButtonAction" opacity="0.5" text="Cancel" />
+                  <JFXButton fx:id="cancel" buttonType="RAISED" onAction="#cancelButtonAction" opacity="0.5" text="Back" />
                </children>
             </HBox>
-            <VBox fx:id="choser" prefHeight="200.0" prefWidth="200.0" spacing="20.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox fx:id="choser" alignment="TOP_CENTER" prefHeight="200.0" prefWidth="300.0" spacing="20.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
-                  <JFXRadioButton fx:id="dictionary" text="Use own dictionary" />
+                  <JFXRadioButton fx:id="dictionary" onAction="#dictionaryAction" text="Use own dictionary" />
                   <Label fx:id="dictionaryLabel" />
                   <JFXRadioButton fx:id="multiplier" onAction="#multiplierAction" text="Use own multiplier" />
                   <Label fx:id="multiplierLabel" />
+                  <Label fx:id="path" text="Actual path : " />
                </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <padding>
+                  <Insets top="10.0" />
+               </padding>
             </VBox>
          </children>
       </AnchorPane>

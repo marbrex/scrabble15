@@ -49,13 +49,17 @@ public class LobbyConfigureController {
   private Label dictionaryLabel;
   @FXML
   private Label multiplierLabel;
+  @FXML
+  private Label path;
 
   private boolean autoSet;
   private int runningPort;
   private LobbyServer server;
   private String seperator;
   private GameLobbyController corresponding;
-  private String multiplierNorm = "";
+  private String multiplierNormOneLine =
+      "^(((TW)|(NO)|(DL)|(TL)|(DW)){1}\\s){14}((TW)|(NO)|(DL)|(TL)|(DW)){1}$";
+  private String multiplierFile = "";
 
   /**
    * Constructor with the needed informations about the lobby controller for screen access and the
@@ -71,6 +75,7 @@ public class LobbyConfigureController {
     this.server = server;
     this.seperator = System.lineSeparator();
     this.corresponding = corresponding;
+    this.multiplierFile = corresponding.getPathToFile();
   }
 
   /**
@@ -98,6 +103,13 @@ public class LobbyConfigureController {
         + "start an new server on a other port." + this.seperator
         + "This means every player will be" + this.seperator + "kicked from the lobby.");
     this.warning.setVisible(false);
+    this.warning.setTextFill(Color.RED);
+    if (this.multiplierFile.matches("")) { // Standard
+      this.multiplier.setSelected(false);
+    } else {
+      this.multiplier.setSelected(true);
+    }
+    this.updatePathLabel(this.multiplierFile);
     // Also add a warning if the Running thread is 0 => Problem
   }
 
@@ -271,12 +283,23 @@ public class LobbyConfigureController {
    * 
    * @author hendiehl
    */
-  private void showMultiplierChooser() {
+  private File showFileChooser() {
     FileChooser multiChooser = new FileChooser();
-    multiChooser.setTitle("Choose a muliplier file");
+    multiChooser.setTitle("Choose a file");
     multiChooser.setInitialDirectory(new File(System.getProperty("user.home")));
     multiChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Txt", "*.txt"));
     File file = multiChooser.showOpenDialog(this.accept.getScene().getWindow());
+    return file;
+  }
+
+  /**
+   * Method to get String data of a file
+   * 
+   * @param file file to read
+   * @return String representation of the input file
+   * @author hendiehl
+   */
+  private String getFileString(File file) {
     try {
       BufferedReader reader = new BufferedReader(new FileReader(file));
       StringBuffer buffer = new StringBuffer();
@@ -285,18 +308,102 @@ public class LobbyConfigureController {
         buffer.append(line + this.seperator);
       }
       reader.close();
-      System.out.println(buffer.toString());
+      return buffer.toString();
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     }
+    return "";
   }
 
+  /**
+   * Method to handle the ActionEvent of the multiplier radio button. Will open a file chose if
+   * wanted to chose a field multiplier file.
+   * 
+   * @author hendiehl
+   */
   @FXML
   private void multiplierAction() {
     if (this.multiplier.isSelected()) {
-      this.showMultiplierChooser();
+      File file = this.showFileChooser();
+      if (file != null) {
+        String txt = this.getFileString(file);
+        if (this.checkAcceptance(txt)) { // file accepted
+          System.out.println("CONFIGURE : File accepted");
+          this.corresponding.setPathToFile(file.getAbsolutePath());
+          this.multiplierLabel
+              .setText("The File was accepted " + this.seperator + "and set up for the game");
+          System.out.println("CONFIGURE : Path to file : " + this.multiplierFile);
+          this.updatePathLabel(this.corresponding.getPathToFile());
+        } else {
+          this.multiplierLabel.setText("The File was not accepted");
+          this.multiplier.setSelected(false);
+        }
+      } else {
+        this.multiplierLabel.setText("Please choose a file");
+        this.multiplier.setSelected(false);
+      }
+    } else {
+      this.corresponding.setPathToFile("");
+      this.multiplierLabel.setText("The standard points will be used");
+      this.updatePathLabel(this.corresponding.getPathToFile());
+    }
+  }
+
+  /**
+   * Method to check the file data to his acceptance, only a limited form of the multiplier field is
+   * allowed. Will return true if it is a text file with 15 rows of the given form.
+   * 
+   * @param txt File data of the chosen file
+   * @return boolean condition about acceptance
+   * @author hendiehl
+   */
+  private boolean checkAcceptance(String txt) {
+    String[] rows = txt.split("\n");
+    System.out.println("CONFIGURE : File length : " + rows.length);
+    if (rows.length == 15) {
+      System.out.println("CONFIGURE : Accepted length");
+      boolean check = true;
+      for (int i = 0; i < 15; i++) { // check every row
+        if (rows[i].matches(this.multiplierNormOneLine)) { // row match form
+          System.out.println("CONFIGURE : Row match " + i);
+          check &= true;
+        } else { // row don't match form
+          check &= false;
+        }
+      }
+      return check;
+    } else {
+      return false;
+    }
+  }
+
+  /**
+   * Method to show the actual path of the multiplier field on the screen
+   * 
+   * @param path path to specific file or empty string if
+   * @author hendiehl
+   */
+  private void updatePathLabel(String path) {
+    String text = "Actual path : " + this.seperator;
+    text += path;
+    this.path.setText(text);
+  }
+  
+  
+  @FXML
+  private void dictionaryAction() {
+    if(this.dictionary.isSelected()) {
+      File file = this.showFileChooser();
+      if(file != null) {
+        //Setting own dictionary 
+      } else {
+        this.dictionaryLabel.setText("Please choose a file");
+        this.dictionary.setSelected(false);
+      }
+    } else {
+      //setting dictionary to standard
     }
   }
 }

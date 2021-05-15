@@ -203,6 +203,26 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
+   * Method to get the actual path to a multiplier field file if wanted. Is a empty String if
+   * standard is wanted. Mainly used by the configure controller
+   * 
+   * @return path string to the file or an empty String
+   * @author hendiehl
+   */
+  public String getPathToFile() {
+    return this.pathToField;
+  }
+
+  /**
+   * Method to set the Path to an specific multiplier field. Used by the configure controller
+   * 
+   * @param path path to an specific file
+   */
+  public void setPathToFile(String path) {
+    this.pathToField = path;
+  }
+
+  /**
    * Method which sets up host specific actions like activating host controls and starting a server
    * 
    * @author hendiehl
