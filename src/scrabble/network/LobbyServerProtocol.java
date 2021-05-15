@@ -7,9 +7,11 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
-
+import com.google.common.collect.Multiset;
 import scrabble.model.HumanPlayer;
+import scrabble.model.LetterBagType;
 import scrabble.model.Player;
+import scrabble.game.LetterBag.Tile;
 import scrabble.model.GameInformationController;
 import scrabble.model.MessageType;
 
@@ -92,6 +94,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
         case END:
           this.reactToEnd(message);
           break;
+        case BAG:
+          this.reactToBag(message);
+          break;
       }
     } catch (EOFException e) {
       this.isRunning = false;
@@ -101,6 +106,85 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     } catch (ClassNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to react to an incoming LetterBag message. Has the function to perform a specific action
+   * on the global LetterBag instance
+   * 
+   * @param message LetterBagMessage
+   * @author hendiehl
+   */
+  private void reactToBag(Message message) {
+    LetterBagMessage msg = (LetterBagMessage) message;
+    LetterMultisetReturnMessage answer;
+    Multiset<Tile> tiles;
+    switch (msg.getType2()) {
+      case GA:
+        int i = this.gameInfoController.getAmount();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, null, i, null,
+            LetterBagType.GA);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRB:
+        tiles = this.gameInfoController.getRemainingBlanks();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+            LetterBagType.GRB);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRC:
+        tiles = this.gameInfoController.getRemainingConsonants();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+            LetterBagType.GRC);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRET:
+        tiles = this.gameInfoController.getRemainingTiles();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+            LetterBagType.GRET);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRT:
+        Tile tile = this.gameInfoController.grabRandomTile();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, null, 0, tile,
+            LetterBagType.GRT);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRTS:
+        tiles = this.gameInfoController.grabRandomTiles(msg.getCount());
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+            LetterBagType.GRTS);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRV:
+        tiles = this.gameInfoController.getRemainingVowels();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+            LetterBagType.GRV);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GV:
+        int j = this.gameInfoController.getValueOf(msg.getLetter());
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, null, j, null,
+            LetterBagType.GV);
+        this.sendLetterBagResponse(answer);
+        break;
+    }
+  }
+
+  /**
+   * Method to send the response back to the client
+   * 
+   * @param msg LetterBagMultisetReturnMessage
+   * @author hendiehl
+   */
+  private void sendLetterBagResponse(LetterMultisetReturnMessage msg) {
+    try {
+      this.out.writeObject(msg);
+      this.out.flush();
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

@@ -3,6 +3,9 @@ package scrabble.model;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import com.google.common.collect.Multiset;
+import scrabble.game.LetterBag.Tile;
+import scrabble.game.LetterBag;
 import scrabble.network.GameHandler;
 import scrabble.network.LobbyAiProtocol;
 import scrabble.network.LobbyServer;
@@ -23,7 +26,7 @@ public class GameInformationController {
   private int gamePort; // port to the GameServer
   private HashMap<NetworkPlayer, Boolean> check;
   private GameHandler gameHandler;// responsible for move organization
-  private LetterBag letterBag; // Letter Bag for a network game
+  private LetterBag bag;
 
   /**
    * Constructor which initialize the class and set up important help classes.
@@ -298,7 +301,8 @@ public class GameInformationController {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    this.letterBag = LetterBag.getLetterBag();
+    // this.letterBag = LetterBag.getLetterBag();
+    this.bag = LetterBag.getInstance();
     // this.fillGame(); // Filling slots of missing Players with AiPlayers
     this.gameHandler = new GameHandler(this, this.players);
     this.gameHandler.startGame();
@@ -353,15 +357,89 @@ public class GameInformationController {
     }
   }
 
+  // --------------------------------------------
+  // Because there should be only one instance of the Letter Bag for all
+  // players in a network game they need to get access to a global instance over the network
+
   /**
-   * Method to use exchange the Letters of a game during a network game
+   * Method to get access to the grabRandomTile method in an Network game
    * 
-   * @param owner owner of the cells holden by a player during the game
-   * @param cells cells holding a Letter
+   * @return random tile from Letter Bag
    * @author hendiehl
    */
-  public void exchangeCells(HumanPlayer owner, Cell[] cells) {
-    this.letterBag.changeLetters(owner, cells);
+  public Tile grabRandomTile() {
+    return this.bag.grabRandomTile();
   }
 
+  /**
+   * Method to get access to the getValueOf method in an network game
+   * 
+   * @param letter
+   * @return value of the letter
+   * @author hendiehl
+   */
+  public int getValueOf(char letter) {
+    return this.bag.getValueOf(letter);
+  }
+
+  /**
+   * Method to get access to the getRemainingVowels method in an network game
+   * 
+   * @return vowels of the letter bag
+   * @author hendiehl
+   */
+  public Multiset<Tile> getRemainingVowels() {
+    return this.bag.getRemainingVowels();
+  }
+
+  /**
+   * Method to get access to the getRemainingConsonants method in an network game
+   * 
+   * @return consonants of the letter bag
+   * @author hendiehl
+   */
+  public Multiset<Tile> getRemainingConsonants() {
+    return this.getRemainingConsonants();
+  }
+
+  /**
+   * Method to get access to the getRemainingBlanks method in an network game
+   * 
+   * @return blanks of the letter bag
+   * @author hendiehl
+   */
+  public Multiset<Tile> getRemainingBlanks() {
+    return this.bag.getRemainingBlanks();
+  }
+
+  /**
+   * Method to get access to the grabRandomTiles(int count) method in an network game
+   * 
+   * @param count amount of tiles
+   * @return tiles of the letter bag
+   * @author hendiehl
+   */
+  public Multiset<Tile> grabRandomTiles(int count) {
+    return this.bag.grabRandomTiles(count);
+  }
+
+  /**
+   * Method to get access to the getRemainingTiles method in an network game
+   * 
+   * @return remaining tiles of the letter bag
+   * @author hendiehl
+   */
+  public Multiset<Tile> getRemainingTiles() {
+    return this.bag.getRemainingTiles();
+  }
+
+  /**
+   * Method to get access to the getAmount method in an network game
+   * 
+   * @return amount of the letter bag
+   * @author hendiehl
+   */
+  public int getAmount() {
+    return this.bag.getAmount();
+  }
 }

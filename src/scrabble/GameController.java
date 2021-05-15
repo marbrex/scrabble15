@@ -1,5 +1,6 @@
 package scrabble;
 
+import com.google.common.collect.Multiset;
 import com.jfoenix.controls.JFXButton;
 import java.io.Console;
 import java.io.IOException;
@@ -27,6 +28,7 @@ import scrabble.game.Grid;
 import scrabble.game.LeaderBoard;
 import scrabble.game.LetterBag;
 import scrabble.game.LetterBar;
+import scrabble.game.LetterBag.Tile;
 import scrabble.model.Dictionary;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
@@ -407,5 +409,88 @@ public class GameController {
     initApi();
     api.startMove();
 
+  }
+  
+  /*
+   * The following methods will be automatically called from the protocol after LetterBag methods
+   * will be called on the protocol for network use. They will provide the answer from the actual
+   * global LetterBag instance
+   * 
+   * 
+   * WARNING !!!!!!!!!!!!!!!!!!!!!!!!! If any of the following methods should change something on
+   * the screen, like changing the text of a label or any other thing, the action have to be in the
+   * body of a : Platform.runLater(() -> {do it}); because only controller threads can change JavaFx
+   * objects, but these methods will be called by the protocol
+   */
+  /**
+   * Provider method of the grabRandomTile method of LetterBag
+   * 
+   * @param tile
+   */
+  public void grabRandomTileAnswer(Tile tile) {
+    // do something with Tile
+  }
+
+  /**
+   * Provider method of the getValueOf method of LetterBag
+   * 
+   * @param tile
+   */
+  public void getValueOfAnswer(int value) {
+    // do something with value
+  }
+
+  /**
+   * Provider method of the getRemainingVowels method of LetterBag
+   * 
+   * @param tile
+   */
+  public void getRemainingVowelsAnswer(Multiset<Tile> tiles) {
+    // do something with Multiset
+  }
+
+  /**
+   * Provider method of the getRemainingConsonants method of LetterBag
+   * 
+   * @param tile
+   */
+  public void getRemainingConsonantsAnswer(Multiset<Tile> tiles) {
+    // do something with Multiset
+  }
+
+  /**
+   * Provider method of the getRemainingBlanks method of LetterBag
+   * 
+   * @param tile
+   */
+  public void getRemainingBlanksAnswer(Multiset<Tile> tiles) {
+    // do something with Multiset
+  }
+
+  /**
+   * Provider method of the grabRandomTiles method of LetterBag
+   * 
+   * @param tile
+   */
+  public void grabRandomTilesAnswer(Multiset<Tile> tiles) {
+    // do something with Multiset
+  }
+
+  /**
+   * Provider method of the getRemainingTiles method of LetterBag
+   * 
+   * @param tile
+   */
+  public void getRemainingTilesAnswer(Multiset<Tile> tiles) {
+    // do something with Multiset
+  }
+
+  /**
+   * Provider method of the getAmount method of LetterBag
+   * 
+   * @param tile
+   */
+  public void getAmountAnswer(int amount) {
+    // do something with amount
   }
 }

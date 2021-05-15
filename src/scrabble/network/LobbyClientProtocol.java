@@ -9,13 +9,15 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-
+import com.google.common.collect.Multiset;
 import scrabble.model.HumanPlayer;
+import scrabble.model.LetterBagType;
 import scrabble.model.Player;
 import scrabble.model.Profile;
 import scrabble.GameController;
 import scrabble.GameFinderController;
 import scrabble.GameLobbyController;
+import scrabble.game.LetterBag.Tile;
 import scrabble.model.GameStatusType;
 import scrabble.model.MessageType;
 
@@ -66,6 +68,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * contact the calling GameFinderController
    * 
    * @param controller Controller of the GameFinder screen
+   * @author hendiehl
    */
   public LobbyClientProtocol(GameFinderController controller) {
     this.gameFinderController = controller;
@@ -73,7 +76,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to get player instance from DB
+   * Method to get player instance from DB
+   * 
+   * @author hendiehl
    */
   private void loadPlayer() { // not implemented yet
     this.player = Profile.getPlayer();
@@ -82,9 +87,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to set the connection on the standard ports
+   * Method to set the connection on the standard ports
    * 
    * @throws ConnectException
+   * @author hendiehl
    */
   private void setSocket() throws PortsOccupiedException { // change to ports occupied exception
     while (!this.isRunning && this.notConnected) {
@@ -120,6 +126,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @param ownPort port given by the user
    * @throws ConnectException
    * @throws IOException
+   * @author hendiehl
    */
   public LobbyClientProtocol(GameFinderController controller, int ownPort)
       throws ConnectException, IOException {
@@ -134,8 +141,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * run method of the thread class. The thread is waiting for messages from the server and react to
+   * Run method of the thread class. The thread is waiting for messages from the server and react to
    * an specific MessageType
+   * 
+   * @author hendiehl
    */
   public void run() {
     System.out.println("CLIENT PROTOCOL : Protocol started");
@@ -154,7 +163,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to react to an incoming message.
+   * Method to react to an incoming message.
+   * 
+   * @author hendiehl
    */
   private void react() {
     try {
@@ -197,6 +208,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case END:
           this.reactToEnd(message);
           break;
+        case BAG:
+          this.reactToBag(message);
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -214,9 +228,64 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
+   * Method to react to an LetterMultisetReturnMessage response in order of a finished LetterBag
+   * server operation
+   * 
+   * @param message LetterBagMultisetReturnMessage
+   * @author hendiehl
+   */
+  private void reactToBag(Message message) {
+    LetterMultisetReturnMessage msg = (LetterMultisetReturnMessage) message;
+    Multiset<Tile> tiles;
+    switch (msg.getType2()) {
+      case GA:
+        int i = msg.getAnswer();
+        // callback
+        this.gameScreen.getAmountAnswer(i);
+        break;
+      case GRB:
+        tiles = msg.getTiles();
+        // callback
+        this.gameScreen.getRemainingBlanksAnswer(tiles);
+        break;
+      case GRC:
+        tiles = msg.getTiles();
+        // callback
+        this.gameScreen.getRemainingConsonantsAnswer(tiles);
+        break;
+      case GRET:
+        tiles = msg.getTiles();
+        // callback
+        this.gameScreen.getRemainingTilesAnswer(tiles);
+        break;
+      case GRT:
+        Tile tile = msg.getTile();
+        // callback
+        this.gameScreen.grabRandomTileAnswer(tile);
+        break;
+      case GRTS:
+        tiles = msg.getTiles();
+        // callback
+        this.gameScreen.grabRandomTilesAnswer(tiles);
+        break;
+      case GRV:
+        tiles = msg.getTiles();
+        // callback
+        this.gameScreen.getRemainingVowelsAnswer(tiles);
+        break;
+      case GV:
+        int j = msg.getAnswer();
+        // callback
+        this.gameScreen.getValueOfAnswer(j);
+        break;
+    }
+  }
+
+  /**
    * Method to react to an incoming end Message which inform the player that his move ended
    * 
    * @param message End message
+   * @author hendiehl
    */
   private void reactToEnd(Message message) {
     System.out.println("CLIENT PROTOCOL : End-Message received");
@@ -230,6 +299,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * Method to react to an incoming Move message which inform the player that he is on move
    * 
    * @param message Move message
+   * @author hendiehl
    */
   private void reactToMove(Message message) {
     System.out.println("CLIENT PROTOCOL : Move-Message received");
@@ -245,6 +315,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * GameScreen
    * 
    * @param message Message from the Server
+   * @author hendiehl
    */
   private void reactToGameMessage(Message message) {
     System.out.println("CLIENT PROTOCOL : Game-Message received");
@@ -260,6 +331,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * chosen player sequence
    * 
    * @param message Message from the Server
+   * @author hendiehl
    */
   private void reactToStartMessage(Message message) {
     System.out.println("CLIENT PROTOCOL : Start-Message received");
@@ -278,9 +350,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to react to the start of an full lobby procedure
+   * Method to react to the start of an full lobby procedure
    * 
    * @param message message from the server
+   * @author hendiehl
    */
   private void reactToFullMessage(Message message) {
     System.out.println("CLIENT PROTOCOL : Full-Message received");
@@ -292,9 +365,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to react to an rejection message
+   * Method to react to an rejection message
    * 
    * @param message message of the server
+   * @author hendiehl
    */
   private void reactRejected(Message message) {
     System.out.println("CLIENT PROTOCOL : Reject-Message received");
@@ -314,7 +388,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to react to a shutdown message, no response expected
+   * Method to react to a shutdown message, no response expected
+   * 
+   * @author hendiehl
    */
   private void reactToShutdown() {
     System.out.println("CLIENT PROTOCOL : Shutdown-Message received");
@@ -328,9 +404,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to react to lobby informations of the server. Will update the screen in consequence.
+   * Method to react to lobby informations of the server. Will update the screen in consequence.
    * 
    * @param message
+   * @author hendiehl
    */
   private void reactToLobby(Message message) {
     System.out.println("CLIENT PROTOCOL : Lobby-Message received");
@@ -349,10 +426,11 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method which react to an acceptance of a server and transform the screen in an GameLobby
+   * Method which react to an acceptance of a server and transform the screen in an GameLobby
    * screen.
    * 
    * @param message
+   * @author hendiehl
    */
   private void reactToAcepted(Message message) {
     System.out.println("CLIENT PROTOCOL : Accept-Message received");
@@ -363,9 +441,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method for reacting on information message from server and show them on the gui
+   * Method for reacting on information message from server and show them on the gui
    * 
    * @param message message from the server which will be castes to the specific type
+   * @author hendiehl
    */
   private void reactToInformation(Message message) {
     System.out.println("CLIENT PROTOCOL : Information-Message received");
@@ -386,7 +465,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to close the connection of the protocol
+   * Method to close the connection of the protocol
+   * 
+   * @author hendiehl
    */
   private void closeConnection() { // change !!!!!!!!!!!!!!!!!
     try { // if a input or output stream is closed the other close himself and the close method
@@ -402,10 +483,11 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to end the running thread and close the connection
+   * Method to end the running thread and close the connection
+   * 
+   * @author hendiehl
    */
-  public void shutdownProtocol(boolean selfcall) { // In future change to an approach with an,
-                                                   // boolean condition about call or selfcall
+  public void shutdownProtocol(boolean selfcall) {
     System.out.println("CLIENT PROTOCOL : Shutdown");
     this.notConnected = false;
     this.isRunning = false;
@@ -418,9 +500,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to change the controller of the screen when new window is loaded
+   * Method to change the controller of the screen when new window is loaded
    * 
    * @param glc
+   * @author hendiehl
    */
   public void setLobbyController(GameLobbyController glc) {
     this.gameFinderController = null;
@@ -432,7 +515,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to update the visibility of the player profiles of the GameLobby screen.
+   * Method to update the visibility of the player profiles of the GameLobby screen.
+   * 
+   * @author hendiehl
    */
   private void updateLobbyinformation() {
     this.gameLobbyController.resetProfileVisibility();
@@ -448,7 +533,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method which will inform the server that the client want to join the lobby.
+   * Method which will inform the server that the client want to join the lobby.
+   * 
+   * @author hendiehl
    */
   public void sendJoinMessage() {
     Message msg = new Message(MessageType.JOIN, this.player);
@@ -463,8 +550,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * method to send a last shutdown message to the client, to give them the opportunity to handle.
+   * Method to send a last shutdown message to the client, to give them the opportunity to handle.
    * No respond expected.
+   * 
+   * @author hendiehl
    */
   public void sendShutdownMsg() {
     // System.out.println("Send shutdown message");
@@ -490,6 +579,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * Method to send a chat message with the chat client to the Chat server
    * 
    * @param message message of the chat client which will be send to the server
+   * @author hendiehl
    */
   public void sendChatMessage(String message) {
     if (this.gameLobbyController != null) {
@@ -502,6 +592,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * GameScreen itself
    * 
    * @param message message from the chat server
+   * @author hendiehl
    */
   public void printChatMessage(String message) {
     if (this.gameLobbyController != null) {
@@ -513,6 +604,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * Method to create a Chat Client with an port given by the ServerProtocol
    * 
    * @param port port of the Chat server started by the Main Server
+   * @author hendiehl
    */
   public void startChatClient(int port) {
     this.chat = new Client(this, port, this.player.getName());
@@ -526,11 +618,19 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   /**
    * Method to get the the amount of players in the lobby, used by the GameLobbyController to set up
    * the position election
+   * 
+   * @author hendiehl
    */
   public int getPlayerAmount() {
     return this.lobbyPlayers.size();
   }
 
+  /**
+   * Method to set the game screen controller after the lobby is leaved for the actual game screen
+   * 
+   * @param gameScreen
+   * @author hendiehl
+   */
   public void setGameScreen(GameController gameScreen) {
     this.gameScreen = gameScreen;
 
@@ -538,6 +638,8 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   /**
    * Method to inform the server that a player finished his move in time
+   * 
+   * @author hendiehl
    */
   @Override
   public void sendEndMessage() {
@@ -555,6 +657,8 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   /**
    * Method to shutdown the chat protocol
+   * 
+   * @author hendiehl
    */
   @Override
   public void stopChatClient() {
@@ -574,5 +678,149 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   @Override
   public ArrayList<Player> getPlayerList() {
     return this.lobbyPlayers;
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void grabRandomTile() {
+    try {
+      LetterBagMessage msg =
+          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRT);
+      this.out.writeObject(msg);
+      this.out.flush();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getValueOf(char letter) {
+    try {
+      LetterBagMessage msg =
+          new LetterBagMessage(MessageType.BAG, this.player, 0, letter, LetterBagType.GV);
+      this.out.writeObject(msg);
+      this.out.flush();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getRemainingVowels() {
+    try {
+      LetterBagMessage msg =
+          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRV);
+      this.out.writeObject(msg);
+      this.out.flush();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getRemainingConsonants() {
+    try {
+      LetterBagMessage msg =
+          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRC);
+      this.out.writeObject(msg);
+      this.out.flush();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getRemainingBlanks() {
+    try {
+      LetterBagMessage msg =
+          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRB);
+      this.out.writeObject(msg);
+      this.out.flush();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void grabRandomTiles(int count) {
+    try {
+      LetterBagMessage msg =
+          new LetterBagMessage(MessageType.BAG, this.player, count, '0', LetterBagType.GRTS);
+      this.out.writeObject(msg);
+      this.out.flush();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getRemainingTiles() {
+    try {
+      LetterBagMessage msg =
+          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRET);
+      this.out.writeObject(msg);
+      this.out.flush();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getAmount() {
+    try {
+      LetterBagMessage msg =
+          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GA);
+      this.out.writeObject(msg);
+      this.out.flush();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 }

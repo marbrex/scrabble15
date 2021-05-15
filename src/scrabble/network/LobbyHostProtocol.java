@@ -2,11 +2,13 @@ package scrabble.network;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import com.google.common.collect.Multiset;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
 import scrabble.model.Profile;
 import scrabble.GameController;
 import scrabble.GameLobbyController;
+import scrabble.game.LetterBag.Tile;
 import scrabble.model.GameInformationController;
 import scrabble.model.GameStatusType;
 
@@ -328,5 +330,101 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   @Override
   public ArrayList<Player> getPlayerList() {
     return this.players;
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void grabRandomTile() {
+    Tile tile = this.gameInfoController.grabRandomTile();
+    // callback
+    this.gameScreen.grabRandomTileAnswer(tile);
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getValueOf(char letter) {
+    int i = this.gameInfoController.getValueOf(letter);
+    // callback
+    this.gameScreen.getValueOfAnswer(i);
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getRemainingVowels() {
+    Multiset<Tile> tiles = this.gameInfoController.getRemainingVowels();
+    // callback
+    this.gameScreen.getRemainingVowelsAnswer(tiles);
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getRemainingConsonants() {
+    Multiset<Tile> tiles = this.gameInfoController.getRemainingConsonants();
+    // callback
+    this.gameScreen.getRemainingConsonantsAnswer(tiles);
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getRemainingBlanks() {
+    Multiset<Tile> tiles = this.gameInfoController.getRemainingBlanks();
+    // callback
+    this.gameScreen.getRemainingBlanksAnswer(tiles);
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void grabRandomTiles(int count) {
+    Multiset<Tile> tiles = this.gameInfoController.grabRandomTiles(count);
+    // callback
+    this.gameScreen.grabRandomTilesAnswer(tiles);
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getRemainingTiles() {
+    Multiset<Tile> tiles = this.gameInfoController.getRemainingTiles();
+    // callback
+    this.gameScreen.getRemainingTilesAnswer(tiles);
+  }
+
+  /**
+   * Method to use LetterBag functionality in a network game
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getAmount() {
+    int i = this.gameInfoController.getAmount();
+    // callback
+    this.gameScreen.getAmountAnswer(i);
   }
 }
