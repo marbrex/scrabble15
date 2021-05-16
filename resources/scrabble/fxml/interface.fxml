@@ -109,12 +109,16 @@
                 <HBox id="player-1-block" alignment="CENTER" fillHeight="false" minHeight="50.0"
                   prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">
                   <children>
-                    <ImageView id="player-1-avatar" fitHeight="60.0" fitWidth="60.0"
-                      pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">
-                      <image>
-                        <Image url="@../img/default-avatar-icon.png"/>
-                      </image>
-                    </ImageView>
+                    <StackPane styleClass="player-avatar-frame">
+                      <children>
+                        <ImageView id="player-1-avatar" fitHeight="60.0" fitWidth="60.0"
+                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">
+                          <image>
+                            <Image url="@../img/default-avatar-icon.png"/>
+                          </image>
+                        </ImageView>
+                      </children>
+                    </StackPane>
                     <Label id="player-1-name" styleClass="players-name" text="Player1"/>
                     <Label id="player-1-score" styleClass="players-score" text="21"/>
                   </children>
@@ -125,12 +129,16 @@
                 <HBox id="player-2-block" alignment="CENTER" fillHeight="false" minHeight="50.0"
                   prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">
                   <children>
-                    <ImageView id="player-2-avatar" fitHeight="60.0" fitWidth="60.0"
-                      pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">
-                      <image>
-                        <Image url="@../img/default-avatar-icon.png"/>
-                      </image>
-                    </ImageView>
+                    <StackPane styleClass="player-avatar-frame">
+                      <children>
+                        <ImageView id="player-2-avatar" fitHeight="60.0" fitWidth="60.0"
+                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">
+                          <image>
+                            <Image url="@../img/default-avatar-icon.png"/>
+                          </image>
+                        </ImageView>
+                      </children>
+                    </StackPane>
                     <Label id="player-2-name" styleClass="players-name" text="Player2"/>
                     <Label id="player-2-score" styleClass="players-score" text="19"/>
                   </children>
@@ -141,12 +149,16 @@
                 <HBox id="player-3-block" alignment="CENTER" fillHeight="false" minHeight="50.0"
                   prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">
                   <children>
-                    <ImageView id="player-3-avatar" fitHeight="60.0" fitWidth="60.0"
-                      pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">
-                      <image>
-                        <Image url="@../img/default-avatar-icon.png"/>
-                      </image>
-                    </ImageView>
+                    <StackPane styleClass="player-avatar-frame">
+                      <children>
+                        <ImageView id="player-3-avatar" fitHeight="60.0" fitWidth="60.0"
+                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">
+                          <image>
+                            <Image url="@../img/default-avatar-icon.png"/>
+                          </image>
+                        </ImageView>
+                      </children>
+                    </StackPane>
                     <Label id="player-3-name" styleClass="players-name" text="Player3"/>
                     <Label id="player-3-score" styleClass="players-score" text="18"/>
                   </children>
@@ -157,12 +169,16 @@
                 <HBox id="player-4-block" alignment="CENTER" fillHeight="false" minHeight="50.0"
                   prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">
                   <children>
-                    <ImageView id="player-4-avatar" fitHeight="60.0" fitWidth="60.0"
-                      pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">
-                      <image>
-                        <Image url="@../img/default-avatar-icon.png"/>
-                      </image>
-                    </ImageView>
+                    <StackPane styleClass="player-avatar-frame">
+                      <children>
+                        <ImageView id="player-4-avatar" fitHeight="60.0" fitWidth="60.0"
+                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">
+                          <image>
+                            <Image url="@../img/default-avatar-icon.png"/>
+                          </image>
+                        </ImageView>
+                      </children>
+                    </StackPane>
                     <Label id="player-4-name" styleClass="players-name" text="Player4"/>
                     <Label id="player-4-score" styleClass="players-score" text="15"/>
                   </children>

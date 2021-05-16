@@ -1,5 +1,8 @@
 #root {
   -fx-background-color: rgb(100,100,100);
+  /*-fx-background-image: url("../img/bg.jpg");*/
+  -fx-background-repeat: repeat;
+  -fx-background-size: 300;
   /*-fx-border-color: #783F04;*/
   /*-fx-border-width: 13;*/
 }
@@ -9,6 +12,8 @@
   -fx-background-color: rgb(220,220,220);
   -fx-background-radius: 7px;
   -fx-border-radius: 7px;
+  /*-fx-border-width: 3px;*/
+  /*-fx-border-color: gray;*/
 }
 
 #exit-btn {
@@ -32,6 +37,15 @@
 
 #players-block {
   /*-fx-background-color: #ffbf70;*/
+}
+
+.player-avatar-frame {
+  -fx-border-radius: 50%;
+}
+
+.player-avatar-frame-active {
+  -fx-border-color: green;
+  -fx-border-width: 3px;
 }
 
 .players-score {
@@ -205,6 +219,9 @@
 #bottom-block {
   -fx-background-color: rgb(220,220,220);
   -fx-background-radius: 7px 7px 0 0;
+  -fx-border-radius: 7px 7px 0 0;
+  /*-fx-border-width: 3px 3px 0 3px;*/
+  /*-fx-border-color: gray;*/
 }
 
 #actions-block {

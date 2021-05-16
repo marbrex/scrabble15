@@ -107,7 +107,7 @@ public class LetterTile {
 
     container.setOnDragDetected(event -> {
       // drag was detected, start drag-and-drop gesture
-      // System.out.println(this + " - onDragDetected");
+       System.out.println(this + " - onDragDetected");
 
       // allow any transfer mode
       Dragboard db = container.startDragAndDrop(TransferMode.ANY);
@@ -123,7 +123,7 @@ public class LetterTile {
 
     container.setOnDragDone(event -> {
       // the drag-and-drop gesture ended
-      // System.out.println(this + " - onDragDone");
+       System.out.println(this + " - onDragDone");
 
       // if the data was successfully moved, clear it
       if (event.getTransferMode() == TransferMode.MOVE) {

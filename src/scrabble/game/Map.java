@@ -1,9 +1,14 @@
 package scrabble.game;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import scrabble.ScrabbleApp;
 
@@ -49,9 +54,16 @@ public class Map {
    */
   private void loadMap() {
     try {
-//     File file = new File(ScrabbleApp.class.getResource(path).getPath());
-      InputStream in = getClass().getResourceAsStream("/scrabble/" + path);
-      Scanner scanner = new Scanner(new InputStreamReader(in));
+      Scanner scanner;
+      Path p = Paths.get(path);
+      if (p.isAbsolute()) {
+        InputStream in = new FileInputStream(new File(path));
+        scanner = new Scanner(new InputStreamReader(in));
+      }
+      else {
+        InputStream in = getClass().getResourceAsStream("/scrabble/" + path);
+        scanner = new Scanner(new InputStreamReader(in));
+      }
       while (scanner.hasNextLine()) {
         String line = scanner.nextLine();
 

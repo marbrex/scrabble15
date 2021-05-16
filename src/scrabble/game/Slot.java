@@ -94,7 +94,7 @@ public class Slot {
 
     container.setOnDragOver(event -> {
       // data is dragged over the target
-      // System.out.println(this + " - onDragOver");
+       System.out.println(this + " - onDragOver");
 
       /* accept it only if it is not dragged from the same node
        * and if it has a string data */
@@ -109,7 +109,7 @@ public class Slot {
 
     container.setOnDragEntered(event -> {
       // the drag-and-drop gesture entered the target
-      // System.out.println(this + " - onDragEntered");
+       System.out.println(this + " - onDragEntered");
 
       // show to the user that it is an actual gesture target
       if (event.getGestureSource() != container &&
@@ -122,7 +122,7 @@ public class Slot {
     });
 
     container.setOnDragExited(event -> {
-      // System.out.println(this + " - onDragExited");
+       System.out.println(this + " - onDragExited");
 
       // mouse moved away, remove the graphical cues
       container.getStyleClass().removeAll("slot-on-drag-entered");
@@ -136,7 +136,7 @@ public class Slot {
 
     container.setOnDragDropped(event -> {
       // data dropped
-      // System.out.println(this + " - onDragDropped");
+       System.out.println(this + " - onDragDropped");
 
       // if there is a string data on drag board, read it and use it
       Dragboard db = event.getDragboard();

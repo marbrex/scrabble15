@@ -15,13 +15,20 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundImage;
+import javafx.scene.layout.BackgroundPosition;
+import javafx.scene.layout.BackgroundRepeat;
+import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 import scrabble.game.Grid;
@@ -147,6 +154,8 @@ public class GameController {
 
   public final int roundTime = 1;
 
+  public VBox playersBlock;
+
   /**
    * Default constructor.
    */
@@ -166,7 +175,7 @@ public class GameController {
    * @param protocol protocol for server communication
    * @param isHost   variable for host detection
    * @param pathToField path to a specific field multiplier file
-   * @param player list of the game members
+   * @param players list of the game members
    * @author hendiehl
    */
   public GameController(NetworkScreen protocol, boolean isHost, String pathToField, ArrayList<Player> players) {
@@ -214,6 +223,16 @@ public class GameController {
         TimerTask task = new TimerTask() {
           @Override
           public void run() {
+
+            System.out.println("Time is over - moving tiles in grid back to bar..");
+            // moving all tiles in grid back to bar
+            letterBar.putTilesBackToBar();
+
+            // disabling every LetterTile in bar
+            letterBar.getTilesInBar().forEach(tile -> {
+              tile.setMouseTransparent(true);
+            });
+
             // ending the current player's move after the end of the timer
             endMove();
           }
@@ -266,24 +285,20 @@ public class GameController {
             // verifying the player's input
             boolean validInput = grid.verifyWordsValidity();
 
-            if (!validInput) {
-              // if the input is invalid
-
-              System.out.println("Time is over - moving tiles in grid back to bar..");
-              // moving all tiles in grid back to bar
-              letterBar.putTilesBackToBar();
-
+            if (validInput) {
               // disabling every LetterTile in bar
               letterBar.getTilesInBar().forEach(tile -> {
                 tile.setMouseTransparent(true);
               });
+
+              // disabling every action button
+              okBtn.setMouseTransparent(true);
+              shuffleBtn.setMouseTransparent(true);
+
+              timer.cancel();
             }
           }
         });
-
-        // disabling every action button
-        okBtn.setMouseTransparent(true);
-        shuffleBtn.setMouseTransparent(true);
 
         // TODO: update the LeaderBoard
         // TODO: pass the turn to the next player
@@ -367,6 +382,20 @@ public class GameController {
     leaderBoard = new LeaderBoard(players);
   }
 
+  private void setButtonActions() {
+
+    shuffleBtn.setOnMouseClicked(event -> letterBar.shuffle());
+
+    quitGame.setOnMouseClicked(event -> {
+      changeScene("fxml/MainPage.fxml", "css/mainMenu.css", event);
+    });
+
+    okBtn.setOnMouseClicked(event -> {
+      api.endMove();
+    });
+
+  }
+
   /**
    * The FXML loader will call the initialize() method after the loading of the FXML document is
    * complete. Initializes both grid cells and proposed letters.
@@ -380,7 +409,9 @@ public class GameController {
 
     letterBar = new LetterBar(this);
 
-    shuffleBtn.setOnMouseClicked(event -> letterBar.shuffle());
+    initPlayers();
+
+    initApi();
 
     // Binding GridPane Wrapper's Height to be always equal to its Width
     gridWrapper.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -392,21 +423,10 @@ public class GameController {
       gridWrapper.setMaxWidth(newValue.doubleValue());
     });
 
-//    gridPaneUI.heightProperty().addListener((observable, oldValue, newValue) -> {
-//      sideBar.setMaxHeight(newValue.doubleValue());
-//    });
-
     sideBar.maxHeightProperty().bind(mainBlock.heightProperty());
 
-    quitGame.setOnMouseClicked(event -> {
-      changeScene("fxml/MainPage.fxml", "css/mainMenu.css", event);
-    });
+    setButtonActions();
 
-    okBtn.setOnMouseClicked(event -> grid.verifyWordsValidity());
-
-    initPlayers();
-
-    initApi();
     api.startMove();
 
   }
