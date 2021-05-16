@@ -13,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,6 +22,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
@@ -30,7 +32,7 @@ import scrabble.dbhandler.Database;
  * scrabble.CreateProfileController to manage profile creation
  * 
  * @author skeskinc
- * @author ekstamy
+ * @author ekasmamy
  */
 public class CreateProfileController {
 
@@ -56,6 +58,9 @@ public class CreateProfileController {
   public FlowPane avatarsBlock;
 
   @FXML
+  public Label errorLabel;
+
+  @FXML
   public int imageindex;
 
   /**
@@ -64,7 +69,7 @@ public class CreateProfileController {
    * @param resource URL-Resource to another scene
    * @param style given style-sheet for next scene
    * @param event Handling MouseEvent
-   * @author ekstamy
+   * @author ekasmamy
    */
   public void changeScene(String resource, String style, Event event) {
     try {
@@ -106,6 +111,7 @@ public class CreateProfileController {
    */
   @FXML
   private void initialize() {
+    // Loading all images which are available for profile creation
     ImageView im =
         new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/male.png")));
     im.setFitHeight(50);
@@ -138,8 +144,20 @@ public class CreateProfileController {
           && this.imageindex <= 3) {
         Database.fillTables(id, name, this.imageindex);
         changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
+      } else if (DBInformation.containsName(name)) {
+        nameField.setStyle("-fx-border-color: red;");
+        errorLabel.setText("Name is already taken!");
+      } else if (name.length() > 15) {
+        nameField.setStyle("-fx-border-color: red;");
+        errorLabel.setText("Name should contain less than 15 letters!");
+      } else if (name.isEmpty()) {
+        nameField.setStyle("-fx-border-color: red;");
+        errorLabel.setText("Fill the Textfield!");
+      } else if (imageindex >= 4) {
+        errorLabel.setText("No image chosen!");
       }
     });
+    // Changing border color on click
     for (int i = 0; i < avatarsBlock.getChildren().size(); i++) {
       int avatarId = i;
       avatarsBlock.getChildren().get(i).setOnMouseClicked(event -> {

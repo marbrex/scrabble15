@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import com.jfoenix.controls.JFXButton;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,15 +15,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
-import scrabble.dbhandler.Database;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Profile;
 
@@ -65,6 +61,7 @@ public class ChooseProfileController implements Initializable {
 
   @FXML
   private JFXButton continueButton;
+  
   @FXML
   private List<Label> labels;
 
@@ -72,8 +69,6 @@ public class ChooseProfileController implements Initializable {
   private JFXButton deleteButton;
 
   private List<Circle> circles;
-
-  private static HumanPlayer player;
 
   private List<HumanPlayer> players;
 
@@ -132,51 +127,10 @@ public class ChooseProfileController implements Initializable {
   }
 
   /**
-   * Changing the scene to the Mainmenu
+   * Loading images and handling Button-Events
    * 
-   * @param event Handling ActionEvent
    * @author skeskinc
    */
-  /*
-   * public void changeScene(Event event) { Parent root; try { if (Profile.getPlayer() != null) {
-   * root = FXMLLoader.load(getClass().getResource("fxml/MainPage.fxml")); Button btn = ((Button)
-   * event.getSource()); Stage stage = (Stage) btn.getScene().getWindow(); Scene scene = new
-   * Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-   * scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
-   * stage.setScene(scene); } } catch (IOException e) { // TODO Auto-generated catch block
-   * e.printStackTrace(); } }
-   */
-
-
-  /**
-   * Changing the scene to the Registration Scene
-   * 
-   * @param event Handling ActionEvent
-   * @author skeskinc
-   */
-  /*
-   * public void changeToRegistration(Event event) { Pane newRoot; if (profilesize < 4) { try {
-   * System.out.println(getClass().getResource("fxml/createProfile.fxml")); newRoot =
-   * FXMLLoader.load(getClass().getResource("fxml/createProfile.fxml")); Button btn = ((Button)
-   * event.getSource()); Stage stage = (Stage) btn.getScene().getWindow(); Scene scene = new
-   * Scene(newRoot, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-   * scene.getStylesheets() .add(getClass().getResource("css/createProfile.css").toExternalForm());
-   * stage.setScene(scene); } catch (IOException e) { // TODO Auto-generated catch block
-   * e.printStackTrace(); } }
-   * 
-   * }
-   */
-
-  /*
-   * @FXML public void changeToDelete(Event event) { BorderPane newRoot; if (Profile.getPlayer() !=
-   * null) { try { newRoot = FXMLLoader.load(getClass().getResource("fxml/DeleteScene.fxml"));
-   * Button btn = ((Button) event.getSource()); Stage stage = (Stage) btn.getScene().getWindow();
-   * Scene scene = new Scene(newRoot, this.root.getScene().getWidth(),
-   * this.root.getScene().getHeight()); scene.getStylesheets()
-   * .add(getClass().getResource("css/createProfile.css").toExternalForm()); stage.setScene(scene);
-   * } catch (IOException e) { // TODO Auto-generated catch block e.printStackTrace(); } } }
-   */
-
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
     labels = new ArrayList<Label>();
@@ -205,28 +159,25 @@ public class ChooseProfileController implements Initializable {
     profilesize = DBInformation.getProfileSize();
     Profile.setPlayer(null);
 
+    // Action on Continue-Button
     continueButton.setOnMouseClicked(event -> {
       if (Profile.getPlayer() != null) {
         changeScene("fxml/MainPage.fxml", "css/mainMenu.css", event);
       }
     });
 
+    // Action on Create-Button
     createButton.setOnMouseClicked(event -> {
       if (profilesize < 4) {
         changeScene("fxml/createProfile.fxml", "css/createProfile.css", event);
       }
     });
 
+    // Action on Delete-Button
     deleteButton.setOnMouseClicked(event -> {
       if (Profile.getPlayer() != null) {
         changeScene("fxml/DeleteScene.fxml", "css/createProfile.css", event);
       }
     });
-
-
-
-    // Database.disconnectDB();
-
   }
-
 }
