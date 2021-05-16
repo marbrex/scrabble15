@@ -64,7 +64,7 @@ public class GameHandler extends Thread {
       if (player instanceof LobbyServerProtocol || player instanceof LobbyHostProtocol) {
         this.actual = player;
         player.startMove();
-        this.informOthers(player);
+        this.informOthers();
         this.waitMazimumTime(); // change to approach only by HumanPlayer
         // Here is the action performed after the player informed the server
 
@@ -81,12 +81,12 @@ public class GameHandler extends Thread {
    * @param player Player on the move
    * @author hendiehl
    */
-  private void informOthers(NetworkPlayer player) {
-    for (NetworkPlayer others : this.players) {
-      if (!others.equals(player)) { // inform every other player
-        player.informOther(player.getPlayer());
+  private void informOthers() {
+      for(NetworkPlayer player : this.players) { //go through them
+          if(!player.equals(this.actual)) {
+            player.informOther(this.players.indexOf(actual));
+          }
       }
-    }
   }
 
   /**

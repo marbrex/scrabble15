@@ -1,5 +1,6 @@
 package scrabble.game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import javafx.scene.Cursor;
 import javafx.scene.control.Label;
@@ -18,7 +19,7 @@ import scrabble.GameController;
  *
  * @author Eldar Kasmamytov
  */
-public class LetterTile {
+public class LetterTile implements Serializable {
 
   final GameController controller;
 
