@@ -2,9 +2,15 @@ package scrabble;
 
 import com.google.common.collect.Multiset;
 import com.jfoenix.controls.JFXButton;
+import java.io.BufferedWriter;
 import java.io.Console;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -156,6 +162,8 @@ public class GameController {
 
   public VBox playersBlock;
 
+  String mapContent;
+
   /**
    * Default constructor.
    */
@@ -174,15 +182,16 @@ public class GameController {
    *
    * @param protocol protocol for server communication
    * @param isHost   variable for host detection
-   * @param pathToField path to a specific field multiplier file
+   * @param mapContent content of a specific field multiplier file
    * @param players list of the game members
    * @author hendiehl
    */
-  public GameController(NetworkScreen protocol, boolean isHost, String pathToField, ArrayList<Player> players) {
+  public GameController(NetworkScreen protocol, boolean isHost, String mapContent, ArrayList<Player> players) {
     this.players = players;
     this.roundCounter = 0;
     this.protocol = protocol;
     this.isHost = isHost;
+    this.mapContent = mapContent;
   }
 
   /**
@@ -205,7 +214,26 @@ public class GameController {
 
       @Override
       public void startMove() {
-        // TODO: first need to draw tiles from the bag if it's necessary
+        // Filling the empty slots in the LetterBar if it's the case
+        int freeSlotsCount = letterBar.getCountFreeSlots();
+        if (freeSlotsCount > 0) {
+
+          if (protocol == null) {
+            // Local Game
+
+            letterBar.fillGaps(LetterBag.getInstance().grabRandomTiles(freeSlotsCount));
+            letterBar.display();
+          }
+          else {
+            // Network Game
+
+            // Sending a request to the server, which on his turn will return a response
+            // that will be accessible only in GameController.grabRandomTilesAnswer method
+            Platform.runLater(() -> {
+              protocol.grabRandomTiles(freeSlotsCount);
+            });
+          }
+        }
 
         // enabling every LetterTile
         grid.getTilesInGrid().forEach(tile -> {
@@ -296,6 +324,8 @@ public class GameController {
               shuffleBtn.setMouseTransparent(true);
 
               timer.cancel();
+
+              protocol.sendEndMessage();
             }
           }
         });
@@ -396,6 +426,38 @@ public class GameController {
 
   }
 
+  String saveMultiplierMap(String content) {
+    String home = System.getProperty("user.home");
+    String slash = System.getProperty("file.separator");
+
+    String fileName = "custom-map";
+    String fileExt = ".txt";
+
+    int counter = 1;
+    while (Files.exists(Paths.get(home + slash + ".Scrabble" + slash + (fileName + "-" + counter) + fileExt))) {
+      counter++;
+    }
+
+    String path = home + slash + ".Scrabble" + slash + (fileName + "-" + counter) + fileExt;
+
+    Path p = Paths.get(path);
+
+    try {
+      Path pathToSave = Files.createFile(p);
+      File f = pathToSave.toFile();
+
+      BufferedWriter writer = new BufferedWriter(new FileWriter(f));
+      writer.write(content);
+      writer.close();
+    }
+    catch (Exception error) {
+      System.err.println("Error on saving the custom map into a file");
+      System.err.println("Error code: " + error.getMessage());
+    }
+
+    return path;
+  }
+
   /**
    * The FXML loader will call the initialize() method after the loading of the FXML document is
    * complete. Initializes both grid cells and proposed letters.
@@ -405,11 +467,23 @@ public class GameController {
 
     initDictionary();
 
-    initGrid();
+    if (protocol == null) {
+      // Local Game
+
+      initGrid();
+    }
+    else {
+      // Network Game
+
+      if (mapContent.isEmpty()) {
+        initGrid();
+      } else {
+        String pathToMap = saveMultiplierMap(mapContent);
+        initGrid(pathToMap);
+      }
+    }
 
     letterBar = new LetterBar(this);
-
-    initPlayers();
 
     initApi();
 
@@ -493,7 +567,11 @@ public class GameController {
    * @param tile
    */
   public void grabRandomTilesAnswer(Multiset<Tile> tiles) {
-    // do something with Multiset
+    Platform.runLater(() -> {
+      // updating the LetterBar
+      letterBar.fillGaps(tiles);
+      letterBar.display();
+    });
   }
 
   /**

@@ -1,5 +1,6 @@
 package scrabble.game;
 
+import com.google.common.collect.Multiset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,17 +37,9 @@ public class LetterBar {
    */
   public void initBar() {
 
-    LetterBag bag = LetterBag.getInstance();
+    for (int i = 0; i < size; i++) {
 
-    int i = 0;
-    for (Tile t : bag.grabRandomTiles(size)) {
-      char randLetter = t.letter;
-      int ltrPoints = t.value;
-
-      // Creating a new LetterTile
-      LetterTile tile = new LetterTile(randLetter, ltrPoints, controller.grid.cellSize, controller);
-
-      Slot slot = new Slot(tile, controller);
+      Slot slot = new Slot(controller);
 
       slot.container.setOnDragDropped(event -> {
         // data dropped
@@ -88,8 +81,6 @@ public class LetterBar {
 
       slots[i] = slot;
       controller.lettersBlock.getChildren().add(slots[i].container);
-
-      i++;
     }
 
     display();
@@ -290,6 +281,32 @@ public class LetterBar {
         i++;
         controller.grid.removeSlotContent(tile.slot);
       }
+    }
+  }
+
+  public int getCountFreeSlots() {
+    int counter = 0;
+    for (Slot slot : slots) {
+      if (slot.isFree()) {
+        counter++;
+      }
+    }
+    return counter;
+  }
+
+  public void fillGaps(Multiset<Tile> tileSet) {
+    System.out.println(this + " - @fillGaps()");
+    if (tileSet.size() == getCountFreeSlots()) {
+      Iterator<Slot> emptySlots = getEmptySlots().iterator();
+      for (Tile tile : tileSet) {
+        LetterTile tileToPaste = new LetterTile(tile.letter, tile.value, controller.grid.cellSize, controller);
+        if (emptySlots.hasNext()) {
+          emptySlots.next().setContent(tileToPaste);
+        }
+      }
+    }
+    else {
+      System.err.println("Error while filling the empty slots in the LetterBar");
     }
   }
 }
