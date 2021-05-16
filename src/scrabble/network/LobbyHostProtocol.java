@@ -246,7 +246,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   @Override
   public void startMove() {
     if (this.gameScreen != null) { // be aware of not loading gameScreen
-      // this.gameScreen.startMove();
+      this.gameScreen.api.startMove(); //start Move
     }
 
   }

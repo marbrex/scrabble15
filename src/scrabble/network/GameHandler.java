@@ -60,7 +60,7 @@ public class GameHandler extends Thread {
         break;
       }
       this.checkRunning();
-      System.out.println("GAME HANDLER : Player turn");
+      System.out.println("GAME HANDLER : Player turn : " + player.getPlayer().getName());
       if (player instanceof LobbyServerProtocol || player instanceof LobbyHostProtocol) {
         this.actual = player;
         player.startMove();
