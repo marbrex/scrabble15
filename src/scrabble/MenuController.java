@@ -87,7 +87,7 @@ public class MenuController {
       Stage stage = (Stage) this.hostGameButton.getScene().getWindow();
       stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight())); // before 700, but need of space
       stage.setMinWidth(900);
-      stage.setMinHeight(750);
+      stage.setMinHeight(800);
       stage.setOnHidden(e -> {
         lobbyController.shutdown();
       });

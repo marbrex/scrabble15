@@ -28,6 +28,6 @@ public interface NetworkPlayer {
 
   public void startMove();
 
-  public void endMove();
+  public void informOther(Player player);
 
 }

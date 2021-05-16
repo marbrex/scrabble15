@@ -360,7 +360,7 @@ public class LobbyConfigureController {
    * @author hendiehl
    */
   private boolean checkAcceptance(String txt) {
-    String[] rows = txt.split("\n");
+    String[] rows = txt.split(this.seperator); //before \n
     System.out.println("CONFIGURE : File length : " + rows.length);
     if (rows.length == 15) {
       System.out.println("CONFIGURE : Accepted length");

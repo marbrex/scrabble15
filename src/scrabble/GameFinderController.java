@@ -326,7 +326,7 @@ public class GameFinderController implements LobbyController {
         Stage stage = (Stage) this.joinBtn.getScene().getWindow();
         stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
         stage.setMinWidth(900);
-        stage.setMinHeight(750);
+        stage.setMinHeight(800);
         stage.setOnHidden(e -> {
           lobbyController.shutdown();
         });

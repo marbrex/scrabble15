@@ -21,11 +21,6 @@ public class LobbyAiProtocol implements NetworkPlayer {
 
   }
 
-  @Override
-  public void endMove() {
-
-  }
-
   // --------------------------------------------------------------------------
   // LobbyAiProtocol is a filler for missing HumanPlayer so the network Messages are not needed
   @Override
@@ -57,5 +52,11 @@ public class LobbyAiProtocol implements NetworkPlayer {
   @Override
   public void sendGameMessage(ArrayList<Player> players) {
     // Not in use because of Non-Network communication
+  }
+
+  @Override
+  public void informOther(Player player) {
+    // TODO Auto-generated method stub
+    
   }
 }

@@ -205,11 +205,11 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case MOVE:
           this.reactToMove(message);
           break;
-        case END:
-          this.reactToEnd(message);
-          break;
         case BAG:
           this.reactToBag(message);
+          break;
+        case OTHER:
+          this.reactToOther(message);
           break;
       }
     } catch (EOFException e) {
@@ -225,6 +225,13 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+  /**
+   * Message to inform a client that a other player is o0n the move
+   * @param message
+   */
+  private void reactToOther(Message message) {
+    
   }
 
   /**
@@ -282,20 +289,6 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to react to an incoming end Message which inform the player that his move ended
-   * 
-   * @param message End message
-   * @author hendiehl
-   */
-  private void reactToEnd(Message message) {
-    System.out.println("CLIENT PROTOCOL : End-Message received");
-    if (this.gameScreen != null) {
-      // this.gameScreen.endMove();
-    }
-
-  }
-
-  /**
    * Method to react to an incoming Move message which inform the player that he is on move
    * 
    * @param message Move message
@@ -303,9 +296,8 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   private void reactToMove(Message message) {
     System.out.println("CLIENT PROTOCOL : Move-Message received");
-    if (this.gameScreen != null) { // Perhaps the screen isn't loaded
-      System.err.println("Game Screen not null");
-      // this.gameScreen.startMove();
+    if (this.gameScreen != null) { // Perhaps the screen isn't loaded, because JavaFX loading time (no control about that)
+      this.gameScreen.api.startMove(); //start Move
     }
 
   }

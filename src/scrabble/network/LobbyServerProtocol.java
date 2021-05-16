@@ -477,19 +477,20 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Message to inform a player that his move has ended
+   * Method to show the player on the move if the actual player isn't on the move
+   * 
+   * @param player on the move others than the actual player himself
+   * @author hendiehl
    */
   @Override
-  public void endMove() {
+  public void informOther(Player player) {
     try {
-      Message msg = new Message(MessageType.END, this.player);
+      Message msg = new Message(MessageType.OTHER, player);
       this.out.writeObject(msg);
       this.out.flush();
-      System.out.println("SERVER PROTOCOL : End-Message sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
   }
 }

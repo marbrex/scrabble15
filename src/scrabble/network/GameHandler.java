@@ -15,11 +15,12 @@ public class GameHandler extends Thread {
   private ArrayList<NetworkPlayer> players;
   /** counter for turns without action */
   private int actionlessMove;
-  /** Int representation of ten minutes*/
-  //private static final int tenMin = 600000; //not in use anymore
+  /** Int representation of ten minutes */
+  // private static final int tenMin = 600000; //not in use anymore
   /** actual player which is on Move */
   private NetworkPlayer actual;
-  //should i control a specific notify call ?
+
+  // should i control a specific notify call ?
   /**
    * Constructor for the GameHandler which setting the corresponding GameInformationController
    * 
@@ -55,7 +56,7 @@ public class GameHandler extends Thread {
    */
   private void makeATurn() {
     for (NetworkPlayer player : this.players) {
-      if(!this.gameIsOn) {
+      if (!this.gameIsOn) {
         break;
       }
       this.checkRunning();
@@ -63,20 +64,36 @@ public class GameHandler extends Thread {
       if (player instanceof LobbyServerProtocol || player instanceof LobbyHostProtocol) {
         this.actual = player;
         player.startMove();
+        this.informOthers(player);
         this.waitMazimumTime(); // change to approach only by HumanPlayer
-        //Here is the action performed after the player informed the server
-   
+        // Here is the action performed after the player informed the server
+
       } else {
         // AI calculating
       }
     }
 
   }
+
+  /**
+   * Method to inform other players that a player is on the move
+   * 
+   * @param player Player on the move
+   * @author hendiehl
+   */
+  private void informOthers(NetworkPlayer player) {
+    for (NetworkPlayer others : this.players) {
+      if (!others.equals(player)) { // inform every other player
+        player.informOther(player.getPlayer());
+      }
+    }
+  }
+
   /**
    * method to break the loop if the game should stop
    */
   private void checkRunning() {
-   //check specific game ending tasks;
+    // check specific game ending tasks;
   }
 
   /**
@@ -84,7 +101,7 @@ public class GameHandler extends Thread {
    */
   private void getMoveInfo() {
     // TODO Auto-generated method stub
-    
+
   }
 
   /**
@@ -94,7 +111,7 @@ public class GameHandler extends Thread {
   private synchronized void waitMazimumTime() { // here a illegal monitor state exception occurs
     System.out.println("GAME HANDLER : Wait move time");
     try {
-      this.wait(); // wait until player inform server 
+      this.wait(); // wait until player inform server
     } catch (InterruptedException e) {
       // Doing something change to a other approach different message for endTurn and forceEndTurn
     }
@@ -105,7 +122,7 @@ public class GameHandler extends Thread {
    */
   public synchronized void endMoveForTime() {
     System.out.println("GAME HANDLER : End move in time");
-    //Perhaps here adding the move information because they should be ready
+    // Perhaps here adding the move information because they should be ready
     this.notify();
   }
 

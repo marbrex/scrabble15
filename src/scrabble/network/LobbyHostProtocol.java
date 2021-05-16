@@ -252,20 +252,6 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to signal a player that his game move ended. Will call the GameController to disable
-   * game controls.
-   * 
-   * @author hendiehl
-   */
-  @Override
-  public void endMove() {
-    if (this.gameScreen != null) {
-      // this.gameScreen.endMove();
-    }
-
-  }
-
-  /**
    * Method to set the GameController to the LobbyHostProtocol after the lobby will be leaved and
    * the GameScreen entered
    * 
@@ -426,5 +412,16 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     int i = this.gameInfoController.getAmount();
     // callback
     this.gameScreen.getAmountAnswer(i);
+  }
+
+  /**
+   * Method to show the player on the move if the actual player isn't on the move
+   * 
+   * @param player on the move others than the actual player himself
+   * @author hendiehl
+   */
+  @Override
+  public void informOther(Player player) {
+
   }
 }
