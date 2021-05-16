@@ -116,7 +116,7 @@ public class GameLobbyController implements LobbyController {
   /** interface to send/print Message, a HostProtocol or an LobbyClientProtocol */
   private NetworkScreen chatUser;
   /** String path to an user specific game field option of multiplier, standard is empty */
-  private String pathToField = "";
+  private String contentOfField = "";
 
   /**
    * Constructor which specify the rights for specific actions with an boolean condition. If the
@@ -179,7 +179,8 @@ public class GameLobbyController implements LobbyController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Menu.fxml"));
         Parent root = loader.load();
         Stage stage = (Stage) this.backButton.getScene().getWindow();
-        stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
+        stage.setScene(
+            new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -212,8 +213,8 @@ public class GameLobbyController implements LobbyController {
    * @return path string to the file or an empty String
    * @author hendiehl
    */
-  public String getPathToFile() {
-    return this.pathToField;
+  public String getContentOfFile() {
+    return this.contentOfField;
   }
 
   /**
@@ -221,8 +222,12 @@ public class GameLobbyController implements LobbyController {
    * 
    * @param path path to an specific file
    */
-  public void setPathToFile(String path) {
-    this.pathToField = path;
+  public void setContentOfFile(String path, boolean hostChange) {
+    if (hostChange) {
+      this.host.setFieldMessage(path);
+    } else {
+      this.contentOfField = path;
+    }
   }
 
   /**
@@ -621,6 +626,14 @@ public class GameLobbyController implements LobbyController {
     // TODO Auto-generated method stub
     this.startTimer();
     this.initializeSequencepositions();
+    if (this.configureButton.isVisible()) {
+      this.configureButton.setDisable(true);
+      this.configureButton.setVisible(false);
+    }
+    if (this.startButton.isVisible()) {
+      this.startButton.setDisable(true);
+      this.startButton.setVisible(false);
+    }
   }
 
   /**
@@ -677,12 +690,12 @@ public class GameLobbyController implements LobbyController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/interface.fxml"));
         if (this.host != null) {
           loader.setControllerFactory(c -> {
-            return new GameController(this.host, this.isHost, this.pathToField,
+            return new GameController(this.host, this.isHost, this.contentOfField,
                 this.host.getPlayerList());
           });
         } else {
           loader.setControllerFactory(c -> {
-            return new GameController(this.client, this.isHost, this.pathToField,
+            return new GameController(this.client, this.isHost, this.contentOfField,
                 this.client.getPlayerList());
           });
         }
@@ -694,7 +707,8 @@ public class GameLobbyController implements LobbyController {
           this.client.setGameScreen(gameScreen);
         }
         Stage stage = (Stage) this.backButton.getScene().getWindow();
-        Scene scene = new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
+        Scene scene =
+            new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
         scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
         stage.setScene(scene);
       } catch (IOException e) {

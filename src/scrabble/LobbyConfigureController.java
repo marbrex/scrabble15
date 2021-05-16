@@ -75,7 +75,7 @@ public class LobbyConfigureController {
     this.server = server;
     this.seperator = System.lineSeparator();
     this.corresponding = corresponding;
-    this.multiplierFile = corresponding.getPathToFile();
+    this.multiplierFile = corresponding.getContentOfFile();
   }
 
   /**
@@ -109,7 +109,7 @@ public class LobbyConfigureController {
     } else {
       this.multiplier.setSelected(true);
     }
-    this.updatePathLabel(this.multiplierFile);
+    //this.updatePathLabel(this.multiplierFile);
     // Also add a warning if the Running thread is 0 => Problem
   }
 
@@ -331,11 +331,12 @@ public class LobbyConfigureController {
         String txt = this.getFileString(file);
         if (this.checkAcceptance(txt)) { // file accepted
           System.out.println("CONFIGURE : File accepted");
-          this.corresponding.setPathToFile(file.getAbsolutePath());
+          this.corresponding.setContentOfFile(txt, true);
+          System.out.println("CONFIGURE : Content of file : " + this.seperator + this.corresponding.getContentOfFile());
           this.multiplierLabel
               .setText("The File was accepted " + this.seperator + "and set up for the game");
-          System.out.println("CONFIGURE : Path to file : " + this.multiplierFile);
-          this.updatePathLabel(this.corresponding.getPathToFile());
+          System.out.println("CONFIGURE : Path to file : " + file.getAbsolutePath());
+          this.updatePathLabel(file.getAbsolutePath());
         } else {
           this.multiplierLabel.setText("The File was not accepted");
           this.multiplier.setSelected(false);
@@ -345,9 +346,10 @@ public class LobbyConfigureController {
         this.multiplier.setSelected(false);
       }
     } else {
-      this.corresponding.setPathToFile("");
+      this.corresponding.setContentOfFile("", true);
+      System.out.println("CONFIGURE : Content of file : " + this.seperator + this.corresponding.getContentOfFile());
       this.multiplierLabel.setText("The standard points will be used");
-      this.updatePathLabel(this.corresponding.getPathToFile());
+      this.updatePathLabel(this.corresponding.getContentOfFile());
     }
   }
 

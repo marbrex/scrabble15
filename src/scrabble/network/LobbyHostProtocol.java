@@ -246,7 +246,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   @Override
   public void startMove() {
     if (this.gameScreen != null) { // be aware of not loading gameScreen
-      this.gameScreen.api.startMove(); //start Move
+      this.gameScreen.api.startMove(); // start Move
     }
 
   }
@@ -421,7 +421,35 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * @author hendiehl
    */
   @Override
-  public void informOther(Player player) {
+  public void informOther(int i) {
+    System.out.println("HOST PROTOCOL : Other-Message received");
+    if (this.gameScreen != null) {
+      this.gameScreen.otherPlayerOnMove(i);
+    }
+  }
 
+  /**
+   * Method to set the own multiplier file for the game field and start to send it to all members
+   * 
+   * @param path content of the chosen multiplier file in the configure screen
+   * @author hendiehl
+   */
+  public void setFieldMessage(String path) {
+    System.out.println("HOST : Set own multiplier");
+    this.gameInfoController.setMultiplier(path);
+  }
+
+  /**
+   * Method to set the of an chosen multiplier file for future use in the game field
+   * 
+   * @param content of an multiplier file
+   * @author hendiehl
+   */
+  @Override
+  public void sendFieldMessage(String path) {
+    System.out.println("Host : Muliplier file content received");
+    if (this.gameLobby != null) {
+      this.gameLobby.setContentOfFile(path, false);
+    }
   }
 }

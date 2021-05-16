@@ -591,4 +591,10 @@ public class GameController {
   public void getAmountAnswer(int amount) {
     // do something with amount
   }
+  
+//testing 
+  public void otherPlayerOnMove(int i) {
+    System.err.println("Inform received");
+    System.err.println("On move : " + this.players.get(i).getName());
+  }
 }

@@ -8,6 +8,7 @@ import scrabble.game.LetterBag.Tile;
 import scrabble.game.LetterBag;
 import scrabble.network.GameHandler;
 import scrabble.network.LobbyAiProtocol;
+import scrabble.network.LobbyHostProtocol;
 import scrabble.network.LobbyServer;
 import scrabble.network.LobbyServerProtocol;
 import scrabble.network.NetworkPlayer;
@@ -27,6 +28,7 @@ public class GameInformationController {
   private HashMap<NetworkPlayer, Boolean> check;
   private GameHandler gameHandler;// responsible for move organization
   private LetterBag bag;
+  private String multiplierContent = ""; // own chosen multiplier field
 
   /**
    * Constructor which initialize the class and set up important help classes.
@@ -441,5 +443,29 @@ public class GameInformationController {
    */
   public int getAmount() {
     return this.bag.getAmount();
+  }
+
+  /**
+   * Method to set the content of an multiplier file and send it to all members of the Lobby
+   * 
+   * @param path content of an file chosen by the host
+   * @author hendiehl
+   */
+  public synchronized void sendFieldMessage() {
+    System.out.println("GAME INFO : Send multiplier content to players");
+    for (NetworkPlayer player : this.players) {
+      player.sendFieldMessage(this.multiplierContent);
+    }
+  }
+
+  /**
+   * Method to set the content of an multiplier file chosen by host Will send it to all Player after
+   * the game started
+   * 
+   * @param path content of the chosen file
+   */
+  public synchronized void setMultiplier(String path) {
+    System.out.println("GAME INFO : Set multiplier content");
+    this.multiplierContent = path;
   }
 }

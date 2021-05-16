@@ -28,6 +28,8 @@ public interface NetworkPlayer {
 
   public void startMove();
 
-  public void informOther(Player player);
+  public void informOther(int i);
+
+  public void sendFieldMessage(String path);
 
 }

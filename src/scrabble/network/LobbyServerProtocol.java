@@ -120,6 +120,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * @author hendiehl
    */
   private void reactToBag(Message message) {
+    System.out.println("SERVER PROTOCOL : Bag-Message received");
     LetterBagMessage msg = (LetterBagMessage) message;
     LetterMultisetReturnMessage answer;
     Multiset<Tile> tiles;
@@ -185,6 +186,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     try {
       this.out.writeObject(msg);
       this.out.flush();
+      System.out.println("SERVER PROTOCOL : LMR-Message sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -477,17 +479,37 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to show the player on the move if the actual player isn't on the move
+   * Method inform the players which player is actually on move if they are not self on the move
    * 
    * @param player on the move others than the actual player himself
    * @author hendiehl
    */
   @Override
-  public void informOther(Player player) {
+  public void informOther(int i) {
     try {
-      Message msg = new Message(MessageType.OTHER, player);
+      OtherMessage msg = new OtherMessage(MessageType.OTHER, this.player, i);
       this.out.writeObject(msg);
       this.out.flush();
+      System.out.println("SERVER PROTOCOL : Other-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to send the chosen content of an multiplier file to the players
+   * 
+   * @param path content of the file chosen by the host
+   * @author hendiehl
+   */
+  @Override
+  public void sendFieldMessage(String path) {
+    try {
+      FieldMessage msg = new FieldMessage(MessageType.FIELD, this.player, path);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : Field-Message sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

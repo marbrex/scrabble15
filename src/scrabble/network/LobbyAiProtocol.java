@@ -55,8 +55,14 @@ public class LobbyAiProtocol implements NetworkPlayer {
   }
 
   @Override
-  public void informOther(Player player) {
+  public void informOther(int i) {
     // TODO Auto-generated method stub
-    
+
+  }
+
+  @Override
+  public void sendFieldMessage(String path) {
+    // TODO Auto-generated method stub
+
   }
 }

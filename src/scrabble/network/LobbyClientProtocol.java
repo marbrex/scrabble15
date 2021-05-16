@@ -211,6 +211,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case OTHER:
           this.reactToOther(message);
           break;
+        case FIELD:
+          this.reactToField(message);
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -226,12 +229,36 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
       e.printStackTrace();
     }
   }
+
   /**
-   * Message to inform a client that a other player is o0n the move
+   * Method to react to an incoming Field Message in order to set the content of an file the host
+   * chose for the multiplier of the game Field
+   * 
+   * @param message FieldMessage
+   * @author hendiehl
+   */
+  private void reactToField(Message message) {
+    System.out.println("CLIENT PROTOCOL : Field-Message received");
+    FieldMessage msg = (FieldMessage) message;
+    if (this.gameLobbyController != null) {
+      this.gameLobbyController.setContentOfFile(msg.getContent(), false);
+    }
+  }
+
+  /**
+   * Message to inform a client that a other player is on the move Will be received by all players
+   * who are not actual on move.
+   * 
    * @param message
+   * @author hendiehl
    */
   private void reactToOther(Message message) {
-    
+    System.out.println("CLIENT PROTOCOL : Other-Message received");
+    OtherMessage msg = (OtherMessage) message;
+    int i = msg.getI();
+    if (this.gameScreen != null) {
+      this.gameScreen.otherPlayerOnMove(i);
+    }
   }
 
   /**
@@ -242,6 +269,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @author hendiehl
    */
   private void reactToBag(Message message) {
+    System.out.println("CLIENT PROTOCOL : Bag-Message received");
     LetterMultisetReturnMessage msg = (LetterMultisetReturnMessage) message;
     Multiset<Tile> tiles;
     switch (msg.getType2()) {
@@ -296,8 +324,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   private void reactToMove(Message message) {
     System.out.println("CLIENT PROTOCOL : Move-Message received");
-    if (this.gameScreen != null) { // Perhaps the screen isn't loaded, because JavaFX loading time (no control about that)
-      this.gameScreen.api.startMove(); //start Move
+    if (this.gameScreen != null) { // Perhaps the screen isn't loaded, because JavaFX loading time
+                                   // (no control about that)
+      this.gameScreen.api.startMove(); // start Move
     }
 
   }
