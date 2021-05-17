@@ -743,7 +743,9 @@ public class Grid {
 
         word.getLetter(l).slot.container.setEffect(null);
         word.getLetter(l).slot.container.setMouseTransparent(true);
+        word.getLetter(l).slot.isFrozen = true;
         word.getLetter(l).container.setMouseTransparent(true);
+        word.getLetter(l).isFrozen = true;
       }
 
       word.frozen = true;

@@ -162,6 +162,10 @@ public class GameController {
   @FXML
   public Label roundLabel;
 
+  public boolean letterDrag = false;
+
+  public int minViewOrder = 0;
+
   /**
    * Default constructor.
    */
@@ -236,11 +240,13 @@ public class GameController {
           // enabling every LetterTile in Grid
           grid.getTilesInGrid().forEach(tile -> {
             tile.setMouseTransparent(false);
+            tile.isFrozen = false;
           });
 
           // enabling every LetterTile in Bar
           letterBar.getTilesInBar().forEach(tile -> {
             tile.setMouseTransparent(false);
+            tile.isFrozen = false;
           });
 
           // enabling every action button
@@ -262,6 +268,7 @@ public class GameController {
                 // disabling every LetterTile in bar
                 letterBar.getTilesInBar().forEach(tile -> {
                   tile.setMouseTransparent(true);
+                  tile.isFrozen = true;
                 });
 
               });
@@ -327,6 +334,7 @@ public class GameController {
             // disabling every LetterTile in bar
             letterBar.getTilesInBar().forEach(tile -> {
               tile.setMouseTransparent(true);
+              tile.isFrozen = true;
             });
 
             // disabling every action button

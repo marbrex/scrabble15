@@ -41,43 +41,43 @@ public class LetterBar {
 
       Slot slot = new Slot(controller);
 
-      slot.container.setOnDragDropped(event -> {
-        // data dropped
-        // System.out.println("onDragDropped");
-
-        // if there is a string data on dragboard, read it and use it
-        Dragboard db = event.getDragboard();
-        boolean success = false;
-        if (db.hasString()) {
-
-          Map<String, String> params = new HashMap<>();
-          String paramsString = db.getString();
-          String[] pairs = paramsString.split("&");
-          for (String p : pairs) {
-            String[] pair = p.split("=");
-            params.put(pair[0], pair[1]);
-          }
-
-          LetterTile ltrTile;
-          if (Boolean.parseBoolean(params.get("isBlank"))) {
-            ltrTile = new LetterTile(controller);
-            ltrTile.isBlank = true;
-          } else {
-            char letter = params.get("letter").charAt(0);
-            int points = Integer.parseInt(params.get("points"));
-            ltrTile = new LetterTile(letter, points, controller.grid.cellSize, controller);
-            ltrTile.isBlank = false;
-          }
-          slot.setContent(ltrTile);
-
-          success = true;
-        }
-        /* let the source know whether the string was successfully
-         * transferred and used */
-        event.setDropCompleted(success);
-
-        event.consume();
-      });
+//      slot.container.setOnDragDropped(event -> {
+//        // data dropped
+//        // System.out.println("onDragDropped");
+//
+//        // if there is a string data on dragboard, read it and use it
+//        Dragboard db = event.getDragboard();
+//        boolean success = false;
+//        if (db.hasString()) {
+//
+//          Map<String, String> params = new HashMap<>();
+//          String paramsString = db.getString();
+//          String[] pairs = paramsString.split("&");
+//          for (String p : pairs) {
+//            String[] pair = p.split("=");
+//            params.put(pair[0], pair[1]);
+//          }
+//
+//          LetterTile ltrTile;
+//          if (Boolean.parseBoolean(params.get("isBlank"))) {
+//            ltrTile = new LetterTile(controller);
+//            ltrTile.isBlank = true;
+//          } else {
+//            char letter = params.get("letter").charAt(0);
+//            int points = Integer.parseInt(params.get("points"));
+//            ltrTile = new LetterTile(letter, points, controller.grid.cellSize, controller);
+//            ltrTile.isBlank = false;
+//          }
+//          slot.setContent(ltrTile);
+//
+//          success = true;
+//        }
+//        /* let the source know whether the string was successfully
+//         * transferred and used */
+//        event.setDropCompleted(success);
+//
+//        event.consume();
+//      });
 
       slots[i] = slot;
       controller.lettersBlock.getChildren().add(slots[i].container);
@@ -273,7 +273,7 @@ public class LetterBar {
     ArrayList<Slot> emptySlots = getEmptySlots();
     int i = 0;
     for (LetterTile tile : controller.grid.getTilesInGrid()) {
-      if (!tile.container.isMouseTransparent()) {
+      if (!tile.isFrozen) {
         System.out.println("@LetterBar - putTilesBackToBar() - " + emptySlots.get(i));
         LetterTile t = new LetterTile(tile.getLetter(), tile.getPoints(), controller.grid.cellSize,
             controller);
@@ -299,14 +299,18 @@ public class LetterBar {
     if (tileSet.size() == getCountFreeSlots()) {
       Iterator<Slot> emptySlots = getEmptySlots().iterator();
       for (Tile tile : tileSet) {
-        LetterTile tileToPaste = new LetterTile(tile.letter, tile.value, controller.grid.cellSize, controller);
+        LetterTile tileToPaste = new LetterTile(tile.letter, tile.value, controller.grid.cellSize,
+            controller);
         if (emptySlots.hasNext()) {
           emptySlots.next().setContent(tileToPaste);
         }
       }
-    }
-    else {
+    } else {
       System.err.println("Error while filling the empty slots in the LetterBar");
     }
+  }
+
+  public int getSize() {
+    return size;
   }
 }
