@@ -154,41 +154,47 @@ public class GameController {
 
   public NetworkGame api;
 
+  @FXML
   public Label timerLabel;
 
   public Timer timer;
 
   public final int roundTime = 1;
 
+  @FXML
   public VBox playersBlock;
 
   String mapContent;
+
+  @FXML
+  public Label roundLabel;
 
   /**
    * Default constructor.
    */
   public GameController() {
-    roundCounter = 0;
+    roundCounter = 1;
     bag = LetterBag.getInstance();
   }
 
   public GameController(LetterBag bag) {
-    roundCounter = 0;
+    roundCounter = 1;
     this.bag = bag;
   }
 
   /**
    * Constructor for Network games
    *
-   * @param protocol protocol for server communication
-   * @param isHost   variable for host detection
+   * @param protocol   protocol for server communication
+   * @param isHost     variable for host detection
    * @param mapContent content of a specific field multiplier file
-   * @param players list of the game members
+   * @param players    list of the game members
    * @author hendiehl
    */
-  public GameController(NetworkScreen protocol, boolean isHost, String mapContent, ArrayList<Player> players) {
+  public GameController(NetworkScreen protocol, boolean isHost, String mapContent,
+      ArrayList<Player> players) {
     this.players = players;
-    this.roundCounter = 0;
+    this.roundCounter = 1;
     this.protocol = protocol;
     this.isHost = isHost;
     this.mapContent = mapContent;
@@ -214,6 +220,7 @@ public class GameController {
 
       @Override
       public void startMove() {
+
         // Filling the empty slots in the LetterBar if it's the case
         int freeSlotsCount = letterBar.getCountFreeSlots();
         if (freeSlotsCount > 0) {
@@ -223,8 +230,7 @@ public class GameController {
 
             letterBar.fillGaps(LetterBag.getInstance().grabRandomTiles(freeSlotsCount));
             letterBar.display();
-          }
-          else {
+          } else {
             // Network Game
 
             // Sending a request to the server, which on his turn will return a response
@@ -235,16 +241,18 @@ public class GameController {
           }
         }
 
-        // enabling every LetterTile
-        grid.getTilesInGrid().forEach(tile -> {
-          tile.setMouseTransparent(false);
+        Platform.runLater(() -> {
+          // enabling every LetterTile
+          grid.getTilesInGrid().forEach(tile -> {
+            tile.setMouseTransparent(false);
+          });
+          letterBar.getTilesInBar().forEach(tile -> {
+            tile.setMouseTransparent(false);
+          });
+          // enabling every action button
+          okBtn.setMouseTransparent(false);
+          shuffleBtn.setMouseTransparent(false);
         });
-        letterBar.getTilesInBar().forEach(tile -> {
-          tile.setMouseTransparent(false);
-        });
-        // enabling every action button
-        okBtn.setMouseTransparent(false);
-        shuffleBtn.setMouseTransparent(false);
 
         // starting the timer (10 minutes for each turn)
         timer = new Timer();
@@ -252,13 +260,15 @@ public class GameController {
           @Override
           public void run() {
 
-            System.out.println("Time is over - moving tiles in grid back to bar..");
-            // moving all tiles in grid back to bar
-            letterBar.putTilesBackToBar();
+            Platform.runLater(() -> {
+              System.out.println("Time is over - moving tiles in grid back to bar..");
+              // moving all tiles in grid back to bar
+              letterBar.putTilesBackToBar();
 
-            // disabling every LetterTile in bar
-            letterBar.getTilesInBar().forEach(tile -> {
-              tile.setMouseTransparent(true);
+              // disabling every LetterTile in bar
+              letterBar.getTilesInBar().forEach(tile -> {
+                tile.setMouseTransparent(true);
+              });
             });
 
             // ending the current player's move after the end of the timer
@@ -268,7 +278,7 @@ public class GameController {
         timer.schedule(task, 1000 * 60 * roundTime);
 
         // Every second the Label will decrement
-        timerLabel.setText(roundTime + ":00");
+        Platform.runLater(() -> timerLabel.setText(roundTime + ":00"));
         TimerTask updateLabel = new TimerTask() {
           @Override
           public void run() {
@@ -325,7 +335,10 @@ public class GameController {
 
               timer.cancel();
 
-              protocol.sendEndMessage();
+              if (protocol != null) {
+                // Network Game
+                protocol.sendEndMessage();
+              }
             }
           }
         });
@@ -434,7 +447,8 @@ public class GameController {
     String fileExt = ".txt";
 
     int counter = 1;
-    while (Files.exists(Paths.get(home + slash + ".Scrabble" + slash + (fileName + "-" + counter) + fileExt))) {
+    while (Files.exists(
+        Paths.get(home + slash + ".Scrabble" + slash + (fileName + "-" + counter) + fileExt))) {
       counter++;
     }
 
@@ -449,8 +463,7 @@ public class GameController {
       BufferedWriter writer = new BufferedWriter(new FileWriter(f));
       writer.write(content);
       writer.close();
-    }
-    catch (Exception error) {
+    } catch (Exception error) {
       System.err.println("Error on saving the custom map into a file");
       System.err.println("Error code: " + error.getMessage());
     }
@@ -471,13 +484,14 @@ public class GameController {
       // Local Game
 
       initGrid();
-    }
-    else {
+    } else {
       // Network Game
 
       if (mapContent.isEmpty()) {
+        // if map content transferred by the lobby is empty => use default map
         initGrid();
       } else {
+        // use the map transferred by the lobby
         String pathToMap = saveMultiplierMap(mapContent);
         initGrid(pathToMap);
       }
@@ -501,24 +515,27 @@ public class GameController {
 
     setButtonActions();
 
-    api.startMove();
+    if (protocol == null) {
+      api.startMove();
+    }
 
   }
-  
+
   /*
    * The following methods will be automatically called from the protocol after LetterBag methods
    * will be called on the protocol for network use. They will provide the answer from the actual
    * global LetterBag instance
-   * 
-   * 
+   *
+   *
    * WARNING !!!!!!!!!!!!!!!!!!!!!!!!! If any of the following methods should change something on
    * the screen, like changing the text of a label or any other thing, the action have to be in the
    * body of a : Platform.runLater(() -> {do it}); because only controller threads can change JavaFx
    * objects, but these methods will be called by the protocol
    */
+
   /**
    * Provider method of the grabRandomTile method of LetterBag
-   * 
+   *
    * @param tile
    */
   public void grabRandomTileAnswer(Tile tile) {
@@ -527,8 +544,8 @@ public class GameController {
 
   /**
    * Provider method of the getValueOf method of LetterBag
-   * 
-   * @param tile
+   *
+   * @param value
    */
   public void getValueOfAnswer(int value) {
     // do something with value
@@ -536,8 +553,8 @@ public class GameController {
 
   /**
    * Provider method of the getRemainingVowels method of LetterBag
-   * 
-   * @param tile
+   *
+   * @param tiles
    */
   public void getRemainingVowelsAnswer(Multiset<Tile> tiles) {
     // do something with Multiset
@@ -545,8 +562,8 @@ public class GameController {
 
   /**
    * Provider method of the getRemainingConsonants method of LetterBag
-   * 
-   * @param tile
+   *
+   * @param tiles
    */
   public void getRemainingConsonantsAnswer(Multiset<Tile> tiles) {
     // do something with Multiset
@@ -554,8 +571,8 @@ public class GameController {
 
   /**
    * Provider method of the getRemainingBlanks method of LetterBag
-   * 
-   * @param tile
+   *
+   * @param tiles
    */
   public void getRemainingBlanksAnswer(Multiset<Tile> tiles) {
     // do something with Multiset
@@ -563,8 +580,8 @@ public class GameController {
 
   /**
    * Provider method of the grabRandomTiles method of LetterBag
-   * 
-   * @param tile
+   *
+   * @param tiles
    */
   public void grabRandomTilesAnswer(Multiset<Tile> tiles) {
     Platform.runLater(() -> {
@@ -576,8 +593,8 @@ public class GameController {
 
   /**
    * Provider method of the getRemainingTiles method of LetterBag
-   * 
-   * @param tile
+   *
+   * @param tiles
    */
   public void getRemainingTilesAnswer(Multiset<Tile> tiles) {
     // do something with Multiset
@@ -585,14 +602,14 @@ public class GameController {
 
   /**
    * Provider method of the getAmount method of LetterBag
-   * 
-   * @param tile
+   *
+   * @param amount
    */
   public void getAmountAnswer(int amount) {
     // do something with amount
   }
-  
-//testing 
+
+  //testing
   public void otherPlayerOnMove(int i) {
     System.err.println("Inform received");
     System.err.println("On move : " + this.players.get(i).getName());

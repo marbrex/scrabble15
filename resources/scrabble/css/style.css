@@ -16,6 +16,14 @@
   /*-fx-border-color: gray;*/
 }
 
+#round-counter {
+  -fx-border-width: 1px;
+  -fx-border-color: black;
+  -fx-border-radius: 50%;
+  -fx-padding: 0 5px;
+  -fx-font-weight: bold;
+}
+
 #exit-btn {
   -fx-border-color: black;
   -fx-background-color: crimson;

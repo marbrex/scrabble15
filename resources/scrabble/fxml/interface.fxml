@@ -74,15 +74,8 @@
         <BorderPane id="side-panel" fx:id="sideBar" minWidth="200.0">
           <top>
             <BorderPane BorderPane.alignment="CENTER">
-              <left>
-                <Label id="time" fx:id="timerLabel" text="12:34" BorderPane.alignment="CENTER">
-                  <font>
-                    <Font name="System Bold" size="15.0"/>
-                  </font>
-                </Label>
-              </left>
               <padding>
-                <Insets bottom="10.0" left="35.0" right="30.0" top="10.0"/>
+                <Insets bottom="10.0" left="30.0" right="30.0" top="10.0"/>
               </padding>
               <right>
                 <ImageView id="exit-btn" fx:id="quitGame" fitHeight="50.0" fitWidth="20.0"
@@ -92,6 +85,20 @@
                   </image>
                 </ImageView>
               </right>
+              <left>
+                <Label id="round-counter" fx:id="roundLabel" text="1">
+                  <font>
+                    <Font size="15.0"/>
+                  </font>
+                </Label>
+              </left>
+              <center>
+                <Label id="time" fx:id="timerLabel" text="12:34" BorderPane.alignment="CENTER">
+                  <font>
+                    <Font name="System Bold" size="15.0"/>
+                  </font>
+                </Label>
+              </center>
             </BorderPane>
           </top>
           <bottom>

@@ -499,7 +499,8 @@ public class Grid {
 
     ArrayList<Slot> validStartingSlots = new ArrayList<>();
 
-    if (controller.roundCounter == 0) {
+    System.out.println("ROUND: " + controller.roundCounter);
+    if (controller.roundCounter == 1) {
       // It's 1st round
       // Adding the center slot as Starting Point
       validStartingSlots.add(getSlot(size / 2, size / 2));
@@ -649,6 +650,7 @@ public class Grid {
       res = true;
 
       controller.roundCounter++;
+      controller.roundLabel.setText(String.valueOf(controller.roundCounter));
 
       freezeWords();
     }
