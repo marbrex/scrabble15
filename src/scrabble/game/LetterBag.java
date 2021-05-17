@@ -2,6 +2,7 @@ package scrabble.game;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Random;
  *
  * @author ekasmamy
  */
-public class LetterBag {
+public class LetterBag implements Serializable {
 
   /**
    * <h1>scrabble.game.LetterBag.Tile</h1>
