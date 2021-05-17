@@ -7,7 +7,12 @@ import java.util.ArrayList;
 import scrabble.ChatController;
 import javafx.application.Platform;
 
-
+/**
+ * scrabble.network.Client class for Client connections to the Chat
+ * 
+ * @author astarche
+ * @author skeskinc
+ */
 public class Client extends Thread {
   private String hostName;
   private int port;
@@ -18,9 +23,16 @@ public class Client extends Thread {
   private ArrayList<ChatController> allController = new ArrayList<ChatController>();
   private String username;
   private boolean running;
-  /** protocol instance for an corresponding chat */
   private NetworkScreen client;
 
+  /**
+   * Constructor for test-application which is not implemented in actual game
+   * 
+   * @param cc ChatController of test-application
+   * @param username Name of the connected user
+   * @author astarche
+   * @author skeskinc
+   */
   public Client(ChatController cc, String username) {
     this.hostName = "localhost";
     this.port = 2222;
@@ -45,6 +57,12 @@ public class Client extends Thread {
   }
 
   // new Message have only call the print chatMessage of the LobbyClientProtocol
+  /**
+   * Connecting to the Chat-Server
+   * 
+   * @author astarche
+   * @author skeskinc
+   */
   public void connect() {
     try {
       c = new Socket(hostName, port);
@@ -88,28 +106,25 @@ public class Client extends Thread {
     toServer.flush();
   }
 
-
+  /**
+   * Sending messages to the Server
+   * 
+   * @param message Sending given message to the server
+   * @author astarche
+   * @author skeskinc
+   */
   public void sendMessageToServer(String message) {
     System.out.println("[" + username + "] " + message);
     toServer.println(username + ": " + message);
     toServer.flush();
-    /*
-     * try { String text = fromServer.readLine(); for (ChatController cc : this.allController) {
-     * cc.applyMessageToArea(clientNumber + " : " + text); }
-     * 
-     * } catch (IOException e) { // TODO Auto-generated catch block e.printStackTrace(); }
-     */
   }
 
-  /*
-   * public String sendMessageToServer(String message) { System.out.println("Client: " + message);
-   * toServer.println(message); toServer.flush(); try { String text = fromServer.readLine(); return
-   * message;
+  /**
+   * Disconnecting from the Chat-Server
    * 
-   * } catch (IOException e) { // TODO Auto-generated catch block e.printStackTrace(); return null;
-   * } }
+   * @author astarche
+   * @author skeskinc
    */
-
   public void disconnect() {
     this.running = false;
     try {
@@ -121,8 +136,9 @@ public class Client extends Thread {
   }
 
   /**
+   * Replacing specific strings with Emoticons
    * 
-   * @param msg for the current message
+   * @param msg for current message
    * @return the message replaced by emoticons.
    * @author skeskinc
    */
@@ -134,6 +150,12 @@ public class Client extends Thread {
     return msg;
   }
 
+  /**
+   * Handling Chat-Messages receiving from Server
+   * 
+   * @author astarche
+   * @author skeskinc
+   */
   public void run() {
     // toServer.println(this.username);
     String msg;
@@ -153,7 +175,6 @@ public class Client extends Thread {
         this.running = false;
         e.printStackTrace();
       }
-
     }
   }
 }

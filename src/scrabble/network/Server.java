@@ -7,6 +7,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import scrabble.network.*;
 
+/**
+ * scrabble.network.Server to start Chat-Server and accept Chat-Clients
+ * 
+ * @author astarche
+ * @author skeskinc
+ */
 public class Server extends Thread {
 
   private ServerSocket serversocket;
@@ -18,6 +24,8 @@ public class Server extends Thread {
 
   /**
    * Constructor initializing the serverSocket
+   * 
+   * @author hendiehl
    */
   public Server() {
     this.maxPlayers = 4;
@@ -43,6 +51,12 @@ public class Server extends Thread {
     }
   }
 
+  /**
+   * Starting the Chat-Server
+   * 
+   * @author astarche
+   * @author skeskinc
+   */
   public void startServer() {
     try {
       this.running = true;
@@ -64,18 +78,24 @@ public class Server extends Thread {
     } catch (ArrayIndexOutOfBoundsException ae) {
       System.out.println("No valid port found.");
     }
-
   }
 
+  /**
+   * Closing all ChatServerProtocols
+   * 
+   * @author skeskinc
+   */
   public synchronized void closeProtocol() {
     for (ServerProtocol sp : allClients) {
       sp.disconnect();
     }
-    /*
-     * for(int i = 0; i < allClients.size(); i++) { allClients.remove(i); }
-     */
   }
 
+  /**
+   * Closing Socket of Chat-Server
+   * 
+   * @author skeskinc
+   */
   public void closeSocket() {
     try {
       this.serversocket.close();
@@ -85,10 +105,20 @@ public class Server extends Thread {
     }
   }
 
+  /**
+   * Clearing protocol-list of Chat-Server
+   * 
+   * @author skeskinc
+   */
   public synchronized void clearProtocol() {
     allClients.clear();
   }
 
+  /**
+   * Stopping the Chat-Server
+   * 
+   * @author skeskinc
+   */
   public synchronized void stopServer() {
 
     this.running = false;
@@ -97,8 +127,12 @@ public class Server extends Thread {
     this.clearProtocol();
   }
 
+  /**
+   * Run Method for ChatServer-Thread
+   * 
+   * @author hendiehl
+   */
   public void run() {
     this.startServer();
   }
-
 }
