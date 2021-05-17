@@ -29,6 +29,7 @@ public class GameInformationController {
   private GameHandler gameHandler;// responsible for move organization
   private LetterBag bag;
   private String multiplierContent = ""; // own chosen multiplier field
+  private String dictionaryContent = ""; // own chosen dictionary file
 
   /**
    * Constructor which initialize the class and set up important help classes.
@@ -446,9 +447,8 @@ public class GameInformationController {
   }
 
   /**
-   * Method to set the content of an multiplier file and send it to all members of the Lobby
+   * Method to send the content of an multiplier file to all player, so it can be set.
    * 
-   * @param path content of an file chosen by the host
    * @author hendiehl
    */
   public synchronized void sendFieldMessage() {
@@ -459,13 +459,36 @@ public class GameInformationController {
   }
 
   /**
-   * Method to set the content of an multiplier file chosen by host Will send it to all Player after
-   * the game started
+   * Method to set the content of an multiplier file chosen by host. Will be send to all Player
+   * after the game started
    * 
    * @param path content of the chosen file
+   * @author hendiehl
    */
   public synchronized void setMultiplier(String path) {
     System.out.println("GAME INFO : Set multiplier content");
     this.multiplierContent = path;
+  }
+
+  /**
+   * Method to set the content of an dictionary file chosen by host. Will send it to all Player
+   * after the game started
+   * 
+   * @param content of an file chosen by host
+   * @author hendiehl
+   */
+  public void setDictionary(String content) {
+    System.out.println("GAME INFO : Set dictionary content");
+    this.dictionaryContent = content;
+  }
+  /**
+   * Method to send the content of an multiplier file to all player, so it can be set.
+   * @author hendiehl
+   */
+  public void sendDictionaryMessage() {
+    System.out.println("GAME INFO : Send dictionary content to players");
+    for (NetworkPlayer player : this.players) {
+      player.sendDictionaryMessage(this.dictionaryContent);
+    }
   }
 }

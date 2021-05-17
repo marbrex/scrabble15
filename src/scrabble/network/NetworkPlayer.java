@@ -6,8 +6,9 @@ import scrabble.model.Player;
 
 public interface NetworkPlayer {
   /**
-   * Interface for a network player. Can be a lobby or game client or a game/lobby host. Provide
-   * methods which all types of network players should have.
+   * Interface for a network player. Can be the server protocol for a corresponding client protocol,
+   * a host protocol or a ai protocol. Provide methods which all types of network players should
+   * have.
    * 
    * @author hendiehl
    */
@@ -31,5 +32,7 @@ public interface NetworkPlayer {
   public void informOther(int i);
 
   public void sendFieldMessage(String path);
+
+  public void sendDictionaryMessage(String dictionaryContent);
 
 }

@@ -115,8 +115,11 @@ public class GameLobbyController implements LobbyController {
   private String seperator;
   /** interface to send/print Message, a HostProtocol or an LobbyClientProtocol */
   private NetworkScreen chatUser;
-  /** String path to an user specific game field option of multiplier, standard is empty */
+  /** String content of an user specific game field option of multiplier, standard is empty */
   private String contentOfField = "";
+  /** String content of an user specific dictionary, standard is empty */
+  private String contentOfDictionary = "";
+
 
   /**
    * Constructor which specify the rights for specific actions with an boolean condition. If the
@@ -207,10 +210,10 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method to get the actual path to a multiplier field file if wanted. Is a empty String if
-   * standard is wanted. Mainly used by the configure controller
+   * Method to get the actual content of a multiplier field file if wanted. Is a empty String if
+   * standard is wanted. Mainly used by the configure controller.
    * 
-   * @return path string to the file or an empty String
+   * @return content string of the file or an empty String
    * @author hendiehl
    */
   public String getContentOfFile() {
@@ -218,9 +221,40 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method to set the Path to an specific multiplier field. Used by the configure controller
+   * Method to get the actual content of a dictionary chosen by a host in the configure screen. Is a
+   * empty string if the standard one is wanted. Mainly used by the configure controller.
    * 
-   * @param path path to an specific file
+   * @return content string of the file or an empty String
+   * @author hendiehl
+   */
+  public String getContentOfDictionary() {
+    return this.contentOfDictionary;
+  }
+
+  /**
+   * Method to set the content of an specific dictionary. Used by the configure controller
+   * 
+   * @param content content of an specific dictionary file
+   * @param hostChange boolean condition which decides if the string is actually set or send to the
+   *        server
+   */
+  public void setContentOfDictionary(String content, boolean hostChange) {
+    if (hostChange) {
+      this.host.setDictionaryMessage(content);
+    } else {
+      if(!content.equals("")) { //not the standard 
+        this.contentOfDictionary = content;
+        //set the dictionary 
+      }
+    }
+  }
+
+  /**
+   * Method to set the content of an specific multiplier field. Used by the configure controller
+   * 
+   * @param path content of an specific file
+   * @param hostChange boolean condition which decides if the string is actually set or send to the
+   *        server
    */
   public void setContentOfFile(String path, boolean hostChange) {
     if (hostChange) {

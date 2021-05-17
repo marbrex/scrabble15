@@ -20,6 +20,7 @@ public enum MessageType {
   MOVE, // inform a player that he is on move
   END, // inform player or Server that the move has been ended.
   BAG, // messages for LetterBag operations via network
-  OTHER, //message to perform a player about the move of somebody else
-  FIELD, //message to set the game field multiplier 
+  OTHER, // message to perform a player about the move of somebody else
+  FIELD, // message to set the game field multiplier
+  DICT, // message to set a dictionary file content
 }

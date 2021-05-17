@@ -8,7 +8,7 @@ import scrabble.model.Player;
 
 public class InformationMessage extends Message implements Serializable {
   /**
-   * information message class used as first message which is send to connecting clients to give
+   * Information message class used as first message which is send to connecting clients to give
    * them informations about the lobby.
    * 
    * @author hendiehl
@@ -23,6 +23,7 @@ public class InformationMessage extends Message implements Serializable {
    * @param owner
    * @param status status of the lobby = in lobby or in game
    * @param amount amount of the players in a lobby
+   * @author hendiehl
    */
   public InformationMessage(MessageType type, Player owner, GameStatusType status, int amount) {
     super(type, owner);
@@ -30,10 +31,22 @@ public class InformationMessage extends Message implements Serializable {
     this.lobbyPlayers = amount;
   }
 
+  /**
+   * Getter of the MessageType to identify a join possibility from the start
+   * 
+   * @return status GameStatusType
+   * @author hendiehl
+   */
   public GameStatusType getStatus() {
     return status;
   }
 
+  /**
+   * Getter of the amount of players in a lobby
+   * 
+   * @return player amount
+   * @author hendiehl
+   */
   public int getLobbyPlayers() {
     return lobbyPlayers;
   }

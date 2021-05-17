@@ -11,7 +11,8 @@ import scrabble.model.GameInformationController;
 
 public class LobbyServer extends Thread {
   /**
-   * Class of the lobby server which is responsible for a network game.
+   * Class of the lobby server which is responsible for a network game. Is the overall server class
+   * which provides the communication with clients by accepting them and starting protocols.
    * 
    * @author hendiehl
    */
@@ -43,6 +44,7 @@ public class LobbyServer extends Thread {
    * Constructor which will inform the player if the server can run on a standard port.
    * 
    * @param gameLobby controller of the GameLobby screen
+   * @author hendiehl
    */
   public LobbyServer(GameLobbyController gameLobby) {
     // setting up controls
@@ -54,6 +56,7 @@ public class LobbyServer extends Thread {
    * 
    * @param gameLobby controller of the GameLobby screen
    * 
+   * @author hendiehl
    */
   public LobbyServer(GameLobbyController gameLobby, int ownPort)
       throws ConnectException, IOException {
@@ -65,6 +68,7 @@ public class LobbyServer extends Thread {
    * Method to set a server with an specific port chosen by Host
    * 
    * @param port2 port given by the host
+   * @author hendiehl
    */
   private void setOwnServer(int port2) throws ConnectException, IOException {
     System.out.println("SERVER : Own port set on " + port2);
@@ -75,9 +79,10 @@ public class LobbyServer extends Thread {
   }
 
   /**
-   * method to initialize important parts of the server
+   * Method to initialize important parts of the server
    * 
    * @param gameLobby controller of the corresponding GameLobby
+   * @author hendiehl
    */
   private void initializeParts(GameLobbyController gameLobby) {
     this.gameLobby = gameLobby;
@@ -97,6 +102,7 @@ public class LobbyServer extends Thread {
    * Method to get the running Port
    * 
    * @return port teh server runs on or 0 if server isn't set
+   * @author hendiehl
    */
   public int getRunningPort() {
     if (this.server != null) { // Pretend calling Method before the server started
@@ -109,16 +115,18 @@ public class LobbyServer extends Thread {
   /**
    * Method to check if a server is launched normally with the standard port or a specific port
    * 
-   * @return
+   * @return boolean condition about a standard port use or a own port / netwrok error
+   * @author hendiehl
    */
   public boolean portIsAutoSet() {
     return this.ownPort == 0; // if the ownPort isn't 0 a own Port is chosen
   }
 
   /**
-   * Method to set the server port
+   * Method to set the server port by testing a amount of predefined ports
    * 
    * @throws PortsOccupiedException thrown when all ports occupied
+   * @author hendiehl
    */
   private void setServer() throws PortsOccupiedException { // can be used in the run method not in
                                                            // the constructor, perhaps faster
@@ -145,6 +153,8 @@ public class LobbyServer extends Thread {
   /**
    * Run method of the thread class in which the server will wait until a client try to connect. A
    * connecting client is add to a list and a LobbyServerProtocol will start.
+   * 
+   * @author hendiehl
    */
   public void run() {
     try {
@@ -165,7 +175,9 @@ public class LobbyServer extends Thread {
   }
 
   /**
-   * method to accept a client
+   * Method to accept a client and starting a ServerProtocol for them
+   * 
+   * @author hendiehl
    */
   private void react() {
     try {
@@ -183,6 +195,8 @@ public class LobbyServer extends Thread {
 
   /**
    * Method to close the connection of the server
+   * 
+   * @author hendiehl
    */
   private void closeConnection() { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     try {
@@ -195,6 +209,8 @@ public class LobbyServer extends Thread {
 
   /**
    * Method which will shutdown the server
+   * 
+   * @author hendiehl
    */
   public void shutdown() { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! critical
     System.out.println("SERVER : Shutdown");
@@ -208,6 +224,8 @@ public class LobbyServer extends Thread {
 
   /**
    * Method which will call a the shutdown procedure for all connected clients.
+   * 
+   * @author hendiehl
    */
   private void closeAllProtocols() { // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! critical
     for (LobbyServerProtocol lP : this.clients) {
@@ -217,7 +235,9 @@ public class LobbyServer extends Thread {
   }
 
   /*
-   * Method which will start the connection with a connecting client
+   * Method which will start the communication with a connecting client
+   * 
+   * @author hendiehl
    */
   private void getInContact(LobbyServerProtocol lsp) {
     this.clients.add(lsp);
@@ -226,9 +246,10 @@ public class LobbyServer extends Thread {
   }
 
   /**
-   * method which will remove a specific server protocol from the server.
+   * Method which will remove a specific server protocol from the server.
    * 
    * @param lsp LobbyServerProtocol which will be removed from the client list.
+   * @author hendiehl
    */
   public void deleteSpecificProtocol(LobbyServerProtocol lsp) {
     if (this.clients.contains(lsp)) {
@@ -238,6 +259,8 @@ public class LobbyServer extends Thread {
 
   /**
    * Method to start the chat server
+   * 
+   * @author hendiehl
    */
   private void startChatServer() {
     this.chat = new Server();
@@ -252,7 +275,8 @@ public class LobbyServer extends Thread {
    * Method to get the port the chat server is running in reason to send it to a client joining the
    * lobby
    * 
-   * @return
+   * @return port of the chat server
+   * @author hendiehl
    */
   protected Integer getChatPort() {
     return this.chatPort;

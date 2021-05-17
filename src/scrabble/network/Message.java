@@ -17,16 +17,11 @@ public class Message implements Serializable {
   private Player owner;
 
   /**
-   * Constructor for a basic network Message
-   * 
-   * @param type MessageType of the Message
-   * @param owner client which sends the Message
-   */
-  /**
-   * constructor of the basic network message
+   * Constructor of the basic network message
    * 
    * @param type type of the message to identify and react
-   * @param owner owner of the message who sends it
+   * @param owner owner of the message who will send the message
+   * @author hendiehl
    */
   public Message(MessageType type, Player owner) {
     this.type = type;
@@ -34,18 +29,20 @@ public class Message implements Serializable {
   }
 
   /**
-   * getter method for the type
+   * Getter method for the type
    * 
    * @return type of the message
+   * @author hendiehl
    */
   public MessageType getType() {
     return this.type;
   }
 
   /**
-   * getter method for the owner
+   * Getter method for the owner
    * 
    * @return owner of the message
+   * @author hendiehl
    */
   public Player getOwner() {
     return this.owner;

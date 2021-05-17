@@ -23,7 +23,8 @@ import scrabble.model.MessageType;
 
 public class LobbyClientProtocol extends Thread implements NetworkScreen {
   /**
-   * Class of a client which handle the communication with a server.
+   * Class of a client which handle the communication with a server in order to inform the server
+   * about the user input or action a user has performed in a network game.
    * 
    * @author hendiehl
    */
@@ -214,6 +215,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case FIELD:
           this.reactToField(message);
           break;
+        case DICT:
+          this.reactToDictionary(message);
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -227,6 +231,21 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to react to an incoming Field Message in order to set the content of an dictionary file
+   * the host chose for the dictionary
+   * 
+   * @param message FieldMessage
+   * @author hendiehl
+   */
+  private void reactToDictionary(Message message) {
+    System.out.println("CLIENT PROTOCOL : Dictionary received");
+    FieldMessage msg = (FieldMessage) message;
+    if (this.gameLobbyController != null) {
+      this.gameLobbyController.setContentOfDictionary(msg.getContent(), false);
     }
   }
 
