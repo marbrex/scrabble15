@@ -41,7 +41,7 @@ public class Dictionary {
           } else if (i == c.length - 1) {
             word = msg.substring(0, i + 1);
           }
-          if (word != null && word.length() <= 15) {
+          if (word != null && word.length() <= 15 && word.matches("[a-zA-Z]+")) {
             words.add(word);
             break;
           }
