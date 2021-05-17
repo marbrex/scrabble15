@@ -3,7 +3,6 @@ package scrabble;
 import com.google.common.collect.Multiset;
 import com.jfoenix.controls.JFXButton;
 import java.io.BufferedWriter;
-import java.io.Console;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,13 +20,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundImage;
-import javafx.scene.layout.BackgroundPosition;
-import javafx.scene.layout.BackgroundRepeat;
-import javafx.scene.layout.BackgroundSize;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
@@ -159,7 +152,7 @@ public class GameController {
 
   public Timer timer;
 
-  public final int roundTime = 1;
+  public final int roundTime = 2;
 
   @FXML
   public VBox playersBlock;
@@ -215,81 +208,85 @@ public class GameController {
   }
 
   private void initApi() {
-
     this.api = new NetworkGame() {
 
       @Override
       public void startMove() {
-
-        // Filling the empty slots in the LetterBar if it's the case
-        int freeSlotsCount = letterBar.getCountFreeSlots();
-        if (freeSlotsCount > 0) {
-
-          if (protocol == null) {
-            // Local Game
-
-            letterBar.fillGaps(LetterBag.getInstance().grabRandomTiles(freeSlotsCount));
-            letterBar.display();
-          } else {
-            // Network Game
-
-            // Sending a request to the server, which on his turn will return a response
-            // that will be accessible only in GameController.grabRandomTilesAnswer method
-            Platform.runLater(() -> {
-              protocol.grabRandomTiles(freeSlotsCount);
-            });
-          }
-        }
-
         Platform.runLater(() -> {
-          // enabling every LetterTile
+
+          // Filling the empty slots in the LetterBar if it's the case
+          int freeSlotsCount = letterBar.getCountFreeSlots();
+          if (freeSlotsCount > 0) {
+
+            if (protocol == null) {
+              // Local Game
+
+              letterBar.fillGaps(LetterBag.getInstance().grabRandomTiles(freeSlotsCount));
+              letterBar.display();
+
+            } else {
+              // Network Game
+
+              // Sending a request to the server, which on his turn will return a response
+              // that will be accessible only in GameController.grabRandomTilesAnswer method
+              protocol.grabRandomTiles(freeSlotsCount);
+            }
+          }
+
+          // enabling every LetterTile in Grid
           grid.getTilesInGrid().forEach(tile -> {
             tile.setMouseTransparent(false);
           });
+
+          // enabling every LetterTile in Bar
           letterBar.getTilesInBar().forEach(tile -> {
             tile.setMouseTransparent(false);
           });
+
           // enabling every action button
           okBtn.setMouseTransparent(false);
           shuffleBtn.setMouseTransparent(false);
-        });
 
-        // starting the timer (10 minutes for each turn)
-        timer = new Timer();
-        TimerTask task = new TimerTask() {
-          @Override
-          public void run() {
+          // starting the timer (10 minutes for each turn)
+          timer = new Timer();
 
-            Platform.runLater(() -> {
-              System.out.println("Time is over - moving tiles in grid back to bar..");
-              // moving all tiles in grid back to bar
-              letterBar.putTilesBackToBar();
+          TimerTask endMove = new TimerTask() {
+            @Override
+            public void run() {
+              Platform.runLater(() -> {
 
-              // disabling every LetterTile in bar
-              letterBar.getTilesInBar().forEach(tile -> {
-                tile.setMouseTransparent(true);
+                System.out.println("Time is over - moving tiles in grid back to bar..");
+                // moving all tiles in grid back to bar
+                letterBar.putTilesBackToBar();
+
+                // disabling every LetterTile in bar
+                letterBar.getTilesInBar().forEach(tile -> {
+                  tile.setMouseTransparent(true);
+                });
+
               });
-            });
 
-            // ending the current player's move after the end of the timer
-            endMove();
-          }
-        };
-        timer.schedule(task, 1000 * 60 * roundTime);
+              // ending the current player's move after the end of the timer
+              endMove();
 
-        // Every second the Label will decrement
-        Platform.runLater(() -> timerLabel.setText(roundTime + ":00"));
-        TimerTask updateLabel = new TimerTask() {
-          @Override
-          public void run() {
-            Platform.runLater(new Runnable() {
-              @Override
-              public void run() {
+            }
+          };
+
+          timer.schedule(endMove, 1000 * 60 * roundTime);
+
+          // Every second the Label will decrement
+          timerLabel.setText(roundTime + ":00");
+
+          TimerTask updateLabel = new TimerTask() {
+            @Override
+            public void run() {
+              Platform.runLater(() -> {
+
                 String[] minSec = timerLabel.getText().split(":");
                 int min = Integer.parseInt(minSec[0]);
                 int sec = Integer.parseInt(minSec[1]);
-                if (min == 0 && sec == 0) {
-                } else {
+
+                if (min != 0 || sec != 0) {
                   if (sec - 1 < 0) {
                     min--;
                     sec = 59;
@@ -297,54 +294,57 @@ public class GameController {
                     sec--;
                   }
                 }
+
                 timerLabel
                     .setText((min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec));
-                if (min >= 5) {
+
+                if (min >= 3) {
                   timerLabel.setTextFill(Paint.valueOf("green"));
-                } else if (min >= 3) {
+                } else if (min >= 1) {
                   timerLabel.setTextFill(Paint.valueOf("orange"));
                 } else if (min >= 0) {
                   timerLabel.setTextFill(Paint.valueOf("red"));
                 }
-              }
-            });
-          }
-        };
-        timer.scheduleAtFixedRate(updateLabel, 0, 1000);
+
+              });
+            }
+          };
+
+          timer.scheduleAtFixedRate(updateLabel, 0, 1000);
+
+        });
       }
 
       @Override
       public void endMove() {
+        Platform.runLater(() -> {
 
-        // terminating the current player's turn
-        Platform.runLater(new Runnable() {
-          @Override
-          public void run() {
-            // verifying the player's input
-            boolean validInput = grid.verifyWordsValidity();
+          // verifying the player's input
+          boolean validInput = grid.verifyWordsValidity();
 
-            if (validInput) {
-              // disabling every LetterTile in bar
-              letterBar.getTilesInBar().forEach(tile -> {
-                tile.setMouseTransparent(true);
-              });
+          if (validInput) {
 
-              // disabling every action button
-              okBtn.setMouseTransparent(true);
-              shuffleBtn.setMouseTransparent(true);
+            // disabling every LetterTile in bar
+            letterBar.getTilesInBar().forEach(tile -> {
+              tile.setMouseTransparent(true);
+            });
 
-              timer.cancel();
+            // disabling every action button
+            okBtn.setMouseTransparent(true);
+            shuffleBtn.setMouseTransparent(true);
 
-              if (protocol != null) {
-                // Network Game
-                protocol.sendEndMessage();
-              }
+            timer.cancel();
+
+            if (protocol != null) {
+              // Network Game
+              protocol.sendEndMessage();
             }
-          }
-        });
 
-        // TODO: update the LeaderBoard
-        // TODO: pass the turn to the next player
+          }
+
+          // TODO: update the LeaderBoard
+
+        });
       }
 
       @Override

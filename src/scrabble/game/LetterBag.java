@@ -23,7 +23,7 @@ public class LetterBag implements Serializable {
    *
    * @see scrabble.game.LetterTile
    */
-  public static class Tile {
+  public static class Tile implements Serializable {
 
     public char letter;
     public int value;
