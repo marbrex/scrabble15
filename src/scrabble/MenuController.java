@@ -48,11 +48,16 @@ public class MenuController {
     try {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/MainPage.fxml"));
       Parent root = loader.load();
+      /*
       Stage stage = (Stage) this.backButton.getScene().getWindow();
       Scene scene =
           new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
       scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
       stage.setScene(scene);
+      */
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+      ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e1) {
       // TODO Auto-generated catch block
       e1.printStackTrace();
@@ -84,6 +89,7 @@ public class MenuController {
       });
       Parent root = loader.load();
       GameLobbyController lobbyController = loader.<GameLobbyController>getController();
+      /*
       Stage stage = (Stage) this.hostGameButton.getScene().getWindow();
       stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight())); // before 700, but need of space
       stage.setMinWidth(900);
@@ -91,6 +97,16 @@ public class MenuController {
       stage.setOnHidden(e -> {
         lobbyController.shutdown();
       });
+      */
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().setRoot(root);
+      ScrabbleApp.getStage().setOnHidden(e -> {
+        lobbyController.shutdown();
+      });
+      if(!ScrabbleApp.getStage().isFullScreen()) {
+        ScrabbleApp.getStage().setMinWidth(900);
+        ScrabbleApp.getStage().setMinHeight(800);
+      }
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -116,11 +132,18 @@ public class MenuController {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/GameFinder.fxml"));
       Parent root = loader.load();
       GameFinderController finderController = loader.<GameFinderController>getController();
+     /*
       Stage stage = (Stage) this.joinGameButton.getScene().getWindow();
       stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
       stage.setMinWidth(900);
       stage.setMinHeight(700);
       stage.setOnHidden(e -> {
+        finderController.shutdown();
+      });
+      */
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().setRoot(root);
+      ScrabbleApp.getStage().setOnHidden(e -> {
         finderController.shutdown();
       });
     } catch (IOException e) {

@@ -181,9 +181,13 @@ public class GameLobbyController implements LobbyController {
       try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Menu.fxml"));
         Parent root = loader.load();
+        /*
         Stage stage = (Stage) this.backButton.getScene().getWindow();
         stage.setScene(
             new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
+        */
+        ScrabbleApp.getScene().getStylesheets().clear();
+        ScrabbleApp.getScene().setRoot(root);
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
@@ -740,11 +744,16 @@ public class GameLobbyController implements LobbyController {
         } else {
           this.client.setGameScreen(gameScreen);
         }
+        /*
         Stage stage = (Stage) this.backButton.getScene().getWindow();
         Scene scene =
             new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
         scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
         stage.setScene(scene);
+        */
+        ScrabbleApp.getScene().getStylesheets().clear();
+        ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
+        ScrabbleApp.getScene().setRoot(root);
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
