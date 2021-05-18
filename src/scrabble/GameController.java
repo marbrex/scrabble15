@@ -17,9 +17,12 @@ import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
@@ -491,7 +494,10 @@ public class GameController {
     if (protocol == null) {
       // Local Game
 
+      initPlayers();
+
       initGrid();
+
     } else {
       // Network Game
 
@@ -503,6 +509,43 @@ public class GameController {
         String pathToMap = saveMultiplierMap(mapContent);
         initGrid(pathToMap);
       }
+
+      // Creating a Leader Board
+      leaderBoard = new LeaderBoard(players);
+
+      System.out.println("Number of players: " + players.size());
+      players.forEach(player -> {
+        System.out.println("Player name: " + player.getName());
+        if (player.getName() != null) {
+          BorderPane playerBlock = new BorderPane();
+          playerBlock.getStyleClass().add("players-block");
+          playerBlock.setPadding(new Insets(10, 30, 10, 30));
+
+          StackPane avatarWrapper = new StackPane();
+          avatarWrapper.getStyleClass().add("player-avatar-frame");
+          avatarWrapper.setAlignment(Pos.CENTER);
+          System.out.println("Image: " + player.getImage());
+          ImageView avatar = new ImageView(new Image(getClass().getResourceAsStream("img/" + player.getImage())));
+          avatar.setFitHeight(60);
+          avatar.setFitWidth(60);
+
+          Label nickname = new Label(player.getName());
+          nickname.getStyleClass().add("players-name");
+          Label score = new Label(String.valueOf(player.getScore()));
+          score.getStyleClass().add("players-score");
+
+          avatarWrapper.getChildren().add(avatar);
+          playerBlock.setLeft(avatarWrapper);
+          playerBlock.setCenter(nickname);
+          playerBlock.setRight(score);
+          BorderPane.setAlignment(avatarWrapper, Pos.CENTER);
+          BorderPane.setAlignment(nickname, Pos.CENTER);
+          BorderPane.setAlignment(score, Pos.CENTER);
+
+          playersBlock.getChildren().add(playerBlock);
+        }
+      });
+
     }
 
     letterBar = new LetterBar(this);

@@ -49,11 +49,12 @@
 
 .player-avatar-frame {
   -fx-border-radius: 50%;
+  -fx-border-color: black;
+  -fx-border-width: 3px;
 }
 
 .player-avatar-frame-active {
   -fx-border-color: green;
-  -fx-border-width: 3px;
 }
 
 .players-score {
