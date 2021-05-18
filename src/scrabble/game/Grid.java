@@ -682,6 +682,7 @@ public class Grid {
 
           if (l < word.getWordLength() - 1) {
             StackPane gap = new StackPane();
+            gap.setViewOrder(--controller.minViewOrder);
             gap.setPrefSize(padSize + 1, word.getLetter(l).container.getHeight());
             gap.setMinSize(padSize + 1, word.getLetter(l).container.getHeight());
             gap.setMaxSize(padSize + 1, word.getLetter(l).container.getHeight());

@@ -168,6 +168,7 @@ public class LetterTile implements Serializable {
         // Removing the highlighting box of the Word that was containing the moved LetterTile
         controller.gridWrapper.getChildren().remove(word.container);
       }
+      word.container.setViewOrder(controller.minViewOrder+1);
     }
     for (Word word : wordsToRemove) {
       // Removing the Word that was containing the moved LetterTile (BACK-END)
@@ -187,7 +188,8 @@ public class LetterTile implements Serializable {
         }
 
         if (!frozenWord) {
-          new Word(word.getLetter(1), word.getLast(), controller);
+          Word shrank = new Word(word.getLetter(1), word.getLast(), controller);
+          shrank.container.setViewOrder(controller.minViewOrder+2);
         }
       }
 
@@ -203,7 +205,8 @@ public class LetterTile implements Serializable {
 
         if (!frozenWord) {
           int ltrIdx = word.getWordLength() - 2;
-          new Word(word.getFirst(), word.getLetter(ltrIdx), controller);
+          Word shrank = new Word(word.getFirst(), word.getLetter(ltrIdx), controller);
+          shrank.container.setViewOrder(controller.minViewOrder+2);
         }
       }
     }
@@ -272,8 +275,7 @@ public class LetterTile implements Serializable {
       slot.container.setViewOrder(--controller.minViewOrder);
       Node parent = slot.container.getParent();
       while (!parent.equals(controller.root)) {
-        --controller.minViewOrder;
-        parent.setViewOrder(controller.minViewOrder);
+        parent.setViewOrder(--controller.minViewOrder);
         parent = parent.getParent();
       }
 
