@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
+import javafx.scene.input.KeyCombination;
 import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
@@ -23,7 +24,15 @@ public class ScrabbleApp extends Application {
 
   final private double windowMinWidth = 620;
   final private double windowMinHeight = 500;
+  
+  private static Scene scene;
+  private static Stage stage;
 
+  /**
+   * Choosing Start-Resource and opening Window
+   * 
+   * @author ekasmamy
+   */
   @Override
   public void start(Stage primaryStage) throws Exception {
     FXMLLoader loader = new FXMLLoader();
@@ -44,9 +53,36 @@ public class ScrabbleApp extends Application {
     primaryStage.setTitle("Scrabble");
     primaryStage.getIcons().add(appIcon);
     primaryStage.setScene(scene);
+//    primaryStage.setFullScreen(true);
+    primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
     primaryStage.show();
+    setScene(scene);
+    setStage(primaryStage);
+  }
+  
+  public void setScene(Scene scene) {
+    ScrabbleApp.scene = scene;
+  }
+  
+  public static Scene getScene() {
+    return scene;
+  }
+  
+  public void setStage(Stage stage) {
+    ScrabbleApp.stage = stage;
+  }
+  
+  public static Stage getStage() {
+    return stage;
   }
 
+  /**
+   * Launching the application in this class
+   * 
+   * @param args
+   * @author ekasmamy
+   * @author skeskinc
+   */
   public static void main(String[] args) {
     Database.connectToDB();
     Database.createTables();

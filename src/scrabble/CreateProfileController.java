@@ -1,18 +1,10 @@
 package scrabble;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextField;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -22,14 +14,13 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
+import java.io.IOException;
 
 
 /**
- * scrabble.CreateProfileController to manage profile creation
+ * scrabble.CreateProfileController to manage profile creation.
  * 
  * @author skeskinc
  * @author ekasmamy
@@ -64,7 +55,7 @@ public class CreateProfileController {
   public int imageindex;
 
   /**
-   * Changing to the Scene
+   * Changing to the Scene.
    * 
    * @param resource URL-Resource to another scene
    * @param style given style-sheet for next scene
@@ -73,14 +64,19 @@ public class CreateProfileController {
    */
   public void changeScene(String resource, String style, Event event) {
     try {
-      System.out.println(resource);
+  //    System.out.println(resource);
       Parent root = FXMLLoader.load(getClass().getResource(resource));
+      /*
       Button btn = ((Button) event.getSource());
       Stage stage = (Stage) btn.getScene().getWindow();
       Scene scene =
           new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
       scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
       stage.setScene(scene);
+      */
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource(style).toExternalForm());
+      ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
       System.err.println("Error: " + e.getMessage());

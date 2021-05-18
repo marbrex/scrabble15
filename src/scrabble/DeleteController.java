@@ -15,7 +15,7 @@ import scrabble.dbhandler.Database;
 import scrabble.model.Profile;
 
 /**
- * scrabble.DeleteController to handle Profile deletion
+ * scrabble.DeleteController to handle Profile deletion.
  * 
  * @author skeskinc
  */
@@ -31,7 +31,7 @@ public class DeleteController {
   private BorderPane root;
 
   /**
-   * Deleting a profile (or not) and returning to the choose profile scene
+   * Deleting a profile (or not) and returning to the choose profile scene.
    * 
    * @param event Handling Delete-Action
    * @author skeskinc
@@ -50,12 +50,17 @@ public class DeleteController {
       } else {
         root = FXMLLoader.load(getClass().getResource("fxml/ChooseProfileScene.fxml"));
       }
+      /*
       Button btn = ((Button) event.getSource());
       Stage stage = (Stage) btn.getScene().getWindow();
       Scene scene =
           new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
       scene.getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
       stage.setScene(scene);
+      */
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
+      ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
       System.err.println("Error: " + e.getMessage());

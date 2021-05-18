@@ -197,6 +197,7 @@ public class SettingsController implements Initializable {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("fxml/MainPage.fxml"));
             Pane root = loader.load();
+            /*
             Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root, (((Node) event.getSource()).getScene().getWidth()),
                     (((Node) event.getSource()).getScene().getHeight()));
@@ -204,6 +205,10 @@ public class SettingsController implements Initializable {
             window.setScene(scene);
             window.setFullScreen(fullScreen);
             window.show();
+            */
+            ScrabbleApp.getScene().getStylesheets().clear();
+            ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+            ScrabbleApp.getScene().setRoot(root);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -240,13 +245,15 @@ public class SettingsController implements Initializable {
             Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
             if (windowed.isSelected()) {
                 fullScreen = true;
-                window.setFullScreen(true);
-                window.setResizable(true);
+                ScrabbleApp.getStage().setFullScreen(true);
+            //    window.setFullScreen(true);
+            //    window.setResizable(true);
                 windowed.setText("Full Screen");
             } else {
                 fullScreen = false;
-                window.setFullScreen(false);
-                window.setResizable(true);
+                ScrabbleApp.getStage().setFullScreen(false);
+            //    window.setFullScreen(false);
+            //    window.setResizable(true);
                 windowed.setText("Windowed");
             }
         });

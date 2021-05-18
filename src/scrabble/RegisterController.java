@@ -80,11 +80,16 @@ public class RegisterController implements Initializable {
 
       try {
         Parent root = FXMLLoader.load(getClass().getResource("fxml/ChooseProfileScene.fxml"));
+        /*
         Stage stage = (Stage) this.root.getScene().getWindow();
         Scene scene =
             new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
         scene.getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
         stage.setScene(scene);
+        */
+        ScrabbleApp.getScene().getStylesheets().clear();
+        ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
+        ScrabbleApp.getScene().setRoot(root);
       } catch (IOException e) {
         e.printStackTrace();
       }

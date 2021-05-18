@@ -122,11 +122,16 @@ public class StatisticsController implements Initializable {
     try {
 
       Parent root = FXMLLoader.load(getClass().getResource("fxml/Register.fxml"));
+      /*
       Stage stage = (Stage) this.backBtn.getScene().getWindow();
       Scene scene =
           new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
       scene.getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
       stage.setScene(scene);
+      */
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
+      ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -142,11 +147,16 @@ public class StatisticsController implements Initializable {
   public void backBtnOnAction(ActionEvent event) {
     try {
       Parent root = FXMLLoader.load(getClass().getResource("fxml/MainPage.fxml"));
+      /*
       Stage stage = (Stage) this.backBtn.getScene().getWindow();
       Scene scene =
           new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
       scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
       stage.setScene(scene);
+      */
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+      ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
     }

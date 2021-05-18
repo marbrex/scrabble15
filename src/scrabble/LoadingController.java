@@ -3,7 +3,6 @@ package scrabble;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -21,6 +20,11 @@ import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * scrabble.LoadingController for the LoadingScreen.
+ * 
+ * @author skeskinc
+ */
 public class LoadingController implements Initializable {
 
   @FXML
@@ -44,6 +48,11 @@ public class LoadingController implements Initializable {
   @FXML
   public BorderPane pane;
 
+  /**
+   * Increase value of timebar.
+   * 
+   * @author skeskinc
+   */
   public void increaseValue() {
 	  
 		if (!MainPageController.isNetwork()) {
@@ -62,6 +71,11 @@ public class LoadingController implements Initializable {
 
       private double progress = 0;
 
+      /**
+       * Handle Ping, which is random.
+       * 
+       * @author skeskinc
+       */
       @Override
       public void handle(ActionEvent event) {
         int randomNumber = (int) (1 + Math.random() * 120);
@@ -81,11 +95,16 @@ public class LoadingController implements Initializable {
         if (progressBar.getProgress() > 1) {
           try {
             Parent root = FXMLLoader.load(getClass().getResource("fxml/interface.fxml"));
+            /*
             Stage stage = (Stage) progressBar.getScene().getWindow();
             Scene scene = new Scene(root, pane.getScene().getWidth(), pane.getScene().getHeight());
             scene.getStylesheets().add(getClass()
                 .getResource("css/style.css").toExternalForm());
             stage.setScene(scene);
+            */
+            ScrabbleApp.getScene().getStylesheets().clear();
+            ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
+            ScrabbleApp.getScene().setRoot(root);
           } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -104,6 +123,11 @@ public class LoadingController implements Initializable {
     handleProgressValue.play();
   }
 
+  /**
+   * Increasing timebar-value here.
+   * 
+   * @author skeskinc
+   */
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
     this.increaseValue();

@@ -1,31 +1,28 @@
 package scrabble;
 
+import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import com.jfoenix.controls.JFXButton;
 import java.util.ResourceBundle;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Profile;
 
 /**
- * scrabble.ChooseProfileController class to select or create a profile
+ * scrabble.ChooseProfileController class to select or create a profile.
  *
  * @author skeskinc
  */
@@ -61,7 +58,7 @@ public class ChooseProfileController implements Initializable {
 
   @FXML
   private JFXButton continueButton;
-  
+
   @FXML
   private List<Label> labels;
 
@@ -79,7 +76,7 @@ public class ChooseProfileController implements Initializable {
   private BorderPane root;
 
   /**
-   * Changing the profile of an Player
+   * Changing the profile of an Player.
    * 
    * @param event Handling ActionEvent
    * @author skeskinc
@@ -102,7 +99,7 @@ public class ChooseProfileController implements Initializable {
   }
 
   /**
-   * Changing to another Scene regarding the given Resource and Style
+   * Changing to another Scene regarding the given Resource and Style.
    * 
    * @param resource Choosing Scene for the Application
    * @param style Choosing the Style-Sheet for the Scene
@@ -113,13 +110,17 @@ public class ChooseProfileController implements Initializable {
     Parent root;
     try {
       root = FXMLLoader.load(getClass().getResource(resource));
-      Button btn = ((Button) event.getSource());
-      Stage stage = (Stage) btn.getScene().getWindow();
-      Scene scene =
-          new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-      scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
-      stage.setScene(scene);
-
+      // Button btn = ((Button) event.getSource());
+      // Stage stage = (Stage) btn.getScene().getWindow();
+      /*
+       * Scene scene = new Scene(root, this.root.getScene().getWidth(),
+       * this.root.getScene().getHeight());
+       * scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
+       * stage.setScene(scene);
+       */
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource(style).toExternalForm());
+      ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -127,7 +128,7 @@ public class ChooseProfileController implements Initializable {
   }
 
   /**
-   * Loading images and handling Button-Events
+   * Loading images and handling Button-Events.
    * 
    * @author skeskinc
    */

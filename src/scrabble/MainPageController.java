@@ -86,12 +86,16 @@ public class MainPageController implements Initializable {
     try {
       System.out.println(resource);
       Parent root = FXMLLoader.load(getClass().getResource(resource));
+     /*
       Button btn = ((Button) event.getSource());
       Stage stage = (Stage) btn.getScene().getWindow();
       Scene scene = new Scene(root, this.root.getScene().getWidth(),
           this.root.getScene().getHeight());
       scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
-      stage.setScene(scene);
+      */
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource(style).toExternalForm());
+      ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
       System.err.println("Error: " + e.getMessage());
