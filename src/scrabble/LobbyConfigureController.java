@@ -59,7 +59,6 @@ public class LobbyConfigureController {
   private GameLobbyController corresponding;
   private String multiplierNormOneLine =
       "^(((TW)|(NO)|(DL)|(TL)|(DW)){1}\\s){14}((TW)|(NO)|(DL)|(TL)|(DW)){1}$";
-  private String multiplierFile = "";
 
   /**
    * Constructor with the needed informations about the lobby controller for screen access and the
@@ -75,7 +74,6 @@ public class LobbyConfigureController {
     this.server = server;
     this.seperator = System.lineSeparator();
     this.corresponding = corresponding;
-    this.multiplierFile = corresponding.getContentOfFile();
   }
 
   /**
@@ -104,13 +102,20 @@ public class LobbyConfigureController {
         + "This means every player will be" + this.seperator + "kicked from the lobby.");
     this.warning.setVisible(false);
     this.warning.setTextFill(Color.RED);
-    if (this.multiplierFile.matches("")) { // Standard
+    if (this.server.isStandardMultiplier()) { // Standard
       this.multiplier.setSelected(false);
     } else {
       this.multiplier.setSelected(true);
     }
-    //this.updatePathLabel(this.multiplierFile);
+    // this.updatePathLabel(this.multiplierFile);
     // Also add a warning if the Running thread is 0 => Problem
+    if (this.server.isStandardDictionary()) { // standard is chosen
+      System.out.println("CONFIGURE : Standard dictionary was set");
+      this.dictionary.setSelected(false);
+    } else {
+      System.out.println("CONFIGURE : Own dictionary was set");
+      this.dictionary.setSelected(true);
+    }
   }
 
   /**
@@ -279,7 +284,7 @@ public class LobbyConfigureController {
 
   /**
    * Method to show a FileChooser if a host want to use a own multiplier specification for the game
-   * field
+   * field.
    * 
    * @author hendiehl
    */
@@ -293,7 +298,7 @@ public class LobbyConfigureController {
   }
 
   /**
-   * Method to get String data of a file
+   * Method to get String data of a file.
    * 
    * @param file file to read
    * @return String representation of the input file
@@ -332,7 +337,7 @@ public class LobbyConfigureController {
         if (this.checkAcceptance(txt)) { // file accepted
           System.out.println("CONFIGURE : File accepted");
           this.corresponding.setContentOfFile(txt, true);
-          System.out.println("CONFIGURE : Content of file : " + this.seperator + this.corresponding.getContentOfFile());
+          System.out.println("CONFIGURE : Content of file : Own file");
           this.multiplierLabel
               .setText("The File was accepted " + this.seperator + "and set up for the game");
           System.out.println("CONFIGURE : Path to file : " + file.getAbsolutePath());
@@ -347,9 +352,9 @@ public class LobbyConfigureController {
       }
     } else {
       this.corresponding.setContentOfFile("", true);
-      System.out.println("CONFIGURE : Content of file : " + this.seperator + this.corresponding.getContentOfFile());
+      System.out.println("CONFIGURE : Content of file : Standard");
       this.multiplierLabel.setText("The standard points will be used");
-      this.updatePathLabel(this.corresponding.getContentOfFile());
+      this.updatePathLabel("");
     }
   }
 
@@ -362,7 +367,7 @@ public class LobbyConfigureController {
    * @author hendiehl
    */
   private boolean checkAcceptance(String txt) {
-    String[] rows = txt.split(this.seperator); //before \n
+    String[] rows = txt.split(this.seperator); // before \n
     System.out.println("CONFIGURE : File length : " + rows.length);
     if (rows.length == 15) {
       System.out.println("CONFIGURE : Accepted length");
@@ -382,7 +387,7 @@ public class LobbyConfigureController {
   }
 
   /**
-   * Method to show the actual path of the multiplier field on the screen
+   * Method to show the actual path of the multiplier field on the screen.
    * 
    * @param path path to specific file or empty string if
    * @author hendiehl
@@ -392,20 +397,31 @@ public class LobbyConfigureController {
     text += path;
     this.path.setText(text);
   }
-  
-  
+
+  /**
+   * Method to handle the ActionEvent of the dictionary RadioButton. Will set a own dictionary if
+   * wanted or set it back to the standard variable.
+   * 
+   * @author hendiehl
+   */
   @FXML
   private void dictionaryAction() {
-    if(this.dictionary.isSelected()) {
+    if (this.dictionary.isSelected()) {
       File file = this.showFileChooser();
-      if(file != null) {
-        //Setting own dictionary 
+      if (file != null) {
+        String dicton = this.getFileString(file);
+        this.dictionaryLabel.setText("Warning : Dictionary files have to follow" + this.seperator
+            + "the convention." + this.seperator + "Incompatible dictionarys arent supported !");
+        this.corresponding.setContentOfDictionary(dicton, true);
+        System.out.println("CONFIGURE : Own Dictionary set");
       } else {
         this.dictionaryLabel.setText("Please choose a file");
         this.dictionary.setSelected(false);
       }
     } else {
-      //setting dictionary to standard
+      this.corresponding.setContentOfDictionary("", true);
+      System.out.println("CONFIGURE : Standard dictionary set");
+      this.dictionaryLabel.setText("Standard dictionary set");
     }
   }
 }

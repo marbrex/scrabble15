@@ -34,7 +34,9 @@ public class StartGameHandler extends Thread {
       System.out.println("START HANDLER : Started");
       this.game.sendFullMessages(); // inform the lobby that no other members will join
       this.game.sendFieldMessage(); // inform the players about the chosen multiplier file
-      this.game.sendDictionaryMessage(); // inform the player about the chosen dictionary
+      //this.game.sendDictionaryMessage(); // inform the player about the chosen dictionary
+      DictionarySender sender = new DictionarySender(game); //inform the others about the chosen dictionary
+      sender.start(); //start the sending
       StartGameHandler.sleep(60000); // sleeping the election time.
       System.out.println("START HANDLER : Time finished");
       this.game.sendStartMessage(); // inform the players the game will start --> sequence Messages

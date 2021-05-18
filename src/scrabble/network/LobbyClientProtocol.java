@@ -66,7 +66,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   /**
    * Constructor for a GameFinderProtocol, which try to connect with an lobby server in the network
    * on 20 specific client known ports. If no server is found the Constructor throws an Exception to
-   * contact the calling GameFinderController
+   * contact the calling GameFinderController.
    * 
    * @param controller Controller of the GameFinder screen
    * @author hendiehl
@@ -77,7 +77,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to get player instance from DB
+   * Method to get player instance from DB.
    * 
    * @author hendiehl
    */
@@ -88,7 +88,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to set the connection on the standard ports
+   * Method to set the connection on the standard ports.
    * 
    * @throws ConnectException
    * @author hendiehl
@@ -121,7 +121,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Constructor for an specific Client known port for an lobby server
+   * Constructor for an specific Client known port for an lobby server.
    * 
    * @param controller controller of the GameFinder screen
    * @param ownPort port given by the user
@@ -143,7 +143,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   /**
    * Run method of the thread class. The thread is waiting for messages from the server and react to
-   * an specific MessageType
+   * an specific MessageType.
    * 
    * @author hendiehl
    */
@@ -236,7 +236,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   /**
    * Method to react to an incoming Field Message in order to set the content of an dictionary file
-   * the host chose for the dictionary
+   * the host chose for the dictionary.
    * 
    * @param message FieldMessage
    * @author hendiehl
@@ -251,7 +251,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   /**
    * Method to react to an incoming Field Message in order to set the content of an file the host
-   * chose for the multiplier of the game Field
+   * chose for the multiplier of the game Field.
    * 
    * @param message FieldMessage
    * @author hendiehl
@@ -282,7 +282,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   /**
    * Method to react to an LetterMultisetReturnMessage response in order of a finished LetterBag
-   * server operation
+   * server operation.
    * 
    * @param message LetterBagMultisetReturnMessage
    * @author hendiehl
@@ -336,23 +336,23 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to react to an incoming Move message which inform the player that he is on move
+   * Method to react to an incoming Move message which inform the player that he is on move.
    * 
    * @param message Move message
    * @author hendiehl
    */
   private void reactToMove(Message message) {
     System.out.println("CLIENT PROTOCOL : Move-Message received");
-    if (this.gameScreen != null) { // Perhaps the screen isn't loaded, because JavaFX loading time
-                                   // (no control about that)
-      this.gameScreen.api.startMove(); // start Move
+    if (this.gameScreen != null) {
+      MoveMessage msg = (MoveMessage) message;
+      this.gameScreen.api.startMove(msg.getTurn()); // start Move
     }
 
   }
 
   /**
    * Message to react to an Game Message. After this Message the lobby will be left to get into a
-   * GameScreen
+   * GameScreen.
    * 
    * @param message Message from the Server
    * @author hendiehl
@@ -368,7 +368,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   /**
    * Method to react to the start message of the server which will be send when the server wants the
-   * chosen player sequence
+   * chosen player sequence.
    * 
    * @param message Message from the Server
    * @author hendiehl
@@ -390,7 +390,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to react to the start of an full lobby procedure
+   * Method to react to the start of an full lobby procedure.
    * 
    * @param message message from the server
    * @author hendiehl
@@ -405,7 +405,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to react to an rejection message
+   * Method to react to an rejection message.
    * 
    * @param message message of the server
    * @author hendiehl
@@ -416,6 +416,13 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   }
 
+  /**
+   * Method to react to an kick message which will be send by the server if an host decided to kick
+   * a client from the Lobby. Will shut down the protocol and switch the screen to the menu screen.
+   * 
+   * @param message
+   * @author hendiehl
+   */
   private void reactToKick(Message message) {
     System.out.println("CLIENT PROTOCOL : Kick-Message received");
     this.chat.sendKickToServer();
@@ -428,7 +435,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to react to a shutdown message, no response expected
+   * Method to react to a shutdown message, no response expected.
    * 
    * @author hendiehl
    */
@@ -481,7 +488,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method for reacting on information message from server and show them on the gui
+   * Method for reacting on information message from server and show them on the gui.
    * 
    * @param message message from the server which will be castes to the specific type
    * @author hendiehl
@@ -505,7 +512,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to close the connection of the protocol
+   * Method to close the connection of the protocol.
    * 
    * @author hendiehl
    */
@@ -523,7 +530,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to end the running thread and close the connection
+   * Method to end the running thread and close the connection.
    * 
    * @author hendiehl
    */
@@ -540,7 +547,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to change the controller of the screen when new window is loaded
+   * Method to change the controller of the screen when new window is loaded.
    * 
    * @param glc
    * @author hendiehl
@@ -616,7 +623,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to send a chat message with the chat client to the Chat server
+   * Method to send a chat message with the chat client to the Chat server.
    * 
    * @param message message of the chat client which will be send to the server
    * @author hendiehl
@@ -629,7 +636,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   /**
    * Method to handle an incoming chat message and print them on the GameLobbyScreen or the
-   * GameScreen itself
+   * GameScreen itself.
    * 
    * @param message message from the chat server
    * @author hendiehl
@@ -641,7 +648,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to create a Chat Client with an port given by the ServerProtocol
+   * Method to create a Chat Client with an port given by the ServerProtocol.
    * 
    * @param port port of the Chat server started by the Main Server
    * @author hendiehl
@@ -657,7 +664,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   /**
    * Method to get the the amount of players in the lobby, used by the GameLobbyController to set up
-   * the position election
+   * the position election.
    * 
    * @author hendiehl
    */
@@ -666,7 +673,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to set the game screen controller after the lobby is leaved for the actual game screen
+   * Method to set the game screen controller after the lobby is leaved for the actual game screen.
    * 
    * @param gameScreen
    * @author hendiehl
@@ -677,7 +684,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to inform the server that a player finished his move in time
+   * Method to inform the server that a player finished his move in time.
    * 
    * @author hendiehl
    */
@@ -696,7 +703,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to shutdown the chat protocol
+   * Method to shutdown the chat protocol.
    * 
    * @author hendiehl
    */
@@ -721,7 +728,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -739,7 +746,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -757,7 +764,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -775,7 +782,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -793,7 +800,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -811,7 +818,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -829,7 +836,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -847,7 +854,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */

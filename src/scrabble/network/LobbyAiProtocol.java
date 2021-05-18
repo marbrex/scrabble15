@@ -15,7 +15,7 @@ public class LobbyAiProtocol implements NetworkPlayer {
   private AiPlayer ai;
 
   /**
-   * Constructor which initialize the AiPlayer which is responsible for game action
+   * Constructor which initialize the AiPlayer which is responsible for game action.
    * 
    * @author hendiehl
    */
@@ -24,7 +24,7 @@ public class LobbyAiProtocol implements NetworkPlayer {
   }
 
   /**
-   * Getter method of the AiPlayer
+   * Getter method of the AiPlayer.
    * 
    * @author hendiehl
    */
@@ -34,12 +34,12 @@ public class LobbyAiProtocol implements NetworkPlayer {
   }
 
   /**
-   * Method to calculate a move by an AiPlayer
+   * Method to calculate a move by an AiPlayer.
    * 
    * @author hendiehl
    */
   @Override
-  public void startMove() {
+  public void startMove(int turn) {
 
   }
 

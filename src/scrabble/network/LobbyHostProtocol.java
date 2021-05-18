@@ -72,7 +72,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to return the player instance connected with the LobbyHostProtocol
+   * Method to return the player instance connected with the LobbyHostProtocol.
    * 
    * @return HumanPlayer instance of the profile loaded in the actual program state.
    * @author hendiehl
@@ -195,7 +195,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
 
   /**
    * Method to get the the amount of players in the lobby, used by the GameLobbyController to set up
-   * the position election
+   * the position election.
    * 
    * @author hendiehl
    */
@@ -206,7 +206,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
 
   /**
    * Method to inform the clients that the game is about to start A sequence Message is expected,
-   * except of the host protocol
+   * except of the host protocol.
    * 
    * @author hendiehl
    */
@@ -216,7 +216,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to inform the lobby member that the lobby will be changed to gameField
+   * Method to inform the lobby member that the lobby will be changed to gameField.
    * 
    * @author hendiehl
    */
@@ -244,16 +244,16 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * @author hendiehl
    */
   @Override
-  public void startMove() {
+  public void startMove(int turn) {
     if (this.gameScreen != null) { // be aware of not loading gameScreen
-      this.gameScreen.api.startMove(); // start Move
+      this.gameScreen.api.startMove(turn); // start Move
     }
 
   }
 
   /**
    * Method to set the GameController to the LobbyHostProtocol after the lobby will be leaved and
-   * the GameScreen entered
+   * the GameScreen entered.
    * 
    * @param gameScreen Corresponding controller to an GameFieldScreen
    * @author hendiehl
@@ -263,7 +263,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to inform the Server that a player ended his move in Time
+   * Method to inform the Server that a player ended his move in Time.
    * 
    * @author hendiehl
    */
@@ -274,7 +274,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to shut down the complete server
+   * Method to shut down the complete server.
    * 
    * @author hendiehl
    */
@@ -284,7 +284,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to shutdown the chat protocol
+   * Method to shutdown the chat protocol.
    * 
    * @author hendiehl
    */
@@ -297,7 +297,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to check if a game started or not, mainly used by LobbyController
+   * Method to check if a game started or not, mainly used by LobbyController.
    * 
    * @return boolean representation if the GameStatus Type is Lobby or Game
    * @author hendiehl
@@ -319,7 +319,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -331,7 +331,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -343,7 +343,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -355,7 +355,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -367,7 +367,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -379,7 +379,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -391,7 +391,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -403,7 +403,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to use LetterBag functionality in a network game
+   * Method to use LetterBag functionality in a network game.
    * 
    * @author hendiehl
    */
@@ -415,7 +415,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to show the player on the move if the actual player isn't on the move
+   * Method to show the player on the move if the actual player isn't on the move.
    * 
    * @param player on the move others than the actual player himself
    * @author hendiehl
@@ -429,7 +429,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to set the own multiplier file for the game field and save it on the server
+   * Method to set the own multiplier file for the game field and save it on the server.
    * 
    * @param path content of the chosen multiplier file in the configure screen
    * @author hendiehl
@@ -440,7 +440,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to set the content of an chosen multiplier file for future use in the game field
+   * Method to set the content of an chosen multiplier file for future use in the game field.
    * 
    * @param path content of an multiplier file
    * @author hendiehl
@@ -454,7 +454,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to set the own dictionary file content for the game field and save it on the server
+   * Method to set the own dictionary file content for the game field and save it on the server.
    * 
    * @param path content of the chosen multiplier file in the configure screen
    * @author hendiehl
@@ -465,7 +465,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
-   * Method to set the content of an chosen dictionary file for future use in the game field
+   * Method to set the content of an chosen dictionary file for future use in the game field.
    * 
    * @param dictionaryContent content of an dictionary file
    * @author hendiehl

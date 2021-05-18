@@ -182,10 +182,9 @@ public class GameLobbyController implements LobbyController {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Menu.fxml"));
         Parent root = loader.load();
         /*
-        Stage stage = (Stage) this.backButton.getScene().getWindow();
-        stage.setScene(
-            new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
-        */
+         * Stage stage = (Stage) this.backButton.getScene().getWindow(); stage.setScene( new
+         * Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
+         */
         ScrabbleApp.getScene().getStylesheets().clear();
         ScrabbleApp.getScene().setRoot(root);
       } catch (IOException e) {
@@ -214,28 +213,6 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method to get the actual content of a multiplier field file if wanted. Is a empty String if
-   * standard is wanted. Mainly used by the configure controller.
-   * 
-   * @return content string of the file or an empty String
-   * @author hendiehl
-   */
-  public String getContentOfFile() {
-    return this.contentOfField;
-  }
-
-  /**
-   * Method to get the actual content of a dictionary chosen by a host in the configure screen. Is a
-   * empty string if the standard one is wanted. Mainly used by the configure controller.
-   * 
-   * @return content string of the file or an empty String
-   * @author hendiehl
-   */
-  public String getContentOfDictionary() {
-    return this.contentOfDictionary;
-  }
-
-  /**
    * Method to set the content of an specific dictionary. Used by the configure controller
    * 
    * @param content content of an specific dictionary file
@@ -246,9 +223,9 @@ public class GameLobbyController implements LobbyController {
     if (hostChange) {
       this.host.setDictionaryMessage(content);
     } else {
-      if(!content.equals("")) { //not the standard 
+      if (!content.equals("")) { // not the standard
         this.contentOfDictionary = content;
-        //set the dictionary 
+        // set the dictionary
       }
     }
   }
@@ -729,12 +706,12 @@ public class GameLobbyController implements LobbyController {
         if (this.host != null) {
           loader.setControllerFactory(c -> {
             return new GameController(this.host, this.isHost, this.contentOfField,
-                this.host.getPlayerList());
+                this.host.getPlayerList(), this.contentOfDictionary);
           });
         } else {
           loader.setControllerFactory(c -> {
             return new GameController(this.client, this.isHost, this.contentOfField,
-                this.client.getPlayerList());
+                this.client.getPlayerList(), this.contentOfDictionary);
           });
         }
         Parent root = loader.load();
@@ -745,14 +722,14 @@ public class GameLobbyController implements LobbyController {
           this.client.setGameScreen(gameScreen);
         }
         /*
-        Stage stage = (Stage) this.backButton.getScene().getWindow();
-        Scene scene =
-            new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-        scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
-        stage.setScene(scene);
-        */
+         * Stage stage = (Stage) this.backButton.getScene().getWindow(); Scene scene = new
+         * Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
+         * scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
+         * stage.setScene(scene);
+         */
         ScrabbleApp.getScene().getStylesheets().clear();
-        ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
+        ScrabbleApp.getScene().getStylesheets()
+            .add(getClass().getResource("css/style.css").toExternalForm());
         ScrabbleApp.getScene().setRoot(root);
       } catch (IOException e) {
         // TODO Auto-generated catch block

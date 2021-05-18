@@ -281,4 +281,26 @@ public class LobbyServer extends Thread {
   protected Integer getChatPort() {
     return this.chatPort;
   }
+
+  /**
+   * Method to get the boolean condition about the actual chosen multiplier field file. Will return
+   * true for standard or false for own file
+   * 
+   * @return boolean condition about standard multiplier or not
+   * @author hendiehl
+   */
+  public boolean isStandardMultiplier() {
+    return this.gameInfoController.isStandardMultiplier();
+  }
+
+  /**
+   * Method to get the boolean condition about the actual chosen dictionary field file. Will return
+   * true for standard or false for own file
+   * 
+   * @return boolean condition about standard dictionary or not
+   * @author hendiehl
+   */
+  public boolean isStandardDictionary() {
+    return this.gameInfoController.isStandardDictionary();
+  }
 }

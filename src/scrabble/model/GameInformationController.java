@@ -55,6 +55,28 @@ public class GameInformationController {
   }
 
   /**
+   * Method to get the boolean condition about the actual chosen multiplier field file. Will return
+   * true for standard or false for own file
+   * 
+   * @return boolean condition about standard multiplier or not
+   * @author hendiehl
+   */
+  public boolean isStandardMultiplier() {
+    return this.multiplierContent.matches("");
+  }
+
+  /**
+   * Method to get the boolean condition about the actual chosen dictionary field file. Will return
+   * true for standard or false for own file
+   * 
+   * @return boolean condition about standard dictionary or not
+   * @author hendiehl
+   */
+  public boolean isStandardDictionary() {
+    return this.dictionaryContent.matches("");
+  }
+
+  /**
    * Method which returns the type of the game status. Will be executed by several threads
    * 
    * @return status of the game
@@ -481,8 +503,10 @@ public class GameInformationController {
     System.out.println("GAME INFO : Set dictionary content");
     this.dictionaryContent = content;
   }
+
   /**
    * Method to send the content of an multiplier file to all player, so it can be set.
+   * 
    * @author hendiehl
    */
   public void sendDictionaryMessage() {

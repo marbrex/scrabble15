@@ -189,10 +189,11 @@ public class GameController {
    * @param isHost     variable for host detection
    * @param mapContent content of a specific field multiplier file
    * @param players    list of the game members
+   * @param dictionary dictionary string chosen by host
    * @author hendiehl
    */
   public GameController(NetworkScreen protocol, boolean isHost, String mapContent,
-      ArrayList<Player> players) {
+      ArrayList<Player> players, String dictionary) {
     this.players = players;
     this.roundCounter = 1;
     this.protocol = protocol;
@@ -218,7 +219,7 @@ public class GameController {
     this.api = new NetworkGame() {
 
       @Override
-      public void startMove() {
+      public void startMove(int turn) {
         Platform.runLater(() -> {
 
           // Filling the empty slots in the LetterBar if it's the case
@@ -572,7 +573,7 @@ public class GameController {
     setButtonActions();
 
     if (protocol == null) {
-      api.startMove();
+      api.startMove(0);
     }
 
   }

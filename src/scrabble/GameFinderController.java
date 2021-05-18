@@ -89,7 +89,7 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * Method to show an specific string on the statusLabel
+   * Method to show an specific string on the statusLabel.
    * 
    * @param message message to be shown
    * @author hendiehl
@@ -101,7 +101,7 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * Method to show an specific string on the statusLabel2
+   * Method to show an specific string on the statusLabel2.
    * 
    * @param message message to be shown
    * @author hendiehl
@@ -113,7 +113,7 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * Method to activate the joinBtn on the screen and show the accessibility of an port
+   * Method to activate the joinBtn on the screen and show the accessibility of an port.
    * @author hendiehl
    */
   public void activateJoin() {
@@ -122,7 +122,7 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * Method to check if an String matches the characteristics of an port number, which means that it have to be a number of a minimum length of 4
+   * Method to check if an String matches the characteristics of an port number, which means that it have to be a number of a minimum length of 4.
    * 
    * @param port String representation of an user port
    * @return boolean about the acceptance of the String parameter
@@ -134,7 +134,7 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * Method to activate auto search after a client changed to own port once
+   * Method to activate auto search after a client changed to own port once.
    * 
    * @param port String representation of 0 for identifying
    * @return about the acceptance of the String parameter
@@ -146,7 +146,7 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * Method which handles the actionEvent of the backButton and calls the openScreen method with the Menu.fxml and shut down a running client protocol
+   * Method which handles the actionEvent of the backButton and calls the openScreen method with the Menu.fxml and shut down a running client protocol.
    * @author hendiehl
    */
   @FXML
@@ -184,7 +184,7 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * Initialize method of javaFx in which the joinProtokol automatically search for an game Lobby
+   * Initialize method of javaFx in which the joinProtokol automatically search for an game Lobby.
    * in an local Network. If an protocol is generated and found a server informations will be shown.
    * @author hendiehl
    */
@@ -194,6 +194,7 @@ public class GameFinderController implements LobbyController {
     System.out.println("GAME FINDER : Activate auto search");
     clientProtocol = new LobbyClientProtocol(this);
     clientProtocol.start();
+    this.useOwnPort.setDisable(false);
   }
   /**
    * Method which will be called after a lobby is found and connected successfully, the join button will then be enabled.
@@ -211,12 +212,12 @@ public class GameFinderController implements LobbyController {
   public void connectNotSucessful() {
     Platform.runLater(() -> {
       this.statusLabel.setText("No game at standart port");
-      this.useOwnPort.setDisable(false); // activate or not
+      //this.useOwnPort.setDisable(false); // activate or not
     });
   }
 
   /**
-   * Method which handles the useOwnPort ActionEvents and activates or deactivates the controls for an user input
+   * Method which handles the useOwnPort ActionEvents and activates or deactivates the controls for an user input.
    * @author hendiehl
    */
   @FXML
@@ -276,7 +277,7 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * Method to shutdown the client protocol
+   * Method to shutdown the client protocol.
    * @author hendiehl
    */
   @Override
@@ -354,7 +355,7 @@ public class GameFinderController implements LobbyController {
   }
 
   /**
-   * Method to set the background image
+   * Method to set the background image.
    * @author hendiehl
    */
   private void loadBackground() {

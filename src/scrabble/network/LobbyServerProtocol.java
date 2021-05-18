@@ -17,7 +17,8 @@ import scrabble.model.MessageType;
 
 public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   /**
-   * Class which handle the communication with a client
+   * Class which handle the communication with a client. Is responsible for the overall
+   * communication with a LobbyClientProtocol.
    * 
    * @author hendiehl
    */
@@ -42,7 +43,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 
   /**
    * Constructor of the LobbyProtocol which are used to get in contact with players who want to join
-   * an Lobby or an game
+   * an Lobby or an game.
    * 
    * @param s Socket given by the Lobby Server, which are connected to an client
    * @param gameLobby controller of the GameLobbyScreen
@@ -66,7 +67,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Run method of the thread which waits for an client message and react to specific MessageTypes
+   * Run method of the thread which waits for an client message and react to specific MessageTypes.
    * 
    * @author hendiehl
    */
@@ -80,7 +81,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 
   /**
    * Method to read an incoming Message from a corresponding client and take action in of the
-   * MessageType
+   * MessageType.
    * 
    * @author hendiehl
    */
@@ -123,7 +124,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 
   /**
    * Method to react to an incoming LetterBag message. Has the function to perform a specific action
-   * on the global LetterBag instance
+   * on the global LetterBag instance.
    * 
    * @param message LetterBagMessage
    * @author hendiehl
@@ -186,7 +187,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to send the response back to the client
+   * Method to send the response back to the client.
    * 
    * @param msg LetterBagMultisetReturnMessage
    * @author hendiehl
@@ -203,7 +204,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to react to an End Message received when a player wants to end his turn
+   * Method to react to an End Message received when a player wants to end his turn.
    * 
    * @param message
    * @author hendiehl
@@ -215,7 +216,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 
   /**
    * Method to react to an incoming start Message of a client which transmit the chosen player
-   * sequence
+   * sequence.
    * 
    * @param message Message of the client, type : StartMessage
    * @author hendiehl
@@ -227,7 +228,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to react to a client which ends the connection
+   * Method to react to a client which ends the connection.
    * 
    * @author hendiehl
    */
@@ -239,7 +240,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 
   /**
    * Method to delete the specific protocol by deleting it from the overall server and the
-   * GameInfoController and shut it down because no action should be performed after that
+   * GameInfoController and shut it down because no action should be performed after that.
    * 
    * @author hendiehl
    */
@@ -289,7 +290,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 
   /**
    * Method to send information about the Lobby to the client and also inform all players in the
-   * lobby about the joining, also himself
+   * lobby about the joining, also himself.
    * 
    * @author hendiehl
    */
@@ -317,10 +318,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   public void sendInformationMessage() {
     // System.out.println("Send basic lobby information");
-    InformationMessage iM = new InformationMessage(MessageType.INFORMATION, this.player, // here
-                                                                                         // perhaps
-                                                                                         // null
-                                                                                         // pointer
+    InformationMessage iM = new InformationMessage(MessageType.INFORMATION, this.player,
         this.gameInfoController.getStatus(), this.gameInfoController.getPlayerAmount());
     try {
       this.out.writeObject(iM);
@@ -333,7 +331,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to close the connection to an client
+   * Method to close the connection to an client.
    * 
    * @author hendiehl
    */
@@ -349,7 +347,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to shutdown the protocol by breaking the thread loop and closing the connection
+   * Method to shutdown the protocol by breaking the thread loop and closing the connection.
    * 
    * @param selfcall boolean condition which decides if a protocol is shut down by itself or forced
    *        to do it
@@ -398,7 +396,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to send the client information about the Lobby, like player amount
+   * Method to send the client information about the Lobby, like player amount.
    * 
    * @author hendiehl
    */
@@ -419,7 +417,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 
   /**
    * Method to send a message to an client to inform him that he was kicked by an host from the
-   * lobby. A shutdown message is expected
+   * lobby. A shutdown message is expected.
    * 
    * @author hendiehl
    */
@@ -437,7 +435,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to adding points to the internal positions in the game
+   * Method to adding points to the internal positions in the game.
    * 
    * @author hendiehl
    */
@@ -446,7 +444,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to return the number representing the sequence election points
+   * Method to return the number representing the sequence election points.
    * 
    * @author hendiehl
    */
@@ -456,7 +454,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 
   /**
    * Method to start the lobby election procedure by an client after a game is full or going to
-   * start
+   * start.
    * 
    * @author hendiehl
    */
@@ -474,7 +472,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
 
   /**
    * Method to inform the clients that the game is about to start. A sequence Message is expected,
-   * except of the host protocol
+   * except of the host protocol.
    * 
    * @author hendiehl
    */
@@ -492,7 +490,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to inform the lobby member that the lobby will be changed to gameField
+   * Method to inform the lobby member that the lobby will be changed to gameField.
    * 
    * @author hendiehl
    */
@@ -512,14 +510,14 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to inform a player that his move has started
+   * Method to inform a player that his move has started.
    * 
    * @author hendiehl
    */
   @Override
-  public void startMove() {
+  public void startMove(int turn) {
     try {
-      Message msg = new Message(MessageType.MOVE, this.player);
+      MoveMessage msg = new MoveMessage(MessageType.MOVE, this.player, turn);
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("SERVER PROTOCOL : Move-Message sended");
@@ -531,7 +529,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method inform the players which player is actually on move if they are not self on the move
+   * Method inform the players which player is actually on move if they are not self on the move.
    * 
    * @param player on the move others than the actual player himself
    * @author hendiehl
@@ -550,7 +548,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to send the chosen content of an multiplier file to the players
+   * Method to send the chosen content of an multiplier file to the players.
    * 
    * @param path content of the file chosen by the host
    * @author hendiehl
@@ -569,7 +567,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to send the chosen content of an dictionary file to the players
+   * Method to send the chosen content of an dictionary file to the players.
    * 
    * @param dictionaryContent content of the file chosen by the host
    * @author hendiehl
