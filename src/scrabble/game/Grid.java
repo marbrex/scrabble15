@@ -629,6 +629,7 @@ public class Grid {
         controller.gridWrapper.getChildren().remove(popup);
         controller.okBtn.setDisable(false);
       });
+      popup.setViewOrder(--controller.minViewOrder);
 
       Label errorLabel = new Label(errorMessage);
       errorLabel.setAlignment(Pos.CENTER);
