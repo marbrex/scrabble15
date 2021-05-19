@@ -55,6 +55,8 @@ public class LetterTile implements Serializable {
         ltrTile.isBlank = true;
         ltrTile.container.setOnDragDetected(null);
         ltrTile.container.setOnDragDone(null);
+        ltrTile.container.setOnMouseDragged(null);
+        ltrTile.container.setOnMouseReleased(null);
         ltrTile.container.setOnMouseClicked(clickEvent -> {
           System.out.println(ltrTile + " - @onMouseClicked");
 
