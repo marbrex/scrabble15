@@ -1,0 +1,7 @@
+TEST DICTIONARY
+
+TA	ta definition
+MA	ma definition
+SA	sa definition
+CA	ca definition
+LA	la definition

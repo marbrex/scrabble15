@@ -3,6 +3,7 @@ package scrabble;
 import com.google.common.collect.Multiset;
 import com.jfoenix.controls.JFXButton;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -169,6 +170,8 @@ public class GameController {
 
   public int minViewOrder = 0;
 
+  String dictContent;
+
   /**
    * Default constructor.
    */
@@ -199,6 +202,7 @@ public class GameController {
     this.protocol = protocol;
     this.isHost = isHost;
     this.mapContent = mapContent;
+    this.dictContent = dictionary;
   }
 
   /**
@@ -397,9 +401,9 @@ public class GameController {
     grid.initCells();
   }
 
-  public void initDictionary(String dictPath) {
+  public void initDictionary(String dictContent) {
     // Setting the Dictionary (should be set only once, an error otherwise)
-    InputStream in = getClass().getResourceAsStream(dictPath);
+    InputStream in = new ByteArrayInputStream(dictContent.getBytes());
     Dictionary.setDictionary(in);
   }
 
@@ -495,10 +499,10 @@ public class GameController {
   @FXML
   private void initialize() {
 
-    initDictionary();
-
     if (protocol == null) {
       // Local Game
+
+      initDictionary();
 
       initPlayers();
 
@@ -506,6 +510,14 @@ public class GameController {
 
     } else {
       // Network Game
+
+      if (dictContent.isEmpty()) {
+        // if dictionary content transferred by the lobby is empty => use default dictionary
+        initDictionary();
+      } else {
+        // use the dictionary transferred by the lobby
+        initDictionary(dictContent);
+      }
 
       if (mapContent.isEmpty()) {
         // if map content transferred by the lobby is empty => use default map
