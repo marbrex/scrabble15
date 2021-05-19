@@ -11,7 +11,7 @@ import java.util.*;
 
 /**
  * scrabble.model.AiPlayer extends from the Player class and is necessary to determine the
- * difficulty of each AI Player
+ * difficulty of each AI Player.
  * 
  * @author astarche
  * @author skeskinc
@@ -32,6 +32,7 @@ public class AiPlayer extends Player implements Serializable {
    */
   public AiPlayer() {
     super();
+    this.setName("AI");
   }
 
   /**

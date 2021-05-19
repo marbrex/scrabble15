@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * scrabble.model.HumanPlayer class extends from the scrabble.model.Player class and contains game
- * statistics, which is only necessary for the HumanPlayer
+ * statistics, which is only necessary for the HumanPlayer.
  * 
  * @author skeskinc
  */
@@ -16,7 +16,7 @@ public class HumanPlayer extends Player implements Serializable {
   private boolean host;
 
   /**
-   * Constructor of the Humanplayer class
+   * Constructor of the Humanplayer class.
    * 
    * @author skeskinc
    */
@@ -27,7 +27,7 @@ public class HumanPlayer extends Player implements Serializable {
   }
 
   /**
-   * Returns Win-Rate of the player
+   * Returns Win-Rate of the player.
    * 
    * @return The Win-Rate of the Player
    * @author skeskinc
@@ -41,7 +41,7 @@ public class HumanPlayer extends Player implements Serializable {
   }
 
   /**
-   * Returns the amount of games lost in total
+   * Returns the amount of games lost in total.
    * 
    * @return Amount of games lost
    * @author skeskinc
@@ -51,7 +51,7 @@ public class HumanPlayer extends Player implements Serializable {
   }
 
   /**
-   * Setting the amount of games lost in total -> Database
+   * Setting the amount of games lost in total.
    * 
    * @param gamesLost Setting up the amount of games lost
    * @author skeskinc
@@ -61,7 +61,7 @@ public class HumanPlayer extends Player implements Serializable {
   }
 
   /**
-   * Returns the amount of games won in total
+   * Returns the amount of games won in total.
    * 
    * @return Amount of games won
    * @author skeskinc
@@ -71,7 +71,7 @@ public class HumanPlayer extends Player implements Serializable {
   }
 
   /**
-   * Setting the amount of games won in total
+   * Setting the amount of games won in total.
    * 
    * @param gamesWon Setting up the amount of games won
    * @author skeskinc
@@ -81,7 +81,7 @@ public class HumanPlayer extends Player implements Serializable {
   }
 
   /**
-   * Deciding to make human player a host
+   * Deciding to make human player a host.
    * 
    * @param host Determine if player is a host or not
    * @author skeskinc
@@ -91,7 +91,7 @@ public class HumanPlayer extends Player implements Serializable {
   }
 
   /**
-   * Returns a truth value, if a human player is a host or not
+   * Returns a truth value, if a human player is a host or not.
    * 
    * @return True if a player is a host, else false
    * @author skeskinc
