@@ -1,7 +1,7 @@
 package scrabble.network;
 
 public interface NetworkGame {
-  public void startMove(int turn); // called when a player is on move and should enable the game
+  public void startMove(int turn, int id); // called when a player is on move and should enable the game
                                    // screen for user input
 
   public void endMove(); // called when a player ends his move or when forced to end his move by the

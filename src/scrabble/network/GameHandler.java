@@ -69,20 +69,20 @@ public class GameHandler extends Thread {
    */
   private void makeATurn() {
     for (NetworkPlayer player : this.players) {
-      if (!this.gameIsOn) {
+      this.checkRunning(); // check if a game should stop
+      if (!this.gameIsOn) { // leaving the loop if a game stopped
         break;
       }
-      this.checkRunning();
       System.out.println("GAME HANDLER : Player turn : " + player.getPlayer().getName());
       if (player instanceof LobbyServerProtocol || player instanceof LobbyHostProtocol) {
         this.actual = player;
-        player.startMove(this.turn);
+        player.startMove(this.turn, this.actual.getPlayer().getId()); // here adding the ID.
         this.informOthers();
         this.waitMazimumTime(); // change to approach only by HumanPlayer
         // here work with player move info
         this.checkRunning(); // check if a game should be ended --> any condition
       } else {
-        // AI calculating
+        this.actual = player;
       }
       this.turn++; // increase the turn counter
     }
@@ -97,7 +97,8 @@ public class GameHandler extends Thread {
   private void informOthers() {
     for (NetworkPlayer player : this.players) { // go through them
       if (!player.equals(this.actual)) {
-        player.informOther(this.players.indexOf(actual));
+        player.informOther(this.turn, this.actual.getPlayer().getId()); // here sending the id +
+                                                                        // turn
       }
     }
   }

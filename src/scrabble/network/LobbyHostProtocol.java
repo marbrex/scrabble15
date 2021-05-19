@@ -244,9 +244,9 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * @author hendiehl
    */
   @Override
-  public void startMove(int turn) {
+  public void startMove(int turn, int id) {
     if (this.gameScreen != null) { // be aware of not loading gameScreen
-      this.gameScreen.api.startMove(turn); // start Move
+      this.gameScreen.api.startMove(turn, id); // start Move
     }
 
   }
@@ -421,10 +421,10 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * @author hendiehl
    */
   @Override
-  public void informOther(int i) {
+  public void informOther(int turn, int id) {
     System.out.println("HOST PROTOCOL : Other-Message received");
     if (this.gameScreen != null) {
-      this.gameScreen.otherPlayerOnMove(i);
+      this.gameScreen.otherPlayerOnMove(turn, id);
     }
   }
 

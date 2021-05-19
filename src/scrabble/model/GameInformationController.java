@@ -318,6 +318,7 @@ public class GameInformationController {
   private void startGame() {
     this.setPlayerSequence();
     this.fillGame();
+    this.setGameIDs();
     System.out.println("GAME INFO : Invoke Game");
     this.sendGameMessage(this.getPlayersInformation());// here adding new List
     try {
@@ -326,11 +327,25 @@ public class GameInformationController {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    // this.letterBag = LetterBag.getLetterBag();
     this.bag = LetterBag.getInstance();
     // this.fillGame(); // Filling slots of missing Players with AiPlayers
     this.gameHandler = new GameHandler(this, this.players);
     this.gameHandler.startGame();
+  }
+
+  /**
+   * Method to set a ID for a game. The id has the purpose to compare the players during a network
+   * game and identify them on the different instances of player lists on the client machines.
+   * 
+   * @author hendiehl
+   */
+  private void setGameIDs() {
+    int ids = 1;
+    for (NetworkPlayer player : this.players) { // iterating through the NetworkPlayers to set their
+                                                // player id
+      player.getPlayer().setId(ids); // here set the id's
+      ids++; // increase id's
+    }
   }
 
   /**

@@ -265,7 +265,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
-   * Message to inform a client that a other player is on the move Will be received by all players
+   * Message to inform a client that a other player is on the move. Will be received by all players
    * who are not actual on move.
    * 
    * @param message
@@ -273,10 +273,11 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   private void reactToOther(Message message) {
     System.out.println("CLIENT PROTOCOL : Other-Message received");
-    OtherMessage msg = (OtherMessage) message;
-    int i = msg.getI();
     if (this.gameScreen != null) {
-      this.gameScreen.otherPlayerOnMove(i);
+      OtherMessage msg = (OtherMessage) message;
+      int i = msg.getTurn();
+      int j = msg.getId();
+      this.gameScreen.otherPlayerOnMove(i, j);
     }
   }
 
@@ -345,7 +346,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     System.out.println("CLIENT PROTOCOL : Move-Message received");
     if (this.gameScreen != null) {
       MoveMessage msg = (MoveMessage) message;
-      this.gameScreen.api.startMove(msg.getTurn()); // start Move
+      int i = msg.getTurn();
+      int j = msg.getId();
+      this.gameScreen.api.startMove(i, j); // start Move
     }
 
   }

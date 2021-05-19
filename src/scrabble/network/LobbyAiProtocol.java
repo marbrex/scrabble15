@@ -39,7 +39,7 @@ public class LobbyAiProtocol implements NetworkPlayer {
    * @author hendiehl
    */
   @Override
-  public void startMove(int turn) {
+  public void startMove(int turn, int id) {
 
   }
 
@@ -77,7 +77,7 @@ public class LobbyAiProtocol implements NetworkPlayer {
   }
 
   @Override
-  public void informOther(int i) {
+  public void informOther(int turn, int id) {
     // Not in use because of Non-Network communication
   }
 

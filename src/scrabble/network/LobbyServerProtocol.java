@@ -515,9 +515,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * @author hendiehl
    */
   @Override
-  public void startMove(int turn) {
+  public void startMove(int turn, int id) {
     try {
-      MoveMessage msg = new MoveMessage(MessageType.MOVE, this.player, turn);
+      MoveMessage msg = new MoveMessage(MessageType.MOVE, this.player, turn, id);
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("SERVER PROTOCOL : Move-Message sended");
@@ -529,15 +529,16 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method inform the players which player is actually on move if they are not self on the move.
+   * Method inform the players which player is actually on move if they are not self on the move and
+   * which turn number it is.
    * 
    * @param player on the move others than the actual player himself
    * @author hendiehl
    */
   @Override
-  public void informOther(int i) {
+  public void informOther(int turn, int id) {
     try {
-      OtherMessage msg = new OtherMessage(MessageType.OTHER, this.player, i);
+      OtherMessage msg = new OtherMessage(MessageType.OTHER, this.player, turn, id);
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("SERVER PROTOCOL : Other-Message sended");

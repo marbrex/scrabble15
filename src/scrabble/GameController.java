@@ -225,7 +225,7 @@ public class GameController {
     this.api = new NetworkGame() {
 
       @Override
-      public void startMove(int turn) {
+      public void startMove(int turn, int id) {
         Platform.runLater(() -> {
 
           // Filling the empty slots in the LetterBar if it's the case
@@ -585,7 +585,7 @@ public class GameController {
     setButtonActions();
 
     if (protocol == null) {
-      api.startMove(0);
+      api.startMove(0, 0);
     }
 
   }
@@ -688,7 +688,7 @@ public class GameController {
   }
 
   //testing
-  public void otherPlayerOnMove(int i) {
+  public void otherPlayerOnMove(int turn, int id) {
 //    System.err.println("Inform received");
 //    System.err.println("On move : " + this.players.get(i).getName());
 
