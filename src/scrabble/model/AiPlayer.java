@@ -33,6 +33,7 @@ public class AiPlayer extends Player implements Serializable {
   public AiPlayer() {
     super();
     this.setName("AI");
+    this.setImage(0);
   }
 
   /**
