@@ -39,9 +39,11 @@ import scrabble.game.LeaderBoard;
 import scrabble.game.LetterBag;
 import scrabble.game.LetterBar;
 import scrabble.game.LetterBag.Tile;
+import scrabble.model.AiPlayer;
 import scrabble.model.Dictionary;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
+import scrabble.model.Profile;
 import scrabble.network.LobbyClientProtocol;
 import scrabble.network.LobbyHostProtocol;
 import scrabble.network.NetworkGame;
@@ -176,12 +178,12 @@ public class GameController {
    * Default constructor.
    */
   public GameController() {
-    roundCounter = 1;
+    roundCounter = 0;
     bag = LetterBag.getInstance();
   }
 
   public GameController(LetterBag bag) {
-    roundCounter = 1;
+    roundCounter = 0;
     this.bag = bag;
   }
 
@@ -198,7 +200,7 @@ public class GameController {
   public GameController(NetworkScreen protocol, boolean isHost, String mapContent,
       ArrayList<Player> players, String dictionary) {
     this.players = players;
-    this.roundCounter = 1;
+    this.roundCounter = 0;
     this.protocol = protocol;
     this.isHost = isHost;
     this.mapContent = mapContent;
@@ -531,37 +533,35 @@ public class GameController {
       // Creating a Leader Board
       leaderBoard = new LeaderBoard(players);
 
-      System.out.println("Number of players: " + players.size());
+//      System.out.println("Number of players: " + players.size());
       players.forEach(player -> {
-        System.out.println("Player name: " + player.getName());
-        if (player.getName() != null) {
-          BorderPane playerBlock = new BorderPane();
-          playerBlock.getStyleClass().add("players-block");
-          playerBlock.setPadding(new Insets(10, 30, 10, 30));
+//        System.out.println("Player name: " + player.getName());
+        BorderPane playerBlock = new BorderPane();
+        playerBlock.getStyleClass().add("players-block");
+        playerBlock.setPadding(new Insets(10, 30, 10, 30));
 
-          StackPane avatarWrapper = new StackPane();
-          avatarWrapper.getStyleClass().add("player-avatar-frame");
-          avatarWrapper.setAlignment(Pos.CENTER);
-          System.out.println("Image: " + player.getImage());
-          ImageView avatar = new ImageView(new Image(getClass().getResourceAsStream("img/" + player.getImage())));
-          avatar.setFitHeight(60);
-          avatar.setFitWidth(60);
+        StackPane avatarWrapper = new StackPane();
+        avatarWrapper.getStyleClass().add("player-avatar-frame");
+        avatarWrapper.setAlignment(Pos.CENTER);
+//          System.out.println("Image: " + player.getImage());
+        ImageView avatar = new ImageView(new Image(getClass().getResourceAsStream("img/" + player.getImage())));
+        avatar.setFitHeight(60);
+        avatar.setFitWidth(60);
 
-          Label nickname = new Label(player.getName());
-          nickname.getStyleClass().add("players-name");
-          Label score = new Label(String.valueOf(player.getScore()));
-          score.getStyleClass().add("players-score");
+        Label nickname = new Label(player.getName());
+        nickname.getStyleClass().add("players-name");
+        Label score = new Label(String.valueOf(player.getScore()));
+        score.getStyleClass().add("players-score");
 
-          avatarWrapper.getChildren().add(avatar);
-          playerBlock.setLeft(avatarWrapper);
-          playerBlock.setCenter(nickname);
-          playerBlock.setRight(score);
-          BorderPane.setAlignment(avatarWrapper, Pos.CENTER);
-          BorderPane.setAlignment(nickname, Pos.CENTER);
-          BorderPane.setAlignment(score, Pos.CENTER);
+        avatarWrapper.getChildren().add(avatar);
+        playerBlock.setLeft(avatarWrapper);
+        playerBlock.setCenter(nickname);
+        playerBlock.setRight(score);
+        BorderPane.setAlignment(avatarWrapper, Pos.CENTER);
+        BorderPane.setAlignment(nickname, Pos.CENTER);
+        BorderPane.setAlignment(score, Pos.CENTER);
 
-          playersBlock.getChildren().add(playerBlock);
-        }
+        playersBlock.getChildren().add(playerBlock);
       });
 
     }
@@ -678,9 +678,20 @@ public class GameController {
     // do something with amount
   }
 
+  public void setPlayerActive(int i) {
+    playersBlock.getChildren().forEach(block -> {
+      BorderPane playerBlock = (BorderPane) block;
+      playerBlock.getLeft().getStyleClass().remove("player-avatar-frame-active");
+    });
+    BorderPane playerBlock = (BorderPane) playersBlock.getChildren().get(i);
+    playerBlock.getLeft().getStyleClass().add("player-avatar-frame-active");
+  }
+
   //testing
   public void otherPlayerOnMove(int i) {
-    System.err.println("Inform received");
-    System.err.println("On move : " + this.players.get(i).getName());
+//    System.err.println("Inform received");
+//    System.err.println("On move : " + this.players.get(i).getName());
+
+    Platform.runLater(() -> setPlayerActive(i));
   }
 }
