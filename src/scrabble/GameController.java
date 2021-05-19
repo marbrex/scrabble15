@@ -692,6 +692,6 @@ public class GameController {
 //    System.err.println("Inform received");
 //    System.err.println("On move : " + this.players.get(i).getName());
 
-    Platform.runLater(() -> setPlayerActive(i));
+    Platform.runLater(() -> setPlayerActive(id));
   }
 }
