@@ -646,9 +646,6 @@ public class Grid {
 
       res = true;
 
-      controller.roundCounter++;
-      controller.roundLabel.setText(String.valueOf(controller.roundCounter+1));
-
       freezeWords();
     }
 

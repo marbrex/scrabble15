@@ -228,6 +228,9 @@ public class GameController {
       public void startMove(int turn, int id) {
         Platform.runLater(() -> {
 
+          setRound();
+          setPlayerActive(id);
+
           // Filling the empty slots in the LetterBar if it's the case
           int freeSlotsCount = letterBar.getCountFreeSlots();
           if (freeSlotsCount > 0) {
@@ -678,13 +681,21 @@ public class GameController {
     // do something with amount
   }
 
-  public void setPlayerActive(int i) {
+  public void setPlayerActive(int id) {
     playersBlock.getChildren().forEach(block -> {
       BorderPane playerBlock = (BorderPane) block;
       playerBlock.getLeft().getStyleClass().remove("player-avatar-frame-active");
     });
-    BorderPane playerBlock = (BorderPane) playersBlock.getChildren().get(i);
-    playerBlock.getLeft().getStyleClass().add("player-avatar-frame-active");
+    players.forEach(player -> {
+      if (player.getId() == id) {
+        BorderPane playerBlock = (BorderPane) playersBlock.getChildren().get(id);
+        playerBlock.getLeft().getStyleClass().add("player-avatar-frame-active");
+      }
+    });
+  }
+
+  public void setRound() {
+    roundLabel.setText(String.valueOf(++roundCounter));
   }
 
   //testing
@@ -692,6 +703,11 @@ public class GameController {
 //    System.err.println("Inform received");
 //    System.err.println("On move : " + this.players.get(i).getName());
 
-    Platform.runLater(() -> setPlayerActive(id));
+    Platform.runLater(() -> {
+
+      setRound();
+      setPlayerActive(id);
+
+    });
   }
 }
