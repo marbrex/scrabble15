@@ -112,88 +112,88 @@
           <center>
             <VBox id="players-block" fx:id="playersBlock" alignment="CENTER" minHeight="200.0"
               minWidth="200.0" prefHeight="485.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-<!--              <children>-->
-<!--                <HBox id="player-1-block" alignment="CENTER" fillHeight="false" minHeight="50.0"-->
-<!--                  prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">-->
-<!--                  <children>-->
-<!--                    <StackPane styleClass="player-avatar-frame">-->
-<!--                      <children>-->
-<!--                        <ImageView id="player-1-avatar" fitHeight="60.0" fitWidth="60.0"-->
-<!--                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">-->
-<!--                          <image>-->
-<!--                            <Image url="@../img/default-avatar-icon.png"/>-->
-<!--                          </image>-->
-<!--                        </ImageView>-->
-<!--                      </children>-->
-<!--                    </StackPane>-->
-<!--                    <Label id="player-1-name" styleClass="players-name" text="Player1"/>-->
-<!--                    <Label id="player-1-score" styleClass="players-score" text="0"/>-->
-<!--                  </children>-->
-<!--                  <padding>-->
-<!--                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>-->
-<!--                  </padding>-->
-<!--                </HBox>-->
-<!--                <HBox id="player-2-block" alignment="CENTER" fillHeight="false" minHeight="50.0"-->
-<!--                  prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">-->
-<!--                  <children>-->
-<!--                    <StackPane styleClass="player-avatar-frame">-->
-<!--                      <children>-->
-<!--                        <ImageView id="player-2-avatar" fitHeight="60.0" fitWidth="60.0"-->
-<!--                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">-->
-<!--                          <image>-->
-<!--                            <Image url="@../img/default-avatar-icon.png"/>-->
-<!--                          </image>-->
-<!--                        </ImageView>-->
-<!--                      </children>-->
-<!--                    </StackPane>-->
-<!--                    <Label id="player-2-name" styleClass="players-name" text="Player2"/>-->
-<!--                    <Label id="player-2-score" styleClass="players-score" text="0"/>-->
-<!--                  </children>-->
-<!--                  <padding>-->
-<!--                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>-->
-<!--                  </padding>-->
-<!--                </HBox>-->
-<!--                <HBox id="player-3-block" alignment="CENTER" fillHeight="false" minHeight="50.0"-->
-<!--                  prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">-->
-<!--                  <children>-->
-<!--                    <StackPane styleClass="player-avatar-frame">-->
-<!--                      <children>-->
-<!--                        <ImageView id="player-3-avatar" fitHeight="60.0" fitWidth="60.0"-->
-<!--                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">-->
-<!--                          <image>-->
-<!--                            <Image url="@../img/default-avatar-icon.png"/>-->
-<!--                          </image>-->
-<!--                        </ImageView>-->
-<!--                      </children>-->
-<!--                    </StackPane>-->
-<!--                    <Label id="player-3-name" styleClass="players-name" text="Player3"/>-->
-<!--                    <Label id="player-3-score" styleClass="players-score" text="0"/>-->
-<!--                  </children>-->
-<!--                  <padding>-->
-<!--                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>-->
-<!--                  </padding>-->
-<!--                </HBox>-->
-<!--                <HBox id="player-4-block" alignment="CENTER" fillHeight="false" minHeight="50.0"-->
-<!--                  prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">-->
-<!--                  <children>-->
-<!--                    <StackPane styleClass="player-avatar-frame">-->
-<!--                      <children>-->
-<!--                        <ImageView id="player-4-avatar" fitHeight="60.0" fitWidth="60.0"-->
-<!--                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">-->
-<!--                          <image>-->
-<!--                            <Image url="@../img/default-avatar-icon.png"/>-->
-<!--                          </image>-->
-<!--                        </ImageView>-->
-<!--                      </children>-->
-<!--                    </StackPane>-->
-<!--                    <Label id="player-4-name" styleClass="players-name" text="Player4"/>-->
-<!--                    <Label id="player-4-score" styleClass="players-score" text="0"/>-->
-<!--                  </children>-->
-<!--                  <padding>-->
-<!--                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>-->
-<!--                  </padding>-->
-<!--                </HBox>-->
-<!--              </children>-->
+              <!--              <children>-->
+              <!--                <HBox id="player-1-block" alignment="CENTER" fillHeight="false" minHeight="50.0"-->
+              <!--                  prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">-->
+              <!--                  <children>-->
+              <!--                    <StackPane styleClass="player-avatar-frame">-->
+              <!--                      <children>-->
+              <!--                        <ImageView id="player-1-avatar" fitHeight="60.0" fitWidth="60.0"-->
+              <!--                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">-->
+              <!--                          <image>-->
+              <!--                            <Image url="@../img/default-avatar-icon.png"/>-->
+              <!--                          </image>-->
+              <!--                        </ImageView>-->
+              <!--                      </children>-->
+              <!--                    </StackPane>-->
+              <!--                    <Label id="player-1-name" styleClass="players-name" text="Player1"/>-->
+              <!--                    <Label id="player-1-score" styleClass="players-score" text="0"/>-->
+              <!--                  </children>-->
+              <!--                  <padding>-->
+              <!--                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>-->
+              <!--                  </padding>-->
+              <!--                </HBox>-->
+              <!--                <HBox id="player-2-block" alignment="CENTER" fillHeight="false" minHeight="50.0"-->
+              <!--                  prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">-->
+              <!--                  <children>-->
+              <!--                    <StackPane styleClass="player-avatar-frame">-->
+              <!--                      <children>-->
+              <!--                        <ImageView id="player-2-avatar" fitHeight="60.0" fitWidth="60.0"-->
+              <!--                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">-->
+              <!--                          <image>-->
+              <!--                            <Image url="@../img/default-avatar-icon.png"/>-->
+              <!--                          </image>-->
+              <!--                        </ImageView>-->
+              <!--                      </children>-->
+              <!--                    </StackPane>-->
+              <!--                    <Label id="player-2-name" styleClass="players-name" text="Player2"/>-->
+              <!--                    <Label id="player-2-score" styleClass="players-score" text="0"/>-->
+              <!--                  </children>-->
+              <!--                  <padding>-->
+              <!--                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>-->
+              <!--                  </padding>-->
+              <!--                </HBox>-->
+              <!--                <HBox id="player-3-block" alignment="CENTER" fillHeight="false" minHeight="50.0"-->
+              <!--                  prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">-->
+              <!--                  <children>-->
+              <!--                    <StackPane styleClass="player-avatar-frame">-->
+              <!--                      <children>-->
+              <!--                        <ImageView id="player-3-avatar" fitHeight="60.0" fitWidth="60.0"-->
+              <!--                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">-->
+              <!--                          <image>-->
+              <!--                            <Image url="@../img/default-avatar-icon.png"/>-->
+              <!--                          </image>-->
+              <!--                        </ImageView>-->
+              <!--                      </children>-->
+              <!--                    </StackPane>-->
+              <!--                    <Label id="player-3-name" styleClass="players-name" text="Player3"/>-->
+              <!--                    <Label id="player-3-score" styleClass="players-score" text="0"/>-->
+              <!--                  </children>-->
+              <!--                  <padding>-->
+              <!--                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>-->
+              <!--                  </padding>-->
+              <!--                </HBox>-->
+              <!--                <HBox id="player-4-block" alignment="CENTER" fillHeight="false" minHeight="50.0"-->
+              <!--                  prefHeight="100.0" prefWidth="200.0" spacing="10.0" styleClass="players-block">-->
+              <!--                  <children>-->
+              <!--                    <StackPane styleClass="player-avatar-frame">-->
+              <!--                      <children>-->
+              <!--                        <ImageView id="player-4-avatar" fitHeight="60.0" fitWidth="60.0"-->
+              <!--                          pickOnBounds="true" preserveRatio="true" styleClass="players-avatar">-->
+              <!--                          <image>-->
+              <!--                            <Image url="@../img/default-avatar-icon.png"/>-->
+              <!--                          </image>-->
+              <!--                        </ImageView>-->
+              <!--                      </children>-->
+              <!--                    </StackPane>-->
+              <!--                    <Label id="player-4-name" styleClass="players-name" text="Player4"/>-->
+              <!--                    <Label id="player-4-score" styleClass="players-score" text="0"/>-->
+              <!--                  </children>-->
+              <!--                  <padding>-->
+              <!--                    <Insets bottom="15.0" left="15.0" right="15.0" top="15.0"/>-->
+              <!--                  </padding>-->
+              <!--                </HBox>-->
+              <!--              </children>-->
             </VBox>
           </center>
         </BorderPane>
@@ -212,7 +212,7 @@
           prefWidth="475.0">
           <children>
             <JFXButton id="shuffle-btn" fx:id="shuffleBtn" alignment="CENTER" maxHeight="50.0"
-              text="Shuffle">
+              mouseTransparent="true" text="Shuffle">
               <font>
                 <Font name="System Bold" size="20.0"/>
               </font>
@@ -236,7 +236,7 @@
           prefWidth="235.0">
           <children>
             <JFXButton id="ok-btn" fx:id="okBtn" alignment="CENTER" minWidth="80.0"
-              prefHeight="50.0" prefWidth="80.0" text="PASS">
+              mouseTransparent="true" prefHeight="50.0" prefWidth="80.0" text="PASS">
               <font>
                 <Font name="System Bold" size="20.0"/>
               </font>

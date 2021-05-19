@@ -307,7 +307,6 @@ public class LetterTile implements Serializable {
 
       for (int i = 0; i < controller.grid.getGlobalSize(); i++) {
         Slot pointedSlot = controller.grid.getSlot(i);
-        System.out.println(i + " Bounds: " + pointedSlot.container.getBoundsInParent());
 
         Bounds cellBounds = pointedSlot.container.getBoundsInParent();
         double cellMinX = wrapperMinX + cellBounds.getMinX();
@@ -339,7 +338,6 @@ public class LetterTile implements Serializable {
 
         for (int i = 0; i < controller.letterBar.getSize(); i++) {
           Slot pointedSlot = controller.letterBar.getSlot(i);
-          System.out.println(i + " Bounds: " + pointedSlot.container.getBoundsInParent());
 
           Bounds cellBounds = pointedSlot.container.getBoundsInParent();
           double cellMinX = ltrBlockMinX + panelMinX + cellBounds.getMinX();
