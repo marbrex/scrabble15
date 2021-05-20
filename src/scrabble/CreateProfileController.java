@@ -84,7 +84,7 @@ public class CreateProfileController {
   }
 
   /**
-   * Generating a player id
+   * Generating a player id.
    * 
    * @return generated Identification number
    * @author skeskinc
@@ -101,7 +101,7 @@ public class CreateProfileController {
   }
 
   /**
-   * Setting avatars and handling events
+   * Setting avatars and handling events.
    * 
    * @author skeskinc
    */

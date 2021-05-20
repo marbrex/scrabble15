@@ -2,7 +2,6 @@ package scrabble.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import scrabble.game.LetterBar;
 
 /**
  * scrabble.model.Player class to store important player characteristics.

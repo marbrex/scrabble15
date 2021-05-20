@@ -1,6 +1,5 @@
 package scrabble;
 
-import java.io.File;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,7 +14,7 @@ import scrabble.dbhandler.Database;
  * scrabble.ScrabbleApp class is the main class and the starting point of the application. Main
  * function is to initialize and launch the application.
  *
- * @author Eldar Kasmamytov
+ * @author ekasmamy
  */
 public class ScrabbleApp extends Application {
 
@@ -29,7 +28,7 @@ public class ScrabbleApp extends Application {
   private static Stage stage;
 
   /**
-   * Choosing Start-Resource and opening Window
+   * Choosing Start-Resource and opening Window.
    * 
    * @author ekasmamy
    */
@@ -77,7 +76,7 @@ public class ScrabbleApp extends Application {
   }
 
   /**
-   * Launching the application in this class
+   * Launching the application in this class.
    * 
    * @param args
    * @author ekasmamy

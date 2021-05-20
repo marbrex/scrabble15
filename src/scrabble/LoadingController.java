@@ -11,13 +11,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
@@ -61,9 +59,9 @@ public class LoadingController implements Initializable {
 			showPing.setVisible(false);
 			modeLabel.setText("Mode: Offline game");
 		} else {
-			pingLabel.setVisible(true);
-			pingCircle.setVisible(true);
-			showPing.setVisible(true);
+			pingLabel.setVisible(false);
+			pingCircle.setVisible(false);
+			showPing.setVisible(false);
 			modeLabel.setText("Mode: Network game");
 		}
 

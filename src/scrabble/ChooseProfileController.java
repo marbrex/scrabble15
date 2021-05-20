@@ -71,7 +71,6 @@ public class ChooseProfileController implements Initializable {
 
   private int profilesize;
 
-
   @FXML
   private BorderPane root;
 
@@ -86,10 +85,8 @@ public class ChooseProfileController implements Initializable {
       if (((Circle) event.getSource()) == circles.get(i)) {
         circles.get(i).setStroke(Color.web("#000000"));
         if (!labels.get(i).getTextFill().equals(Color.web("FF0000", 0.8))) {
-          // player = players.get(i);
           Profile.setPlayer(players.get(i));
         } else {
-          // player = null;
           Profile.setPlayer(null);
         }
       } else {
@@ -110,14 +107,6 @@ public class ChooseProfileController implements Initializable {
     Parent root;
     try {
       root = FXMLLoader.load(getClass().getResource(resource));
-      // Button btn = ((Button) event.getSource());
-      // Stage stage = (Stage) btn.getScene().getWindow();
-      /*
-       * Scene scene = new Scene(root, this.root.getScene().getWidth(),
-       * this.root.getScene().getHeight());
-       * scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
-       * stage.setScene(scene);
-       */
       ScrabbleApp.getScene().getStylesheets().clear();
       ScrabbleApp.getScene().getStylesheets().add(getClass().getResource(style).toExternalForm());
       ScrabbleApp.getScene().setRoot(root);
@@ -144,8 +133,6 @@ public class ChooseProfileController implements Initializable {
     circles.add(profileTwo);
     circles.add(profileThree);
     circles.add(profileFour);
-    // player = DBInformation.loadProfile(0);
-    // profileoneLabel.setText(player.getName());
     players = DBInformation.getPlayerProfiles();
     for (int i = 0; i < labels.size(); i++) {
       if (i <= players.size() - 1) {

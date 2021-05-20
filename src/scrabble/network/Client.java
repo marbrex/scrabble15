@@ -1,14 +1,17 @@
 package scrabble.network;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 
 import scrabble.ChatController;
-import javafx.application.Platform;
 
 /**
- * scrabble.network.Client class for Client connections to the Chat
+ * scrabble.network.Client class for Client connections to the Chat.
  * 
  * @author astarche
  * @author skeskinc
@@ -16,7 +19,7 @@ import javafx.application.Platform;
 public class Client extends Thread {
   private String hostName;
   private int port;
-  private Socket c = null;
+  private Socket socket = null;
   private BufferedReader fromServer = null;
   private PrintWriter toServer = null;
   private ChatController chatcontroller;
@@ -26,7 +29,7 @@ public class Client extends Thread {
   private NetworkScreen client;
 
   /**
-   * Constructor for test-application which is not implemented in actual game
+   * Constructor for test-application which is not implemented in actual game.
    * 
    * @param cc ChatController of test-application
    * @param username Name of the connected user
@@ -42,7 +45,7 @@ public class Client extends Thread {
   }
 
   /**
-   * Constructor to print chat Message to an GameLobby or an GameField Version for an Lobby Client
+   * Constructor to print chat Message to an GameLobby or an GameField Version for an Lobby Client.
    * 
    * @param client protocol of the corresponding user
    * @param port port on which the Chat server listen -> given by the network protocol
@@ -58,17 +61,17 @@ public class Client extends Thread {
 
   // new Message have only call the print chatMessage of the LobbyClientProtocol
   /**
-   * Connecting to the Chat-Server
+   * Connecting to the Chat-Server.
    * 
    * @author astarche
    * @author skeskinc
    */
   public void connect() {
     try {
-      c = new Socket(hostName, port);
+      socket = new Socket(hostName, port);
       System.out.println("Client started!");
-      this.fromServer = new BufferedReader(new InputStreamReader(c.getInputStream()));
-      this.toServer = new PrintWriter(c.getOutputStream(), true);
+      this.fromServer = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+      this.toServer = new PrintWriter(socket.getOutputStream(), true);
       running = true;
     } catch (IOException e) {
       e.printStackTrace();
@@ -97,7 +100,7 @@ public class Client extends Thread {
   }
 
   /**
-   * Sends a message to everyone, that a player has joined the lobby
+   * Sends a message to everyone, that a player has joined the lobby.
    * 
    * @author skeskinc
    */
@@ -107,7 +110,7 @@ public class Client extends Thread {
   }
 
   /**
-   * Sending messages to the Server
+   * Sending messages to the Server.
    * 
    * @param message Sending given message to the server
    * @author astarche
@@ -120,7 +123,7 @@ public class Client extends Thread {
   }
 
   /**
-   * Disconnecting from the Chat-Server
+   * Disconnecting from the Chat-Server.
    * 
    * @author astarche
    * @author skeskinc
@@ -128,7 +131,7 @@ public class Client extends Thread {
   public void disconnect() {
     this.running = false;
     try {
-      this.c.close();
+      this.socket.close();
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -136,7 +139,7 @@ public class Client extends Thread {
   }
 
   /**
-   * Replacing specific strings with Emoticons
+   * Replacing specific strings with Emoticons.
    * 
    * @param msg for current message
    * @return the message replaced by emoticons.
@@ -151,13 +154,12 @@ public class Client extends Thread {
   }
 
   /**
-   * Handling Chat-Messages receiving from Server
+   * Handling Chat-Messages receiving from Server.
    * 
    * @author astarche
    * @author skeskinc
    */
   public void run() {
-    // toServer.println(this.username);
     String msg;
     while (running) {
       try {
@@ -169,7 +171,6 @@ public class Client extends Thread {
         this.disconnect();
       } catch (SocketException e) {
         this.disconnect();
-        // e.printStackTrace();
       } catch (IOException e) {
         // TODO Auto-generated catch block
         this.running = false;

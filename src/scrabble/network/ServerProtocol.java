@@ -1,17 +1,14 @@
 package scrabble.network;
 
-import java.io.*;
-import java.net.*;
-import java.util.HashMap;
-
-import javax.swing.SwingUtilities;
-
-import scrabble.ChatController;
-import scrabble.ClientMain;
-import javafx.application.Platform;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketException;
 
 /**
- * scrabble.network.ServerProtocol to receive and send Client messages
+ * scrabble.network.ServerProtocol to receive and send Client messages.
  * 
  * @author astarche
  * @author skeskinc
@@ -26,7 +23,7 @@ public class ServerProtocol extends Thread {
   private boolean running;
 
   /**
-   * Constructor of the ServerProtocol
+   * Constructor of the ServerProtocol.
    * 
    * @param server Current Chat-Server
    * @param socket Current Client-socket to work with
@@ -49,7 +46,7 @@ public class ServerProtocol extends Thread {
   }
 
   /**
-   * Receiving and sending Chat-Messages
+   * Receiving and sending Chat-Messages.
    * 
    * @author astarche
    * @author skeskinc
@@ -77,7 +74,7 @@ public class ServerProtocol extends Thread {
   }
 
   /**
-   * Closing ServerProtocol-socket
+   * Closing ServerProtocol-socket.
    * 
    * @author skeskinc
    */
