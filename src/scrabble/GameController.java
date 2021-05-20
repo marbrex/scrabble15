@@ -229,6 +229,7 @@ public class GameController {
         Platform.runLater(() -> {
 
           setRound();
+          if (protocol != null)
           setPlayerActive(id);
 
           // Filling the empty slots in the LetterBar if it's the case
@@ -542,6 +543,7 @@ public class GameController {
         BorderPane playerBlock = new BorderPane();
         playerBlock.getStyleClass().add("players-block");
         playerBlock.setPadding(new Insets(10, 30, 10, 30));
+        playerBlock.setId(String.valueOf(player.getId()));
 
         StackPane avatarWrapper = new StackPane();
         avatarWrapper.getStyleClass().add("player-avatar-frame");
@@ -682,13 +684,12 @@ public class GameController {
   }
 
   public void setPlayerActive(int id) {
+    System.out.println("ID: " + id);
     playersBlock.getChildren().forEach(block -> {
       BorderPane playerBlock = (BorderPane) block;
       playerBlock.getLeft().getStyleClass().remove("player-avatar-frame-active");
-    });
-    players.forEach(player -> {
-      if (player.getId() == id) {
-        BorderPane playerBlock = (BorderPane) playersBlock.getChildren().get(id);
+
+      if (Integer.parseInt(block.getId()) == id) {
         playerBlock.getLeft().getStyleClass().add("player-avatar-frame-active");
       }
     });

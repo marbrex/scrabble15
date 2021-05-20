@@ -499,7 +499,7 @@ public class Grid {
 
     ArrayList<Slot> validStartingSlots = new ArrayList<>();
 
-    if (controller.roundCounter == 0) {
+    if (controller.roundCounter == 1) {
       // It's 1st round
       // Adding the center slot as Starting Point
       validStartingSlots.add(getSlot(size / 2, size / 2));
