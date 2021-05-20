@@ -188,19 +188,19 @@ public class GameController {
   }
 
   /**
-   * Constructor for Network games
+   * Constructor for Network games.
    *
-   * @param protocol   protocol for server communication
-   * @param isHost     variable for host detection
+   * @param protocol protocol for server communication
+   * @param isHost variable for host detection
    * @param mapContent content of a specific field multiplier file
-   * @param players    list of the game members
+   * @param players list of the game members
    * @param dictionary dictionary string chosen by host
    * @author hendiehl
    */
   public GameController(NetworkScreen protocol, boolean isHost, String mapContent,
       ArrayList<Player> players, String dictionary) {
     this.players = players;
-    this.roundCounter = 0;
+    this.roundCounter = 0; // should be not set here
     this.protocol = protocol;
     this.isHost = isHost;
     this.mapContent = mapContent;
@@ -213,6 +213,7 @@ public class GameController {
    * @author hendiehl
    */
   public void shutdown() {
+    System.out.println("GAME CONTROLLER : Shutdown initialized");
     if (this.protocol instanceof LobbyClientProtocol) {
       ((LobbyClientProtocol) this.protocol).shutdownProtocol(true);
     } else if (this.protocol instanceof LobbyHostProtocol) {
@@ -226,6 +227,7 @@ public class GameController {
 
       @Override
       public void startMove(int turn, int id) {
+        System.out.println("GAME CONTROLLER : startMove called");
         Platform.runLater(() -> {
 
           setRound();
@@ -338,6 +340,7 @@ public class GameController {
 
       @Override
       public void endMove() {
+        System.out.println("GAME CONTROLLER : Prepare to end move");
         Platform.runLater(() -> {
 
           // verifying the player's input
@@ -658,6 +661,7 @@ public class GameController {
    * @param tiles
    */
   public void grabRandomTilesAnswer(Multiset<Tile> tiles) {
+    System.out.println("GAME CONTROLLER : grabRandomTilesAnswer received");
     Platform.runLater(() -> {
       // updating the LetterBar
       letterBar.fillGaps(tiles);
@@ -701,8 +705,7 @@ public class GameController {
 
   //testing
   public void otherPlayerOnMove(int turn, int id) {
-//    System.err.println("Inform received");
-//    System.err.println("On move : " + this.players.get(i).getName());
+    System.out.println("GAME CONTROLLER : Other on move ! Turn : " + turn + " with player id : " + id);
 
     Platform.runLater(() -> {
 

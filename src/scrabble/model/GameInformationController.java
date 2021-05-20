@@ -316,8 +316,9 @@ public class GameInformationController {
    * @author hendiehl
    */
   private void startGame() {
-    this.setPlayerSequence();
     this.fillGame();
+    System.out.println("GAME INFO : PLayer list shoud be size 4 is " + this.players.size());
+    this.setPlayerSequence();
     this.setGameIDs();
     System.out.println("GAME INFO : Invoke Game");
     this.sendGameMessage(this.getPlayersInformation());// here adding new List
@@ -344,6 +345,7 @@ public class GameInformationController {
     for (NetworkPlayer player : this.players) { // iterating through the NetworkPlayers to set their
                                                 // player id
       player.getPlayer().setId(ids); // here set the id's
+      System.err.println("Player : " + player.getPlayer().getName() + " ID = " + ids);
       ids++; // increase id's
     }
   }
@@ -392,6 +394,7 @@ public class GameInformationController {
     if (this.players.size() < 4) {
       for (int i = this.players.size(); i < 4; i++) {
         LobbyAiProtocol ai = new LobbyAiProtocol();
+        ai.addSequence(Integer.MAX_VALUE);
         this.players.add(ai);
       }
     }
