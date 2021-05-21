@@ -5,10 +5,12 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -17,9 +19,8 @@
 <BorderPane xmlns="http://javafx.com/javafx/11.0.2"
 	xmlns:fx="http://javafx.com/fxml/1" fx:id="root"
 	style="-fx-background-color: #DEB887; -fx-border-color: #783F04; -fx-border-width: 13;"
-	maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-	minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0"
-	fx:controller="scrabble.StatisticsController">
+	maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0"
+	minWidth="-Infinity" fx:controller="scrabble.StatisticsController">
 	<top>
 		<VBox alignment="CENTER">
 			<Label text="Player Statistic">
@@ -30,11 +31,11 @@
 		</VBox>
 	</top>
 	<center>
-		<FlowPane alignment="CENTER">
+		<HBox alignment="CENTER">
 			<children>
-				<VBox prefWidth="400.0">
+				<VBox>
 					<BorderPane.margin>
-						<Insets top="150" bottom="150" />
+						<Insets top="0" />
 					</BorderPane.margin>
 					<children>
 						<FlowPane alignment="CENTER">
@@ -42,7 +43,7 @@
 								<ImageView fx:id="img" fitHeight="177.0"
 									fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
 									<FlowPane.margin>
-										<Insets top="50" bottom="20" />
+										<Insets top="0" bottom="20" />
 									</FlowPane.margin>
 									<image>
 										<Image url="@../img/ProfilePicture.png" />
@@ -90,23 +91,23 @@
 						</FlowPane>
 					</children>
 				</VBox>
-				<VBox prefWidth="400.0">
+				<VBox>
 					<children>
 						<FlowPane alignment="CENTER">
 							<children>
 								<ImageView fitHeight="45.0" fitWidth="44.0"
 									pickOnBounds="true" preserveRatio="true">
 									<FlowPane.margin>
-										<Insets top="50" bottom="10" />
+										<Insets top="10" bottom="10" />
 									</FlowPane.margin>
 									<image>
 										<Image url="@../img/Trophy.png" />
 									</image>
 								</ImageView>
 								<JFXTextArea fx:id="txtWon" editable="false"
-									prefHeight="52.0" prefWidth="184.0" text="Games won: ">
+									prefWidth="200.0" prefHeight="52.0" text="Games won: ">
 									<FlowPane.margin>
-										<Insets top="50" bottom="10" />
+										<Insets top="20" bottom="10" />
 									</FlowPane.margin>
 									<font>
 										<Font size="18.0" />
@@ -126,7 +127,7 @@
 									</image>
 								</ImageView>
 								<JFXTextArea fx:id="txtLost" editable="false"
-									prefHeight="55.0" prefWidth="184.0" text="Games lost:">
+									prefWidth="200.0" prefHeight="55.0" text="Games lost:">
 									<FlowPane.margin>
 										<Insets top="10" bottom="10" />
 									</FlowPane.margin>
@@ -138,7 +139,7 @@
 						</FlowPane>
 						<FlowPane alignment="CENTER">
 							<JFXTextArea fx:id="txtRatio" editable="false"
-								prefHeight="55.0" prefWidth="246.0" text="Win/Lose Ratio">
+								prefWidth="200.0" prefHeight="55.0" text="Win/Lose Ratio">
 								<FlowPane.margin>
 									<Insets top="10" bottom="10" />
 								</FlowPane.margin>
@@ -148,34 +149,44 @@
 							</JFXTextArea>
 						</FlowPane>
 						<FlowPane alignment="CENTER">
-							<PieChart fx:id="pieChart" prefHeight="202.0"
+							<PieChart fx:id="pieChart" prefHeight="100.0"
 								prefWidth="200.0">
 							</PieChart>
 						</FlowPane>
 					</children>
 				</VBox>
 			</children>
-		</FlowPane>
+		</HBox>
 	</center>
 	<bottom>
-		<FlowPane alignment="CENTER" prefHeight="200.0">
+		<HBox alignment="BOTTOM_CENTER" minHeight="38.00">
 			<children>
 				<JFXButton fx:id="backBtn" buttonType="RAISED"
-					onAction="#backBtnOnAction" prefHeight="55.0" prefWidth="200.0"
-					text="Back">
+					onAction="#backBtnOnAction" prefHeight="38.0" text="Back">
 					<font>
 						<Font size="23.0" />
 					</font>
+					<HBox.margin>
+						<Insets right="50.0" bottom="10.0" />
+					</HBox.margin>
 				</JFXButton>
 				<JFXButton buttonType="RAISED" onAction="#delBtnOnAction"
-					prefHeight="55.0" prefWidth="200.0" ripplerFill="#39477c"
+					prefHeight="38.0" ripplerFill="#39477c"
 					style="-fx-background-color: #f94c48;" text="Delete Profile"
 					textFill="WHITE">
 					<font>
 						<Font size="18.0" />
 					</font>
+					<HBox.margin>
+						<Insets right="50.0" bottom="10.0" />
+					</HBox.margin>
 				</JFXButton>
 			</children>
-		</FlowPane>
+		</HBox>
 	</bottom>
 </BorderPane>
+
+
+
+
+
