@@ -33,7 +33,7 @@ import javafx.stage.Stage;
 
 /**
  * 
- * The controller class for the Statistics.fxml screen
+ * The controller class for the Statistics.fxml screen.
  * 
  * @author mraucher
  */
@@ -61,7 +61,7 @@ public class StatisticsController implements Initializable {
 
   private HumanPlayer plyr;
 
-  
+
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
     this.plyr = Profile.getPlayer();
@@ -74,15 +74,15 @@ public class StatisticsController implements Initializable {
     this.txtWon.setText("Games won: " + plyr.getGamesWon());
     this.txtLost.setText("Games lost: " + plyr.getGamesLost());
     this.txtRatio.setText("Win/Lose Ratio: " + plyr.getWinRate() + "");
-    String basePath = new File("").getAbsolutePath();
-    System.out.println(basePath);
     try {
-      this.img.setImage(new Image(new FileInputStream(".\\resources\\scrabble\\img\\"+plyr.getImage())));
-      } catch (FileNotFoundException e) {
+      String fileSeperator = System.getProperty("file.separator");
+      this.img.setImage(new Image(new FileInputStream("." + fileSeperator + "resources"
+          + fileSeperator + "scrabble" + fileSeperator + "img" + fileSeperator + plyr.getImage())));
+    } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
 
-    // pie chart with wins vs. losses will only be shown if at least one game was played
+    // pie chart with wins vs. losses will only be shown if at least one game was played.
     if (plyr.getGamesLost() + plyr.getGamesWon() > 0) {
       ObservableList<PieChart.Data> pieChartData =
           FXCollections.observableArrayList(new PieChart.Data("Lost", plyr.getGamesLost()),
@@ -93,8 +93,7 @@ public class StatisticsController implements Initializable {
   }
 
   /**
-   * Listener for the update button.
-   * The players name will be updated in the database
+   * Listener for the update button. The players name will be updated in the database.
    * 
    * @param event the ActionEvent if the delete profile button is clicked
    * @author mraucher
@@ -107,9 +106,8 @@ public class StatisticsController implements Initializable {
 
 
   /**
-   * Listener for the delete profile button.
-   * The current player will be deleted from database and the user will be routed
-   * to the register screen.
+   * Listener for the delete profile button. The current player will be deleted from database and
+   * the user will be routed to the register screen.
    * 
    * @param event the ActionEvent if the delete profile button is clicked
    * @author mraucher
@@ -123,14 +121,14 @@ public class StatisticsController implements Initializable {
 
       Parent root = FXMLLoader.load(getClass().getResource("fxml/Register.fxml"));
       /*
-      Stage stage = (Stage) this.backBtn.getScene().getWindow();
-      Scene scene =
-          new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-      scene.getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
-      stage.setScene(scene);
-      */
+       * Stage stage = (Stage) this.backBtn.getScene().getWindow(); Scene scene = new Scene(root,
+       * this.root.getScene().getWidth(), this.root.getScene().getHeight());
+       * scene.getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm()
+       * ); stage.setScene(scene);
+       */
       ScrabbleApp.getScene().getStylesheets().clear();
-      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
+      ScrabbleApp.getScene().getStylesheets()
+          .add(getClass().getResource("css/changeProfile.css").toExternalForm());
       ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
@@ -148,14 +146,14 @@ public class StatisticsController implements Initializable {
     try {
       Parent root = FXMLLoader.load(getClass().getResource("fxml/MainPage.fxml"));
       /*
-      Stage stage = (Stage) this.backBtn.getScene().getWindow();
-      Scene scene =
-          new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-      scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
-      stage.setScene(scene);
-      */
+       * Stage stage = (Stage) this.backBtn.getScene().getWindow(); Scene scene = new Scene(root,
+       * this.root.getScene().getWidth(), this.root.getScene().getHeight());
+       * scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+       * stage.setScene(scene);
+       */
       ScrabbleApp.getScene().getStylesheets().clear();
-      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+      ScrabbleApp.getScene().getStylesheets()
+          .add(getClass().getResource("css/mainMenu.css").toExternalForm());
       ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
