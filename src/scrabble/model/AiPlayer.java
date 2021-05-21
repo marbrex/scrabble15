@@ -1,7 +1,9 @@
 package scrabble.model;
 
+import com.google.common.collect.Multiset;
 import scrabble.GameController;
 import scrabble.game.Grid;
+import scrabble.game.LetterBag;
 import scrabble.game.LetterBar;
 import scrabble.game.LetterTile;
 import scrabble.game.Word;
@@ -406,7 +408,7 @@ public class AiPlayer extends Player implements Serializable {
     return contains;
   }
   /**
-   * Gives letters to ai player.
+   * Generates random tiles and adds them to the list with the letters of the aiplayer
    *
    * @author astarche
    * @param gc Game Controller
@@ -414,14 +416,26 @@ public class AiPlayer extends Player implements Serializable {
   public void giveLettersToAiPlayer(GameController gc){
     String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     Random random = new Random();
-    while (ailetters.size() != 7){
+    for (int i = 0;i < 5 - ailetters.size();i++){
       ailetters.add(new LetterTile(alphabet.charAt(random.nextInt(alphabet.length())), 1, 10,
               gc));
     }
     ailetters.add(new LetterTile('0', 0, 10, gc));
     ailetters.add(new LetterTile('0', 0, 10, gc));
   }
-
+  /**
+   * Grabs random tiles from the bag and gives them to the aiplayer
+   *
+   * @author astarche
+   * @param bag bag with letters that is used in the game
+   * @param gc Game Controller
+   */
+  public void giveLettersToAiPlayer(GameController gc, LetterBag bag){
+    Multiset<LetterBag.Tile> tiles = bag.grabRandomTiles(7 - ailetters.size());
+    for (LetterBag.Tile tile :tiles){
+      ailetters.add(new LetterTile(tile.letter, tile.value, 10, gc));
+    }
+  }
   /**
    * Displays tiles, that the aiplayer currently has
    *
@@ -434,7 +448,6 @@ public class AiPlayer extends Player implements Serializable {
     }
     System.out.println();
   }
-
   /**
    * Gives human player some words that he can construct with his letters.
    * Can be used only in single player.
