@@ -62,8 +62,31 @@
   -fx-font-size: 15px;
 }
 
-#chat-block {
-  /*-fx-background-color: #ffdca7;*/
+#chat {
+  -fx-background-color: rgb(200,200,200);
+  -fx-background-radius: 7px;
+  -fx-border-radius: 7px;
+  -fx-padding: 10px;
+}
+
+#chat:hover {
+  -fx-cursor: default;
+}
+
+#chat-input {
+  -fx-background-color: rgb(200,200,200);
+  -fx-background-radius: 7px;
+  -fx-border-radius: 7px;
+  -fx-padding: 3px 5px;
+}
+
+#chat-input:focused {
+  -fx-border-color: #0073ff;
+}
+
+#chat-send:hover {
+  -fx-cursor: hand;
+  -fx-opacity: 0.6;
 }
 
 

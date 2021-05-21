@@ -2,6 +2,8 @@ package scrabble;
 
 import com.google.common.collect.Multiset;
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXTextArea;
+import com.jfoenix.controls.JFXTextField;
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -23,6 +25,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -173,6 +176,12 @@ public class GameController {
   public int minViewOrder = 0;
 
   String dictContent;
+
+  public JFXTextArea chat;
+
+  public ImageView chatSend;
+
+  public HBox chatActions;
 
   /**
    * Default constructor.
@@ -494,11 +503,31 @@ public class GameController {
       writer.write(content);
       writer.close();
     } catch (Exception error) {
-      System.err.println("Error on saving the custom map into a file");
-      System.err.println("Error code: " + error.getMessage());
+//      System.err.println("Error on saving the custom map into a file");
+//      System.err.println("Error code: " + error.getMessage());
     }
 
     return path;
+  }
+
+  void initChat() {
+    JFXTextField chatField = new JFXTextField();
+    chatField.setId("chat-input");
+    chatField.setFocusColor(Paint.valueOf("transparent"));
+    chatField.setUnFocusColor(Paint.valueOf("transparent"));
+    chatField.setFocusTraversable(false);
+    chatActions.getChildren().add(chatField);
+    chatField.toBack();
+
+    chatSend.setOnMouseClicked(mouseEvent -> {
+      // On Clicking send button
+      String message = chatField.getText();
+      if (!message.isEmpty()) {
+        String name = Profile.getPlayer().getName();
+        chat.appendText((chat.getText().length() == 0 ? "" : "\n") + name + ": " + message);
+        chatField.clear();
+      }
+    });
   }
 
   /**
@@ -507,6 +536,8 @@ public class GameController {
    */
   @FXML
   private void initialize() {
+
+    initChat();
 
     if (protocol == null) {
       // Local Game
@@ -690,10 +721,12 @@ public class GameController {
   public void setPlayerActive(int id) {
     System.out.println("ID: " + id);
     playersBlock.getChildren().forEach(block -> {
+      System.out.println("Current player block ID: " + block.getId());
       BorderPane playerBlock = (BorderPane) block;
       playerBlock.getLeft().getStyleClass().remove("player-avatar-frame-active");
 
       if (Integer.parseInt(block.getId()) == id) {
+        System.out.println("Found! ID: " + block.getId());
         playerBlock.getLeft().getStyleClass().add("player-avatar-frame-active");
       }
     });
