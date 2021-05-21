@@ -1,15 +1,18 @@
 package scrabble;
 
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXToggleButton;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -18,12 +21,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import javafx.event.ActionEvent;
-import javafx.stage.StageStyle;
-
-import java.awt.*;
-import java.net.URL;
-import java.util.ResourceBundle;
+import scrabble.dbhandler.DBInformation;
+import scrabble.model.HumanPlayer;
+import scrabble.model.Profile;
 
 /**
  * Controller of the Settings.fxml
@@ -96,7 +96,7 @@ public class SettingsController implements Initializable {
     hard.setPrefHeight(18);
     easy.setPrefWidth(44);
     easy.setPrefHeight(18);
-    if (difficult) {
+    if (difficultyHard) {
       hard.setSelected(true);
     } else {
       easy.setSelected(true);
@@ -104,12 +104,12 @@ public class SettingsController implements Initializable {
     hard.setOnAction(event -> {
       hard.setSelected(true);
       easy.setSelected(false);
-      difficult = true;
+      difficultyHard = true;
     });
     easy.setOnAction(event -> {
       hard.setSelected(false);
       easy.setSelected(true);
-      difficult = false;
+      difficultyHard = false;
     });
     lowerBlock.getChildren().add(hard);
     lowerBlock.getChildren().add(easy);
@@ -133,23 +133,23 @@ public class SettingsController implements Initializable {
     title.setText("Settings -> Sound");
     mainBlock.getChildren().clear();
     JFXToggleButton toggle = new JFXToggleButton();
-    toggle.setSelected(sound);
+    toggle.setSelected(soundOn);
     toggle.setFont(new Font("System", 28));
-    toggle.setSelected(sound);
-    if (sound) {
+    toggle.setSelected(soundOn);
+    if (soundOn) {
       toggle.setText("ON");
     } else {
       toggle.setText("OFF");
     }
     toggle.setOnAction(event -> {
-      if (sound) {
+      if (soundOn) {
         toggle.setSelected(false);
         toggle.setText("OFF");
-        sound = false;
+        soundOn = false;
       } else {
         toggle.setSelected(true);
         toggle.setText("ON");
-        sound = true;
+        soundOn = true;
       }
     });
     HBox upperBlock = new HBox();
@@ -201,17 +201,13 @@ public class SettingsController implements Initializable {
       FXMLLoader loader = new FXMLLoader();
       loader.setLocation(getClass().getResource("fxml/MainPage.fxml"));
       Pane root = loader.load();
-      /*
-       * Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow(); Scene scene = new
-       * Scene(root, (((Node) event.getSource()).getScene().getWidth()), (((Node)
-       * event.getSource()).getScene().getHeight()));
-       * scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
-       * window.setScene(scene); window.setFullScreen(fullScreen); window.show();
-       */
-      ScrabbleApp.getScene().getStylesheets().clear();
-      ScrabbleApp.getScene().getStylesheets()
-          .add(getClass().getResource("css/mainMenu.css").toExternalForm());
-      ScrabbleApp.getScene().setRoot(root);
+      Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
+      Scene scene = new Scene(root, (((Node) event.getSource()).getScene().getWidth()),
+          (((Node) event.getSource()).getScene().getHeight()));
+      scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+      window.setScene(scene);
+      window.setFullScreen(fullScreen);
+      window.show();
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -249,15 +245,13 @@ public class SettingsController implements Initializable {
       Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
       if (windowed.isSelected()) {
         fullScreen = true;
-        ScrabbleApp.getStage().setFullScreen(true);
-        // window.setFullScreen(true);
-        // window.setResizable(true);
+        window.setFullScreen(true);
+        window.setResizable(true);
         windowed.setText("Full Screen");
       } else {
         fullScreen = false;
-        ScrabbleApp.getStage().setFullScreen(false);
-        // window.setFullScreen(false);
-        // window.setResizable(true);
+        window.setFullScreen(false);
+        window.setResizable(true);
         windowed.setText("Windowed");
       }
     });
@@ -286,5 +280,9 @@ public class SettingsController implements Initializable {
     lowerBlockMain.getChildren().add(lowerBlockTwo);
     mainBlock.getChildren().add(upperBlockMain);
     mainBlock.getChildren().add(lowerBlockMain);
+
   }
+
 }
+
+
