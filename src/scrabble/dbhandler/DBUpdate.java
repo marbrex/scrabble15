@@ -7,10 +7,10 @@ import java.util.List;
 import scrabble.model.*;
 
 /**
- * scrabble.dbhandler.DBUpdate class to update player statistics and settings
+ * scrabble.dbhandler.DBUpdate class to update player statistics and settings.
  * 
  * @author mraucher
- * @author skeskinc  
+ * @author skeskinc
  */
 
 public class DBUpdate {
@@ -18,8 +18,8 @@ public class DBUpdate {
   private static Statement stmt = null;
   private static PreparedStatement pstmt = null;
 
-/**
-   * Updating the amount of games won in the Database and in the player's object
+  /**
+   * Updating the amount of games won in the Database and in the player's object.
    * 
    * @param player The Human-Player to update games won
    * @author mraucher
@@ -44,7 +44,7 @@ public class DBUpdate {
   }
 
   /**
-   * Updating the amount of games lost in the Database and in the player's object
+   * Updating the amount of games lost in the Database and in the player's object.
    * 
    * @param player The Human-Player to update the games lost
    * @author mraucher
@@ -69,7 +69,7 @@ public class DBUpdate {
   }
 
   /**
-   * Updating the Win-Rate in the Database
+   * Updating the Win-Rate in the Database.
    * 
    * @param player Updating Win-Rate of the Human-Player
    * @author mraucher
@@ -87,7 +87,7 @@ public class DBUpdate {
   }
 
   /**
-   * Updating the name of the player in the database and the player's object
+   * Updating the name of the player in the database and the player's object.
    * 
    * @param player the human player to be updated
    * @param newName the new name of the human player
@@ -107,35 +107,59 @@ public class DBUpdate {
   }
 
   /**
-   * Updates the AI Difficulty
+   * Updating the window mode of the Game.
+   * 
+   * @param fullscreen true, if the profile wants to have fullscreen, else false.
+   * @author skeskinc
+   */
+  public static void updateSceneMode(int settings_id, boolean fullscreen) {
+
+    String windowMode;
+    if (fullscreen) {
+      windowMode = "Fullscreen";
+    } else {
+      windowMode = "Window";
+    }
+    try {
+      stmt = Database.getConnection().createStatement();
+      stmt.executeUpdate("UPDATE Settings SET SceneMode = '" + windowMode + "' WHERE SettingsId = "
+          + settings_id + ";");
+    } catch (SQLException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Updates the AI Difficulty.
    * 
    * @param settings_id the settingsId to identify the settings entry to be updated
    * @param difficulty the new difficulty of AI to be updated in the database
    * @author mraucher
    * @author skeskinc
    */
-  public void updateAIDifficulty(int settings_id, String difficulty) {
+  public static void updateAIDifficulty(int settings_id, String difficulty) {
     try {
       stmt = Database.getConnection().createStatement();
-      stmt.executeUpdate("UPDATE Settings SET AIDifficulty = " + difficulty
-          + " WHERE Settings_Id = " + settings_id + ";");
+      stmt.executeUpdate("UPDATE Settings SET AIDifficulty = '" + difficulty
+          + "' WHERE SettingsId = " + settings_id + ";");
     } catch (SQLException e) {
       e.printStackTrace();
     }
   }
 
   /**
-   * Updates the Sound-Level of the Game
+   * Updates the Sound-Level of the Game.
    * 
    * @param settings_id the settingsId to identify the settings entry to be updated
    * @param the new soundlevel to be updated in the database
    * @author mraucher
    * @author skeskinc
    */
-  public void updateSoundLevel(int settings_id, int soundlevel) {
+  public static void updateSoundLevel(int settings_id, double soundlevel) {
     try {
       stmt = Database.getConnection().createStatement();
-      stmt.executeUpdate("UPDATE Settings SET SoundLevel = " + soundlevel + " WHERE Settings_Id = "
+      stmt.executeUpdate("UPDATE Settings SET SoundLevel = " + soundlevel + " WHERE SettingsId = "
           + settings_id + ";");
     } catch (SQLException e) {
       e.printStackTrace();
@@ -143,20 +167,20 @@ public class DBUpdate {
   }
 
   /**
-   * Updates the Switch sound state
+   * Updates the Switch sound state.
    * 
    * @param settings_id the settingsId to identify the settings entry to be updated
    * @param soundOn the new flag for soundOn (=true) / soundOf (=false)
    * @author mraucher
    * @author skeskinc
    */
-  public void updateSoundSwitcher(int settings_id, boolean soundOn) {
+  public static void updateSoundSwitcher(int settings_id, boolean soundOn) {
     try {
       stmt = Database.getConnection().createStatement();
       stmt.executeUpdate(
-          "UPDATE Settings SET SoundOn = " + soundOn + " WHERE Settings_Id = " + settings_id + ";");
+          "UPDATE Settings SET SoundOn = " + soundOn + " WHERE SettingsId = " + settings_id + ";");
     } catch (SQLException e) {
       e.printStackTrace();
     }
-   }
- }
+  }
+}

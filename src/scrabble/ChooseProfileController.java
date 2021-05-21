@@ -150,6 +150,11 @@ public class ChooseProfileController implements Initializable {
     // Action on Continue-Button
     continueButton.setOnMouseClicked(event -> {
       if (Profile.getPlayer() != null) {
+        if(DBInformation.isFullscreen(Profile.getPlayer())) {
+          ScrabbleApp.getStage().setFullScreen(true);
+        } else {
+          ScrabbleApp.getStage().setFullScreen(false);
+        }
         changeScene("fxml/MainPage.fxml", "css/mainMenu.css", event);
       }
     });

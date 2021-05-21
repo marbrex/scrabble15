@@ -22,6 +22,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
+import scrabble.dbhandler.DBUpdate;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Profile;
 
@@ -53,10 +54,11 @@ public class SettingsController implements Initializable {
   @FXML
   private HBox switchSection;
 
-  private static boolean fullScreen = DBInformation.isFullscreen(Profile.getPlayer());
-  private static boolean difficultyHard = DBInformation.isAiDifficultyHard(Profile.getPlayer());
-  private static boolean soundOn = DBInformation.isSoundOn(Profile.getPlayer());
-  private static int soundLevel = DBInformation.getSoundLevel(Profile.getPlayer());
+  private boolean fullScreen = DBInformation.isFullscreen(Profile.getPlayer());
+  private boolean difficultyHard = DBInformation.isAiDifficultyHard(Profile.getPlayer());
+  private boolean soundOn = DBInformation.isSoundOn(Profile.getPlayer());
+  private double soundLevel = DBInformation.getSoundLevel(Profile.getPlayer());
+  private int settingsId = DBInformation.getSettingsId(Profile.getPlayer());
 
 
   /** Switch to gameplay settings screen */
@@ -105,11 +107,13 @@ public class SettingsController implements Initializable {
       hard.setSelected(true);
       easy.setSelected(false);
       difficultyHard = true;
+      DBUpdate.updateAIDifficulty(settingsId, "Hard");
     });
     easy.setOnAction(event -> {
       hard.setSelected(false);
       easy.setSelected(true);
       difficultyHard = false;
+      DBUpdate.updateAIDifficulty(settingsId, "Easy");
     });
     lowerBlock.getChildren().add(hard);
     lowerBlock.getChildren().add(easy);
@@ -151,6 +155,7 @@ public class SettingsController implements Initializable {
         toggle.setText("ON");
         soundOn = true;
       }
+      DBUpdate.updateSoundSwitcher(settingsId, soundOn);
     });
     HBox upperBlock = new HBox();
     upperBlock.setAlignment(Pos.CENTER);
@@ -171,6 +176,12 @@ public class SettingsController implements Initializable {
     lowerBlockTwo.setPrefHeight(100);
     Slider slider = new Slider();
     slider.showTickLabelsProperty().setValue(true);
+    slider.setValue(soundLevel);
+    System.out.println(slider.getValue());
+    slider.setOnMouseReleased(event -> {
+      soundLevel = slider.getValue();
+      DBUpdate.updateSoundLevel(settingsId, soundLevel);
+    });
     lowerBlockTwo.getChildren().add(slider);
     lowerBlockOne.getChildren().add(lowerBlockTwo);
     mainBlock.getChildren().add(lowerBlockOne);
@@ -201,13 +212,17 @@ public class SettingsController implements Initializable {
       FXMLLoader loader = new FXMLLoader();
       loader.setLocation(getClass().getResource("fxml/MainPage.fxml"));
       Pane root = loader.load();
-      Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
-      Scene scene = new Scene(root, (((Node) event.getSource()).getScene().getWidth()),
-          (((Node) event.getSource()).getScene().getHeight()));
-      scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
-      window.setScene(scene);
-      window.setFullScreen(fullScreen);
-      window.show();
+      /*
+       * Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow(); Scene scene = new
+       * Scene(root, (((Node) event.getSource()).getScene().getWidth()), (((Node)
+       * event.getSource()).getScene().getHeight()));
+       * scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+       * window.setScene(scene);
+       */
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().getStylesheets()
+          .add(getClass().getResource("css/mainMenu.css").toExternalForm());
+      ScrabbleApp.getScene().setRoot(root);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -245,15 +260,19 @@ public class SettingsController implements Initializable {
       Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow();
       if (windowed.isSelected()) {
         fullScreen = true;
-        window.setFullScreen(true);
-        window.setResizable(true);
+        // window.setFullScreen(true);
+        // window.setResizable(true);
+        // ScrabbleApp.getStage().setFullScreen(true);
         windowed.setText("Full Screen");
       } else {
         fullScreen = false;
-        window.setFullScreen(false);
-        window.setResizable(true);
+        // window.setFullScreen(false);
+        // window.setResizable(true);
+        // ScrabbleApp.getStage().setFullScreen(false);
         windowed.setText("Windowed");
       }
+      ScrabbleApp.getStage().setFullScreen(fullScreen);
+      DBUpdate.updateSceneMode(settingsId, fullScreen);
     });
     upperBlockTwo.getChildren().add(windowed);
     upperBlockMain.getChildren().add(upperBlockOne);

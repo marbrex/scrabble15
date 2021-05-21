@@ -184,9 +184,10 @@ public class DBInformation {
    * @param player the HumanPlayer
    * @return the soundlevel setting from DB
    * @author mraucher
+   * @author skeskinc
    */
-  public static int getSoundLevel(HumanPlayer player) {
-    return Integer.valueOf(getPlayerSettings(player).get(1));
+  public static double getSoundLevel(HumanPlayer player) {
+    return Double.valueOf(getPlayerSettings(player).get(1));
   }
 
   /**
