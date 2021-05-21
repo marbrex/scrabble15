@@ -323,7 +323,7 @@ public class GameInformationController {
     System.out.println("GAME INFO : Invoke Game");
     this.sendGameMessage(this.getPlayersInformation());// here adding new List
     try {
-      this.wait(1000); // For testing perhaps change to a finish approach
+      this.wait(3000); // For testing perhaps change to a finish approach
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
