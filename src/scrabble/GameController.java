@@ -25,7 +25,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -177,11 +176,7 @@ public class GameController {
 
   String dictContent;
 
-  public JFXTextArea chat;
-
-  public ImageView chatSend;
-
-  public HBox chatActions;
+  public BorderPane chatBlock;
 
   /**
    * Default constructor.
@@ -214,6 +209,11 @@ public class GameController {
     this.isHost = isHost;
     this.mapContent = mapContent;
     this.dictContent = dictionary;
+
+    players.forEach(player -> {
+      System.out.println("\n" + player.getName() + " HAS ID : " + player.getId());
+      System.out.println(player.getName() + " HAS SCORE : " + player.getScore());
+    });
   }
 
   /**
@@ -262,12 +262,6 @@ public class GameController {
             }
           }
 
-          // enabling every LetterTile in Grid
-          grid.getTilesInGrid().forEach(tile -> {
-            tile.setMouseTransparent(false);
-            tile.isFrozen = false;
-          });
-
           // enabling every LetterTile in Bar
           letterBar.getTilesInBar().forEach(tile -> {
             tile.setMouseTransparent(false);
@@ -286,7 +280,7 @@ public class GameController {
             public void run() {
               Platform.runLater(() -> {
 
-                System.out.println("Time is over - moving tiles in grid back to bar..");
+//                System.out.println("Time is over - moving tiles in grid back to bar..");
                 // moving all tiles in grid back to bar
                 letterBar.putTilesBackToBar();
 
@@ -433,7 +427,7 @@ public class GameController {
 
   public void changeScene(String resource, String style, Event event) {
     try {
-      System.out.println(resource);
+//      System.out.println(resource);
       Parent root = FXMLLoader.load(getClass().getResource(resource));
       /*
       ImageView btn = ((ImageView) event.getSource());
@@ -448,7 +442,7 @@ public class GameController {
       ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
-      System.err.println("Error: " + e.getMessage());
+//      System.err.println("Error: " + e.getMessage());
     }
   }
 
@@ -464,7 +458,7 @@ public class GameController {
     leaderBoard = new LeaderBoard(players);
   }
 
-  private void setButtonActions() {
+  protected void setButtonActions() {
 
     shuffleBtn.setOnMouseClicked(event -> letterBar.shuffle());
 
@@ -478,7 +472,7 @@ public class GameController {
 
   }
 
-  String saveMultiplierMap(String content) {
+  protected String saveMultiplierMap(String content) {
     String home = System.getProperty("user.home");
     String slash = System.getProperty("file.separator");
 
@@ -510,14 +504,35 @@ public class GameController {
     return path;
   }
 
-  void initChat() {
+  private void initChat() {
+    chatBlock.setPadding(new Insets(10));
+
+    JFXTextArea chat = new JFXTextArea();
+    chat.setFocusColor(Paint.valueOf("transparent"));
+    chat.setUnFocusColor(Paint.valueOf("transparent"));
+    chat.setEditable(false);
+    chat.setId("chat");
+    chat.setPrefColumnCount(15);
+    chatBlock.setCenter(chat);
+
+    HBox chatActions = new HBox();
+    chatActions.setAlignment(Pos.CENTER);
+    chatBlock.setBottom(chatActions);
+
     JFXTextField chatField = new JFXTextField();
     chatField.setId("chat-input");
     chatField.setFocusColor(Paint.valueOf("transparent"));
     chatField.setUnFocusColor(Paint.valueOf("transparent"));
     chatField.setFocusTraversable(false);
     chatActions.getChildren().add(chatField);
-    chatField.toBack();
+
+    String path = "img/send-msg-icon.png";
+    Image im = new Image(getClass().getResource(path).toExternalForm());
+    ImageView chatSend = new ImageView(im);
+    chatSend.setId("chat-send");
+    chatSend.setFitHeight(30);
+    chatSend.setFitWidth(30);
+    chatActions.getChildren().add(chatSend);
 
     chatSend.setOnMouseClicked(mouseEvent -> {
       // On Clicking send button
@@ -537,8 +552,6 @@ public class GameController {
   @FXML
   private void initialize() {
 
-    initChat();
-
     if (protocol == null) {
       // Local Game
 
@@ -551,6 +564,8 @@ public class GameController {
     } else {
       // Network Game
       this.protocol.setGameScreen(this); //setting controller to protocol
+
+      initChat();
 
       if (dictContent.isEmpty()) {
         // if dictionary content transferred by the lobby is empty => use default dictionary
@@ -578,6 +593,7 @@ public class GameController {
         BorderPane playerBlock = new BorderPane();
         playerBlock.getStyleClass().add("players-block");
         playerBlock.setPadding(new Insets(10, 30, 10, 30));
+        System.out.println(player.getName() + " has ID: " + player.getId());
         playerBlock.setId(String.valueOf(player.getId()));
 
         StackPane avatarWrapper = new StackPane();
