@@ -681,20 +681,23 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @param gameScreen
    * @author hendiehl
    */
+  @Override
   public void setGameScreen(GameController gameScreen) {
+    System.out.println("CLIENT PROTOCOL : GAME-Controller set");
     this.gameScreen = gameScreen;
-
   }
 
   /**
    * Method to inform the server that a player finished his move in time.
    * 
+   * @param action String representation of the action a player performed in his last move.
+   * @param points Points a player gain with his last move action.
    * @author hendiehl
    */
   @Override
-  public void sendEndMessage() {
+  public void sendEndMessage(String action, int points) {
     try {
-      Message msg = new Message(MessageType.END, this.player);
+      EndMessage msg = new EndMessage(MessageType.END, this.player, action, points);
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("CLIENT PROTOCOL : End-Message sended");
@@ -872,5 +875,25 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Method to inform the GameHandler that the loading of the game field screen finished. Will be
+   * called form the GameController in his initialize method.
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void loadFinished() {
+    try {
+      Message msg = new Message(MessageType.LOAD, this.player);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("CLIENT PROTOCOL : Load-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
   }
 }

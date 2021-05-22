@@ -30,6 +30,7 @@ public class GameInformationController {
   private LetterBag bag;
   private String multiplierContent = ""; // own chosen multiplier field
   private String dictionaryContent = ""; // own chosen dictionary file
+  private HashMap<NetworkPlayer, Boolean> initCheck;
 
   /**
    * Constructor which initialize the class and set up important help classes.
@@ -42,6 +43,7 @@ public class GameInformationController {
     this.players = new ArrayList<NetworkPlayer>();
     this.status = GameStatusType.LOBBY;
     this.check = new HashMap<NetworkPlayer, Boolean>();
+    this.initCheck = new HashMap<NetworkPlayer, Boolean>();
   }
 
   /**
@@ -316,22 +318,17 @@ public class GameInformationController {
    * @author hendiehl
    */
   private void startGame() {
-    this.fillGame();
+    this.fillGame(); // filling game with AiPlayers
     System.out.println("GAME INFO : PLayer list shoud be size 4 is " + this.players.size());
-    this.setPlayerSequence();
-    this.setGameIDs();
+    this.setPlayerSequence(); // setting the sequence for the game
+    this.setGameIDs(); // setting id's for machine independent recognition of player classes
+    this.initCheckMap(); // initialize the loading time check data structure
     System.out.println("GAME INFO : Invoke Game");
-    this.sendGameMessage(this.getPlayersInformation());// here adding new List
-    try {
-      this.wait(3000); // For testing perhaps change to a finish approach
-    } catch (InterruptedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-    this.bag = LetterBag.getInstance();
-    // this.fillGame(); // Filling slots of missing Players with AiPlayers
     this.gameHandler = new GameHandler(this, this.players);
     this.gameHandler.startGame();
+    this.sendGameMessage(this.getPlayersInformation());// consequence --> enter LoadingScreen
+    // LoadingScreen needs 9, should be enough
+    this.bag = LetterBag.getInstance();
   }
 
   /**
@@ -365,12 +362,15 @@ public class GameInformationController {
   /**
    * Method to end a player move before the maximum time goes by
    * 
+   * @param action String representation of the action a player performed in his last move.
+   * @param points Points a player gain with his last move action.
    * @author hendiehl
    */
-  public void endMoveForTime() { // here freeze
+  public void endMoveForTime(String action, int points) { // here freeze
     System.out.println("GAME INFO : Interupt play move");
-    this.gameHandler.endMoveForTime(); // Perhaps controlling the interaction so that only the
-                                       // player onMove can notify ?
+    this.gameHandler.endMoveForTime(action, points); // Perhaps controlling the interaction so that
+                                                     // only the
+    // player onMove can notify ?
   }
 
   /**
@@ -531,6 +531,57 @@ public class GameInformationController {
     System.out.println("GAME INFO : Send dictionary content to players");
     for (NetworkPlayer player : this.players) {
       player.sendDictionaryMessage(this.dictionaryContent);
+    }
+  }
+
+  /**
+   * Gate method to use the function of the informLoading method of the GameHandler. Is used to
+   * inform the handler that the game field is loaded by a specific player. After all players are
+   * filled the GameHandler will start his procedure.
+   * 
+   * @param NetworkPlayer which game field finished the initialization
+   * @author hendiehl
+   */
+  public synchronized void informLoading(NetworkPlayer player) {
+    this.initCheck.replace(player, true);
+    this.invokeGameHandler();
+  }
+
+  /**
+   * Method to check if all player finished the loading of their game field. If all players finished
+   * the GameHandler will be notified and the turn procedure starts.
+   * 
+   * @author hendiehl
+   */
+  private void invokeGameHandler() {
+    boolean checker = true;
+    for (NetworkPlayer player : this.players) {
+      checker &= this.initCheck.get(player);
+    }
+    if (checker) { // all finished
+      System.out.println("GAME INFO : All players finished loading");
+      this.gameHandler.invokeTurnPhase(); // start turn phase.
+      // adding leave method !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1
+    }
+  }
+
+  /**
+   * Method to initialize a check object which is used to inform the GameHandler when all players
+   * game field finished loading in reason to start the turn procedure in this case. Is used because
+   * different OS has different JavaFx loading times and a turn can only start when all players
+   * finished their loading of the game field. Will set LobbyAiProtocols ready from the beginning
+   * because they are not connected with a specific loading time.
+   * 
+   * @author hendiehl
+   */
+  private void initCheckMap() {
+    for (NetworkPlayer player : players) {
+      if (player instanceof LobbyAiProtocol) { // AiProtocols don't need loading time
+        this.initCheck.put(player, true);
+        // setting them ready from beginning
+      } else { // HumanPlayers
+        this.initCheck.put(player, false);
+      }
     }
   }
 }

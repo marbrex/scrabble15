@@ -1,6 +1,7 @@
 package scrabble.network;
 
 import java.util.ArrayList;
+import scrabble.GameController;
 import scrabble.model.AiPlayer;
 import scrabble.model.Player;
 
@@ -34,13 +35,14 @@ public class LobbyAiProtocol implements NetworkPlayer {
   }
 
   /**
-   * Method to calculate a move by an AiPlayer.
+   * Special method to calculate a move by an AiPlayer. A AiPLayer needs a game field instance to
+   * work on the grid class. The normal move parameters turn and id are not needed here.
    * 
+   * @param field game field of the host
    * @author hendiehl
    */
-  @Override
-  public void startMove(int turn, int id) {
-
+  public void aiMove(GameController field) {
+    System.out.println("AI PROTOCOL : Calculate move");
   }
 
   // --------------------------------------------------------------------------
@@ -88,6 +90,11 @@ public class LobbyAiProtocol implements NetworkPlayer {
 
   @Override
   public void sendDictionaryMessage(String dictionaryContent) {
+    // Not in use because of Non-Network communication
+  }
+
+  @Override
+  public void startMove(int turn, int id) {
     // Not in use because of Non-Network communication
   }
 }

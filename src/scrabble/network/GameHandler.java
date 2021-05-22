@@ -1,6 +1,7 @@
 package scrabble.network;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import scrabble.model.GameInformationController;
 
 public class GameHandler extends Thread {
@@ -17,12 +18,13 @@ public class GameHandler extends Thread {
   private ArrayList<NetworkPlayer> players;
   /** counter for turns without action */
   private int actionlessMove;
-  /** Int representation of ten minutes */
-  // private static final int tenMin = 600000; //not in use anymore
   /** actual player which is on Move */
   private NetworkPlayer actual;
   /** Counter of the player turns during a game */
   private int turn = 0;
+  /** Map for saving the points */
+  private HashMap<NetworkPlayer, Integer> points;
+  private LobbyHostProtocol host;
 
   // should i control a specific notify call ?
   /**
@@ -35,6 +37,18 @@ public class GameHandler extends Thread {
   public GameHandler(GameInformationController game, ArrayList<NetworkPlayer> players) {
     this.game = game;
     this.players = players;
+    this.points = new HashMap<NetworkPlayer, Integer>();
+    // initialize the map and the host
+    {
+      for (NetworkPlayer player : this.players) {
+        if (player instanceof LobbyHostProtocol) {
+          this.points.put(player, 0);
+          this.host = (LobbyHostProtocol) player; // setting host;
+        } else {
+          this.points.put(player, 0);
+        }
+      }
+    }
   }
 
   /**
@@ -45,6 +59,7 @@ public class GameHandler extends Thread {
    */
   public void run() {
     System.err.println("GAME HANDLER : Started");
+    this.waitMazimumTime(); // wait until all players finished loading
     while (gameIsOn) {
       System.out.println("GAME HANDLER : Make complete turn");
       this.makeATurn(); // Perhaps wrapping it in a synchronized method ?
@@ -75,6 +90,7 @@ public class GameHandler extends Thread {
       }
       System.out.println("GAME HANDLER : Player turn : " + player.getPlayer().getName());
       if (player instanceof LobbyServerProtocol || player instanceof LobbyHostProtocol) {
+        System.out.println("GAME HANDLER : Human move");
         this.actual = player;
         player.startMove(this.turn, this.actual.getPlayer().getId()); // here adding the ID.
         this.informOthers();
@@ -82,11 +98,30 @@ public class GameHandler extends Thread {
         // here work with player move info
         this.checkRunning(); // check if a game should be ended --> any condition
       } else {
+        System.out.println("GAME HANDLER : AI move");
         this.actual = player;
+        this.informOthers();
+        this.waitAiTime(); // Only in purpose to show AiPlayer on the field --> 10sek
+        LobbyAiProtocol ai = (LobbyAiProtocol) player; // only left possibility because of condition
+        ai.aiMove(this.host.getGameScreen());
       }
       this.turn++; // increase the turn counter
     }
 
+  }
+
+  /**
+   * Method to give the game fields time to show the move of an AiPlayer.
+   * 
+   * @author hendiehl
+   */
+  private synchronized void waitAiTime() {
+    try {
+      this.wait(10000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -97,7 +132,7 @@ public class GameHandler extends Thread {
   private void informOthers() {
     for (NetworkPlayer player : this.players) { // go through them
       if (!player.equals(this.actual)) {
-        player.informOther(this.turn, this.actual.getPlayer().getId()); // here sending the id +
+        player.informOther(this.turn, this.actual.getPlayer().getId()); // here sending the id + //
                                                                         // turn
       }
     }
@@ -140,23 +175,59 @@ public class GameHandler extends Thread {
   }
 
   /**
-   * Method to interrupt a waiting gameHandler during a move.
+   * Method to interrupt a waiting gameHandler during a move. Will be called when a player ends his
+   * move.
    * 
+   * @param action String representation of the action a player performed in his last move
+   * @param points Points a player gain with his last move action.
    * @author hendiehl
    */
-  public synchronized void endMoveForTime() {
+  public synchronized void endMoveForTime(String action, int points) {
+    // here adding a actual condition
     System.out.println("GAME HANDLER : End move in time");
-    // Perhaps here adding the move information because they should be ready
-    this.notify();
+    this.processAction(action, points); // work with the action
+    this.notify(); // wake handler for next move
+  }
+
+  private void processAction(String action, int points) {
+    if (action.matches("")) { // move without action
+      System.out.println("GAME HANDLER : Actionless move");
+      this.actionlessMove++; // increase counter
+    } else {
+      System.out.println("GAME HANDLER : Action move");
+      this.actionlessMove = 0; // setting back counter
+      int point = points + this.points.get(actual); // adding points
+      this.points.replace(actual, point); // replacing points
+      this.informActions(action, points);
+    }
   }
 
   /**
-   * Method to shut down the GameHandler
+   * Method to inform other players about the action a player performed during his last move.
+   * Information will be send to other players to update their game field.
+   * 
+   * @param action String representation of last move action
+   * @param points Points gained through the last move
+   * @author hendiehl
+   */
+  private void informActions(String action, int points) {
+    // implement
+  }
+
+  /**
+   * Method to shut down the GameHandler.
    * 
    * @author hendiehl
    */
   public void shutdown() {
     this.gameIsOn = false;
     // Need of braking the inner loop ?
+  }
+
+  /**
+   * Method to wake the thread after all players finishing loading their game field.
+   */
+  public synchronized void invokeTurnPhase() {
+    this.notify();
   }
 }

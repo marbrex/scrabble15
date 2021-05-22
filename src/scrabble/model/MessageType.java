@@ -23,4 +23,5 @@ public enum MessageType {
   OTHER, // message to perform a player about the move of somebody else
   FIELD, // message to set the game field multiplier
   DICT, // message to set a dictionary file content
+  LOAD, // message to inform about successful game Field Loading
 }

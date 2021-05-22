@@ -107,6 +107,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
         case BAG:
           this.reactToBag(message);
           break;
+        case LOAD:
+          this.reactToLoad(message);
+          break;
       }
     } catch (EOFException e) {
       this.isRunning = false;
@@ -120,6 +123,18 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Method to react to an load message form a client, which is send in reason to inform the server
+   * that his game field finished loading.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToLoad(Message message) {
+    System.out.println("SERVER PROTOCOL : Load-Message received");
+    this.gameInfoController.informLoading(this);
   }
 
   /**
@@ -211,7 +226,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   private synchronized void reactToEnd(Message message) {
     System.out.println("SERVER PROTOCOL : End-Message received");
-    this.gameInfoController.endMoveForTime(); // did he go in or not ?
+    EndMessage msg = (EndMessage) message;
+    this.gameInfoController.endMoveForTime(msg.getAction(), msg.getPoints()); // did he go in or not
+                                                                              // ?
   }
 
   /**

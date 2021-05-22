@@ -702,30 +702,23 @@ public class GameLobbyController implements LobbyController {
   public void goInGameScreen() { // Just Testing Purpose with TestScreen !!!!!!!!!!!!!!!!!!!!!!!!!!!
     Platform.runLater(() -> {
       try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/interface.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/LoadingScreen.fxml"));
         if (this.host != null) {
           loader.setControllerFactory(c -> {
-            return new GameController(this.host, this.isHost, this.contentOfField,
+            return new LoadingController(this.host, this.isHost, this.contentOfField,
                 this.host.getPlayerList(), this.contentOfDictionary);
           });
         } else {
           loader.setControllerFactory(c -> {
-            return new GameController(this.client, this.isHost, this.contentOfField,
+            return new LoadingController(this.client, this.isHost, this.contentOfField,
                 this.client.getPlayerList(), this.contentOfDictionary);
           });
         }
         Parent root = loader.load();
-        GameController gameScreen = loader.<GameController>getController();
-        if (this.host != null) {
-          this.host.setGameScreen(gameScreen);
-        } else {
-          this.client.setGameScreen(gameScreen);
-        }
         /*
-         * Stage stage = (Stage) this.backButton.getScene().getWindow(); Scene scene = new
-         * Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-         * scene.getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
-         * stage.setScene(scene);
+         * GameController gameScreen = loader.<GameController>getController(); if (this.host !=
+         * null) { this.host.setGameScreen(gameScreen); } else {
+         * this.client.setGameScreen(gameScreen); }
          */
         ScrabbleApp.getScene().getStylesheets().clear();
         ScrabbleApp.getScene().getStylesheets()

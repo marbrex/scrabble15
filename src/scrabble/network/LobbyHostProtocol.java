@@ -248,6 +248,8 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     if (this.gameScreen != null) { // be aware of not loading gameScreen
       System.out.println("HOST PROTOCOL : Move-Message received");
       this.gameScreen.api.startMove(turn, id); // start Move
+    } else {
+      System.out.println("HOST PROTOCOL : ERROR");
     }
 
   }
@@ -259,19 +261,34 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * @param gameScreen Corresponding controller to an GameFieldScreen
    * @author hendiehl
    */
+  @Override
   public void setGameScreen(GameController gameScreen) {
+    System.out.println("HOST PROTOCOL : GAME-Controller set");
     this.gameScreen = gameScreen;
+  }
+
+  /**
+   * Getter for the game screen controller in reason to give them to an AiPlayer. AiPlayer work on
+   * the field instance of the Host.
+   * 
+   * @return actual controller of the host game field.
+   * @author hendiehl
+   */
+  public GameController getGameScreen() {
+    return this.gameScreen;
   }
 
   /**
    * Method to inform the Server that a player ended his move in Time.
    * 
+   * @param action String representation of the action a player performed in his last move.
+   * @param points Points a player gain with his last move action.
    * @author hendiehl
    */
   @Override
-  public synchronized void sendEndMessage() {
+  public synchronized void sendEndMessage(String action, int points) {
     System.out.println("HOST PROTOCOL : End move by self");
-    this.gameInfoController.endMoveForTime();// he didn't go in ???????????????????
+    this.gameInfoController.endMoveForTime(action, points);// he didn't go in ???????????????????
   }
 
   /**
@@ -477,5 +494,16 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     if (this.gameLobby != null) {
       this.gameLobby.setContentOfDictionary(dictionaryContent, false);
     }
+  }
+
+  /**
+   * Method to inform the GameHandler that the loading of the game field screen finished. Will be
+   * called form the GameController in his initialize method.
+   * 
+   * @author hendiehl
+   */
+  public void loadFinished() {
+    System.out.println("HOST PROTOCOL : Load-Message sended");
+    this.gameInfoController.informLoading(this);
   }
 }

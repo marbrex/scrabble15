@@ -371,7 +371,7 @@ public class GameController {
 
             if (protocol != null) {
               // Network Game
-              protocol.sendEndMessage();
+              protocol.sendEndMessage("", 0);
             }
 
           }
@@ -607,7 +607,10 @@ public class GameController {
 
     letterBar = new LetterBar(this);
 
+    this.protocol.setGameScreen(this); //setting controller to protocol
     initApi();
+    this.protocol.loadFinished(); //inform about loading finish
+    System.out.println("GAME CONTROLLER : Finished loading");
 
     // Binding GridPane Wrapper's Height to be always equal to its Width
     gridWrapper.widthProperty().addListener((observable, oldValue, newValue) -> {

@@ -2,6 +2,7 @@ package scrabble;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -17,6 +18,8 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
+import scrabble.model.Player;
+import scrabble.network.NetworkScreen;
 
 /**
  * scrabble.LoadingController for the LoadingScreen.
@@ -45,6 +48,32 @@ public class LoadingController implements Initializable {
   
   @FXML
   public BorderPane pane;
+  
+  private NetworkScreen protocol;
+  private boolean isHost;
+  private String mapContent;
+  private String dictionary;
+  private ArrayList<Player> players;
+
+  /**
+   * Constructor for a network game which has the function to briefly save game necessary
+   * information, which will be needed for a network game.
+   * 
+   * @param protocol corresponding protocol of the player
+   * @param isHost boolean condition for host allocation
+   * @param mapContent content of a multiplier field file
+   * @param players members of the game
+   * @param dictionary content of a dictionary file
+   * @author hendiehl
+   */
+  public LoadingController(NetworkScreen protocol, boolean isHost, String mapContent,
+      ArrayList<Player> players, String dictionary) {
+    this.protocol = protocol;
+    this.isHost = isHost;
+    this.mapContent = mapContent;
+    this.players = players;
+    this.dictionary = dictionary;
+  }
 
   /**
    * Increase value of timebar.
@@ -92,16 +121,25 @@ public class LoadingController implements Initializable {
         progressBar.setProgress(progress);
         if (progressBar.getProgress() > 1) {
           try {
-            Parent root = FXMLLoader.load(getClass().getResource("fxml/interface.fxml"));
+            Parent root;
+            if (!MainPageController.isNetwork()) {
+              root = FXMLLoader.load(getClass().getResource("fxml/interface.fxml"));
+            } else {
+              FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/interface.fxml"));
+              loader.setControllerFactory(c -> {
+                return new GameController(protocol, isHost, mapContent, players, dictionary);
+              });
+              root = loader.load();
+            }
             /*
-            Stage stage = (Stage) progressBar.getScene().getWindow();
-            Scene scene = new Scene(root, pane.getScene().getWidth(), pane.getScene().getHeight());
-            scene.getStylesheets().add(getClass()
-                .getResource("css/style.css").toExternalForm());
-            stage.setScene(scene);
-            */
+             * Stage stage = (Stage) progressBar.getScene().getWindow(); Scene scene = new
+             * Scene(root, pane.getScene().getWidth(), pane.getScene().getHeight());
+             * scene.getStylesheets().add(getClass()
+             * .getResource("css/style.css").toExternalForm()); stage.setScene(scene);
+             */
             ScrabbleApp.getScene().getStylesheets().clear();
-            ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/style.css").toExternalForm());
+            ScrabbleApp.getScene().getStylesheets()
+                .add(getClass().getResource("css/style.css").toExternalForm());
             ScrabbleApp.getScene().setRoot(root);
           } catch (IOException e) {
             // TODO Auto-generated catch block
