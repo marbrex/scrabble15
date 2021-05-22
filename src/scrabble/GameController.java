@@ -376,18 +376,9 @@ public class GameController {
       }
 
       @Override
-      public void sendMoveInformation() {
-
-      }
-
-      @Override
-      public void getOpponentsInfo() {
-
-      }
-
-      @Override
-      public void endMoveActions() {
-
+      public void getOpponentsInfo(String action, int points, int id) {
+        // here the actions of a other player will be received
+        System.out.println("GAME CONTROLLER : Other action received in controller");
       }
 
       /**

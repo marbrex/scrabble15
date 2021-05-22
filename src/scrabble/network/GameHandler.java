@@ -97,6 +97,7 @@ public class GameHandler extends Thread {
         this.waitMazimumTime(); // change to approach only by HumanPlayer
         // here work with player move info
         this.checkRunning(); // check if a game should be ended --> any condition
+        // Perhaps here not needed
       } else {
         System.out.println("GAME HANDLER : AI move");
         this.actual = player;
@@ -147,16 +148,6 @@ public class GameHandler extends Thread {
     if (this.actionlessMove == 6) { // six successive turns without action
       this.gameIsOn = false; // ending the game
     }
-  }
-
-  /**
-   * Method to get the Information of a player turn.
-   * 
-   * @author hendiehl
-   */
-  private void getMoveInfo() {
-    // TODO Auto-generated method stub
-
   }
 
   /**
@@ -211,7 +202,13 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   private void informActions(String action, int points) {
-    // implement
+    for (NetworkPlayer player : this.players) { // go through them
+      if (!player.equals(this.actual)) { //not the actual
+        if(!(player instanceof LobbyAiProtocol)) { //no AiPlayers they get information from host grid
+          player.sendActionMessage(action, points, this.actual.getPlayer().getId());
+        }
+      }
+    }
   }
 
   /**

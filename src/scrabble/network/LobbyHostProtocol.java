@@ -511,4 +511,20 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     System.out.println("HOST PROTOCOL : Load-Message sended");
     this.gameInfoController.informLoading(this);
   }
+
+  /**
+   * Method to inform the host about the action an other player performed in his move.
+   * 
+   * @param action action string of the other player
+   * @param points points gained by this action
+   * @param id id of the player performed the action
+   * @author hendiehl
+   */
+  @Override
+  public void sendActionMessage(String action, int points, int id) {
+    if (this.gameScreen != null) {
+      this.gameScreen.api.getOpponentsInfo(action, points, id);
+      System.out.println("HOST PROTOCOL : Action-Message sended");
+    }
+  }
 }

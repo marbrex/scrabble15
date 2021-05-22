@@ -218,6 +218,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case DICT:
           this.reactToDictionary(message);
           break;
+        case ACTION:
+          this.reactToAction(message);
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -231,6 +234,21 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to react to an ActionMessage which send in reason to inform a player about the action a
+   * other player performed in his move.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToAction(Message message) {
+    System.out.println("CLIENT PROTOCOL : Action-Message received");
+    ActionMessage msg = (ActionMessage) message;
+    if (this.gameScreen != null) {
+      this.gameScreen.api.getOpponentsInfo(msg.getAction(), msg.getPoints(), msg.getId());
     }
   }
 
@@ -696,7 +714,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   public void setGameScreen(GameController gameScreen) {
     System.out.println("CLIENT PROTOCOL : GAME-Controller set");
     this.gameScreen = gameScreen;
-    this.gameLobbyController = null; //not needed anymore after GameScreen is set.
+    this.gameLobbyController = null; // not needed anymore after GameScreen is set.
   }
 
   /**

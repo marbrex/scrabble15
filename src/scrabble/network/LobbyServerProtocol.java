@@ -514,15 +514,15 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   @Override
   public void sendGameMessage(ArrayList<Player> players) {
     System.err.println("List by server send");
-    //Emergency solution because of data loose
+    // Emergency solution because of data loose
     int[] ids = new int[4];
-    for(int i = 0; i < players.size() && i < 4; i++) {
+    for (int i = 0; i < players.size() && i < 4; i++) {
       ids[i] = players.get(i).getId();
-      System.err.println("Player : " + players.get(i).getName() + " connected with id " + players.get(i).getId());
+      System.err.println(
+          "Player : " + players.get(i).getName() + " connected with id " + players.get(i).getId());
     }
     try {
-      GameMessage msg =
-          new GameMessage(MessageType.GAME, this.player, players, ids);
+      GameMessage msg = new GameMessage(MessageType.GAME, this.player, players, ids);
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("SERVER PROTOCOL : Game-Message sended");
@@ -609,5 +609,26 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       e.printStackTrace();
     }
 
+  }
+
+  /**
+   * Method to inform the player about the action an other player performed in his move.
+   * 
+   * @param action action string of the other player
+   * @param points points gained by this action
+   * @param id id of the player performed the action
+   * @author hendiehl
+   */
+  @Override
+  public void sendActionMessage(String action, int points, int id) {
+    try {
+      ActionMessage msg = new ActionMessage(MessageType.ACTION, this.player, action, points, id);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : Action-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 }

@@ -97,4 +97,9 @@ public class LobbyAiProtocol implements NetworkPlayer {
   public void startMove(int turn, int id) {
     // Not in use because of Non-Network communication
   }
+
+  @Override
+  public void sendActionMessage(String action, int points, int id) {
+    // Not in use because of Non-Network communication
+  }
 }

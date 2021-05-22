@@ -35,4 +35,6 @@ public interface NetworkPlayer {
 
   public void sendDictionaryMessage(String dictionaryContent);
 
+  public void sendActionMessage(String action, int points, int id);
+
 }
