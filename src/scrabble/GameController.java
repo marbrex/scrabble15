@@ -550,6 +550,7 @@ public class GameController {
 
     } else {
       // Network Game
+      this.protocol.setGameScreen(this); //setting controller to protocol
 
       if (dictContent.isEmpty()) {
         // if dictionary content transferred by the lobby is empty => use default dictionary
@@ -607,9 +608,10 @@ public class GameController {
 
     letterBar = new LetterBar(this);
 
-    this.protocol.setGameScreen(this); //setting controller to protocol
     initApi();
-    this.protocol.loadFinished(); //inform about loading finish
+    if(this.protocol != null) { //Have to be checked again
+      this.protocol.loadFinished();
+    }
     System.out.println("GAME CONTROLLER : Finished loading");
 
     // Binding GridPane Wrapper's Height to be always equal to its Width

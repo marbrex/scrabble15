@@ -74,6 +74,14 @@ public class LoadingController implements Initializable {
     this.players = players;
     this.dictionary = dictionary;
   }
+   
+  /**
+   * Basic constructor for non network games.
+   * @author hendiehl
+   */
+  public LoadingController() {
+    //Constructor for non network game
+  }
 
   /**
    * Increase value of timebar.
