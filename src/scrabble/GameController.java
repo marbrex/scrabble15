@@ -390,14 +390,29 @@ public class GameController {
 
       }
 
+      /**
+       * Method to print an incoming chat message from the chat server to the chat field on the game
+       * field.
+       * 
+       * @param message chat string from the chat server
+       * @author hendiehl
+       */
       @Override
       public void printChatMessage(String message) {
-
+        Platform.runLater(() -> {
+          chat.appendText(System.lineSeparator() + message);
+        });
       }
 
+      /**
+       * Method to send an chat message to the chat server
+       * 
+       * @param message chat message of an lobby member
+       * @author hendiehl
+       */
       @Override
       public void sendChatMessage(String message) {
-
+        protocol.sendChatMessage(message); // sending the message
       }
 
     };
@@ -538,8 +553,7 @@ public class GameController {
       // On Clicking send button
       String message = chatField.getText();
       if (!message.isEmpty()) {
-        String name = Profile.getPlayer().getName();
-        chat.appendText((chat.getText().length() == 0 ? "" : "\n") + name + ": " + message);
+        this.api.sendChatMessage(message);
         chatField.clear();
       }
     });

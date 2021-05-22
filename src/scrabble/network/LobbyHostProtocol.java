@@ -161,7 +161,9 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * @author hendiehl
    */
   public void sendChatMessage(String message) {
-    if (this.gameLobby != null) {
+    if (this.gameScreen != null) {
+      this.chat.sendMessageToServer(message);
+    } else if (this.gameLobby != null) {
       this.chat.sendMessageToServer(message);
     }
   }
@@ -174,7 +176,9 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * @author hendiehl
    */
   public void printChatMessage(String message) {
-    if (this.gameLobby != null) {
+    if (this.gameScreen != null) {
+      this.gameScreen.api.printChatMessage(message);
+    } else if (this.gameLobby != null) {
       this.gameLobby.printChatMessage(message);
     }
   }
@@ -265,6 +269,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   public void setGameScreen(GameController gameScreen) {
     System.out.println("HOST PROTOCOL : GAME-Controller set");
     this.gameScreen = gameScreen;
+    this.gameLobby = null; // not needed anymore
   }
 
   /**

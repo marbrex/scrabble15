@@ -363,10 +363,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   private void reactToGameMessage(Message message) {
     System.out.println("CLIENT PROTOCOL : Game-Message received");
     GameMessage msg = (GameMessage) message;
-    //Emergency solution because of data loose
+    // Emergency solution because of data loose
     ArrayList<Player> copie = msg.getPlayers();
     int[] ids = msg.getIds();
-    for(int i = 0; i < copie.size() && i < 4; i++) {
+    for (int i = 0; i < copie.size() && i < 4; i++) {
       copie.get(i).setId(ids[i]);
       System.err.println("Player : " + copie.get(i).getName() + " with id : " + ids[i]);
     }
@@ -639,7 +639,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @author hendiehl
    */
   public void sendChatMessage(String message) {
-    if (this.gameLobbyController != null) {
+    if (this.gameScreen != null) {
+      this.chat.sendMessageToServer(message);
+    } else if (this.gameLobbyController != null) {
       this.chat.sendMessageToServer(message);
     }
   }
@@ -652,7 +654,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @author hendiehl
    */
   public void printChatMessage(String message) {
-    if (this.gameLobbyController != null) {
+    if (this.gameScreen != null) {
+      this.gameScreen.api.printChatMessage(message);
+    } else if (this.gameLobbyController != null) {
       this.gameLobbyController.printChatMessage(message);
     }
   }
@@ -692,6 +696,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   public void setGameScreen(GameController gameScreen) {
     System.out.println("CLIENT PROTOCOL : GAME-Controller set");
     this.gameScreen = gameScreen;
+    this.gameLobbyController = null; //not needed anymore after GameScreen is set.
   }
 
   /**
