@@ -178,6 +178,8 @@ public class GameController {
 
   public BorderPane chatBlock;
 
+  public JFXTextArea chat;
+
   /**
    * Default constructor.
    */
@@ -391,7 +393,7 @@ public class GameController {
       @Override
       public void printChatMessage(String message) {
         Platform.runLater(() -> {
-          chat.appendText(System.lineSeparator() + message);
+          chat.appendText(chat.getText().isEmpty() ? message : (System.lineSeparator() + message));
         });
       }
 
@@ -519,6 +521,7 @@ public class GameController {
     chat.setEditable(false);
     chat.setId("chat");
     chat.setPrefColumnCount(15);
+    this.chat = chat;
     chatBlock.setCenter(chat);
 
     HBox chatActions = new HBox();
@@ -568,9 +571,10 @@ public class GameController {
 
     } else {
       // Network Game
-      this.protocol.setGameScreen(this); //setting controller to protocol
 
       initChat();
+
+      this.protocol.setGameScreen(this); //setting controller to protocol
 
       if (dictContent.isEmpty()) {
         // if dictionary content transferred by the lobby is empty => use default dictionary
@@ -592,9 +596,8 @@ public class GameController {
       // Creating a Leader Board
       leaderBoard = new LeaderBoard(players);
 
-//      System.out.println("Number of players: " + players.size());
       players.forEach(player -> {
-//        System.out.println("Player name: " + player.getName());
+
         BorderPane playerBlock = new BorderPane();
         playerBlock.getStyleClass().add("players-block");
         playerBlock.setPadding(new Insets(10, 30, 10, 30));
@@ -604,7 +607,7 @@ public class GameController {
         StackPane avatarWrapper = new StackPane();
         avatarWrapper.getStyleClass().add("player-avatar-frame");
         avatarWrapper.setAlignment(Pos.CENTER);
-//          System.out.println("Image: " + player.getImage());
+
         ImageView avatar = new ImageView(new Image(getClass().getResourceAsStream("img/" + player.getImage())));
         avatar.setFitHeight(60);
         avatar.setFitWidth(60);
