@@ -513,10 +513,16 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   @Override
   public void sendGameMessage(ArrayList<Player> players) {
+    System.err.println("List by server send");
+    //Emergency solution because of data loose
+    int[] ids = new int[4];
+    for(int i = 0; i < players.size() && i < 4; i++) {
+      ids[i] = players.get(i).getId();
+      System.err.println("Player : " + players.get(i).getName() + " connected with id " + players.get(i).getId());
+    }
     try {
-      LobbyInformationMessage msg =
-          new LobbyInformationMessage(MessageType.GAME, this.player, players); // just Testing
-                                                                               // purpose
+      GameMessage msg =
+          new GameMessage(MessageType.GAME, this.player, players, ids);
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("SERVER PROTOCOL : Game-Message sended");

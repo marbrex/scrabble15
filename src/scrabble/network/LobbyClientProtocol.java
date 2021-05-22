@@ -362,8 +362,15 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   private void reactToGameMessage(Message message) {
     System.out.println("CLIENT PROTOCOL : Game-Message received");
-    LobbyInformationMessage msg = (LobbyInformationMessage) message;
-    this.lobbyPlayers = msg.getPlayers();
+    GameMessage msg = (GameMessage) message;
+    //Emergency solution because of data loose
+    ArrayList<Player> copie = msg.getPlayers();
+    int[] ids = msg.getIds();
+    for(int i = 0; i < copie.size() && i < 4; i++) {
+      copie.get(i).setId(ids[i]);
+      System.err.println("Player : " + copie.get(i).getName() + " with id : " + ids[i]);
+    }
+    this.lobbyPlayers = copie;
     if (this.gameLobbyController != null) {
       this.gameLobbyController.startGame();
     }
