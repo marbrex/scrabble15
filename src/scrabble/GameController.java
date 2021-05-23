@@ -429,7 +429,7 @@ public class GameController {
 
   public void initDictionary() {
     // Setting the Dictionary (should be set only once, an error otherwise)
-    InputStream in = getClass().getResourceAsStream("/scrabble/dictionaries/english-default.txt");
+    InputStream in = getClass().getResourceAsStream("/dictionaries/english-default.txt");
     Dictionary.setDictionary(in);
   }
 
@@ -471,7 +471,7 @@ public class GameController {
     shuffleBtn.setOnMouseClicked(event -> letterBar.shuffle());
 
     quitGame.setOnMouseClicked(event -> {
-      changeScene("fxml/MainPage.fxml", "css/mainMenu.css", event);
+      changeScene("/fxml/MainPage.fxml", "/css/mainMenu.css", event);
     });
 
     okBtn.setOnMouseClicked(event -> {
@@ -535,7 +535,7 @@ public class GameController {
     chatField.setFocusTraversable(false);
     chatActions.getChildren().add(chatField);
 
-    String path = "img/send-msg-icon.png";
+    String path = "/img/send-msg-icon.png";
     Image im = new Image(getClass().getResource(path).toExternalForm());
     ImageView chatSend = new ImageView(im);
     chatSend.setId("chat-send");
@@ -608,7 +608,7 @@ public class GameController {
         avatarWrapper.getStyleClass().add("player-avatar-frame");
         avatarWrapper.setAlignment(Pos.CENTER);
 
-        ImageView avatar = new ImageView(new Image(getClass().getResourceAsStream("img/" + player.getImage())));
+        ImageView avatar = new ImageView(new Image(getClass().getResourceAsStream("/img/" + player.getImage())));
         avatar.setFitHeight(60);
         avatar.setFitWidth(60);
 

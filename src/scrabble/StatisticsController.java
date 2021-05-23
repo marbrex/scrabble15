@@ -76,8 +76,9 @@ public class StatisticsController implements Initializable {
     this.txtRatio.setText("Win/Lose Ratio: " + plyr.getWinRate() + "");
     try {
       String fileSeperator = System.getProperty("file.separator");
-      this.img.setImage(new Image(new FileInputStream("." + fileSeperator + "resources"
-          + fileSeperator + "scrabble" + fileSeperator + "img" + fileSeperator + plyr.getImage())));
+      this.img.setImage(new Image(new FileInputStream("." + fileSeperator + "src" +
+          fileSeperator + "main" + fileSeperator + "resources"
+          + fileSeperator + "img" + fileSeperator + plyr.getImage())));
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     }
@@ -119,7 +120,7 @@ public class StatisticsController implements Initializable {
     Database.removeSettings(id);
     try {
 
-      Parent root = FXMLLoader.load(getClass().getResource("fxml/Register.fxml"));
+      Parent root = FXMLLoader.load(getClass().getResource("/fxml/ChooseProfileScene.fxml"));
       /*
        * Stage stage = (Stage) this.backBtn.getScene().getWindow(); Scene scene = new Scene(root,
        * this.root.getScene().getWidth(), this.root.getScene().getHeight());
@@ -128,7 +129,7 @@ public class StatisticsController implements Initializable {
        */
       ScrabbleApp.getScene().getStylesheets().clear();
       ScrabbleApp.getScene().getStylesheets()
-          .add(getClass().getResource("css/changeProfile.css").toExternalForm());
+          .add(getClass().getResource("/css/changeProfile.css").toExternalForm());
       ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
@@ -144,7 +145,7 @@ public class StatisticsController implements Initializable {
   @FXML
   public void backBtnOnAction(ActionEvent event) {
     try {
-      Parent root = FXMLLoader.load(getClass().getResource("fxml/MainPage.fxml"));
+      Parent root = FXMLLoader.load(getClass().getResource("/fxml/MainPage.fxml"));
       /*
        * Stage stage = (Stage) this.backBtn.getScene().getWindow(); Scene scene = new Scene(root,
        * this.root.getScene().getWidth(), this.root.getScene().getHeight());
@@ -153,7 +154,7 @@ public class StatisticsController implements Initializable {
        */
       ScrabbleApp.getScene().getStylesheets().clear();
       ScrabbleApp.getScene().getStylesheets()
-          .add(getClass().getResource("css/mainMenu.css").toExternalForm());
+          .add(getClass().getResource("/css/mainMenu.css").toExternalForm());
       ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();

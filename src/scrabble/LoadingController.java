@@ -131,9 +131,9 @@ public class LoadingController implements Initializable {
           try {
             Parent root;
             if (!MainPageController.isNetwork()) {
-              root = FXMLLoader.load(getClass().getResource("fxml/interface.fxml"));
+              root = FXMLLoader.load(getClass().getResource("/fxml/interface.fxml"));
             } else {
-              FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/interface.fxml"));
+              FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/interface.fxml"));
               loader.setControllerFactory(c -> {
                 return new GameController(protocol, isHost, mapContent, players, dictionary);
               });
@@ -147,7 +147,7 @@ public class LoadingController implements Initializable {
              */
             ScrabbleApp.getScene().getStylesheets().clear();
             ScrabbleApp.getScene().getStylesheets()
-                .add(getClass().getResource("css/style.css").toExternalForm());
+                .add(getClass().getResource("/css/style.css").toExternalForm());
             ScrabbleApp.getScene().setRoot(root);
           } catch (IOException e) {
             // TODO Auto-generated catch block

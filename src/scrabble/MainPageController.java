@@ -106,7 +106,7 @@ public class MainPageController implements Initializable {
     JFXButton singlePlayerBtn = new JFXButton("Singleplayer");
     singlePlayerBtn.setOnMouseClicked(event -> {
       setNetworkMode(false);
-      changeScene("fxml/LoadingScreen.fxml", "css/mainMenu.css", event);
+      changeScene("/fxml/LoadingScreen.fxml", "/css/mainMenu.css", event);
     });
     singlePlayerBtn.getStyleClass().add("button");
     buttons.add(singlePlayerBtn);
@@ -115,7 +115,7 @@ public class MainPageController implements Initializable {
     multiPlayerBtn.getStyleClass().add("button");
     multiPlayerBtn.setOnMouseClicked(event -> {
       setNetworkMode(true);
-      changeScene("fxml/Menu.fxml", "css/style.css", event);
+      changeScene("/fxml/Menu.fxml", "/css/style.css", event);
     });
     buttons.add(multiPlayerBtn);
 
@@ -155,16 +155,16 @@ public class MainPageController implements Initializable {
     }));
     
     profileBtn.setOnMouseClicked(event -> {
-      changeScene("fxml/Statistics.fxml", "css/style.css", event);
+      changeScene("/fxml/Statistics.fxml", "/css/style.css", event);
     });
     
     settingsBtn.setOnMouseClicked(event -> {
-      changeScene("fxml/Settings.fxml", "css/settings.css", event);
+      changeScene("/fxml/Settings.fxml", "/css/settings.css", event);
     });
 
     changeProfileBtn.setOnMouseClicked(event -> {
       Profile.setPlayer(null);
-      changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
+      changeScene("/fxml/ChooseProfileScene.fxml", "/css/changeProfile.css", event);
     });
 
     exitAppBtn.setOnMouseClicked(event -> {

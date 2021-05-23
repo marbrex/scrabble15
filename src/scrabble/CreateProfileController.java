@@ -109,19 +109,19 @@ public class CreateProfileController {
   private void initialize() {
     // Loading all images which are available for profile creation
     ImageView im =
-        new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/male.png")));
+        new ImageView(new Image(getClass().getResourceAsStream("/img/male.png")));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(0)).getChildren().add(im);
-    im = new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/female.png")));
+    im = new ImageView(new Image(getClass().getResourceAsStream("/img/female.png")));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(1)).getChildren().add(im);
-    im = new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/anonyms.png")));
+    im = new ImageView(new Image(getClass().getResourceAsStream("/img/anonyms.png")));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(2)).getChildren().add(im);
-    im = new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/animal.png")));
+    im = new ImageView(new Image(getClass().getResourceAsStream("/img/animal.png")));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(3)).getChildren().add(im);
@@ -129,7 +129,7 @@ public class CreateProfileController {
 
     // Action on Cancel Button
     cancelBtn.setOnMouseClicked(event -> {
-      changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
+      changeScene("/fxml/ChooseProfileScene.fxml", "/css/changeProfile.css", event);
     });
 
     // Action on Create Button
@@ -139,7 +139,7 @@ public class CreateProfileController {
       if (!name.isEmpty() && !DBInformation.containsName(name) && name.length() <= 15
           && this.imageindex <= 3) {
         Database.fillTables(id, name, this.imageindex);
-        changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
+        changeScene("/fxml/ChooseProfileScene.fxml", "/css/changeProfile.css", event);
       } else if (DBInformation.containsName(name)) {
         nameField.setStyle("-fx-border-color: red;");
         errorLabel.setText("Name is already taken!");

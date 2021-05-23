@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity"
+	maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+	prefHeight="482.0" prefWidth="600.0"
+	xmlns="http://javafx.com/javafx/11.0.2"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="scrabble.DeleteController">
+	<center>
+		<VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0"
+			BorderPane.alignment="CENTER">
+			<children>
+				<Label text="Are you sure?" />
+				<FlowPane alignment="CENTER" hgap="50.0" prefHeight="200.0"
+					prefWidth="200.0">
+					<children>
+						<JFXButton fx:id="deleteYesBtn" onAction="#handleDelete"
+							prefHeight="26.0" prefWidth="64.0" text="Yes" />
+						<JFXButton fx:id="deleteNoBtn" onAction="#handleDelete"
+							prefHeight="26.0" prefWidth="61.0" text="No" />
+					</children>
+				</FlowPane>
+			</children>
+		</VBox>
+	</center>
+</BorderPane>

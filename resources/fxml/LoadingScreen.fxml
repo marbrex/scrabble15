@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="pane" maxHeight="-Infinity"
+	maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+	prefHeight="487.0" prefWidth="742.0"
+	style="-fx-background-color: #E4C59D; -fx-border-color: #783F04; -fx-border-width: 13;"
+	xmlns="http://javafx.com/javafx/11.0.2"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="scrabble.LoadingController">
+	<top>
+		<HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0"
+			BorderPane.alignment="CENTER">
+			<children>
+				<Label fx:id="modeLabel" text="- Network Game -">
+					<font>
+						<Font name="Gentium Basic Bold" size="15.0" />
+					</font>
+				</Label>
+			</children>
+		</HBox>
+	</top>
+	<center>
+		<VBox alignment="CENTER" prefHeight="200.0" prefWidth="614.0"
+			BorderPane.alignment="CENTER_RIGHT">
+			<children>
+				<VBox alignment="CENTER" prefHeight="106.0" prefWidth="614.0">
+					<children>
+						<Label alignment="CENTER" contentDisplay="CENTER"
+							prefHeight="0.0" prefWidth="448.0" text="Loading Game....">
+							<font>
+								<Font name="DejaVu Sans Condensed Bold" size="52.0" />
+							</font>
+						</Label>
+					</children>
+				</VBox>
+				<VBox alignment="CENTER" prefHeight="52.0" prefWidth="614.0">
+					<children>
+						<ProgressBar fx:id="progressBar" prefHeight="21.0"
+							prefWidth="438.0" progress="0.0" />
+					</children>
+				</VBox>
+				<VBox alignment="CENTER" prefHeight="112.0" prefWidth="614.0">
+					<children>
+						<Label fx:id="hintLabel" prefHeight="85.0" prefWidth="438.0"
+							style="-fx-border-color: black; -fx-border-width: 2;"
+							text="Hint: If seven tiles have been laid on the board in one turn after all of the words formed have been scored, 50 bonus points are added."
+							textFill="RED" wrapText="true">
+							<font>
+								<Font name="Gentium Basic Bold" size="16.0" />
+							</font>
+						</Label>
+					</children>
+				</VBox>
+			</children>
+		</VBox>
+	</center>
+	<bottom>
+		<VBox prefHeight="116.0" prefWidth="623.0"
+			BorderPane.alignment="CENTER">
+			<children>
+				<HBox prefHeight="130.0" prefWidth="623.0">
+					<children>
+						<HBox prefHeight="100.0" prefWidth="200.0">
+							<children>
+								<Pane prefHeight="100.0" prefWidth="208.0">
+									<children>
+										<Circle fx:id="pingCircle" fill="#27b53c"
+											layoutX="14.0" layoutY="98.0" radius="4.0" stroke="BLACK"
+											strokeType="INSIDE" />
+										<Label fx:id="pingLabel" layoutX="18.0" layoutY="87.0"
+											text=" Ping: ">
+											<font>
+												<Font name="Gentium Basic Bold" size="18.0" />
+											</font>
+										</Label>
+										<Label fx:id="showPing" layoutX="67.0" layoutY="88.0"
+											text="0 ms">
+											<font>
+												<Font name="Gentium Basic Bold" size="18.0" />
+											</font>
+										</Label>
+									</children>
+								</Pane>
+							</children>
+						</HBox>
+					</children>
+				</HBox>
+			</children>
+		</VBox>
+	</bottom>
+</BorderPane>

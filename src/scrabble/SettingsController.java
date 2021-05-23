@@ -210,7 +210,7 @@ public class SettingsController implements Initializable {
   public void goToMainPage(ActionEvent event) {
     try {
       FXMLLoader loader = new FXMLLoader();
-      loader.setLocation(getClass().getResource("fxml/MainPage.fxml"));
+      loader.setLocation(getClass().getResource("/fxml/MainPage.fxml"));
       Pane root = loader.load();
       /*
        * Stage window = (Stage) ((Node) event.getSource()).getScene().getWindow(); Scene scene = new
@@ -221,7 +221,7 @@ public class SettingsController implements Initializable {
        */
       ScrabbleApp.getScene().getStylesheets().clear();
       ScrabbleApp.getScene().getStylesheets()
-          .add(getClass().getResource("css/mainMenu.css").toExternalForm());
+          .add(getClass().getResource("/css/mainMenu.css").toExternalForm());
       ScrabbleApp.getScene().setRoot(root);
     } catch (Exception e) {
       e.printStackTrace();

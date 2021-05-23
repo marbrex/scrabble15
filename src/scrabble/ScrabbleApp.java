@@ -36,16 +36,16 @@ public class ScrabbleApp extends Application {
   public void start(Stage primaryStage) throws Exception {
     FXMLLoader loader = new FXMLLoader();
     if (DBInformation.getProfileSize() != 0) {
-      loader.setLocation(getClass().getResource("fxml/ChooseProfileScene.fxml"));
+      loader.setLocation(getClass().getResource("/fxml/ChooseProfileScene.fxml"));
     } else {
-      loader.setLocation(getClass().getResource("fxml/Register.fxml"));
+      loader.setLocation(getClass().getResource("/fxml/Register.fxml"));
     }
     Parent root = loader.load();
 
     Scene scene = new Scene(root, windowWidth, windowHeight);
-    scene.getStylesheets().add(getClass().getResource("css/changeProfile.css").toExternalForm());
+    scene.getStylesheets().add(getClass().getResource("/css/changeProfile.css").toExternalForm());
 
-    Image appIcon = new Image(getClass().getResourceAsStream("img/scrabble-icon-dark.png"));
+    Image appIcon = new Image(getClass().getResourceAsStream("/img/scrabble-icon-dark.png"));
 
     primaryStage.setMinWidth(windowMinWidth);
     primaryStage.setMinHeight(windowMinHeight);

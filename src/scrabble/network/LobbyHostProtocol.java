@@ -97,7 +97,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     this.gameLobby.resetProfileVisibility();
     for (int i = 0; i < players.size(); i++) {
       this.gameLobby.setProfileVisible(i, players.get(i).getName());
-      this.gameLobby.setProfilePicture(i, "img/" + players.get(i).getImage());
+      this.gameLobby.setProfilePicture(i, "/img/" + players.get(i).getImage());
     }
 
   }

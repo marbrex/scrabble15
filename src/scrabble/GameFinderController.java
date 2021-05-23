@@ -168,7 +168,7 @@ public class GameFinderController implements LobbyController {
   public void openMenu() {
     Platform.runLater(() -> {
       try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Menu.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Menu.fxml"));
         Parent root = loader.load();
         /*
         Stage stage = (Stage) this.backButton.getScene().getWindow();
@@ -320,7 +320,7 @@ public class GameFinderController implements LobbyController {
             * stage.setTitle("Scrablle"); stage.setHeight(700); stage.setWidth(900);
             * stage.setResizable(false); stage.show();
             */
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/GameLobby.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GameLobby.fxml"));
         loader.setControllerFactory(c -> {
           return new GameLobbyController(false);
         });
@@ -359,6 +359,6 @@ public class GameFinderController implements LobbyController {
    * @author hendiehl
    */
   private void loadBackground() {
-    this.background.setImage(new Image(getClass().getResourceAsStream("img/GameFinder.jpg")));
+    this.background.setImage(new Image(getClass().getResourceAsStream("/img/GameFinder.jpg")));
   }
 }

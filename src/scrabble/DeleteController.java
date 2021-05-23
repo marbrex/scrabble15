@@ -43,13 +43,13 @@ public class DeleteController {
     try {
       Parent root;
       if (DBInformation.getProfileSize() == 0) {
-        root = FXMLLoader.load(getClass().getResource("fxml/Register.fxml"));
+        root = FXMLLoader.load(getClass().getResource("/fxml/Register.fxml"));
       } else {
-        root = FXMLLoader.load(getClass().getResource("fxml/ChooseProfileScene.fxml"));
+        root = FXMLLoader.load(getClass().getResource("/fxml/ChooseProfileScene.fxml"));
       }
       ScrabbleApp.getScene().getStylesheets().clear();
       ScrabbleApp.getScene().getStylesheets()
-          .add(getClass().getResource("css/changeProfile.css").toExternalForm());
+          .add(getClass().getResource("/css/changeProfile.css").toExternalForm());
       ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();

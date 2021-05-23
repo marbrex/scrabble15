@@ -46,7 +46,7 @@ public class MenuController {
   @FXML
   private void backButtonAction() {
     try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/MainPage.fxml"));
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainPage.fxml"));
       Parent root = loader.load();
       /*
       Stage stage = (Stage) this.backButton.getScene().getWindow();
@@ -56,7 +56,7 @@ public class MenuController {
       stage.setScene(scene);
       */
       ScrabbleApp.getScene().getStylesheets().clear();
-      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("/css/mainMenu.css").toExternalForm());
       ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e1) {
       // TODO Auto-generated catch block
@@ -83,7 +83,7 @@ public class MenuController {
           * stage.setResizable(false); stage.setOnHidden(e -> {lobbyController.shutdown();}); //what
           * if gamescreen is shown stage.show(); //Set up Host
           */
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/GameLobby.fxml"));
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GameLobby.fxml"));
       loader.setControllerFactory(c -> {
         return new GameLobbyController(true);
       });
@@ -129,7 +129,7 @@ public class MenuController {
           * stage.setResizable(false); stage.setOnHidden(e -> {finderController.shutdown();});
           * stage.show();
           */
-      FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/GameFinder.fxml"));
+      FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GameFinder.fxml"));
       Parent root = loader.load();
       GameFinderController finderController = loader.<GameFinderController>getController();
      /*
@@ -157,6 +157,6 @@ public class MenuController {
    * @author hendiehl
    */
   private void loadBackground() {
-    this.background.setImage(new Image(getClass().getResourceAsStream("img/Menu.jpg")));
+    this.background.setImage(new Image(getClass().getResourceAsStream("/img/Menu.jpg")));
   }
 }

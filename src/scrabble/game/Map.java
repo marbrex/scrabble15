@@ -30,7 +30,7 @@ public class Map {
    */
   Map() {
     cells = new ArrayList<Multiplier>();
-    path = "maps/default-map.txt";
+    path = "/maps/default-map.txt";
     size = 0;
     loadMap();
   }
@@ -56,12 +56,12 @@ public class Map {
     try {
       Scanner scanner;
       Path p = Paths.get(path);
-      if (p.isAbsolute()) {
+      if (Files.exists(p)) {
         InputStream in = new FileInputStream(new File(path));
         scanner = new Scanner(new InputStreamReader(in));
       }
       else {
-        InputStream in = getClass().getResourceAsStream("/scrabble/" + path);
+        InputStream in = getClass().getResourceAsStream(path);
         scanner = new Scanner(new InputStreamReader(in));
       }
       while (scanner.hasNextLine()) {

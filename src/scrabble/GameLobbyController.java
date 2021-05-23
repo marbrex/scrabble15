@@ -179,7 +179,7 @@ public class GameLobbyController implements LobbyController {
      */
     Platform.runLater(() -> {
       try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/Menu.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/Menu.fxml"));
         Parent root = loader.load();
         /*
          * Stage stage = (Stage) this.backButton.getScene().getWindow(); stage.setScene( new
@@ -495,7 +495,7 @@ public class GameLobbyController implements LobbyController {
     if (this.host != null) { // extra host controll
       if (this.host.isNotInGame()) {
         try {
-          FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/LobbyConfigure.fxml"));
+          FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LobbyConfigure.fxml"));
           loader.setControllerFactory(c -> {
             return new LobbyConfigureController(server, this);
           });
@@ -666,7 +666,7 @@ public class GameLobbyController implements LobbyController {
    * @author hendiehl
    */
   private void loadBackground() {
-    this.background.setImage(new Image(getClass().getResourceAsStream("img/GameLobby.jpg")));
+    this.background.setImage(new Image(getClass().getResourceAsStream("/img/GameLobby.jpg")));
   }
 
   /**
@@ -702,7 +702,7 @@ public class GameLobbyController implements LobbyController {
   public void goInGameScreen() { // Just Testing Purpose with TestScreen !!!!!!!!!!!!!!!!!!!!!!!!!!!
     Platform.runLater(() -> {
       try {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("fxml/LoadingScreen.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/LoadingScreen.fxml"));
         if (this.host != null) {
           loader.setControllerFactory(c -> {
             return new LoadingController(this.host, this.isHost, this.contentOfField,
@@ -722,7 +722,7 @@ public class GameLobbyController implements LobbyController {
          */
         ScrabbleApp.getScene().getStylesheets().clear();
         ScrabbleApp.getScene().getStylesheets()
-            .add(getClass().getResource("css/style.css").toExternalForm());
+            .add(getClass().getResource("/css/style.css").toExternalForm());
         ScrabbleApp.getScene().setRoot(root);
       } catch (IOException e) {
         // TODO Auto-generated catch block

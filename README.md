@@ -1,6 +1,14 @@
 # Scrabble game project [Group 15]
 This is a team project of **Software Engineering Practice** in **Mannheim University**.
 
+# Build
+
+- **Maven :** mvn package
+
+# Run
+
+Build the project and run the **"target/scrabble-{version}-jar-with-dependencies.jar"** file.
+
 # Game rules
 A player makes a play by putting a valid word on the board. The first word has to be played through the middle of the board (star) and it must be at least two letters long. After that a valid move is made by using one or more tiles to place a word on the board. This new word may use an already existing word or must join with the cluster of tiles already on the board.
 

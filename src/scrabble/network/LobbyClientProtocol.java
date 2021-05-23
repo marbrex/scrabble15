@@ -602,7 +602,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     for (int i = 0; i < lobbyPlayers.size(); i++) {
       // System.err.println("Update gui :" + i);
       this.gameLobbyController.setProfileVisible(i, lobbyPlayers.get(i).getName());
-      this.gameLobbyController.setProfilePicture(i, "img/" + lobbyPlayers.get(i).getImage());
+      this.gameLobbyController.setProfilePicture(i, "/img/" + lobbyPlayers.get(i).getImage());
     }
 
   }
