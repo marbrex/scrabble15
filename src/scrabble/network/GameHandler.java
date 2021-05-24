@@ -1,13 +1,14 @@
 package scrabble.network;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import scrabble.model.GameInformationController;
 
 public class GameHandler extends Thread {
   /**
-   * GameInfoController of the game and the lobby, holding the information and logic of a network
-   * game.
+   * GameHandler class has the function to control the turn procedure and the information
+   * transmitting of a network game.
    * 
    * @author hendiehl
    */
@@ -25,6 +26,8 @@ public class GameHandler extends Thread {
   /** Map for saving the points */
   private HashMap<NetworkPlayer, Integer> points;
   private LobbyHostProtocol host;
+  private NetworkPlayer winner;
+  private boolean loading;
 
   // should i control a specific notify call ?
   /**
@@ -35,6 +38,7 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   public GameHandler(GameInformationController game, ArrayList<NetworkPlayer> players) {
+    this.loading = true;
     this.game = game;
     this.players = players;
     this.points = new HashMap<NetworkPlayer, Integer>();
@@ -64,7 +68,80 @@ public class GameHandler extends Thread {
       System.out.println("GAME HANDLER : Make complete turn");
       this.makeATurn(); // Perhaps wrapping it in a synchronized method ?
     }
+    // Here the GameHandler stop the turn procedure --> game ends
+    this.calculateWinner(); // Calculate the winner with gained points
+    this.sendResults(); // Sending game results for showing purpose
+    this.sendDBPoints(); // sending the gained points to the player so they will be added to the DB.
     System.err.println("GAME HANDLER : Outrun");
+  }
+
+  /**
+   * Method to send the results of an network game for showing purpose.
+   * 
+   * @author hendiehl
+   */
+  private void sendResults() {
+    // Here a GameMessage can be used again because of same parameters.
+    int[] ids = new int[4];
+    int[] points = new int[4];
+    // All additional informations will be send in different arrays in same order like the player
+    // list.
+    // Is done this way to prevent data loose.
+    for (int i = 0; i < this.players.size(); i++) {
+      ids[i] = this.players.get(i).getPlayer().getId(); // setting id sequence
+      points[i] = this.points.get(this.players.get(i)); // setting points sequence
+    }
+    // Now sending the Message to all players --> perhaps changing the screen in this moment.
+  }
+
+  /**
+   * Method to calculate the winner of an network game.
+   * 
+   * @author hendiehl
+   */
+  private void calculateWinner() {
+    this.players.sort(new Comparator<NetworkPlayer>() {
+
+      // Method to sort them in reversed sequence
+      @Override
+      public int compare(NetworkPlayer arg0, NetworkPlayer arg1) {
+        if (points.get(arg0) > points.get(arg1)) {
+          return -1;
+        } else if (points.get(arg0) < points.get(arg1)) {
+          return 1;
+        } else {
+          if (players.indexOf(arg0) > players.indexOf(arg1)) {
+            return -1;
+          } else if (players.indexOf(arg0) < players.indexOf(arg1)) {
+            return 1;
+          } else {
+            return 0;
+          }
+        }
+      }
+
+    });
+    // Control prints
+    for (NetworkPlayer player : this.players) {
+      System.out.println("GAMA INFO : " + player.getPlayer().getName() + " with "
+          + this.points.get(player) + " points");
+    }
+    this.winner = this.players.get(0); // First player has most points
+  }
+
+  /**
+   * Method to send each Player his gained points in reason to save them in the Database.
+   * 
+   * @author hendiehl
+   */
+  private void sendDBPoints() {
+    for (NetworkPlayer player : this.players) {
+      if (!(player instanceof LobbyAiProtocol)) { // only non AiPlayers
+        player.sendDBMessage(this.points.get(player), player.equals(winner)); // inform them about
+                                                                              // their result
+      }
+    }
+
   }
 
   /**
@@ -226,7 +303,10 @@ public class GameHandler extends Thread {
    * Method to wake the thread after all players finishing loading their game field.
    */
   public synchronized void invokeTurnPhase() {
-    this.notify();
+    if (this.loading) { // in case the method is called in the turn phase.
+      this.notify();
+      this.loading = false;
+    }
   }
 
   /**
@@ -245,5 +325,22 @@ public class GameHandler extends Thread {
     }
     this.game.prepareLobbyReturn(list); // changing the GameInfoController and the screen by all
                                         // members
+  }
+
+  /**
+   * Method to inform the GameHandler that a player has left the game.
+   * 
+   * @param player player deleted from the list
+   */
+  public synchronized void playerDeleted(NetworkPlayer player) {
+    this.points.remove(player);
+    // Player should be deleted from list because of same
+    if (player.equals(actual)) { // the actual player has left the game
+      if (this.getState() == Thread.State.WAITING) { // Thread waits for end move
+        this.invokeTurnPhase(); // just notify the thread so the method can be used
+      }
+    }
+    // Now the players have to be informed.
+
   }
 }

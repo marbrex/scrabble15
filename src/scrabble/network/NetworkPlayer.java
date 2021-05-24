@@ -39,4 +39,6 @@ public interface NetworkPlayer {
   
   public void resetGameInfoCon(GameInformationController game);
 
+  public void sendDBMessage(Integer integer, boolean won);
+
 }

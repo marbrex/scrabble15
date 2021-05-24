@@ -645,4 +645,23 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     System.out.println("SERVER PROTOCOL : Game-Info exchange");
     // Here sending Message : LobbyInfoMessage with new list --> RETURN type
   }
+
+  /**
+   * Method to send the client his gained game points in reason that he can save them in his own DB.
+   * 
+   * @param points gained in a network game.
+   * @author hendiehl
+   */
+  @Override
+  public void sendDBMessage(Integer integer, boolean won) {
+    try {
+      DBMessage msg = new DBMessage(MessageType.DB, this.player, integer, won);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER Protocol : DB-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
 }

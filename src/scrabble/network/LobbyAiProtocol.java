@@ -122,4 +122,9 @@ public class LobbyAiProtocol implements NetworkPlayer {
   public void resetGameInfoCon(GameInformationController game) {
     // Not in use because of Non-Network communication
   }
+
+  @Override
+  public void sendDBMessage(Integer integer, boolean won) {
+    // Not in use because of Non-Network communication
+  }
 }

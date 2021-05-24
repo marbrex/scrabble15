@@ -221,6 +221,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case ACTION:
           this.reactToAction(message);
           break;
+        case DB:
+          this.reactToDB(message);
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -235,6 +238,21 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Method to react to an DB-Message in reason to save the result of an network game in the DB of
+   * the local player.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToDB(Message message) {
+    System.out.println("CLIENT PROTOCOL : DB-Message received");
+    DBMessage msg = (DBMessage) message;
+    int points = msg.getPoints();
+    boolean won = msg.isWon();
+    // Here save the data in corresponding DB
   }
 
   /**

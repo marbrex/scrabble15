@@ -541,4 +541,16 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     System.out.println("HOST PROTOCOL : Game-Info exchange");
     // Here open new Lobby with old server.
   }
+
+  /**
+   * Method to save the result of an network game in the DB of the local player.
+   * 
+   * @param integer points gained in a network game
+   * @param won boolean condition about the player win
+   * @author hendiehl
+   */
+  @Override
+  public void sendDBMessage(Integer integer, boolean won) {
+    // Here save the data in the corresponding DB
+  }
 }

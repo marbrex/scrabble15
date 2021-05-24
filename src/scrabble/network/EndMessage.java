@@ -12,6 +12,7 @@ public class EndMessage extends Message {
    * @author hendiehl
    */
 
+  private static final long serialVersionUID = 1L;
   private int points;
   private String action;
 
@@ -41,7 +42,7 @@ public class EndMessage extends Message {
   }
 
   /**
-   * Getter for the string representation of actions a player performed in his move
+   * Getter for the string representation of actions a player performed in his move.
    * 
    * @return action string
    */
