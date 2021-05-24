@@ -36,11 +36,16 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
+import netscape.javascript.JSObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import scrabble.game.Grid;
 import scrabble.game.LeaderBoard;
 import scrabble.game.LetterBag;
 import scrabble.game.LetterBar;
 import scrabble.game.LetterBag.Tile;
+import scrabble.game.LetterTile;
+import scrabble.game.Word;
 import scrabble.model.AiPlayer;
 import scrabble.model.Dictionary;
 import scrabble.model.HumanPlayer;
@@ -179,6 +184,10 @@ public class GameController {
   public BorderPane chatBlock;
 
   public JFXTextArea chat;
+
+  GameController thisController = this;
+
+  Label scoreLabel;
 
   /**
    * Default constructor.
@@ -367,7 +376,72 @@ public class GameController {
 
             if (protocol != null) {
               // Network Game
-              protocol.sendEndMessage("", 0);
+
+              ArrayList<Word> wordsInGrid = grid.words;
+              int score = 0;
+              String action = "{\n"
+                  + " \"nb\": \"" + wordsInGrid.size() + "\",\n"
+                  + " \"words\": [\n";
+
+              for (int j = 0; j < wordsInGrid.size(); j++) {
+                Word word = wordsInGrid.get(j);
+                if (word.newlyPlaced) {
+                  String spelling = word.getWordAsString();
+                  action += "  {\n"
+                      + "   \"word\": \"" + spelling + "\",\n"
+                      + "   \"points\": \"" + word.getPoints() + "\",\n"
+                      + "   \"tiles\": [\n";
+
+                  for (int i = 0; i < word.getWordLength(); i++) {
+                    LetterTile letterTile = word.getLetter(i);
+                    if (letterTile.isNewlyPlaced) {
+                      char letter = letterTile.getLetter();
+                      int value = letterTile.getPoints();
+                      int row = grid.getCellRow(letterTile);
+                      int col = grid.getCellColumn(letterTile);
+                      boolean isBlank = letterTile.isBlank;
+
+                      action += "    {\n"
+                          + "     \"letter\": \"" + letter + "\",\n"
+                          + "     \"value\": \"" + value + "\",\n"
+                          + "     \"row\": \"" + row + "\",\n"
+                          + "     \"col\": \"" + col + "\",\n"
+                          + "     \"isBlank\": \"" + isBlank + "\"\n"
+                          + "    }";
+
+                      if (i == word.getWordLength() - 1) {
+                        action += "\n";
+                      } else {
+                        action += ",\n";
+                      }
+
+                      letterTile.isNewlyPlaced = false;
+                    }
+                  }
+
+                  action += "   ]";
+
+                  if (j == wordsInGrid.size() - 1) {
+                    action += "\n"
+                        + "  }\n";
+                  } else {
+                    action += ",\n";
+                  }
+
+                  word.newlyPlaced = false;
+
+                  score += word.getPoints();
+                }
+              }
+
+              action += " ],\n"
+                  + " \"score\": \"" + score + "\"\n"
+                  + "}";
+
+              System.out.println(action);
+              scoreLabel.setText(String.valueOf(score));
+
+              protocol.sendEndMessage(action, score);
             }
 
           }
@@ -379,8 +453,54 @@ public class GameController {
 
       @Override
       public void getOpponentsInfo(String action, int points, int id) {
-        // here the actions of a other player will be received
-        System.out.println("GAME CONTROLLER : Other action received in controller");
+        Platform.runLater(() -> {
+          // here the actions of a other player will be received
+          System.out.println("GAME CONTROLLER : Other action received in controller");
+
+          JSONObject data = new JSONObject(action);
+          JSONArray words = data.getJSONArray("words");
+          for (int i = 0; i < words.length(); i++) {
+            JSONObject word = words.getJSONObject(i);
+            JSONArray tiles = word.getJSONArray("tiles");
+
+            LetterTile first = new LetterTile(thisController);
+            LetterTile last = new LetterTile(thisController);
+            for (int j = 0; j < tiles.length(); j++) {
+              JSONObject tile = tiles.getJSONObject(j);
+
+              int col = tile.getInt("col");
+              int row = tile.getInt("row");
+              char letter = tile.getString("letter").charAt(0);
+              int value = tile.getInt("value");
+              boolean isBlank = tile.getBoolean("isBlank");
+
+              LetterTile ltrTile = new LetterTile(letter, value, grid.cellSize, thisController);
+              ltrTile.setMouseTransparent(true);
+              ltrTile.isFrozen = true;
+              ltrTile.isNewlyPlaced = false;
+              ltrTile.isBlank = isBlank;
+              if (isBlank) {
+                ltrTile.setPointsVisible(false);
+                ltrTile.setLetterVisible(true);
+              }
+
+              grid.getSlot(col, row).isFrozen = true;
+              grid.getSlot(col, row).setContent(ltrTile);
+
+              if (i == 0) {
+                first = ltrTile;
+              }
+              else if (i == tiles.length() - 1) {
+                last = ltrTile;
+              }
+            }
+
+            Word w = new Word(first, last, thisController);
+            w.newlyPlaced = false;
+            w.frozen = true;
+            w.setMouseTransparent(true);
+          }
+        });
       }
 
       /**
@@ -616,6 +736,9 @@ public class GameController {
         nickname.getStyleClass().add("players-name");
         Label score = new Label(String.valueOf(player.getScore()));
         score.getStyleClass().add("players-score");
+        if (player.getId() == Profile.getPlayer().getId()) {
+          scoreLabel = score;
+        }
 
         avatarWrapper.getChildren().add(avatar);
         playerBlock.setLeft(avatarWrapper);

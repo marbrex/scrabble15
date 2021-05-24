@@ -29,9 +29,9 @@ public class Grid {
   double padding;
   double padSize;
   private double paneSize;
-  double cellSize;
+  public double cellSize;
 
-  ArrayList<Word> words;
+  public ArrayList<Word> words;
 
   GridPane container;
 
@@ -741,9 +741,11 @@ public class Grid {
         word.getLetter(l).slot.isFrozen = true;
         word.getLetter(l).container.setMouseTransparent(true);
         word.getLetter(l).isFrozen = true;
+        word.getLetter(l).isNewlyPlaced = true;
       }
 
       word.frozen = true;
+      word.newlyPlaced = true;
 //      controller.gridWrapper.getChildren().remove(words.get(w).container);
       word.container.getStyleClass().clear();
       word.container.getChildren().clear();

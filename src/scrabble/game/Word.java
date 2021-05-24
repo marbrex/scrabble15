@@ -24,7 +24,8 @@ public class Word {
   private boolean isValid;
   private boolean isHorizontal;
   private boolean isVertical;
-  boolean frozen;
+  public boolean frozen;
+  public boolean newlyPlaced;
 
   private int multiplierValue;
   private boolean multiplier;
@@ -544,5 +545,9 @@ public class Word {
    */
   public LetterTile getLast() {
     return w.getLast();
+  }
+
+  public void setMouseTransparent(boolean value) {
+    container.setMouseTransparent(value);
   }
 }

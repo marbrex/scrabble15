@@ -22,11 +22,12 @@ public class LetterTile implements Serializable {
 
   private double cellSize;
 
-  AnchorPane container;
+  public AnchorPane container;
   private Label letter;
   private Label points;
-  boolean isBlank;
+  public boolean isBlank;
   public boolean isFrozen;
+  public boolean isNewlyPlaced;
 
   Slot slot;
 
