@@ -11,7 +11,7 @@ import scrabble.model.*;
  * tables and updating player statistics.
  * 
  * @author mraucher
- * @author skeskinc  
+ * @author skeskinc
  */
 
 public class Database {
@@ -43,7 +43,26 @@ public class Database {
     System.out.println("Successfully connected to DB!");
   }
 
-  /** 
+  /**
+   * Setting connection for specific Database.
+   * Useful for JUnit-Test.
+   * 
+   * @param name Name of the Database
+   * @author skeskinc
+   */
+  public static void setConnection(String name) {
+    try {
+      connection = DriverManager.getConnection(
+          "jdbc:sqlite:" + System.getProperty("user.home") + System.getProperty("file.separator")
+              + ".Scrabble" + System.getProperty("file.separator") + name);
+    } catch (SQLException e) {
+      System.out.println("Connection failed!");
+      System.exit(0);
+    }
+    System.out.println("Successfully connected to DB!");
+  }
+
+  /**
    * Disconnecting from DB.
    * 
    * @author mraucher
@@ -60,7 +79,7 @@ public class Database {
     System.out.println("Disconnected from DB");
   }
 
-  /** 
+  /**
    * Creating tables for the Database.
    * 
    * @author mraucher
@@ -86,7 +105,8 @@ public class Database {
     }
   }
 
-  /** Deleting all tables which are present in the Database.
+  /**
+   * Deleting all tables which are present in the Database.
    * 
    * @author mraucher
    * @author skeskinc
@@ -98,8 +118,8 @@ public class Database {
     System.out.println("All tables dropped.");
   }
 
-  /** 
-   * Dropping Statistics Table. 
+  /**
+   * Dropping Statistics Table.
    *
    * @author mraucher
    * @author skeskinc
@@ -113,7 +133,8 @@ public class Database {
     }
   }
 
-  /** Dropping Player table. 
+  /**
+   * Dropping Player table.
    * 
    * @author mraucher
    */
@@ -126,7 +147,8 @@ public class Database {
     }
   }
 
-  /** Dropping Statistic table. 
+  /**
+   * Dropping Statistic table.
    * 
    * @author mraucher
    */
@@ -241,7 +263,7 @@ public class Database {
       e.printStackTrace();
     }
   }
-  
+
   /**
    * Removing the Settings.
    * 
