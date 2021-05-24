@@ -303,4 +303,33 @@ public class LobbyServer extends Thread {
   public boolean isStandardDictionary() {
     return this.gameInfoController.isStandardDictionary();
   }
+
+  /**
+   * Method to set up a new GameInformationController after a game ends and the player return to the
+   * lobby. The new GameInfoController will be set by all clients connected with this server. The
+   * player list for the GameInfoController should be free from LobbyAiprotocols and the
+   * LobbyHostProtocol should be first in list.
+   * 
+   * @param players Players of a ended network Game.
+   * @author hendiehl
+   */
+  public void prepareLobbyReturn(ArrayList<NetworkPlayer> players) { // List should be freed from
+                                                                     // AiPlayer and host at the
+                                                                     // beginning
+    this.gameInfoController = new GameInformationController(this, players);
+    for (LobbyServerProtocol protocol : this.clients) { // Here the server protocols of the players
+                                                        // list are also saved
+      protocol.resetGameInfoCon(this.gameInfoController); // reset the GameInformationsController in
+                                                          // Lobby
+      // Don't forget checkGameStart method
+    }
+    // Getting the host :
+    for (NetworkPlayer player : players) {
+      if (player instanceof LobbyHostProtocol) {
+        LobbyHostProtocol host = (LobbyHostProtocol) player;
+        host.resetGameInfoCon(this.gameInfoController);
+        break; // only one host is in the list --> should normally on position 0
+      }
+    }
+  }
 }

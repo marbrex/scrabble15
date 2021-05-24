@@ -25,4 +25,5 @@ public enum MessageType {
   DICT, // message to set a dictionary file content
   LOAD, // message to inform about successful game Field Loading
   ACTION, // message to inform about the move action of somebody else
+  RETURN, // message to return to the lobby from the gameScreen.
 }

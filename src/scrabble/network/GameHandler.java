@@ -89,7 +89,14 @@ public class GameHandler extends Thread {
         break;
       }
       System.out.println("GAME HANDLER : Player turn : " + player.getPlayer().getName());
-      if (player instanceof LobbyServerProtocol || player instanceof LobbyHostProtocol) {
+      if (player instanceof LobbyAiProtocol) {
+        System.out.println("GAME HANDLER : AI move");
+        this.actual = player;
+        this.informOthers();
+        this.waitAiTime(); // Only in purpose to show AiPlayer on the field --> 10sek
+        LobbyAiProtocol ai = (LobbyAiProtocol) player; // special move method of AiPlayer
+        ai.aiMove(this.host.getGameScreen());
+      } else { // In case : LobbyHost- or LobbyServerProtocol
         System.out.println("GAME HANDLER : Human move");
         this.actual = player;
         player.startMove(this.turn, this.actual.getPlayer().getId()); // here adding the ID.
@@ -98,13 +105,6 @@ public class GameHandler extends Thread {
         // here work with player move info
         this.checkRunning(); // check if a game should be ended --> any condition
         // Perhaps here not needed
-      } else {
-        System.out.println("GAME HANDLER : AI move");
-        this.actual = player;
-        this.informOthers();
-        this.waitAiTime(); // Only in purpose to show AiPlayer on the field --> 10sek
-        LobbyAiProtocol ai = (LobbyAiProtocol) player; // only left possibility because of condition
-        ai.aiMove(this.host.getGameScreen());
       }
       this.turn++; // increase the turn counter
     }
@@ -203,8 +203,9 @@ public class GameHandler extends Thread {
    */
   private void informActions(String action, int points) {
     for (NetworkPlayer player : this.players) { // go through them
-      if (!player.equals(this.actual)) { //not the actual
-        if(!(player instanceof LobbyAiProtocol)) { //no AiPlayers they get information from host grid
+      if (!player.equals(this.actual)) { // not the actual
+        if (!(player instanceof LobbyAiProtocol)) { // no AiPlayers they get information from host
+                                                    // grid
           player.sendActionMessage(action, points, this.actual.getPlayer().getId());
         }
       }
@@ -218,7 +219,7 @@ public class GameHandler extends Thread {
    */
   public void shutdown() {
     this.gameIsOn = false;
-    // Need of braking the inner loop ?
+    this.invokeTurnPhase(); // In case the thread is waiting
   }
 
   /**
@@ -226,5 +227,23 @@ public class GameHandler extends Thread {
    */
   public synchronized void invokeTurnPhase() {
     this.notify();
+  }
+
+  /**
+   * Method to return from the game field to the lobby after the game finished. Will prepare a new
+   * list of members without the LobbyAiProtocols
+   * 
+   * @author hendiehl
+   */
+  private void prepareLobbyReturn() {
+    ArrayList<NetworkPlayer> list = new ArrayList<NetworkPlayer>(); // new list
+    list.add(this.host); // Adding host always first for the lobby
+    for (NetworkPlayer player : this.players) { // Free list from AiPlayers
+      if (player instanceof LobbyServerProtocol) {
+        list.add(player); // Adding only LobbyServerProtocols
+      }
+    }
+    this.game.prepareLobbyReturn(list); // changing the GameInfoController and the screen by all
+                                        // members
   }
 }

@@ -527,4 +527,18 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
       System.out.println("HOST PROTOCOL : Action-Message sended");
     }
   }
+
+  /**
+   * Method to exchange the used GamInfoController in reason to return from an network game back
+   * into the lobby. Is used to set back internal control structures.
+   * 
+   * @param game New instance of an GameInfoController
+   * @author hendiehl
+   */
+  @Override
+  public void resetGameInfoCon(GameInformationController game) {
+    this.gameInfoController = game;
+    System.out.println("HOST PROTOCOL : Game-Info exchange");
+    // Here open new Lobby with old server.
+  }
 }

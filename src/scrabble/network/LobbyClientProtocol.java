@@ -583,9 +583,6 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   public void setLobbyController(GameLobbyController glc) {
     this.gameFinderController = null;
     this.gameLobbyController = glc;
-    if (glc != null) {
-      System.out.println("Controller not null");
-    }
     this.updateLobbyinformation();
   }
 

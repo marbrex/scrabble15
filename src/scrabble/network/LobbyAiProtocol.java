@@ -3,6 +3,7 @@ package scrabble.network;
 import java.util.ArrayList;
 import scrabble.GameController;
 import scrabble.model.AiPlayer;
+import scrabble.model.GameInformationController;
 import scrabble.model.Player;
 
 public class LobbyAiProtocol implements NetworkPlayer {
@@ -14,6 +15,7 @@ public class LobbyAiProtocol implements NetworkPlayer {
    * @author hendiehl
    */
   private AiPlayer ai;
+  private int pos;
 
   /**
    * Constructor which initialize the AiPlayer which is responsible for game action.
@@ -45,22 +47,35 @@ public class LobbyAiProtocol implements NetworkPlayer {
     System.out.println("AI PROTOCOL : Calculate move");
   }
 
+  /**
+   * Method to set the position of an AiProtocol. Is exactly once called by the
+   * GameInformationsController with MAX.VALUE, to ensure that AiPlayers always set at the back of
+   * the list.
+   * 
+   * @param i Integer.MAX_VALUE set by the GameInfoController
+   * @author hendiehl
+   */
+  @Override
+  public void addSequence(int i) {
+    this.pos += i;
+  }
+
+  /**
+   * Method to return the position variable for comparing NetworkPlayers during sorting.
+   * 
+   * @return pos variable.
+   * @author hendiehl
+   */
+  @Override
+  public int getSequencePos() {
+    return this.pos;
+  }
+
   // --------------------------------------------------------------------------
   // LobbyAiProtocol is a filler for missing HumanPlayer so the network Messages are not needed
   @Override
   public void updateLobbyinformation(ArrayList<Player> playersArrayList) {
     // Not in use because of Non-Network communication
-  }
-
-  @Override
-  public void addSequence(int i) {
-    // Not in use because of Non-Network communication
-  }
-
-  @Override
-  public int getSequencePos() {
-    // Not in use because of Non-Network communication
-    return 0;
   }
 
   @Override
@@ -100,6 +115,11 @@ public class LobbyAiProtocol implements NetworkPlayer {
 
   @Override
   public void sendActionMessage(String action, int points, int id) {
+    // Not in use because of Non-Network communication
+  }
+
+  @Override
+  public void resetGameInfoCon(GameInformationController game) {
     // Not in use because of Non-Network communication
   }
 }

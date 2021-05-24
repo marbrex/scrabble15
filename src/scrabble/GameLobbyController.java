@@ -119,6 +119,8 @@ public class GameLobbyController implements LobbyController {
   private String contentOfField = "";
   /** String content of an user specific dictionary, standard is empty */
   private String contentOfDictionary = "";
+  /** boolean condition to specify a lobby return from game */
+  private boolean back;
 
 
   /**
@@ -131,6 +133,20 @@ public class GameLobbyController implements LobbyController {
    */
   public GameLobbyController(boolean isHost) {
     this.isHost = isHost;
+  }
+
+  /**
+   * Constructor which will be called when a host return from an network game back to the lobby. The
+   * old server will be used again in this case, because it holds the list about the connected
+   * clients so they can start a game again.
+   * 
+   * @param isHost boolean condition about an call by host
+   * @param old LobbyServer which was used and started in an lobby before
+   * @author hendiehl
+   */
+  public GameLobbyController(boolean isHost, LobbyServer old) {
+    this.isHost = isHost;
+    this.server = old;
   }
 
   /**
@@ -147,7 +163,8 @@ public class GameLobbyController implements LobbyController {
 
   /**
    * Initialize method from JavaFX, which starts the server procedure if the lobby is opened from a
-   * host, set up a os specific line separator for chat usage and initiliaze screen specific classes
+   * host, set up a OS specific line separator for chat usage and initialize screen specific
+   * classes.
    * 
    * @author hendiehl
    */
@@ -213,7 +230,7 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method to set the content of an specific dictionary. Used by the configure controller
+   * Method to set the content of an specific dictionary. Used by the configure controller.
    * 
    * @param content content of an specific dictionary file
    * @param hostChange boolean condition which decides if the string is actually set or send to the
@@ -231,7 +248,7 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method to set the content of an specific multiplier field. Used by the configure controller
+   * Method to set the content of an specific multiplier field. Used by the configure controller.
    * 
    * @param path content of an specific file
    * @param hostChange boolean condition which decides if the string is actually set or send to the
@@ -246,14 +263,16 @@ public class GameLobbyController implements LobbyController {
   }
 
   /**
-   * Method which sets up host specific actions like activating host controls and starting a server
+   * Method which sets up host specific actions like activating host controls and starting a server.
    * 
    * @author hendiehl
    */
   private void isHost() {
-    this.activateHostControlls();
-    this.server = new LobbyServer(this);
-    this.server.start();
+    this.activateHostControlls(); // activating the host controls
+    if (!back) { // condition if host return from an network game to lobby
+      this.server = new LobbyServer(this); // starting the server
+      this.server.start();
+    }
   }
 
   /**

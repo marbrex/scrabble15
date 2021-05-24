@@ -1,7 +1,7 @@
 package scrabble.network;
 
 import java.util.ArrayList;
-
+import scrabble.model.GameInformationController;
 import scrabble.model.Player;
 
 public interface NetworkPlayer {
@@ -36,5 +36,7 @@ public interface NetworkPlayer {
   public void sendDictionaryMessage(String dictionaryContent);
 
   public void sendActionMessage(String action, int points, int id);
+  
+  public void resetGameInfoCon(GameInformationController game);
 
 }

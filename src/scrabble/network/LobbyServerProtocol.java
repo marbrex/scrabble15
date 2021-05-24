@@ -631,4 +631,18 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       e.printStackTrace();
     }
   }
+
+  /**
+   * Method to exchange the used GamInfoController in reason to return from an network game back
+   * into the lobby. Is used to set back internal control structures.
+   * 
+   * @param gameInfoController2 New instance of an GameInfoController
+   * @author hendiehl
+   */
+  @Override
+  public void resetGameInfoCon(GameInformationController gameInfoController2) {
+    this.gameInfoController = gameInfoController2;
+    System.out.println("SERVER PROTOCOL : Game-Info exchange");
+    // Here sending Message : LobbyInfoMessage with new list --> RETURN type
+  }
 }

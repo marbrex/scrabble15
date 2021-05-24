@@ -47,6 +47,36 @@ public class GameInformationController {
   }
 
   /**
+   * Constructor for the GameInfoController which will be used when a Game finished and the player
+   * will return to Lobby again. For that reason the NetworkPlayer list will be set from beginning
+   * with the list of the GameHandler and the status will be set to game.
+   * 
+   * @param mainServer corresponding server
+   * @param players list of NetworkPlayers which participate in a game before
+   * @author hendiehl
+   */
+  public GameInformationController(LobbyServer mainServer, ArrayList<NetworkPlayer> players) {
+    this.mainServer = mainServer;
+    this.players = players; // Set List from beginning
+    this.status = GameStatusType.GAME; // will stop Player joins !!!!!!!!!!!!!!!!!!!!!!!
+    this.check = new HashMap<NetworkPlayer, Boolean>();
+    this.initCheck = new HashMap<NetworkPlayer, Boolean>();
+  }
+
+  /**
+   * Constructor without network and JavaFx dependency for testing purpose. Is used for class intern
+   * JUnit tests which doesn't need a corresponding server.
+   * 
+   * @author hendiehl
+   */
+  public GameInformationController() {
+    this.players = new ArrayList<NetworkPlayer>();
+    this.status = GameStatusType.LOBBY;
+    this.check = new HashMap<NetworkPlayer, Boolean>();
+    this.initCheck = new HashMap<NetworkPlayer, Boolean>();
+  }
+
+  /**
    * Method which returns the amount of players in a game/lobby. Will be executed by several threads
    * 
    * @return amount of players in game
@@ -113,7 +143,8 @@ public class GameInformationController {
    * 
    * @author hendiehl
    */
-  public void checkLobbySize() {
+  public void checkLobbySize() { // here add a condition that it will only be tested if not in Game
+                                 // --> because of after game lobby
     if (this.players.size() == 4) {
       System.err.println("Maximum Player Amount Joined");
       this.lobbyFull(); // will be called before the last lobby updates
@@ -242,9 +273,10 @@ public class GameInformationController {
   public void kickPlayer(int i) {
     if (i < this.players.size()) {
       System.err.println("Kick Player : " + i);
-      LobbyServerProtocol player = (LobbyServerProtocol) this.players.get(i); // will be changed in
-                                                                              // future first
-                                                                              // approach.
+      LobbyServerProtocol player = (LobbyServerProtocol) this.players.get(i);
+      // Because the kick button is only usable during the lobby phase and the host kick method
+      // ensure that
+      // a host can't kick himself the index can only refer on a LobbyServerProtocol
       player.sendKickMessage();
       player.deletePlayer(); // will it call deletePlayer ???????????????????????????????????
     }
@@ -258,6 +290,11 @@ public class GameInformationController {
    * @author hendiehl
    */
   private void setPlayerSequence() {
+    System.out.println("GAME INFO : Start compare");
+    for (NetworkPlayer player : this.players) {
+      System.out.println("GAME INFO : Player :" + player.getPlayer().getName() + " with pos : "
+          + player.getSequencePos());
+    }
     this.players.sort(new Comparator<NetworkPlayer>() {
 
       @Override
@@ -287,9 +324,13 @@ public class GameInformationController {
    */
   public synchronized void addSequence(int[] pos, NetworkPlayer caller) {
     System.out.println("GAME INFO : Player sequence received");
+    System.out.println("GAME INFO : Sequence of : " + caller.getPlayer().getName() + " choosen : "
+        + pos[0] + "/" + pos[1] + "/" + pos[2] + "/" + pos[3]);
     this.check.replace(caller, true);
     for (int i = 0; i < this.players.size(); i++) {
       this.players.get(i).addSequence(pos[i]); // adding a elected position to a protocol
+      System.out.println(
+          "GAME INFO : Player : " + this.players.get(i).getPlayer().getName() + " added " + pos[i]);
     }
     this.checkGameStart();
   }
@@ -583,5 +624,18 @@ public class GameInformationController {
         this.initCheck.put(player, false);
       }
     }
+  }
+
+  /**
+   * Gate method to access methods of the corresponding LobbyServer which holds all actual connected
+   * LobbyServerProtocols. Is used to reset the GameInfocontroller by all server protocols, the host
+   * protocol and the server himself and inform them about the screen change.
+   * 
+   * @param list ArrayList of the members of an network game.
+   * @author hendiehl
+   */
+  public void prepareLobbyReturn(ArrayList<NetworkPlayer> list) {
+    this.mainServer.prepareLobbyReturn(list); // reset the controller
+    // This controller is from this point on out dated and not in use anymore
   }
 }
