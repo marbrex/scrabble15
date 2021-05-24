@@ -7,15 +7,18 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
-
+import com.google.common.collect.Multiset;
 import scrabble.model.HumanPlayer;
+import scrabble.model.LetterBagType;
 import scrabble.model.Player;
+import scrabble.game.LetterBag.Tile;
 import scrabble.model.GameInformationController;
 import scrabble.model.MessageType;
 
 public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   /**
-   * Class which handle the communication with a client
+   * Class which handle the communication with a client. Is responsible for the overall
+   * communication with a LobbyClientProtocol.
    * 
    * @author hendiehl
    */
@@ -39,12 +42,13 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   private int sequencePos;
 
   /**
-   * constructor of the LobbyProtocol which are used to get in contact with players who want to join
-   * an Lobby or an game
+   * Constructor of the LobbyProtocol which are used to get in contact with players who want to join
+   * an Lobby or an game.
    * 
    * @param s Socket given by the Lobby Server, which are connected to an client
    * @param gameLobby controller of the GameLobbyScreen
    * @param gameInfoController controller which holds game specific information
+   * @author hendiehl
    */
   public LobbyServerProtocol(Socket s, LobbyServer server,
       GameInformationController gameInfoController) {
@@ -63,7 +67,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * run method of the thread which waits for an client message and react to specific MessageTypes
+   * Run method of the thread which waits for an client message and react to specific MessageTypes.
+   * 
+   * @author hendiehl
    */
   public void run() {
     System.out.println("SERVER PROTOCOL : Protocol started");
@@ -73,6 +79,12 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     System.err.println("SERVER PROTOCOL OUTRUN");
   }
 
+  /**
+   * Method to read an incoming Message from a corresponding client and take action in of the
+   * MessageType.
+   * 
+   * @author hendiehl
+   */
   private void react() {
     try { // after Server closed the loop is executed ?
       // System.out.println("Protocol run pass");
@@ -92,6 +104,12 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
         case END:
           this.reactToEnd(message);
           break;
+        case BAG:
+          this.reactToBag(message);
+          break;
+        case LOAD:
+          this.reactToLoad(message);
+          break;
       }
     } catch (EOFException e) {
       this.isRunning = false;
@@ -108,20 +126,117 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to react to an End Message received when a player wants to end his turn
+   * Method to react to an load message form a client, which is send in reason to inform the server
+   * that his game field finished loading.
    * 
    * @param message
+   * @author hendiehl
+   */
+  private void reactToLoad(Message message) {
+    System.out.println("SERVER PROTOCOL : Load-Message received");
+    this.gameInfoController.informLoading(this);
+  }
+
+  /**
+   * Method to react to an incoming LetterBag message. Has the function to perform a specific action
+   * on the global LetterBag instance.
+   * 
+   * @param message LetterBagMessage
+   * @author hendiehl
+   */
+  private void reactToBag(Message message) {
+    System.out.println("SERVER PROTOCOL : Bag-Message received");
+    LetterBagMessage msg = (LetterBagMessage) message;
+    LetterMultisetReturnMessage answer;
+    Multiset<Tile> tiles;
+    switch (msg.getType2()) {
+      case GA:
+        int i = this.gameInfoController.getAmount();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, null, i, null,
+            LetterBagType.GA);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRB:
+        tiles = this.gameInfoController.getRemainingBlanks();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+            LetterBagType.GRB);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRC:
+        tiles = this.gameInfoController.getRemainingConsonants();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+            LetterBagType.GRC);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRET:
+        tiles = this.gameInfoController.getRemainingTiles();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+            LetterBagType.GRET);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRT:
+        Tile tile = this.gameInfoController.grabRandomTile();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, null, 0, tile,
+            LetterBagType.GRT);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRTS:
+        tiles = this.gameInfoController.grabRandomTiles(msg.getCount());
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+            LetterBagType.GRTS);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GRV:
+        tiles = this.gameInfoController.getRemainingVowels();
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+            LetterBagType.GRV);
+        this.sendLetterBagResponse(answer);
+        break;
+      case GV:
+        int j = this.gameInfoController.getValueOf(msg.getLetter());
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, null, j, null,
+            LetterBagType.GV);
+        this.sendLetterBagResponse(answer);
+        break;
+    }
+  }
+
+  /**
+   * Method to send the response back to the client.
+   * 
+   * @param msg LetterBagMultisetReturnMessage
+   * @author hendiehl
+   */
+  private void sendLetterBagResponse(LetterMultisetReturnMessage msg) {
+    try {
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : LMR-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to react to an End Message received when a player wants to end his turn.
+   * 
+   * @param message
+   * @author hendiehl
    */
   private synchronized void reactToEnd(Message message) {
     System.out.println("SERVER PROTOCOL : End-Message received");
-    this.gameInfoController.endMoveForTime(); // did he go in or not ?
+    EndMessage msg = (EndMessage) message;
+    this.gameInfoController.endMoveForTime(msg.getAction(), msg.getPoints()); // did he go in or not
+                                                                              // ?
   }
 
   /**
    * Method to react to an incoming start Message of a client which transmit the chosen player
-   * sequence
+   * sequence.
    * 
    * @param message Message of the client, type : StartMessage
+   * @author hendiehl
    */
   private void reactToStart(Message message) {
     System.out.println("SERVER PROTOCOL : Start-Message received");
@@ -130,7 +245,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * method to react to a client which ends the connection
+   * Method to react to a client which ends the connection.
+   * 
+   * @author hendiehl
    */
   private void reactToShutdown() {
     System.out.println("SERVER PROTOCOL : Shutdown-Message received");
@@ -139,7 +256,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * method to delete the specific protocol
+   * Method to delete the specific protocol by deleting it from the overall server and the
+   * GameInfoController and shut it down because no action should be performed after that.
+   * 
+   * @author hendiehl
    */
   public void deletePlayer() {
     this.corespondingServer.deleteSpecificProtocol(this);
@@ -149,11 +269,12 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * method which react to an JoinMessage of an User If the gameInformationController add the player
+   * Method which react to an JoinMessage of an User If the gameInformationController add the player
    * information about the lobby are ended. If the gameInformationController not add the player the
    * client will be rejected.
    * 
    * @param message message which will be casted to the specific MessageType to get information
+   * @author hendiehl
    */
   private void reactToJoin(Message message) {
     System.out.println("SERVER PROTOCOL : Join-Message received");
@@ -168,7 +289,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * method to send an rejection information to a client, a shutdown message is expected.
+   * Method to send an rejection information to a client, a shutdown message is expected.
+   * 
+   * @author hendiehl
    */
   private void sendRejectInfomation() { // after this a protocol should be shutdown !!!!!!!!!!!!!!!!
     Message msg = new Message(MessageType.REJECTED, this.player);
@@ -183,8 +306,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * method to send information about the Lobby to the client and also inform all players in the
-   * lobby about the joining, also himself
+   * Method to send information about the Lobby to the client and also inform all players in the
+   * lobby about the joining, also himself.
+   * 
+   * @author hendiehl
    */
   public void sendLobbyInformation() { // !!!!!!!!!!!!!!!!!!!!!!!!
     // System.out.println("Send lobby information after client add");
@@ -204,15 +329,13 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * method which sends the first information message for an client. Executed by the
-   * LobbyServerThread not this thread because of the call hierarchy. A Join message is expected.
+   * Method which sends the first information message for an client.A Join message is expected.
+   * 
+   * @author hendiehl
    */
   public void sendInformationMessage() {
     // System.out.println("Send basic lobby information");
-    InformationMessage iM = new InformationMessage(MessageType.INFORMATION, this.player, // here
-                                                                                         // perhaps
-                                                                                         // null
-                                                                                         // pointer
+    InformationMessage iM = new InformationMessage(MessageType.INFORMATION, this.player,
         this.gameInfoController.getStatus(), this.gameInfoController.getPlayerAmount());
     try {
       this.out.writeObject(iM);
@@ -225,7 +348,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * method to close the connection to an client
+   * Method to close the connection to an client.
+   * 
+   * @author hendiehl
    */
   private void closeConnection() { // change !!!!!!!!!!!!!!!!!!!!!
     try {
@@ -239,7 +364,11 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * method to shutdown the protocol
+   * Method to shutdown the protocol by breaking the thread loop and closing the connection.
+   * 
+   * @param selfcall boolean condition which decides if a protocol is shut down by itself or forced
+   *        to do it
+   * @author hendiehl
    */
   public void shutdownProtocol(boolean selfcall) { // change !!!!!!!!!!!!!!!!!!!
     System.out.println("SERVER PROTOCOL : Shutdown");
@@ -251,8 +380,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * method to send a last shutdown message to the client, to give them the opportunity to handle.
+   * Method to send a last shutdown message to the client, to give them the opportunity to handle.
    * No respond expected.
+   * 
+   * @author hendiehl
    */
   public void sendShutdownMsg() { // critical
     Message msg = new Message(MessageType.SHUTDOWN, this.player);
@@ -272,16 +403,19 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     }
   }
 
-  // here Problem with the null Pointer, player have to be set after first contact
   /**
-   * method to get the specific player class of a client.
+   * Method to get the specific player class of a client.
+   * 
+   * @author hendiehl
    */
   public Player getPlayer() {
     return this.player;
   }
 
   /**
-   * method to send the client information about the Lobby, like player amount
+   * Method to send the client information about the Lobby, like player amount.
+   * 
+   * @author hendiehl
    */
   @Override
   public void updateLobbyinformation(ArrayList<Player> players) {
@@ -298,6 +432,12 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     }
   }
 
+  /**
+   * Method to send a message to an client to inform him that he was kicked by an host from the
+   * lobby. A shutdown message is expected.
+   * 
+   * @author hendiehl
+   */
   public void sendKickMessage() {
     try {
       Message msg = new Message(MessageType.KICK, this.player);
@@ -312,21 +452,28 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * method to adding points to the internal positions in the game
+   * Method to adding points to the internal positions in the game.
+   * 
+   * @author hendiehl
    */
   public void addSequence(int i) {
     this.sequencePos += i;
   }
 
   /**
-   * method to return the number representing the sequence election points
+   * Method to return the number representing the sequence election points.
+   * 
+   * @author hendiehl
    */
   public int getSequencePos() {
     return this.sequencePos;
   }
 
   /**
-   * starting the lobby maximum procedure
+   * Method to start the lobby election procedure by an client after a game is full or going to
+   * start.
+   * 
+   * @author hendiehl
    */
   public void sendFullMessage() {
     try {
@@ -341,8 +488,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to inform the clients that the game is about to start A sequence Message is expected,
-   * except of the host protocol
+   * Method to inform the clients that the game is about to start. A sequence Message is expected,
+   * except of the host protocol.
+   * 
+   * @author hendiehl
    */
   @Override
   public void sendStartMessage() {
@@ -358,12 +507,22 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to inform the lobby member that the lobby will be changed to gameField
+   * Method to inform the lobby member that the lobby will be changed to gameField.
+   * 
+   * @author hendiehl
    */
   @Override
-  public void sendGameMessage() {
+  public void sendGameMessage(ArrayList<Player> players) {
+    System.err.println("List by server send");
+    // Emergency solution because of data loose
+    int[] ids = new int[4];
+    for (int i = 0; i < players.size() && i < 4; i++) {
+      ids[i] = players.get(i).getId();
+      System.err.println(
+          "Player : " + players.get(i).getName() + " connected with id " + players.get(i).getId());
+    }
     try {
-      Message msg = new Message(MessageType.GAME, this.player); // just Testing purpose
+      GameMessage msg = new GameMessage(MessageType.GAME, this.player, players, ids);
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("SERVER PROTOCOL : Game-Message sended");
@@ -374,12 +533,14 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Method to inform a player that his move has started
+   * Method to inform a player that his move has started.
+   * 
+   * @author hendiehl
    */
   @Override
-  public void startMove() {
+  public void startMove(int turn, int id) {
     try {
-      Message msg = new Message(MessageType.MOVE, this.player);
+      MoveMessage msg = new MoveMessage(MessageType.MOVE, this.player, turn, id);
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("SERVER PROTOCOL : Move-Message sended");
@@ -391,19 +552,97 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   }
 
   /**
-   * Message to inform a player that his move has ended
+   * Method inform the players which player is actually on move if they are not self on the move and
+   * which turn number it is.
+   * 
+   * @param player on the move others than the actual player himself
+   * @author hendiehl
    */
   @Override
-  public void endMove() {
+  public void informOther(int turn, int id) {
     try {
-      Message msg = new Message(MessageType.END, this.player);
+      OtherMessage msg = new OtherMessage(MessageType.OTHER, this.player, turn, id);
       this.out.writeObject(msg);
       this.out.flush();
-      System.out.println("SERVER PROTOCOL : End-Message sended");
+      System.out.println("SERVER PROTOCOL : Other-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to send the chosen content of an multiplier file to the players.
+   * 
+   * @param path content of the file chosen by the host
+   * @author hendiehl
+   */
+  @Override
+  public void sendFieldMessage(String path) {
+    try {
+      FieldMessage msg = new FieldMessage(MessageType.FIELD, this.player, path);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : Field-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to send the chosen content of an dictionary file to the players.
+   * 
+   * @param dictionaryContent content of the file chosen by the host
+   * @author hendiehl
+   */
+  @Override
+  public void sendDictionaryMessage(String dictionaryContent) {
+    try {
+      FieldMessage msg = new FieldMessage(MessageType.DICT, this.player, dictionaryContent);
+      // because of same type of Message content the FieldMessage can also be used
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : Dictionary sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
 
+  }
+
+  /**
+   * Method to inform the player about the action an other player performed in his move.
+   * 
+   * @param action action string of the other player
+   * @param points points gained by this action
+   * @param id id of the player performed the action
+   * @author hendiehl
+   */
+  @Override
+  public void sendActionMessage(String action, int points, int id) {
+    try {
+      ActionMessage msg = new ActionMessage(MessageType.ACTION, this.player, action, points, id);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : Action-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to exchange the used GamInfoController in reason to return from an network game back
+   * into the lobby. Is used to set back internal control structures.
+   * 
+   * @param gameInfoController2 New instance of an GameInfoController
+   * @author hendiehl
+   */
+  @Override
+  public void resetGameInfoCon(GameInformationController gameInfoController2) {
+    this.gameInfoController = gameInfoController2;
+    System.out.println("SERVER PROTOCOL : Game-Info exchange");
+    // Here sending Message : LobbyInfoMessage with new list --> RETURN type
   }
 }

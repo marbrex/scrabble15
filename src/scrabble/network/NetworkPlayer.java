@@ -1,13 +1,14 @@
 package scrabble.network;
 
 import java.util.ArrayList;
-
+import scrabble.model.GameInformationController;
 import scrabble.model.Player;
 
 public interface NetworkPlayer {
   /**
-   * Interface for a network player. Can be a lobby or game client or a game/lobby host. Provide
-   * methods which all types of network players should have.
+   * Interface for a network player. Can be the server protocol for a corresponding client protocol,
+   * a host protocol or a ai protocol. Provide methods which all types of network players should
+   * have.
    * 
    * @author hendiehl
    */
@@ -24,10 +25,18 @@ public interface NetworkPlayer {
 
   public void sendStartMessage();
 
-  public void sendGameMessage();
+  public void sendGameMessage(ArrayList<Player> players);
 
-  public void startMove();
+  public void startMove(int turn, int id);
 
-  public void endMove();
+  public void informOther(int turn, int id);
+
+  public void sendFieldMessage(String path);
+
+  public void sendDictionaryMessage(String dictionaryContent);
+
+  public void sendActionMessage(String action, int points, int id);
+  
+  public void resetGameInfoCon(GameInformationController game);
 
 }

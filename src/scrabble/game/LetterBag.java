@@ -2,6 +2,7 @@ package scrabble.game;
 
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
+import java.io.Serializable;
 import java.util.Random;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Random;
  *
  * @author ekasmamy
  */
-public class LetterBag {
+public class LetterBag implements Serializable {
 
   /**
    * <h1>scrabble.game.LetterBag.Tile</h1>
@@ -22,7 +23,7 @@ public class LetterBag {
    *
    * @see scrabble.game.LetterTile
    */
-  public static class Tile {
+  public static class Tile implements Serializable {
 
     public char letter;
     public int value;
@@ -42,12 +43,13 @@ public class LetterBag {
 
   private static LetterBag instance = null;
   private final Multiset<Tile> bag;
+  private int originalSize;
 
-  private final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  private final String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + '\0';
   private final int[] count = {9, 2, 2, 4, 12, 2, 3, 2, 9, 1, 1, 4, 2, 6, 8, 2, 1, 6, 4, 6, 4, 2, 2,
-      1, 2, 1};
+      1, 2, 1, 2};
   private final int[] values = {1, 3, 3, 2, 1, 4, 2, 4, 1, 8, 5, 1, 3, 1, 1, 3, 10, 1, 1, 1, 1, 4,
-      4, 8, 4, 10};
+      4, 8, 4, 10, 0};
 
   /**
    * Default Constructor. This constructor should not be accessed directly. Use getInstance() method
@@ -76,6 +78,7 @@ public class LetterBag {
    * Internal method that is used to fill the LetterBag with Tiles.
    */
   private void fillBag() {
+    originalSize = 0;
     if (bag.isEmpty()) {
       char[] alphabetArray = alphabet.toCharArray();
 
@@ -95,13 +98,19 @@ public class LetterBag {
 
         bag.add(t);
         bag.setCount(t, count[i]);
-      }
 
-      Tile t = new Tile((char) 0, 0);
-      t.isBlank = true;
-      bag.add(t);
-      bag.add(t);
+        originalSize += count[i];
+      }
     }
+  }
+
+  /**
+   * Returns the original quantity letter tiles in the bag.
+   *
+   * @return Original quantity of letter tiles in the bag.
+   */
+  public int getOriginalAmount() {
+    return originalSize;
   }
 
   /**
@@ -114,6 +123,23 @@ public class LetterBag {
     for (Tile tile : bag.elementSet()) {
       if (tile.letter == Character.toUpperCase(letter)) {
         return bag.count(tile);
+      }
+    }
+    return 0;
+  }
+
+  /**
+   * Returns the original quantity of the specified letter tile.
+   *
+   * @param letter letter (char)
+   * @return Original quantity of the specified letter tile.
+   */
+  public int getOriginalAmountOf(char letter) {
+    char[] charArray = alphabet.toCharArray();
+    for (int i = 0; i < charArray.length; i++) {
+      char c = charArray[i];
+      if (c == letter) {
+        return count[i];
       }
     }
     return 0;
@@ -211,7 +237,7 @@ public class LetterBag {
 
       float random = r.nextFloat();
 
-      if (random <= 0.5) {
+      if (random <= 0.05) {
         bag.elementSet().forEach(tile -> {
           if (tile.isBlank) {
             subset.add(tile);

@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXTextArea?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.text.Font?>
+
+<!-- @author mraucher -->
+
+<BorderPane xmlns="http://javafx.com/javafx/11.0.2"
+	xmlns:fx="http://javafx.com/fxml/1" fx:id="root"
+	style="-fx-background-color: #DEB887; -fx-border-color: #783F04; -fx-border-width: 13;"
+	maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+	minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0"
+	fx:controller="scrabble.RegisterController">
+	<top>
+		<VBox alignment="CENTER" prefHeight="152.0" prefWidth="800.0"
+			BorderPane.alignment="CENTER">
+			<Label text="Register">
+				<font>
+					<Font name="System Bold" size="36.0" />
+				</font>
+			</Label>
+		</VBox>
+	</top>
+	<center>
+		<VBox alignment="CENTER" prefHeight="152.0" prefWidth="800.0"
+			BorderPane.alignment="CENTER">
+
+			<VBox alignment="CENTER">
+				<children>
+					<Label text="Name">
+						<font>
+							<Font size="18.0" />
+						</font>
+					</Label>
+					<FlowPane alignment="CENTER">
+						<JFXTextArea fx:id="txtName" focusColor="WHITE"
+							prefHeight="55.0" prefWidth="217.0">
+							<font>
+								<Font size="18.0" />
+							</font>
+						</JFXTextArea>
+					</FlowPane>
+				</children>
+			</VBox>
+			<FlowPane alignment="CENTER" prefHeight="152.0"
+				prefWidth="800.0">
+				<children>
+					<ToggleButton mnemonicParsing="false"
+						onAction="#maleBtnPressed" prefHeight="55.0" prefWidth="70.0">
+						<graphic>
+							<ImageView fitHeight="56.0" fitWidth="61.0"
+								pickOnBounds="true" preserveRatio="true">
+								<image>
+									<Image url="@../img/male.png" />
+								</image>
+							</ImageView>
+						</graphic>
+						<toggleGroup>
+							<ToggleGroup fx:id="user" />
+						</toggleGroup>
+					</ToggleButton>
+					<ToggleButton layoutX="526.0" layoutY="413.0"
+						mnemonicParsing="false" onAction="#femaleBtnPressed"
+						toggleGroup="$user">
+						<graphic>
+							<ImageView fitHeight="56.0" fitWidth="61.0"
+								pickOnBounds="true" preserveRatio="true">
+								<image>
+									<Image url="@../img/female.png" />
+								</image>
+							</ImageView>
+						</graphic>
+					</ToggleButton>
+					<ToggleButton layoutX="605.0" layoutY="413.0"
+						mnemonicParsing="false" onAction="#anonymsBtnPressed"
+						toggleGroup="$user">
+						<graphic>
+							<ImageView fitHeight="56.0" fitWidth="61.0"
+								pickOnBounds="true" preserveRatio="true">
+								<image>
+									<Image url="@../img/anonyms.png" />
+								</image>
+							</ImageView>
+						</graphic>
+					</ToggleButton>
+					<ToggleButton layoutX="684.0" layoutY="413.0"
+						mnemonicParsing="false" onAction="#animalBtnPressed"
+						toggleGroup="$user">
+						<graphic>
+							<ImageView fitHeight="56.0" fitWidth="61.0"
+								pickOnBounds="true" preserveRatio="true">
+								<image>
+									<Image url="@../img/animal.png" />
+								</image>
+							</ImageView>
+						</graphic>
+					</ToggleButton>
+				</children>
+			</FlowPane>
+			<VBox alignment="CENTER" prefHeight="152.0" prefWidth="800.0"
+				BorderPane.alignment="CENTER">
+				<JFXButton fx:id="registerBtn" buttonType="RAISED"
+					alignment="center" onAction="#registerBtnOnAction"
+					style="-fx-background-color: #78c843;" text="Register"
+					textFill="WHITE">
+					<font>
+						<Font size="23.0" />
+					</font>
+				</JFXButton>
+			</VBox>
+		</VBox>
+	</center>
+</BorderPane>

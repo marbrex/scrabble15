@@ -1,18 +1,11 @@
 package scrabble;
 
 import com.jfoenix.controls.JFXButton;
-import com.jfoenix.controls.JFXTextField;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import javax.imageio.ImageIO;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,16 +14,16 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
+import java.io.IOException;
 
 
-/** 
- * scrabble.CreateProfileController to manage profile creation  
+/**
+ * scrabble.CreateProfileController to manage profile creation.
  * 
  * @author skeskinc
- * @author ekstamy
+ * @author ekasmamy
  */
 public class CreateProfileController {
 
@@ -56,26 +49,46 @@ public class CreateProfileController {
   public FlowPane avatarsBlock;
 
   @FXML
+  public Label errorLabel;
+
+  @FXML
   public int imageindex;
 
-  /** Changing to the Scene */
+  /**
+   * Changing to the Scene.
+   * 
+   * @param resource URL-Resource to another scene
+   * @param style given style-sheet for next scene
+   * @param event Handling MouseEvent
+   * @author ekasmamy
+   */
   public void changeScene(String resource, String style, Event event) {
     try {
-      System.out.println(resource);
+  //    System.out.println(resource);
       Parent root = FXMLLoader.load(getClass().getResource(resource));
+      /*
       Button btn = ((Button) event.getSource());
       Stage stage = (Stage) btn.getScene().getWindow();
       Scene scene =
           new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
       scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
       stage.setScene(scene);
+      */
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource(style).toExternalForm());
+      ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
       System.err.println("Error: " + e.getMessage());
     }
   }
 
-  /** Generating a player id */
+  /**
+   * Generating a player id.
+   * 
+   * @return generated Identification number
+   * @author skeskinc
+   */
   private int generateId() {
     int id = 0;
     for (int i = 1; i < 5; i++) {
@@ -87,40 +100,60 @@ public class CreateProfileController {
     return id;
   }
 
-  /** Setting avatars and handling events */
+  /**
+   * Setting avatars and handling events.
+   * 
+   * @author skeskinc
+   */
   @FXML
   private void initialize() {
-    ImageView im = new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/male.png")));
+    // Loading all images which are available for profile creation
+    ImageView im =
+        new ImageView(new Image(getClass().getResourceAsStream("/img/male.png")));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(0)).getChildren().add(im);
-    im = new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/female.png")));
+    im = new ImageView(new Image(getClass().getResourceAsStream("/img/female.png")));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(1)).getChildren().add(im);
-    im = new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/anonyms.png")));
+    im = new ImageView(new Image(getClass().getResourceAsStream("/img/anonyms.png")));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(2)).getChildren().add(im);
-    im = new ImageView(new Image(getClass().getResourceAsStream("/scrabble/img/animal.png")));
+    im = new ImageView(new Image(getClass().getResourceAsStream("/img/animal.png")));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(3)).getChildren().add(im);
+    this.imageindex = 5;
 
-    //Action on Cancel Button
+    // Action on Cancel Button
     cancelBtn.setOnMouseClicked(event -> {
-      changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
+      changeScene("/fxml/ChooseProfileScene.fxml", "/css/changeProfile.css", event);
     });
 
-    //Action on Create Button
+    // Action on Create Button
     createBtn.setOnMouseClicked(event -> {
       String name = nameField.getText();
       int id = generateId();
-      if (!name.isEmpty() && !DBInformation.containsName(name) && name.length() <= 15) {
+      if (!name.isEmpty() && !DBInformation.containsName(name) && name.length() <= 15
+          && this.imageindex <= 3) {
         Database.fillTables(id, name, this.imageindex);
-        changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
+        changeScene("/fxml/ChooseProfileScene.fxml", "/css/changeProfile.css", event);
+      } else if (DBInformation.containsName(name)) {
+        nameField.setStyle("-fx-border-color: red;");
+        errorLabel.setText("Name is already taken!");
+      } else if (name.length() > 15) {
+        nameField.setStyle("-fx-border-color: red;");
+        errorLabel.setText("Name should contain less than 15 letters!");
+      } else if (name.isEmpty()) {
+        nameField.setStyle("-fx-border-color: red;");
+        errorLabel.setText("Fill the Textfield!");
+      } else if (imageindex >= 4) {
+        errorLabel.setText("No image chosen!");
       }
     });
+    // Changing border color on click
     for (int i = 0; i < avatarsBlock.getChildren().size(); i++) {
       int avatarId = i;
       avatarsBlock.getChildren().get(i).setOnMouseClicked(event -> {

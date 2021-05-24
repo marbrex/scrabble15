@@ -17,18 +17,12 @@ public class LobbyInformationMessage extends Message implements Serializable {
   private ArrayList<Player> players;
 
   /**
-   * Constructor for a message which will inform joined clients about the members of a lobby
-   * 
-   * @param type
-   * @param owner
-   * @param players list of all players in the lobby.
-   */
-  /**
-   * constructor for setting the list of players in a lobby
+   * Constructor for setting the list of players in a lobby
    * 
    * @param type type of the network message
    * @param owner owner of the network message
    * @param players list of human lobby players
+   * @author hendiehl
    */
   public LobbyInformationMessage(MessageType type, Player owner, ArrayList<Player> players) {
     super(type, owner);
@@ -36,9 +30,10 @@ public class LobbyInformationMessage extends Message implements Serializable {
   }
 
   /**
-   * getter method for the player list
+   * Getter method for the player list
    * 
    * @return list of the players in the lobby
+   * @author hendiehl
    */
   public ArrayList<Player> getPlayers() {
     return players;

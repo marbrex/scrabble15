@@ -2,40 +2,27 @@ package scrabble;
 
 import java.io.IOException;
 import java.net.URL;
+import com.jfoenix.controls.JFXButton;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ResourceBundle;
-
-import com.jfoenix.controls.JFXButton;
-
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
-import scrabble.model.HumanPlayer;
 import scrabble.model.Profile;
 
 /**
- * <h1>The Main Controller linked with "MainPage.fxml" file.</h1>
+ * The Main Controller linked with "MainPage.fxml" file.
  *
- * @author Eldar Kasmamytov
- * @author Sergen Keskincelik
+ * @author ekasmamy
+ * @author skeskinc
  */
 public class MainPageController implements Initializable {
 
@@ -66,44 +53,60 @@ public class MainPageController implements Initializable {
 
   private static boolean checkNetworkMode;
 
-  private HumanPlayer player;
-
-  /*
-   * public void setSize(Stage stage) {
-   * this.soundButton.fitHeightProperty().bind(stage.heightProperty());
-   * this.soundButton.fitWidthProperty().bind(stage.widthProperty()); }
+  /**
+   * Setting boolean var to true, if network-mode is chosen.
+   * 
+   * @param check Setting var to true or false
+   * @author skeskinc
    */
-
   public static void setNetworkMode(boolean check) {
     checkNetworkMode = check;
   }
 
+  /**
+   * Check, if chosen mode is a network-mode.
+   * 
+   * @return true, if multiplayer has been pressed, else false
+   * @author skeskinc
+   */
   public static boolean isNetwork() {
     return checkNetworkMode;
   }
 
+  /**
+   * Changing scene.
+   * 
+   * @param resource Getting resource of next scene
+   * @param style Setting style-sheet of next scene
+   * @param event Handling Event Actions
+   * @author ekasmamy
+   * @author skeskinc
+   */
   public void changeScene(String resource, String style, Event event) {
     try {
       System.out.println(resource);
       Parent root = FXMLLoader.load(getClass().getResource(resource));
-      Button btn = ((Button) event.getSource());
-      Stage stage = (Stage) btn.getScene().getWindow();
-      Scene scene = new Scene(root, this.root.getScene().getWidth(),
-          this.root.getScene().getHeight());
-      scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
-      stage.setScene(scene);
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource(style).toExternalForm());
+      ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
       System.err.println("Error: " + e.getMessage());
     }
   }
 
+  /**
+   * Managing Button changes.
+   * 
+   * @return specific button-collections
+   * @author ekasmamy
+   */
   public Collection<JFXButton> getPlayButtons() {
     Collection<JFXButton> buttons = new ArrayList<JFXButton>();
     JFXButton singlePlayerBtn = new JFXButton("Singleplayer");
     singlePlayerBtn.setOnMouseClicked(event -> {
       setNetworkMode(false);
-      changeScene("fxml/LoadingScreen.fxml", "css/mainMenu.css", event);
+      changeScene("/fxml/LoadingScreen.fxml", "/css/mainMenu.css", event);
     });
     singlePlayerBtn.getStyleClass().add("button");
     buttons.add(singlePlayerBtn);
@@ -112,7 +115,7 @@ public class MainPageController implements Initializable {
     multiPlayerBtn.getStyleClass().add("button");
     multiPlayerBtn.setOnMouseClicked(event -> {
       setNetworkMode(true);
-      changeScene("fxml/Menu.fxml", "css/style.css", event);
+      changeScene("/fxml/Menu.fxml", "/css/style.css", event);
     });
     buttons.add(multiPlayerBtn);
 
@@ -131,13 +134,14 @@ public class MainPageController implements Initializable {
     return buttons;
   }
 
+  /**
+   * Handling Scene Change and application exit.
+   * 
+   * @author ekasmamy
+   */
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
-//    Database.fillPlayerTable(playersData);
-//    HumanPlayer player = DBInformation.loadProfile(0);
-    player = Profile.getPlayer();
-    this.idLabel.setText("Welcome back, " + Profile.getPlayer().getName());
-    //	setSize();
+    this.idLabel.setText("Welcome, " + Profile.getPlayer().getName());
 
     // Save main menu buttons into a collection
     mainMenuButtons = new ArrayList<JFXButton>();
@@ -151,16 +155,16 @@ public class MainPageController implements Initializable {
     }));
     
     profileBtn.setOnMouseClicked(event -> {
-      changeScene("fxml/Statistics.fxml", "css/style.css", event);
+      changeScene("/fxml/Statistics.fxml", "/css/style.css", event);
     });
     
     settingsBtn.setOnMouseClicked(event -> {
-      changeScene("fxml/Settings.fxml", "css/settings.css", event);
+      changeScene("/fxml/Settings.fxml", "/css/settings.css", event);
     });
 
     changeProfileBtn.setOnMouseClicked(event -> {
       Profile.setPlayer(null);
-      changeScene("fxml/ChooseProfileScene.fxml", "css/changeProfile.css", event);
+      changeScene("/fxml/ChooseProfileScene.fxml", "/css/changeProfile.css", event);
     });
 
     exitAppBtn.setOnMouseClicked(event -> {

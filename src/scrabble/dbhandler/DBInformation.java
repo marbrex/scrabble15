@@ -8,7 +8,7 @@ import java.util.List;
 import scrabble.model.HumanPlayer;
 
 /**
- * scrabble.dbhandler.DBInformation class to receive player statistics from the Database
+ * scrabble.dbhandler.DBInformation class to receive player statistics from the Database.
  * 
  * @author skeskinc
  * @author mraucher
@@ -19,7 +19,7 @@ public class DBInformation {
   private static Statement stmt = null;
 
   /**
-   * Player profiles to choose from in UI
+   * Player profiles to choose from in UI.
    * 
    * @return A list of Player profiles
    * @author skeskinc
@@ -46,7 +46,7 @@ public class DBInformation {
   }
 
   /**
-   * Checks, if Database contains already the name
+   * Checks, if Database contains already the name.
    * 
    * @return true if Player table from Database contains name, else false
    * @author skeskinc
@@ -62,7 +62,7 @@ public class DBInformation {
   }
 
   /**
-   * Returns a List, which contains all Player names saved in the Database
+   * Returns a List, which contains all Player names saved in the Database.
    * 
    * @return A list of player names in database
    * @author skeskinc
@@ -83,7 +83,7 @@ public class DBInformation {
   }
 
   /**
-   * Checks, if one specific Identification number is in Statistics table
+   * Checks, if one specific Identification number is in Statistics table.
    * 
    * @param id checking given id
    * @return true, if id is in Database, else false
@@ -106,7 +106,7 @@ public class DBInformation {
   }
 
   /**
-   * Loads one player profile on given index
+   * Loads one player profile on given index.
    * 
    * @return human-player profile, which was loaded from Database
    * @param index loading profile regarding given index
@@ -124,7 +124,7 @@ public class DBInformation {
   }
 
   /**
-   * Returns all statistics of an Player in a List
+   * Returns all statistics of an Player in a List.
    * 
    * @return a list of all player statistics from one player
    * @param player getting statistics from given human-player
@@ -140,11 +140,89 @@ public class DBInformation {
   }
 
   /**
-   * Gets the Settings-ID of a Player
+   * Returns all settings of a Player in a List.
+   * 
+   * @param player the humanPlayer
+   * @return List of player settings
+   * @author mraucher
+   */
+  private static List<String> getPlayerSettings(HumanPlayer player) {
+    try {
+      stmt = Database.getConnection().createStatement();
+      ResultSet rs = stmt.executeQuery(
+          "SELECT SoundOn, SoundLevel, SceneMode, AIDifficulty " + "FROM Settings s, Players p "
+              + "WHERE p.Name = '" + player.getName() + "' AND p.SettingsId = s.SettingsId;");
+      List<String> playerSettings = new ArrayList<String>(4);
+      playerSettings.add(rs.getString("SoundOn"));
+      playerSettings.add(rs.getString("SoundLevel"));
+      playerSettings.add(rs.getString("SceneMode"));
+      playerSettings.add(rs.getString("AIDifficulty"));
+      return playerSettings;
+    } catch (SQLException e) {
+      e.printStackTrace();
+      return null;
+    }
+
+  }
+
+  /**
+   * Checks the SoundOn/SoundOff setting of this player from the DB.
+   * 
+   * @param player the HumanPlayer
+   * @return true if SoundOn==1 in DB, false if SoundOn==0 in DB
+   * @author mraucher
+   */
+  public static boolean isSoundOn(HumanPlayer player) {
+    // If DB should hold anything else than "1".
+    // (e. g. "null") the default value would be false=="sound off".
+    return (getPlayerSettings(player).get(0).equals("1") ? true : false);
+  }
+
+  /**
+   * Gets the Soundlevel setting of this player from the DB.
+   * 
+   * @param player the HumanPlayer
+   * @return the soundlevel setting from DB
+   * @author mraucher
+   * @author skeskinc
+   */
+  public static double getSoundLevel(HumanPlayer player) {
+    return Double.valueOf(getPlayerSettings(player).get(1));
+  }
+
+  /**
+   * Checks the SceneMode setting of this player from the DB.
+   * 
+   * @param player the HumanPlayer
+   * @return true if SceneMode=="Fullscreen" in DB, false if SceneMode!="Fullscreen"
+   * @author mraucher
+   */
+  public static boolean isFullscreen(HumanPlayer player) {
+    // If DB should hold anything else than "Fullscreen"
+    // (e. g. "null") the default would be false=="not fullscreen"
+    return (getPlayerSettings(player).get(2).equals("Fullscreen") ? true : false);
+  }
+
+  /**
+   * Checks the AIDifficulty setting of this player from the DB.
+   * 
+   * @param player the HumanPlayer
+   * @return true if AIDifficulty=="Hard" in DB, false if SceneMode!="Hard"
+   * @author mraucher
+   */
+  public static boolean isAiDifficultyHard(HumanPlayer player) {
+    // If DB should hold anything else than "Hard"
+    // (e. g. "null") the default value would be false=="not hard"
+    return (getPlayerSettings(player).get(3).equals("Hard") ? true : false);
+  }
+
+  /**
+   * Gets the Settings-ID of a Player.
    * 
    * @param player given Human-player to get the id
    * @return Settings-ID of the given Human-Player
    * @author skeskinc
+   * @author mraucher
    */
   public static int getSettingsId(HumanPlayer player) {
     int id = 0;
@@ -161,7 +239,7 @@ public class DBInformation {
   }
 
   /**
-   * Returns the amount of player profiles
+   * Returns the amount of player profiles.
    * 
    * @return size of the player-table
    * @author skeskinc
@@ -171,11 +249,12 @@ public class DBInformation {
   }
 
   /**
-   * Returns the Ratio of Win-/Loserate
+   * Returns the Ratio of Win-/Loserate.
    * 
    * @return win-/loserate of a player
    * @param player current human-player for win-/lose-ratio
    * @author skeskinc
+   * @author mraucher
    */
   public double ratioWnL(HumanPlayer player) {
     double ratio = 0.0;
@@ -199,7 +278,7 @@ public class DBInformation {
   }
 
   /**
-   * Returns the total game played by any player
+   * Returns the total game played by any player.
    * 
    * @return total games played of a player
    * @param name given Name

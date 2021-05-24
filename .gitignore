@@ -8,7 +8,7 @@
 /scrabble15.iml
 # IntelliJ IDEA output files
 /out
-/bin/
+/bin
+/target
 
-# Database file
-resources/scrabble/db/Scrabble15.db
+scrabble-maven.iml

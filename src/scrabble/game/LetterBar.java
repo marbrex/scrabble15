@@ -1,6 +1,9 @@
 package scrabble.game;
 
+import com.google.common.collect.Multiset;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import javafx.scene.input.Dragboard;
@@ -34,60 +37,50 @@ public class LetterBar {
    */
   public void initBar() {
 
-    LetterBag bag = LetterBag.getInstance();
+    for (int i = 0; i < size; i++) {
 
-    int i = 0;
-    for (Tile t : bag.grabRandomTiles(size)) {
-      char randLetter = t.letter;
-      int ltrPoints = t.value;
+      Slot slot = new Slot(controller);
 
-      // Creating a new LetterTile
-      LetterTile tile = new LetterTile(randLetter, ltrPoints, controller.grid.cellSize, controller);
-
-      Slot slot = new Slot(tile, controller);
-
-      slot.container.setOnDragDropped(event -> {
-        // data dropped
-        // System.out.println("onDragDropped");
-
-        // if there is a string data on dragboard, read it and use it
-        Dragboard db = event.getDragboard();
-        boolean success = false;
-        if (db.hasString()) {
-
-          Map<String, String> params = new HashMap<>();
-          String paramsString = db.getString();
-          String[] pairs = paramsString.split("&");
-          for (String p : pairs) {
-            String[] pair = p.split("=");
-            params.put(pair[0], pair[1]);
-          }
-
-          LetterTile ltrTile;
-          if (Boolean.parseBoolean(params.get("isBlank"))) {
-            ltrTile = new LetterTile(controller);
-            ltrTile.isBlank = true;
-          } else {
-            char letter = params.get("letter").charAt(0);
-            int points = Integer.parseInt(params.get("points"));
-            ltrTile = new LetterTile(letter, points, controller.grid.cellSize, controller);
-            ltrTile.isBlank = false;
-          }
-          slot.setContent(ltrTile);
-
-          success = true;
-        }
-        /* let the source know whether the string was successfully
-         * transferred and used */
-        event.setDropCompleted(success);
-
-        event.consume();
-      });
+//      slot.container.setOnDragDropped(event -> {
+//        // data dropped
+//        // System.out.println("onDragDropped");
+//
+//        // if there is a string data on dragboard, read it and use it
+//        Dragboard db = event.getDragboard();
+//        boolean success = false;
+//        if (db.hasString()) {
+//
+//          Map<String, String> params = new HashMap<>();
+//          String paramsString = db.getString();
+//          String[] pairs = paramsString.split("&");
+//          for (String p : pairs) {
+//            String[] pair = p.split("=");
+//            params.put(pair[0], pair[1]);
+//          }
+//
+//          LetterTile ltrTile;
+//          if (Boolean.parseBoolean(params.get("isBlank"))) {
+//            ltrTile = new LetterTile(controller);
+//            ltrTile.isBlank = true;
+//          } else {
+//            char letter = params.get("letter").charAt(0);
+//            int points = Integer.parseInt(params.get("points"));
+//            ltrTile = new LetterTile(letter, points, controller.grid.cellSize, controller);
+//            ltrTile.isBlank = false;
+//          }
+//          slot.setContent(ltrTile);
+//
+//          success = true;
+//        }
+//        /* let the source know whether the string was successfully
+//         * transferred and used */
+//        event.setDropCompleted(success);
+//
+//        event.consume();
+//      });
 
       slots[i] = slot;
       controller.lettersBlock.getChildren().add(slots[i].container);
-
-      i++;
     }
 
     display();
@@ -243,5 +236,81 @@ public class LetterBar {
       }
     }
     return null;
+  }
+
+  public ArrayList<LetterTile> getTilesInBar() {
+    ArrayList<LetterTile> list = new ArrayList<>();
+    for (Slot slot : slots) {
+      if (slot.content != null) {
+        list.add(slot.content);
+      }
+    }
+    return list;
+  }
+
+  public ArrayList<Slot> getEmptySlots() {
+    ArrayList<Slot> list = new ArrayList<>();
+    for (Slot slot : slots) {
+      if (slot.isFree()) {
+        list.add(slot);
+      }
+    }
+    return list;
+  }
+
+  public void putTilesBackToBar() {
+    System.out.println("@LetterBar - putTilesBackToBar()");
+    Iterator<Word> it = controller.grid.words.iterator();
+
+    while (it.hasNext()) {
+      Word word = it.next();
+      if (!word.frozen) {
+        it.remove();
+        controller.gridWrapper.getChildren().remove(word.container);
+      }
+    }
+
+    ArrayList<Slot> emptySlots = getEmptySlots();
+    int i = 0;
+    for (LetterTile tile : controller.grid.getTilesInGrid()) {
+      if (!tile.isFrozen) {
+        System.out.println("@LetterBar - putTilesBackToBar() - " + emptySlots.get(i));
+        LetterTile t = new LetterTile(tile.getLetter(), tile.getPoints(), controller.grid.cellSize,
+            controller);
+        emptySlots.get(i).setContent(t);
+        i++;
+        controller.grid.removeSlotContent(tile.slot);
+      }
+    }
+  }
+
+  public int getCountFreeSlots() {
+    int counter = 0;
+    for (Slot slot : slots) {
+      if (slot.isFree()) {
+        counter++;
+      }
+    }
+    return counter;
+  }
+
+  public void fillGaps(Multiset<Tile> tileSet) {
+    System.out.println(this + " - @fillGaps()");
+    if (tileSet.size() == getCountFreeSlots()) {
+      Iterator<Slot> emptySlots = getEmptySlots().iterator();
+      for (Tile tile : tileSet) {
+        LetterTile tileToPaste = new LetterTile(tile.letter, tile.value, controller.grid.cellSize,
+            controller);
+        if (emptySlots.hasNext()) {
+          emptySlots.next().setContent(tileToPaste);
+        }
+      }
+    } else {
+      System.err.println("Error while filling the empty slots in the LetterBar");
+    }
+  }
+
+  public int getSize() {
+    return size;
   }
 }

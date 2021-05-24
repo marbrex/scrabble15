@@ -1,11 +1,10 @@
 package scrabble.model;
 
-import java.util.*;
+import java.util.List;
 import scrabble.dbhandler.DBInformation;
-import scrabble.dbhandler.Database;
 
 /**
- * scrabble.model.Profile class to receive current Player Profile and its statistics
+ * scrabble.model.Profile class to receive current Player Profile and its statistics.
  * 
  * @author skeskinc
  */
@@ -15,8 +14,9 @@ public class Profile {
   private static List<String> statistics;
 
   /** 
-   * Setting the player and his statistics 
+   * Setting the player and his statistics. 
    * 
+   * @param humanplayer Current given profile
    * @author skeskinc
    */
   public static void setPlayer(HumanPlayer humanplayer) {
@@ -27,8 +27,9 @@ public class Profile {
   }
 
   /**
-   * Returns a Human-Player object
+   * Returns a Human-Player object.
    * 
+   * @return current profile
    * @author skeskinc
    */
   public static HumanPlayer getPlayer() {
@@ -36,8 +37,9 @@ public class Profile {
   }
 
   /**
-   * Returns the statistics of a humanplayer object
+   * Returns the statistics of a Human-player object.
    * 
+   * @return statistics of the current profile
    * @author skeskinc
    */
   public static List<String> getStatistics() {

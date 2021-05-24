@@ -2,8 +2,9 @@ package scrabble;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
-
+import javafx.util.Duration;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
@@ -12,15 +13,19 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
-import javafx.util.Duration;
+import scrabble.model.Player;
+import scrabble.network.NetworkScreen;
 
+/**
+ * scrabble.LoadingController for the LoadingScreen.
+ * 
+ * @author skeskinc
+ */
 public class LoadingController implements Initializable {
 
   @FXML
@@ -40,52 +45,151 @@ public class LoadingController implements Initializable {
 
   @FXML
   public Label showPing;
-  
+
   @FXML
   public BorderPane pane;
 
+  private NetworkScreen protocol;
+  
+  private boolean isHost;
+
+  private String mapContent;
+
+  private String dictionary;
+
+  private ArrayList<Player> players;
+
+  private double progress = 0;
+
+  private int randomNumber;
+
+  /**
+   * Constructor for a network game which has the function to briefly save game necessary
+   * information, which will be needed for a network game.
+   * 
+   * @param protocol corresponding protocol of the player
+   * @param isHost boolean condition for host allocation
+   * @param mapContent content of a multiplier field file
+   * @param players members of the game
+   * @param dictionary content of a dictionary file
+   * @author hendiehl
+   */
+  public LoadingController(NetworkScreen protocol, boolean isHost, String mapContent,
+      ArrayList<Player> players, String dictionary) {
+    this.protocol = protocol;
+    this.isHost = isHost;
+    this.mapContent = mapContent;
+    this.players = players;
+    this.dictionary = dictionary;
+  }
+
+  /**
+   * Basic constructor for non network games.
+   * 
+   * @author hendiehl
+   */
+  public LoadingController() {
+    // Constructor for non network game
+  }
+  
+  /**
+   * Changing hints of the Loading-Screen.
+   * 
+   * @author skeskinc
+   */
+  public void changeHint() {
+    randomNumber = (int) (1 + Math.random() * 5);
+    if (progress == 0 || progress == 0.5) {
+      switch (randomNumber) {
+        case 1:
+          hintLabel.setText(
+              "Hint: If seven tiles have been laid on the board in one turn after all of the words formed have been scored, 50 bonus points are added.");
+          break;
+        case 2:
+          hintLabel.setText(
+              "Hint: Words can only be played as a continuous string of letters by reading them from left to top or top to bottom.");
+          break;
+        case 3:
+          hintLabel.setText(
+              "Hint: Blank tiles are joker. By using them, the player can define what letter the blank tile stands for. Blank tiles scores zero points.");
+          break;
+        case 4:
+          hintLabel.setText(
+              "Hint: If a player uses more than 10 minutes of overtime, the game is ending.");
+          break;
+        case 5:
+          hintLabel.setText(
+              "Hint: The player has the options to pass a turn, play at least one tile on the game field or exchange one or more tiles for an equal number from the bag.");
+          break;
+        default:
+          hintLabel.setText(
+              "Hint: If seven tiles have been laid on the board in one turn after all of the words formed have been scored, 50 bonus points are added.");
+          break;
+      }
+    }
+  }
+
+  /**
+   * Increase value of timebar.
+   * 
+   * @author skeskinc
+   */
   public void increaseValue() {
-	  
-		if (!MainPageController.isNetwork()) {
-			pingLabel.setVisible(false);
-			pingCircle.setVisible(false);
-			showPing.setVisible(false);
-			modeLabel.setText("Mode: Offline game");
-		} else {
-			pingLabel.setVisible(true);
-			pingCircle.setVisible(true);
-			showPing.setVisible(true);
-			modeLabel.setText("Mode: Network game");
-		}
+
+    if (!MainPageController.isNetwork()) {
+      pingLabel.setVisible(false);
+      pingCircle.setVisible(false);
+      showPing.setVisible(false);
+      modeLabel.setText("Mode: Offline game");
+    } else {
+      pingLabel.setVisible(false);
+      pingCircle.setVisible(false);
+      showPing.setVisible(false);
+      modeLabel.setText("Mode: Network game");
+    }
 
     KeyFrame keyframe = new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
 
-      private double progress = 0;
-
+      /**
+       * Handle Ping, which is random and ProgressBar value management.
+       * 
+       * @author skeskinc
+       */
       @Override
       public void handle(ActionEvent event) {
-        int randomNumber = (int) (1 + Math.random() * 120);
-        if (randomNumber >= 60 && randomNumber <= 99) {
+        int randomPing = (int) (1 + Math.random() * 120);
+        if (randomPing >= 60 && randomPing <= 99) {
           showPing.setTextFill(Color.web("#ff8d1b", 0.8));
           pingCircle.setFill(Color.web("#ff8d1b"));
-        } else if (randomNumber > 99) {
+        } else if (randomPing > 99) {
           showPing.setTextFill(Color.web("#ff0000", 0.8));
           pingCircle.setFill(Color.web("#ff0000"));
-        } else if (randomNumber < 60) {
+        } else if (randomPing < 60) {
           showPing.setTextFill(Color.web("#27b53c", 0.8));
           pingCircle.setFill(Color.web("#27b53c"));
         }
-        showPing.setText("" + randomNumber + " ms");
+        showPing.setText("" + randomPing + " ms");
         progress += 0.125;
         progressBar.setProgress(progress);
+        //Changing hint
+        changeHint();
+
         if (progressBar.getProgress() > 1) {
           try {
-            Parent root = FXMLLoader.load(getClass().getResource("fxml/interface.fxml"));
-            Stage stage = (Stage) progressBar.getScene().getWindow();
-            Scene scene = new Scene(root, pane.getScene().getWidth(), pane.getScene().getHeight());
-            scene.getStylesheets().add(getClass()
-                .getResource("css/style.css").toExternalForm());
-            stage.setScene(scene);
+            Parent root;
+            if (!MainPageController.isNetwork()) {
+              root = FXMLLoader.load(getClass().getResource("/fxml/interface.fxml"));
+            } else {
+              FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/interface.fxml"));
+              loader.setControllerFactory(c -> {
+                return new GameController(protocol, isHost, mapContent, players, dictionary);
+              });
+              root = loader.load();
+            }
+            ScrabbleApp.getScene().getStylesheets().clear();
+            ScrabbleApp.getScene().getStylesheets()
+                .add(getClass().getResource("/css/style.css").toExternalForm());
+            ScrabbleApp.getScene().setRoot(root);
           } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -104,8 +208,15 @@ public class LoadingController implements Initializable {
     handleProgressValue.play();
   }
 
+  /**
+   * Increasing timebar-value here.
+   * 
+   * @author skeskinc
+   */
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
+    this.changeHint();
+    // Increasing progress-bar
     this.increaseValue();
   }
 }

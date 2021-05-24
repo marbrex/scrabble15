@@ -1,35 +1,28 @@
 package scrabble;
 
+import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import com.jfoenix.controls.JFXButton;
 import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
-import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
-import scrabble.dbhandler.Database;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Profile;
 
 /**
- * scrabble.ChooseProfileController class to select or create a profile
+ * scrabble.ChooseProfileController class to select or create a profile.
  *
  * @author skeskinc
  */
@@ -65,6 +58,7 @@ public class ChooseProfileController implements Initializable {
 
   @FXML
   private JFXButton continueButton;
+
   @FXML
   private List<Label> labels;
 
@@ -73,18 +67,15 @@ public class ChooseProfileController implements Initializable {
 
   private List<Circle> circles;
 
-  private static HumanPlayer player;
-
   private List<HumanPlayer> players;
 
   private int profilesize;
-
 
   @FXML
   private BorderPane root;
 
   /**
-   * Changing the profile of an Player
+   * Changing the profile of an Player.
    * 
    * @param event Handling ActionEvent
    * @author skeskinc
@@ -94,10 +85,8 @@ public class ChooseProfileController implements Initializable {
       if (((Circle) event.getSource()) == circles.get(i)) {
         circles.get(i).setStroke(Color.web("#000000"));
         if (!labels.get(i).getTextFill().equals(Color.web("FF0000", 0.8))) {
-          // player = players.get(i);
           Profile.setPlayer(players.get(i));
         } else {
-          // player = null;
           Profile.setPlayer(null);
         }
       } else {
@@ -107,7 +96,7 @@ public class ChooseProfileController implements Initializable {
   }
 
   /**
-   * Changing to another Scene regarding the given Resource and Style
+   * Changing to another Scene regarding the given Resource and Style.
    * 
    * @param resource Choosing Scene for the Application
    * @param style Choosing the Style-Sheet for the Scene
@@ -118,13 +107,9 @@ public class ChooseProfileController implements Initializable {
     Parent root;
     try {
       root = FXMLLoader.load(getClass().getResource(resource));
-      Button btn = ((Button) event.getSource());
-      Stage stage = (Stage) btn.getScene().getWindow();
-      Scene scene =
-          new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-      scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
-      stage.setScene(scene);
-
+      ScrabbleApp.getScene().getStylesheets().clear();
+      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource(style).toExternalForm());
+      ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -132,51 +117,10 @@ public class ChooseProfileController implements Initializable {
   }
 
   /**
-   * Changing the scene to the Mainmenu
+   * Loading images and handling Button-Events.
    * 
-   * @param event Handling ActionEvent
    * @author skeskinc
    */
-  /*
-   * public void changeScene(Event event) { Parent root; try { if (Profile.getPlayer() != null) {
-   * root = FXMLLoader.load(getClass().getResource("fxml/MainPage.fxml")); Button btn = ((Button)
-   * event.getSource()); Stage stage = (Stage) btn.getScene().getWindow(); Scene scene = new
-   * Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-   * scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
-   * stage.setScene(scene); } } catch (IOException e) { // TODO Auto-generated catch block
-   * e.printStackTrace(); } }
-   */
-
-
-  /**
-   * Changing the scene to the Registration Scene
-   * 
-   * @param event Handling ActionEvent
-   * @author skeskinc
-   */
-  /*
-   * public void changeToRegistration(Event event) { Pane newRoot; if (profilesize < 4) { try {
-   * System.out.println(getClass().getResource("fxml/createProfile.fxml")); newRoot =
-   * FXMLLoader.load(getClass().getResource("fxml/createProfile.fxml")); Button btn = ((Button)
-   * event.getSource()); Stage stage = (Stage) btn.getScene().getWindow(); Scene scene = new
-   * Scene(newRoot, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-   * scene.getStylesheets() .add(getClass().getResource("css/createProfile.css").toExternalForm());
-   * stage.setScene(scene); } catch (IOException e) { // TODO Auto-generated catch block
-   * e.printStackTrace(); } }
-   * 
-   * }
-   */
-
-  /*
-   * @FXML public void changeToDelete(Event event) { BorderPane newRoot; if (Profile.getPlayer() !=
-   * null) { try { newRoot = FXMLLoader.load(getClass().getResource("fxml/DeleteScene.fxml"));
-   * Button btn = ((Button) event.getSource()); Stage stage = (Stage) btn.getScene().getWindow();
-   * Scene scene = new Scene(newRoot, this.root.getScene().getWidth(),
-   * this.root.getScene().getHeight()); scene.getStylesheets()
-   * .add(getClass().getResource("css/createProfile.css").toExternalForm()); stage.setScene(scene);
-   * } catch (IOException e) { // TODO Auto-generated catch block e.printStackTrace(); } } }
-   */
-
   @Override
   public void initialize(URL arg0, ResourceBundle arg1) {
     labels = new ArrayList<Label>();
@@ -189,14 +133,12 @@ public class ChooseProfileController implements Initializable {
     circles.add(profileTwo);
     circles.add(profileThree);
     circles.add(profileFour);
-    // player = DBInformation.loadProfile(0);
-    // profileoneLabel.setText(player.getName());
     players = DBInformation.getPlayerProfiles();
     for (int i = 0; i < labels.size(); i++) {
       if (i <= players.size() - 1) {
         labels.get(i).setText(players.get(i).getName());
         circles.get(i).setFill(new ImagePattern(new Image(
-            getClass().getResourceAsStream("/scrabble/img/" + players.get(i).getImage()))));
+            getClass().getResourceAsStream("/img/" + players.get(i).getImage()))));
       } else {
         labels.get(i).setText("Empty");
         labels.get(i).setTextFill(Color.web("#FF0000", 0.8));
@@ -205,28 +147,30 @@ public class ChooseProfileController implements Initializable {
     profilesize = DBInformation.getProfileSize();
     Profile.setPlayer(null);
 
+    // Action on Continue-Button
     continueButton.setOnMouseClicked(event -> {
       if (Profile.getPlayer() != null) {
-        changeScene("fxml/MainPage.fxml", "css/mainMenu.css", event);
+        if(DBInformation.isFullscreen(Profile.getPlayer())) {
+          ScrabbleApp.getStage().setFullScreen(true);
+        } else {
+          ScrabbleApp.getStage().setFullScreen(false);
+        }
+        changeScene("/fxml/MainPage.fxml", "/css/mainMenu.css", event);
       }
     });
 
+    // Action on Create-Button
     createButton.setOnMouseClicked(event -> {
       if (profilesize < 4) {
-        changeScene("fxml/createProfile.fxml", "css/createProfile.css", event);
+        changeScene("/fxml/createProfile.fxml", "/css/createProfile.css", event);
       }
     });
 
+    // Action on Delete-Button
     deleteButton.setOnMouseClicked(event -> {
       if (Profile.getPlayer() != null) {
-        changeScene("fxml/DeleteScene.fxml", "css/createProfile.css", event);
+        changeScene("/fxml/DeleteScene.fxml", "/css/createProfile.css", event);
       }
     });
-
-
-
-    // Database.disconnectDB();
-
   }
-
 }

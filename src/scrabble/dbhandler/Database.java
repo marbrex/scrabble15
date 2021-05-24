@@ -8,10 +8,10 @@ import scrabble.model.*;
 
 /**
  * scrabble.dbhandler.Database class to connect to the Database, creating and being able to delete
- * tables and updating player statistics
+ * tables and updating player statistics.
  * 
  * @author mraucher
- * @author skeskinc  
+ * @author skeskinc
  */
 
 public class Database {
@@ -21,7 +21,7 @@ public class Database {
   private static PreparedStatement pstmt = null;
 
   /**
-   * Connecting to DB and creating DB File if it doesn't exist (SQLite .jar file needed!)
+   * Connecting to DB and creating DB File if it doesn't exist (SQLite .jar file needed!).
    * 
    * @author mraucher
    * @author skeskinc
@@ -43,8 +43,27 @@ public class Database {
     System.out.println("Successfully connected to DB!");
   }
 
-  /** 
-   * Disconnecting from DB 
+  /**
+   * Setting connection for specific Database.
+   * Useful for JUnit-Test.
+   * 
+   * @param name Name of the Database
+   * @author skeskinc
+   */
+  public static void setConnection(String name) {
+    try {
+      connection = DriverManager.getConnection(
+          "jdbc:sqlite:" + System.getProperty("user.home") + System.getProperty("file.separator")
+              + ".Scrabble" + System.getProperty("file.separator") + name);
+    } catch (SQLException e) {
+      System.out.println("Connection failed!");
+      System.exit(0);
+    }
+    System.out.println("Successfully connected to DB!");
+  }
+
+  /**
+   * Disconnecting from DB.
    * 
    * @author mraucher
    * @author skeskinc
@@ -60,8 +79,8 @@ public class Database {
     System.out.println("Disconnected from DB");
   }
 
-  /** 
-   * Creating tables for the Database 
+  /**
+   * Creating tables for the Database.
    * 
    * @author mraucher
    * @author skeskinc
@@ -72,7 +91,7 @@ public class Database {
         "CREATE TABLE IF NOT EXISTS Statistics (Statistic_Id INT PRIMARY KEY, Player_Name references Players (Name));");
     sqlstatements.add(
         "CREATE TABLE IF NOT EXISTS Settings (SettingsId INT PRIMARY KEY, SoundOn BOOLEAN NOT NULL,"
-            + "SoundLevel INT NOT NULL, SceneMode VARCHAR(25) NOT NULL, AIDifficulty VARCHAR(25) NOT NULL);");
+            + "SoundLevel DOUBLE NOT NULL, SceneMode VARCHAR(25) NOT NULL, AIDifficulty VARCHAR(25) NOT NULL);");
     sqlstatements.add("CREATE TABLE IF NOT EXISTS Players (Name VARCHAR(15) PRIMARY KEY NOT NULL, "
         + " GamesWon INT NOT NULL, GamesLost INT NOT NULL, Winrate DOUBLE NOT NULL, Image INT NOT NULL, SettingsId references Settings (Id));");
     try {
@@ -86,7 +105,8 @@ public class Database {
     }
   }
 
-  /** Deleting all tables which are present in the Database 
+  /**
+   * Deleting all tables which are present in the Database.
    * 
    * @author mraucher
    * @author skeskinc
@@ -98,8 +118,8 @@ public class Database {
     System.out.println("All tables dropped.");
   }
 
-  /** 
-   * Dropping Statistics Table 
+  /**
+   * Dropping Statistics Table.
    *
    * @author mraucher
    * @author skeskinc
@@ -113,7 +133,8 @@ public class Database {
     }
   }
 
-  /** Dropping Player table 
+  /**
+   * Dropping Player table.
    * 
    * @author mraucher
    */
@@ -126,7 +147,8 @@ public class Database {
     }
   }
 
-  /** Dropping Statistic table 
+  /**
+   * Dropping Statistic table.
    * 
    * @author mraucher
    */
@@ -140,7 +162,7 @@ public class Database {
   }
 
   /**
-   * Fills in player table with Player Data
+   * Fills in player table with Player Data.
    * 
    * @param settingsId the id for the settings table
    * @param name name of the player
@@ -165,7 +187,7 @@ public class Database {
   }
 
   /**
-   * Fills in settings table with default values
+   * Fills in settings table with default values.
    * 
    * @param id settingsId
    * @author mraucher
@@ -177,8 +199,8 @@ public class Database {
           "INSERT INTO Settings (SettingsId,SoundOn,SoundLevel,SceneMode,AIDifficulty) VALUES (?,?,?,?,?);");
       pstmt.setInt(1, id);
       pstmt.setBoolean(2, true);
-      pstmt.setInt(3, 50);
-      pstmt.setString(4, "Fullscreen");
+      pstmt.setDouble(3, 50.0);
+      pstmt.setString(4, "Window");
       pstmt.setString(5, "Easy");
       pstmt.executeUpdate();
 
@@ -188,7 +210,7 @@ public class Database {
   }
 
   /**
-   * Filling all tables
+   * Filling all tables.
    * 
    * @param id SettingsId and PlayerId
    * @param name player name
@@ -204,7 +226,7 @@ public class Database {
 
 
   /**
-   * Fills in statistics table with Statistic Data
+   * Fills in statistics table with Statistic Data.
    * 
    * @throws SQLException
    * @author mraucher
@@ -220,7 +242,7 @@ public class Database {
   }
 
   /**
-   * Removes Player data from the Database
+   * Removes Player data from the Database.
    * 
    * @param player the human player to be deleted from database
    * @author mraucher
@@ -241,9 +263,9 @@ public class Database {
       e.printStackTrace();
     }
   }
-  
+
   /**
-   * Removing the Settings
+   * Removing the Settings.
    * 
    * @param id removing the settings regarding the id
    * @author skeskinc
@@ -259,7 +281,7 @@ public class Database {
   }
 
   /**
-   * Returns the Connection for the DBInformation class
+   * Returns the Connection for the DBInformation class.
    * 
    * @return The current connection to the Database
    * @author mraucher

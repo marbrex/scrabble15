@@ -1,15 +1,18 @@
 package scrabble.network;
 
-import java.io.*;
-import java.net.*;
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.PrintWriter;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.SocketException;
 
-import javax.swing.SwingUtilities;
-
-import scrabble.ChatController;
-import scrabble.ClientMain;
-import javafx.application.Platform;
-
+/**
+ * scrabble.network.ServerProtocol to receive and send Client messages.
+ * 
+ * @author astarche
+ * @author skeskinc
+ */
 public class ServerProtocol extends Thread {
 
   private Socket socket;
@@ -19,6 +22,14 @@ public class ServerProtocol extends Thread {
   private int clientNumber;
   private boolean running;
 
+  /**
+   * Constructor of the ServerProtocol.
+   * 
+   * @param server Current Chat-Server
+   * @param socket Current Client-socket to work with
+   * @param clientNumber Current Number of the client to identify
+   * @author skeskinc
+   */
   public ServerProtocol(Server server, Socket socket, int clientNumber) {
     try {
       this.myServer = server;
@@ -32,17 +43,19 @@ public class ServerProtocol extends Thread {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-
   }
 
+  /**
+   * Receiving and sending Chat-Messages.
+   * 
+   * @author astarche
+   * @author skeskinc
+   */
   public void run() {
-    // String username = fromClient.readLine();
     String message;
     while (running) {
       try {
         message = fromClient.readLine();
-        // System.out.println("Second Message: " + message);
-        // System.out.println("Size of Clients: " + Server.allClients.size());
         if (message != null) {
           for (ServerProtocol sp : Server.allClients) {
             toClient = new PrintWriter(sp.socket.getOutputStream());
@@ -54,34 +67,24 @@ public class ServerProtocol extends Thread {
         this.disconnect();
       } catch (SocketException e) {
         this.disconnect();
-        e.printStackTrace();
       } catch (IOException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
     }
   }
 
-  public void closeSocket() {
-    try {
-      this.socket.close();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-  }
-
+  /**
+   * Closing ServerProtocol-socket.
+   * 
+   * @author skeskinc
+   */
   public void disconnect() {
     this.running = false;
     try {
       this.socket.close();
-      // System.out.println("ServerProtocol: disconnect");
     } catch (SocketException e) {
-      // TODO Auto-generated catch block
-
-      // e.printStackTrace();
+      // Do nothing
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }

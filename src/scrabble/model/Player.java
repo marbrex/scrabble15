@@ -2,11 +2,9 @@ package scrabble.model;
 
 import java.io.Serializable;
 import java.util.Date;
-import scrabble.game.LetterBar;
 
 /**
- * scrabble.model.Player class to store important player characteristics, e.g. the name and score of
- * the player
+ * scrabble.model.Player class to store important player characteristics.
  * 
  * @author skeskinc
  */
@@ -14,12 +12,12 @@ public abstract class Player implements Serializable {
 
   private String name;
   private int score;
-  private LetterBar rack;
+  private int id;
   private Date usedOvertime;
   private String imageurl;
 
   /**
-   * Constructor of the Player class
+   * Constructor of the Player class.
    * 
    * @author skeskinc
    */
@@ -28,25 +26,7 @@ public abstract class Player implements Serializable {
   }
 
   /**
-   * Setting your Rack in the beginning or while choosing the options 'exchange' or 'play'
-   * 
-   * @author skeskinc
-   */
-  public void settingRack() {
-    // Code needs to be implemented.
-  }
-
-  /**
-   * Clearing the rack, e.g. in the end of the game
-   * 
-   * @author skeskinc
-   */
-  public void clearRack() {
-    rack = new LetterBar();
-  }
-
-  /**
-   * Returns the name of the player
+   * Returns the name of the player.
    * 
    * @return Name of the player
    * @author skeskinc
@@ -56,7 +36,7 @@ public abstract class Player implements Serializable {
   }
 
   /**
-   * Setting the name for the player
+   * Setting the name for the player.
    * 
    * @param name Setting up the Name
    * @author skeskinc
@@ -66,7 +46,7 @@ public abstract class Player implements Serializable {
   }
 
   /**
-   * Returns the score of the player
+   * Returns the score of the player.
    * 
    * @return The score of the Player
    * @author skeskinc
@@ -76,7 +56,7 @@ public abstract class Player implements Serializable {
   }
 
   /**
-   * Setting the score of the player
+   * Setting the score of the player.
    * 
    * @param score Setting up the Score of the Player
    * @author skeskinc
@@ -84,9 +64,29 @@ public abstract class Player implements Serializable {
   public void setScore(int score) {
     this.score = score;
   }
+  
+  /**
+   * Setting the id of the player.
+   * 
+   * @param id Setting up identification number of Player
+   * @author skeskinc
+   */
+  public void setId(int id) {
+    this.id = id;
+  }
+  
+  /**
+   * Returning the id of a Player.
+   * 
+   * @return player's identification number
+   * @author skeskinc
+   */
+  public int getId() {
+    return this.id;
+  }
 
   /**
-   * Setting the overtime of the Player
+   * Setting the overtime of the Player.
    *
    * @param overtime Setting up the used Overtime of one Player
    * @author skeskinc
@@ -96,7 +96,7 @@ public abstract class Player implements Serializable {
   }
 
   /**
-   * Returns the used Overtime of the Player
+   * Returns the used Overtime of the Player.
    * 
    * @return Used Overtime of the Player
    * @author skeskinc
@@ -106,7 +106,7 @@ public abstract class Player implements Serializable {
   }
 
   /**
-   * Settings the Image for the player
+   * Settings the Image for the player.
    * 
    * @param imageindex to set an Image-URL regarding the number
    * @author skeskinc
@@ -132,7 +132,7 @@ public abstract class Player implements Serializable {
   }
 
   /**
-   * Returns the Image-URL
+   * Returns the Image-URL.
    * 
    * @return Image-URL of the Player
    * @author skeskinc

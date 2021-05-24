@@ -1,14 +1,12 @@
 package scrabble.game;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import javafx.geometry.Bounds;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.effect.DropShadow;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import scrabble.GameController;
 
 /**
@@ -18,16 +16,18 @@ import scrabble.GameController;
  *
  * @author Eldar Kasmamytov
  */
-public class LetterTile {
+public class LetterTile implements Serializable {
 
   final GameController controller;
 
   private double cellSize;
 
-  AnchorPane container;
+  public AnchorPane container;
   private Label letter;
   private Label points;
-  boolean isBlank;
+  public boolean isBlank;
+  public boolean isFrozen;
+  public boolean isNewlyPlaced;
 
   Slot slot;
 
@@ -36,6 +36,192 @@ public class LetterTile {
   private LetterTile right;
   private LetterTile bottom;
   private LetterTile left;
+
+  private void moveTileTo(Slot pointedSlot) {
+    // Creating a new LetterTile
+    if (isBlank) {
+      // blank letterTile
+
+      // Setting visible a popup window
+      controller.popupBlankBlock.setVisible(true);
+      controller.popupBlankBlock.setViewOrder(--controller.minViewOrder);
+
+      LetterBag bag = LetterBag.getInstance();
+      for (int j = 0; j < bag.getAlphabetSize(); j++) {
+        char l = bag.getLetterInAlphabet(j);
+        int v = bag.getValueInAlphabet(j);
+
+        LetterTile ltrTile = new LetterTile(l, v, cellSize, controller);
+        ltrTile.setPointsVisible(false);
+        ltrTile.isBlank = true;
+        ltrTile.container.setOnDragDetected(null);
+        ltrTile.container.setOnDragDone(null);
+        ltrTile.container.setOnMouseDragged(null);
+        ltrTile.container.setOnMouseReleased(null);
+        ltrTile.container.setOnMouseClicked(clickEvent -> {
+          System.out.println(ltrTile + " - @onMouseClicked");
+
+          // Creating a new Letter letterTile
+          LetterTile tile = new LetterTile(l, v, controller.grid.cellSize, controller);
+
+          System.out.println(ltrTile + " - @onMouseClicked - created a tile");
+
+          tile.setLetterVisible(true);
+          tile.setPointsVisible(false);
+          tile.isBlank = true;
+
+          System.out.println(ltrTile + " - @onMouseClicked - set the tile");
+
+          controller.popupBlankBlock.setVisible(false);
+          controller.okBtn.setDisable(false);
+
+          System.out.println(ltrTile + " - @onMouseClicked - removed popup and turned on OK btn");
+
+          // Adding the Letter to the Slot
+          pointedSlot.setContent(tile);
+
+          System.out.println(ltrTile + " - @onMouseClicked - Added the Letter to the Slot");
+
+          // Checking if there are any Neighbours
+          // Getting First and Last letter, both for Horizontal and Vertical
+          LetterTile mostTop = controller.grid.getMostTopOf(tile);
+          LetterTile mostRight = controller.grid.getMostRightOf(tile);
+          LetterTile mostBottom = controller.grid.getMostBottomOf(tile);
+          LetterTile mostLeft = controller.grid.getMostLeftOf(tile);
+
+          System.out.println(ltrTile + " - @onMouseClicked - got the neighbours");
+
+          System.out.println(ltrTile + " - @onMouseClicked - mostTop=" + mostTop);
+          System.out.println(ltrTile + " - @onMouseClicked - mostRight=" + mostRight);
+          System.out.println(ltrTile + " - @onMouseClicked - mostBottom=" + mostBottom);
+          System.out.println(ltrTile + " - @onMouseClicked - mostLeft=" + mostLeft);
+          System.out.println(ltrTile + " - @onMouseClicked - tile=" + tile);
+
+          if (mostLeft != tile || mostRight != tile) {
+            // There are HORIZONTAL neighbours
+            System.out.println(ltrTile + " - @onMouseClicked - creating a horizontal word");
+            new Word(mostLeft, mostRight, controller);
+          }
+
+          if (mostTop != tile || mostBottom != tile) {
+            // There are VERTICAL neighbours
+            System.out.println(ltrTile + " - @onMouseClicked - creating a vertical word");
+            new Word(mostTop, mostBottom, controller);
+          }
+
+          controller.popupBlankMessage.getChildren().clear();
+          System.out.println(ltrTile + " - @onMouseClicked - finish");
+        });
+
+        controller.popupBlankMessage.getChildren().add(ltrTile.container);
+      }
+
+      controller.okBtn.setDisable(true);
+    } else {
+      // regular letterTile
+
+      // Creating a new Letter letterTile
+      LetterTile tile = new LetterTile(getLetter(), getPoints(), cellSize, controller);
+
+      tile.setVisible(true);
+      tile.isBlank = false;
+
+      // Adding the Letter to the Slot
+      pointedSlot.setContent(tile);
+
+      // Checking if there are any Neighbours
+      // Getting First and Last letter, both for Horizontal and Vertical
+      LetterTile mostTop = controller.grid.getMostTopOf(tile);
+      LetterTile mostRight = controller.grid.getMostRightOf(tile);
+      LetterTile mostBottom = controller.grid.getMostBottomOf(tile);
+      LetterTile mostLeft = controller.grid.getMostLeftOf(tile);
+
+      if (mostLeft != tile || mostRight != tile) {
+        // There are HORIZONTAL neighbours
+
+        // Creating a Word.
+        // Fills in all data members of the Word class.
+        // It checks whether the word has no empty gaps, i.e. the word is FULL.
+        // If thw word is full, then it checks if the word is VALID.
+        new Word(mostLeft, mostRight, controller);
+      }
+
+      if (mostTop != tile || mostBottom != tile) {
+        // There are VERTICAL neighbours
+        new Word(mostTop, mostBottom, controller);
+      }
+    }
+
+    // Removing the moved LetterTile from its old Slot
+    Slot slot = this.slot;
+    if (this.slot != null) {
+      System.out.println(this + " - onDragDone - Removing the LetterTile");
+      this.slot.removeContent();
+    }
+
+    ArrayList<Word> wordsToRemove = new ArrayList<>();
+    // Searching Words that contain this Letter Tile
+    System.out.println("Words that contain just moved letter \"" + this.getLetter() + "\": ");
+    for (Word word : controller.grid.words) {
+      if (word.contains(this)) {
+        word.display();
+        System.out.print("\n");
+        wordsToRemove.add(word);
+
+        // Removing the highlighting box of the Word that was containing the moved LetterTile
+        controller.gridWrapper.getChildren().remove(word.container);
+      }
+      word.container.setViewOrder(controller.minViewOrder+1);
+    }
+    for (Word word : wordsToRemove) {
+      // Removing the Word that was containing the moved LetterTile (BACK-END)
+      controller.grid.words.remove(word);
+
+      // Shrinking the word if the removed LetterTile is first or last letter of the word
+      if (this == word.getFirst() && word.getWordLength() > 2) {
+
+        // Finding out whether the shrank word is entirely frozen
+        // in that case, a new Word will not be created
+        boolean frozenWord = true;
+        for (int j = 1; j < word.getWordLength(); j++) {
+          if (!word.getLetter(j).isFrozen) {
+            frozenWord = false;
+            break;
+          }
+        }
+
+        if (!frozenWord) {
+          Word shrank = new Word(word.getLetter(1), word.getLast(), controller);
+          shrank.container.setViewOrder(controller.minViewOrder+2);
+        }
+      }
+
+      if (this == word.getLast() && word.getWordLength() > 2) {
+
+        boolean frozenWord = true;
+        for (int j = 0; j < word.getWordLength() - 1; j++) {
+          if (!word.getLetter(j).isFrozen) {
+            frozenWord = false;
+            break;
+          }
+        }
+
+        if (!frozenWord) {
+          int ltrIdx = word.getWordLength() - 2;
+          Word shrank = new Word(word.getFirst(), word.getLetter(ltrIdx), controller);
+          shrank.container.setViewOrder(controller.minViewOrder+2);
+        }
+      }
+    }
+
+    if (!controller.letterBar.isFull()) {
+      controller.okBtn.setText("OK");
+    } else {
+      controller.okBtn.setText("PASS");
+    }
+
+    controller.grid.display();
+  }
 
   /**
    * Initiates the FRONT-end part (AnchorPane with 2 Labels inside)
@@ -78,122 +264,111 @@ public class LetterTile {
     points.getStyleClass().add("points-label");
     points.setLabelFor(container);
 
-//    container.setOnMousePressed(event -> {
-//      System.out
-//          .println("Event.getScene: (" + event.getSceneX() + ", " + event.getSceneY() + ")");
-//      System.out.println("Event.get: (" + event.getX() + ", " + event.getY() + ")\n");
-//    });
+    container.setOnMousePressed(event -> {
+      System.out
+          .println("Event.getScene: (" + event.getSceneX() + ", " + event.getSceneY() + ")");
+      System.out.println("Event.get: (" + event.getX() + ", " + event.getY() + ")\n");
+    });
 
-//    container.setOnMouseDragged(mouseEvent -> {
-//      container.toFront();
-//      container.setCursor(Cursor.CLOSED_HAND);
-//      container.setStyle("-fx-opacity: 0.6");
-//
-//      container.setLayoutX(mouseEvent.getX() + container.getLayoutX() - container.getWidth() / 2);
-//      container.setLayoutY(mouseEvent.getY() + container.getLayoutY() - container.getHeight() / 2);
-//
-//      mouseEvent.consume();
-//    });
+    container.setOnMouseDragged(mouseEvent -> {
+      controller.letterDrag = true;
 
-//    container.setOnMouseReleased(mouseEvent -> {
-//      container.setCursor(Cursor.DEFAULT);
-//      container.setStyle("-fx-opacity: 1");
-//
-//      mouseEvent.consume();
-//    });
+      container.setManaged(false);
+
+      slot.container.setViewOrder(--controller.minViewOrder);
+      Node parent = slot.container.getParent();
+      while (!parent.equals(controller.root)) {
+        parent.setViewOrder(--controller.minViewOrder);
+        parent = parent.getParent();
+      }
+
+      container.setCursor(Cursor.CLOSED_HAND);
+      container.setStyle("-fx-opacity: 0.7");
+
+      container.setLayoutX(mouseEvent.getX() + container.getLayoutX() - container.getWidth() / 2);
+      container.setLayoutY(mouseEvent.getY() + container.getLayoutY() - container.getHeight() / 2);
+
+      mouseEvent.consume();
+    });
+
+    container.setOnMouseReleased(mouseEvent -> {
+      controller.letterDrag = false;
+
+      container.setCursor(Cursor.DEFAULT);
+      container.setStyle("-fx-opacity: 1");
+
+      Bounds wrapperBounds = controller.gridWrapper.getBoundsInParent();
+      double wrapperMinX = wrapperBounds.getMinX();
+      double wrapperMinY = wrapperBounds.getMinY();
+
+      double mouseX = mouseEvent.getSceneX();
+      double mouseY = mouseEvent.getSceneY();
+
+      boolean found = false;
+
+      for (int i = 0; i < controller.grid.getGlobalSize(); i++) {
+        Slot pointedSlot = controller.grid.getSlot(i);
+
+        Bounds cellBounds = pointedSlot.container.getBoundsInParent();
+        double cellMinX = wrapperMinX + cellBounds.getMinX();
+        double cellMaxX = wrapperMinX + cellBounds.getMaxX();
+        double cellMinY = wrapperMinY + cellBounds.getMinY();
+        double cellMaxY = wrapperMinY + cellBounds.getMaxY();
+
+        if (mouseX >= cellMinX && mouseX <= cellMaxX && mouseY >= cellMinY && mouseY <= cellMaxY) {
+
+          if (pointedSlot.isFree()) {
+            found = true;
+
+            moveTileTo(pointedSlot);
+
+            break;
+          }
+        }
+      }
+
+      Bounds panelBounds = controller.lettersBlock.getParent().getBoundsInParent();
+      double panelMinX = panelBounds.getMinX();
+      double panelMinY = panelBounds.getMinY();
+
+      Bounds ltrBlockBounds = controller.lettersBlock.getBoundsInParent();
+      double ltrBlockMinX = ltrBlockBounds.getMinX();
+      double ltrBlockMinY = ltrBlockBounds.getMinY();
+
+      if (!found) {
+
+        for (int i = 0; i < controller.letterBar.getSize(); i++) {
+          Slot pointedSlot = controller.letterBar.getSlot(i);
+
+          Bounds cellBounds = pointedSlot.container.getBoundsInParent();
+          double cellMinX = ltrBlockMinX + panelMinX + cellBounds.getMinX();
+          double cellMaxX = ltrBlockMinX + panelMinX + cellBounds.getMaxX();
+          double cellMinY = ltrBlockMinY + panelMinY + cellBounds.getMinY();
+          double cellMaxY = ltrBlockMinY + panelMinY + cellBounds.getMaxY();
+
+          if (mouseX >= cellMinX && mouseX <= cellMaxX && mouseY >= cellMinY
+              && mouseY <= cellMaxY) {
+
+            if (pointedSlot.isFree()) {
+              found = true;
+
+              moveTileTo(pointedSlot);
+
+              break;
+            }
+          }
+        }
+      }
+
+      if (!found) {
+        this.container.setManaged(true);
+      }
+
+      mouseEvent.consume();
+    });
 
     container.setOnMouseEntered(event -> container.setStyle("-fx-opacity: 0.8"));
     container.setOnMouseExited(event -> container.setStyle("-fx-opacity: 1"));
-
-    container.setOnDragDetected(event -> {
-      // drag was detected, start drag-and-drop gesture
-      // System.out.println(this + " - onDragDetected");
-
-      // allow any transfer mode
-      Dragboard db = container.startDragAndDrop(TransferMode.ANY);
-
-      // put a string on drag board
-      ClipboardContent content = new ClipboardContent();
-      content.putString("letter=" + letter.getText() + "&points=" + points.getText() + "&isBlank="
-          + this.isBlank);
-      db.setContent(content);
-
-      event.consume();
-    });
-
-    container.setOnDragDone(event -> {
-      // the drag-and-drop gesture ended
-      // System.out.println(this + " - onDragDone");
-
-      // if the data was successfully moved, clear it
-      if (event.getTransferMode() == TransferMode.MOVE) {
-
-        Slot slot = this.slot;
-        if (slot != null) {
-          System.out.println(this + " - onDragDone - Removing the LetterTile");
-          slot.removeContent();
-        }
-
-        ArrayList<Word> wordsToRemove = new ArrayList<>();
-        for (Word word : controller.grid.words) {
-          if (word.contains(this)) {
-            wordsToRemove.add(word);
-
-            // Removing the highlighting box of the Word that was containing the moved LetterTile
-            controller.gridWrapper.getChildren().remove(word.container);
-          }
-        }
-        for (Word word : wordsToRemove) {
-          // Removing the Word that was containing the moved LetterTile (BACK-END)
-          controller.grid.words.remove(word);
-
-          // Shrinking the word if the removed LetterTile is first or last letter of the word
-          if (this == word.getFirst() && word.getWordLength() > 2) {
-
-            // Finding out whether the shrank word is entirely frozen
-            // in that case, a new Word will not be created
-            boolean frozenWord = true;
-            for (int i = 1; i < word.getWordLength(); i++) {
-              if (!word.getLetter(i).container.isMouseTransparent()) {
-                frozenWord = false;
-                break;
-              }
-            }
-
-            if (!frozenWord) {
-              new Word(word.getLetter(1), word.getLast(), controller);
-            }
-          }
-
-          if (this == word.getLast() && word.getWordLength() > 2) {
-
-            boolean frozenWord = true;
-            for (int i = 0; i < word.getWordLength() - 1; i++) {
-              if (!word.getLetter(i).container.isMouseTransparent()) {
-                frozenWord = false;
-                break;
-              }
-            }
-
-            if (!frozenWord) {
-              int ltrIdx = word.getWordLength() - 2;
-              new Word(word.getFirst(), word.getLetter(ltrIdx), controller);
-            }
-          }
-        }
-
-        if (!controller.letterBar.isFull()) {
-          controller.okBtn.setText("OK");
-        } else {
-          controller.okBtn.setText("PASS");
-        }
-
-        controller.grid.display();
-
-      }
-
-      event.consume();
-    });
 
     container.getChildren().add(letter);
     container.getChildren().add(points);
@@ -478,5 +653,13 @@ public class LetterTile {
    */
   public int getPoints() {
     return Integer.parseInt(points.getText());
+  }
+
+  public void setDisable(boolean value) {
+    container.setDisable(value);
+  }
+
+  public void setMouseTransparent(boolean value) {
+    container.setMouseTransparent(value);
   }
 }

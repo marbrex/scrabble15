@@ -24,7 +24,8 @@ public class Word {
   private boolean isValid;
   private boolean isHorizontal;
   private boolean isVertical;
-  boolean frozen;
+  public boolean frozen;
+  public boolean newlyPlaced;
 
   private int multiplierValue;
   private boolean multiplier;
@@ -120,6 +121,7 @@ public class Word {
     AnchorPane.setTopAnchor(pointsLabel, -15.0);
 
     container.setMouseTransparent(true);
+    container.setViewOrder(--controller.minViewOrder);
 
     // Adding the Highlighted Box to the GridPane's wrapper
     controller.gridWrapper.getChildren().add(container);
@@ -206,14 +208,14 @@ public class Word {
             Multiplier mult = controller.grid.getSlot(i, startY).getMultiplier();
             if (mult.getScope().equals("LETTER")) {
               if (!controller.grid.getSlotContent(i, startY).isBlank) {
-                if (!controller.grid.getSlot(i, startY).container.isMouseTransparent()) {
+                if (!controller.grid.getSlot(i, startY).isFrozen) {
                   points += controller.grid.getSlotContent(i, startY).getPoints() * mult.getValue();
                 } else {
                   points += controller.grid.getSlotContent(i, startY).getPoints();
                 }
               }
             } else if (mult.getScope().equals("WORD")) {
-              if (!controller.grid.getSlot(i, startY).container.isMouseTransparent()) {
+              if (!controller.grid.getSlot(i, startY).isFrozen) {
                 multiplier = true;
                 multiplierValue *= mult.getValue();
               }
@@ -278,14 +280,14 @@ public class Word {
             Multiplier mult = controller.grid.getSlot(startX, j).getMultiplier();
             if (mult.getScope().equals("LETTER")) {
               if (!controller.grid.getSlotContent(startX, j).isBlank) {
-                if (!controller.grid.getSlot(startX, j).container.isMouseTransparent()) {
+                if (!controller.grid.getSlot(startX, j).isFrozen) {
                   points += controller.grid.getSlotContent(startX, j).getPoints() * mult.getValue();
                 } else {
                   points += controller.grid.getSlotContent(startX, j).getPoints();
                 }
               }
             } else if (mult.getScope().equals("WORD")) {
-              if (!controller.grid.getSlot(startX, j).container.isMouseTransparent()) {
+              if (!controller.grid.getSlot(startX, j).isFrozen) {
                 multiplier = true;
                 multiplierValue *= mult.getValue();
               }
@@ -543,5 +545,9 @@ public class Word {
    */
   public LetterTile getLast() {
     return w.getLast();
+  }
+
+  public void setMouseTransparent(boolean value) {
+    container.setMouseTransparent(value);
   }
 }

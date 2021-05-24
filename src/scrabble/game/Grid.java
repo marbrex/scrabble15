@@ -29,9 +29,9 @@ public class Grid {
   double padding;
   double padSize;
   private double paneSize;
-  double cellSize;
+  public double cellSize;
 
-  ArrayList<Word> words;
+  public ArrayList<Word> words;
 
   GridPane container;
 
@@ -499,7 +499,7 @@ public class Grid {
 
     ArrayList<Slot> validStartingSlots = new ArrayList<>();
 
-    if (controller.roundCounter == 0) {
+    if (controller.roundCounter == 1) {
       // It's 1st round
       // Adding the center slot as Starting Point
       validStartingSlots.add(getSlot(size / 2, size / 2));
@@ -507,11 +507,8 @@ public class Grid {
     } else {
       // It's 2nd+ round
       // Searching all frozen words and adding them into Starting Slots Array
-      System.out.println("Frozen words: ");
       for (Word word : words) {
         if (word.frozen) {
-          word.display();
-          System.out.print("\n");
           for (int j = 0; j < word.getWordLength(); j++) {
             validStartingSlots.add(word.getLetter(j).slot);
           }
@@ -628,6 +625,7 @@ public class Grid {
         controller.gridWrapper.getChildren().remove(popup);
         controller.okBtn.setDisable(false);
       });
+      popup.setViewOrder(--controller.minViewOrder);
 
       Label errorLabel = new Label(errorMessage);
       errorLabel.setAlignment(Pos.CENTER);
@@ -647,8 +645,6 @@ public class Grid {
       System.out.println("ROUND OVER\nWORD-S ARE VALIDATED\nPROCEEDING TO THE NEXT PLAYER...");
 
       res = true;
-
-      controller.roundCounter++;
 
       freezeWords();
     }
@@ -679,6 +675,7 @@ public class Grid {
 
           if (l < word.getWordLength() - 1) {
             StackPane gap = new StackPane();
+            gap.setViewOrder(--controller.minViewOrder);
             gap.setPrefSize(padSize + 1, word.getLetter(l).container.getHeight());
             gap.setMinSize(padSize + 1, word.getLetter(l).container.getHeight());
             gap.setMaxSize(padSize + 1, word.getLetter(l).container.getHeight());
@@ -741,10 +738,14 @@ public class Grid {
 
         word.getLetter(l).slot.container.setEffect(null);
         word.getLetter(l).slot.container.setMouseTransparent(true);
+        word.getLetter(l).slot.isFrozen = true;
         word.getLetter(l).container.setMouseTransparent(true);
+        word.getLetter(l).isFrozen = true;
+        word.getLetter(l).isNewlyPlaced = true;
       }
 
       word.frozen = true;
+      word.newlyPlaced = true;
 //      controller.gridWrapper.getChildren().remove(words.get(w).container);
       word.container.getStyleClass().clear();
       word.container.getChildren().clear();

@@ -1,12 +1,18 @@
 package scrabble.model;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
 import scrabble.game.Word;
 
 /**
- * scrabble.model.Dictionary class to import the word list, adding or removing words from the
- * Dictionary
+ * scrabble.model.Dictionary class to set-up the Dictionary.
  * 
  * @author skeskinc
  */
@@ -16,9 +22,11 @@ public class Dictionary {
   private static BufferedReader in;
   private static List<String> words = new ArrayList<String>();
   private static List<String> definitions = new ArrayList<String>();
+  private static HashSet<String> set;
+
 
   /**
-   * Setting the Dictionary -> following the Format is necessary!
+   * Setting the Dictionary.
    * 
    * @param file to read the File
    * @author skeskinc
@@ -41,7 +49,7 @@ public class Dictionary {
           } else if (i == c.length - 1) {
             word = msg.substring(0, i + 1);
           }
-          if (word != null && word.length() <= 15) {
+          if (word != null && word.length() <= 15 && word.matches("[a-zA-Z]+")) {
             words.add(word);
             break;
           }
@@ -54,6 +62,7 @@ public class Dictionary {
           }
         }
       }
+      removeDoubles();
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -64,7 +73,7 @@ public class Dictionary {
   }
 
   /**
-   * Returns a list of words
+   * Returns a list of words.
    * 
    * @return list of words
    * @author skeskinc
@@ -74,7 +83,7 @@ public class Dictionary {
   }
 
   /**
-   * Returns a list of all Definitions
+   * Returns a list of all Definitions.
    * 
    * @return all definitions which are present in the File
    * @author skeskinc
@@ -84,7 +93,7 @@ public class Dictionary {
   }
 
   /**
-   * Returns the size of the Dictionary
+   * Returns the size of the Dictionary.
    * 
    * @return Size of the Dictionary
    * @author skeskinc
@@ -94,7 +103,7 @@ public class Dictionary {
   }
 
   /**
-   * Checks, if given word matches a word of the Dictionary
+   * Checks, if given word matches a word of the Dictionary.
    * 
    * @param word Matching given word with words from Dictionary
    * @author skeskinc
@@ -109,7 +118,7 @@ public class Dictionary {
   }
 
   /**
-   * Adds a Word into the Word-List
+   * Adds a Word into the Word-List.
    * 
    * @param word Adding given word to dictionary
    * @author skeskinc
@@ -122,7 +131,7 @@ public class Dictionary {
   }
 
   /**
-   * Removes Word from the Word-List
+   * Removes Word from the Word-List.
    * 
    * @param word Removing given word from dictionary
    * @author skeskinc
@@ -135,4 +144,15 @@ public class Dictionary {
       }
     }
   }
+  
+  /**
+   * Removing words, which are present multiple times.
+   * 
+   * @author skeskinc
+   */
+  public static void removeDoubles() {
+    set = new HashSet<String>(words);
+    words = new ArrayList<String>(set);
+    Collections.sort(words);
+ }
 }
