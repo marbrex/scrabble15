@@ -30,7 +30,7 @@ public class Word {
   private int multiplierValue;
   private boolean multiplier;
 
-  AnchorPane container;
+  public AnchorPane container;
   Label pointsLabel;
 
   /**
@@ -142,6 +142,7 @@ public class Word {
     isHorizontal = false;
     isVertical = false;
     frozen = false;
+    newlyPlaced = true;
 
     multiplier = false;
     multiplierValue = 1;
@@ -166,6 +167,7 @@ public class Word {
     wordLength = 0;
     isValid = false;
     frozen = false;
+    newlyPlaced = true;
 
     multiplier = false;
     multiplierValue = 1;
@@ -337,8 +339,12 @@ public class Word {
    * @return TRUE if contains, FALSE otherwise
    */
   public boolean contains(LetterTile tile) {
+    System.out.println("@contains()");
     for (int i = 0; i < wordLength; i++) {
-      if (w.get(i) == tile) {
+      System.out.println("\n@contains() - comparing: ");
+      System.out.println(w.get(i) + " " + w.get(i).getLetter());
+      System.out.println(tile + " " + tile.getLetter());
+      if (w.get(i).equals(tile)) {
         return true;
       }
     }

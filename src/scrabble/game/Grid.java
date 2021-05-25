@@ -500,18 +500,27 @@ public class Grid {
     ArrayList<Slot> validStartingSlots = new ArrayList<>();
 
     if (controller.roundCounter == 1) {
+      System.out.println("\n@verifyWordsValidity - 1st round");
       // It's 1st round
       // Adding the center slot as Starting Point
       validStartingSlots.add(getSlot(size / 2, size / 2));
 
     } else {
+      System.out.println("\n@verifyWordsValidity - 2nd+ round");
       // It's 2nd+ round
       // Searching all frozen words and adding them into Starting Slots Array
+
+      System.out.println("@verifyWordsValidity - Words:");
       for (Word word : words) {
+        System.out.println("@verifyWordsValidity - " + word.getWordAsString());
         if (word.frozen) {
+          System.out.println("@verifyWordsValidity - frozen");
+          System.out.println("@verifyWordsValidity - tiles:");
           for (int j = 0; j < word.getWordLength(); j++) {
+            System.out.print(word.getLetter(j).getLetter() + " ");
             validStartingSlots.add(word.getLetter(j).slot);
           }
+          System.out.print("\n");
         }
       }
     }
@@ -546,13 +555,18 @@ public class Grid {
         frozenWordsCounter++;
       }
 
+      System.out.println("\n@verifyWordsValidity - validStartingSlots: ");
       for (Slot slot : validStartingSlots) {
+        System.out.println("\n" + slot + " " + slot.content.getLetter());
         // we want to find out whether at least one starting slot is used by a word
-        if (!slot.isFree() && word.contains(slot.content)) {
+        if (word.contains(slot.content) && !slot.isFree()) {
+          System.out.print(slot.content.getLetter() + " ");
+
           wordsUsingStartSlot++;
           break;
         }
       }
+      System.out.print("\n");
     }
 
     boolean noSingleTiles = true;
@@ -745,7 +759,6 @@ public class Grid {
       }
 
       word.frozen = true;
-      word.newlyPlaced = true;
 //      controller.gridWrapper.getChildren().remove(words.get(w).container);
       word.container.getStyleClass().clear();
       word.container.getChildren().clear();

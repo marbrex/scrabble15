@@ -284,7 +284,7 @@ public class GameController {
           shuffleBtn.setMouseTransparent(false);
 
           // starting the timer (10 minutes for each turn)
-          timer = new Timer();
+          timer = new Timer(true);
 
           TimerTask endMove = new TimerTask() {
             @Override
@@ -439,7 +439,7 @@ public class GameController {
                   + "}";
 
               System.out.println(action);
-              scoreLabel.setText(String.valueOf(score));
+//              scoreLabel.setText(String.valueOf(score));
 
               protocol.sendEndMessage(action, score);
             }
@@ -456,6 +456,7 @@ public class GameController {
         Platform.runLater(() -> {
           // here the actions of a other player will be received
           System.out.println("GAME CONTROLLER : Other action received in controller");
+          ArrayList<LetterTile> ltrTiles = new ArrayList<>();
 
           JSONObject data = new JSONObject(action);
           JSONArray words = data.getJSONArray("words");
@@ -463,8 +464,7 @@ public class GameController {
             JSONObject word = words.getJSONObject(i);
             JSONArray tiles = word.getJSONArray("tiles");
 
-            LetterTile first = new LetterTile(thisController);
-            LetterTile last = new LetterTile(thisController);
+
             for (int j = 0; j < tiles.length(); j++) {
               JSONObject tile = tiles.getJSONObject(j);
 
@@ -487,18 +487,17 @@ public class GameController {
               grid.getSlot(col, row).isFrozen = true;
               grid.getSlot(col, row).setContent(ltrTile);
 
-              if (i == 0) {
-                first = ltrTile;
-              }
-              else if (i == tiles.length() - 1) {
-                last = ltrTile;
-              }
+              ltrTiles.add(ltrTile);
             }
 
-            Word w = new Word(first, last, thisController);
+            System.out.println("First: " + ltrTiles.get(0));
+            System.out.println("Last: " + ltrTiles.get(ltrTiles.size()-1));
+
+            Word w = new Word(ltrTiles.get(0), ltrTiles.get(ltrTiles.size()-1), thisController);
             w.newlyPlaced = false;
             w.frozen = true;
             w.setMouseTransparent(true);
+            gridWrapper.getChildren().remove(w.container);
           }
         });
       }
@@ -736,6 +735,8 @@ public class GameController {
         nickname.getStyleClass().add("players-name");
         Label score = new Label(String.valueOf(player.getScore()));
         score.getStyleClass().add("players-score");
+        System.out.println("ID transmitted: " + player.getId());
+        System.out.println("ID profile: " + Profile.getPlayer().getId());
         if (player.getId() == Profile.getPlayer().getId()) {
           scoreLabel = score;
         }
