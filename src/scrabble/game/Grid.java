@@ -495,27 +495,28 @@ public class Grid {
    * @return True if input is valid, False otherwise
    */
   public boolean verifyWordsValidity() {
+    System.out.println("\n-----@Grid verifyWordsValidity() START-----");
     boolean res = false;
 
     ArrayList<Slot> validStartingSlots = new ArrayList<>();
 
     if (controller.roundCounter == 1) {
-      System.out.println("\n@verifyWordsValidity - 1st round");
+      System.out.println("1st round");
       // It's 1st round
       // Adding the center slot as Starting Point
       validStartingSlots.add(getSlot(size / 2, size / 2));
 
     } else {
-      System.out.println("\n@verifyWordsValidity - 2nd+ round");
+      System.out.println("2nd+ round");
       // It's 2nd+ round
       // Searching all frozen words and adding them into Starting Slots Array
 
-      System.out.println("@verifyWordsValidity - Words:");
+      System.out.println("Words:");
       for (Word word : words) {
-        System.out.println("@verifyWordsValidity - " + word.getWordAsString());
+        System.out.println(word.getWordAsString());
+        System.out.println("is frozen: " + word.frozen);
         if (word.frozen) {
-          System.out.println("@verifyWordsValidity - frozen");
-          System.out.println("@verifyWordsValidity - tiles:");
+          System.out.println("tiles:");
           for (int j = 0; j < word.getWordLength(); j++) {
             System.out.print(word.getLetter(j).getLetter() + " ");
             validStartingSlots.add(word.getLetter(j).slot);
@@ -532,10 +533,9 @@ public class Grid {
     int nbVertical = 0;
 
     for (Word word : words) {
-      System.out.println("@verifyWordsValidity - current word: ");
-      word.display();
-      System.out.print("\n");
-      System.out.println("@verifyWordsValidity - is frozen: " + word.frozen);
+      System.out.println("current word: " + word.getWordAsString());
+      System.out.println("is frozen: " + word.frozen);
+      System.out.println("is newly placed: " + word.newlyPlaced);
 
       // verifying if all words present in the grid are valid
       // (by counting the number of valid words and comparing it to number of all words)
@@ -555,18 +555,22 @@ public class Grid {
         frozenWordsCounter++;
       }
 
-      System.out.println("\n@verifyWordsValidity - validStartingSlots: ");
+      System.out.println("validStartingSlots: ");
       for (Slot slot : validStartingSlots) {
-        System.out.println("\n" + slot + " " + slot.content.getLetter());
+        System.out.println("Current valid starting slot: " + slot + " " + slot.content.getLetter());
         // we want to find out whether at least one starting slot is used by a word
         if (word.contains(slot.content) && !slot.isFree()) {
-          System.out.print(slot.content.getLetter() + " ");
+          System.out.print(word.getWordAsString() + " uses that slot");
+          System.out.print("check next newly placed words...");
 
           wordsUsingStartSlot++;
           break;
         }
+        else {
+          System.out.print(word.getWordAsString() + " doesn't use that slot");
+          System.out.print("check if " + word.getWordAsString() + " uses another start slot...");
+        }
       }
-      System.out.print("\n");
     }
 
     boolean noSingleTiles = true;
@@ -583,6 +587,9 @@ public class Grid {
       }
     }
 
+    System.out.println("words using starting slots: " + wordsUsingStartSlot);
+    System.out.println("grid.words.size(): " + words.size());
+
     String errorMessage = "";
     if (wordsUsingStartSlot == words.size()) {
       // at least one of the previous letters is used by ALL new words
@@ -597,7 +604,7 @@ public class Grid {
           System.out.println("ALL WORDS ARE VALID !");
 
           if (nbHorizontal == words.size() - frozenWordsCounter
-              || nbVertical == words.size() - frozenWordsCounter) {
+              |nbVertical == words.size() - frozenWordsCounter) {
             // All words have the same direction
             System.out.println("ALL WORDS HAVE THE SAME DIRECTION !");
 
@@ -656,17 +663,20 @@ public class Grid {
 
     } else {
       // everything is OK
-      System.out.println("ROUND OVER\nWORD-S ARE VALIDATED\nPROCEEDING TO THE NEXT PLAYER...");
+      System.out.println("WORD-S ARE VALIDATED");
 
       res = true;
 
       freezeWords();
     }
 
+    System.out.println("return " + res);
+    System.out.println("-----@Grid verifyWordsValidity() END-----");
     return res;
   }
 
   private void freezeWords() {
+    System.out.println("\nj-----@Grid freezeWords() START-----");
 
     for (Word word : words) {
       // words present in the grid
@@ -676,79 +686,82 @@ public class Grid {
 
         word.getLetter(l).container.getStyleClass().clear();
         word.getLetter(l).container.getStyleClass().add("letter-btn");
+        word.getLetter(l).container.getStyleClass().add("letter-btn-frozen");
 
-        if (word.isHorizontal()) {
+//        if (word.isHorizontal()) {
+//
+//          if (l == 0) {
+//            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-min");
+//          } else if (l < word.getWordLength() - 1) {
+//            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-mid");
+//          } else if (l == word.getWordLength() - 1) {
+//            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-max");
+//          }
+//
+////          if (l < word.getWordLength() - 1) {
+////            StackPane gap = new StackPane();
+////            gap.setViewOrder(--controller.minViewOrder);
+////            gap.setPrefSize(padSize + 1, word.getLetter(l).container.getHeight());
+////            gap.setMinSize(padSize + 1, word.getLetter(l).container.getHeight());
+////            gap.setMaxSize(padSize + 1, word.getLetter(l).container.getHeight());
+////            gap.getStyleClass().add("gap-hor");
+////
+////            controller.gridWrapper.getChildren().add(gap);
+////
+////            gap.setTranslateX(
+////                word.getLetter(l).slot.container.getBoundsInParent().getMaxX() - 1);
+////            gap.setTranslateY(
+////                word.getLetter(l).slot.container.getBoundsInParent().getMinY());
+////
+////            word.getLetter(l).slot.container.boundsInParentProperty()
+////                .addListener((obs, oldValue, newValue) -> {
+////                  gap.setTranslateX(newValue.getMaxX() - 1);
+////                  gap.setTranslateY(newValue.getMinY());
+////                });
+////
+////            gap.prefHeightProperty().bind(word.getLetter(l).container.heightProperty());
+////            gap.minHeightProperty().bind(word.getLetter(l).container.heightProperty());
+////            gap.maxHeightProperty().bind(word.getLetter(l).container.heightProperty());
+////          }
+//
+//        } else if (word.isVertical()) {
+//
+//          if (l == 0) {
+//            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-min");
+//          } else if (l < word.getWordLength() - 1) {
+//            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-mid");
+//          } else if (l == word.getWordLength() - 1) {
+//            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-max");
+//          }
+//
+////          if (l < word.getWordLength() - 1) {
+////            StackPane gap = new StackPane();
+////            gap.setPrefSize(word.getLetter(l).container.getWidth(), padSize + 1);
+////            gap.setMinSize(word.getLetter(l).container.getWidth(), padSize + 1);
+////            gap.setMaxSize(word.getLetter(l).container.getWidth(), padSize + 1);
+////            gap.getStyleClass().add("gap-ver");
+////
+////            controller.gridWrapper.getChildren().add(gap);
+////
+////            gap.setTranslateX(
+////                word.getLetter(l).slot.container.getBoundsInParent().getMinX() + 1);
+////            gap.setTranslateY(
+////                word.getLetter(l).slot.container.getBoundsInParent().getMaxY() - 1);
+////
+////            word.getLetter(l).slot.container.boundsInParentProperty()
+////                .addListener((obs, oldValue, newValue) -> {
+////                  gap.setTranslateX(newValue.getMinX() + 1);
+////                  gap.setTranslateY(newValue.getMaxY() - 1);
+////                });
+////
+////            gap.prefWidthProperty().bind(word.getLetter(l).container.widthProperty());
+////            gap.minWidthProperty().bind(word.getLetter(l).container.widthProperty());
+////            gap.maxWidthProperty().bind(word.getLetter(l).container.widthProperty());
+////          }
+//
+//        }
 
-          if (l == 0) {
-            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-min");
-          } else if (l < word.getWordLength() - 1) {
-            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-mid");
-          } else if (l == word.getWordLength() - 1) {
-            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-max");
-          }
 
-          if (l < word.getWordLength() - 1) {
-            StackPane gap = new StackPane();
-            gap.setViewOrder(--controller.minViewOrder);
-            gap.setPrefSize(padSize + 1, word.getLetter(l).container.getHeight());
-            gap.setMinSize(padSize + 1, word.getLetter(l).container.getHeight());
-            gap.setMaxSize(padSize + 1, word.getLetter(l).container.getHeight());
-            gap.getStyleClass().add("gap-hor");
-
-            controller.gridWrapper.getChildren().add(gap);
-
-            gap.setTranslateX(
-                word.getLetter(l).slot.container.getBoundsInParent().getMaxX() - 1);
-            gap.setTranslateY(
-                word.getLetter(l).slot.container.getBoundsInParent().getMinY());
-
-            word.getLetter(l).slot.container.boundsInParentProperty()
-                .addListener((obs, oldValue, newValue) -> {
-                  gap.setTranslateX(newValue.getMaxX() - 1);
-                  gap.setTranslateY(newValue.getMinY());
-                });
-
-            gap.prefHeightProperty().bind(word.getLetter(l).container.heightProperty());
-            gap.minHeightProperty().bind(word.getLetter(l).container.heightProperty());
-            gap.maxHeightProperty().bind(word.getLetter(l).container.heightProperty());
-          }
-
-        } else if (word.isVertical()) {
-
-          if (l == 0) {
-            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-min");
-          } else if (l < word.getWordLength() - 1) {
-            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-mid");
-          } else if (l == word.getWordLength() - 1) {
-            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-max");
-          }
-
-          if (l < word.getWordLength() - 1) {
-            StackPane gap = new StackPane();
-            gap.setPrefSize(word.getLetter(l).container.getWidth(), padSize + 1);
-            gap.setMinSize(word.getLetter(l).container.getWidth(), padSize + 1);
-            gap.setMaxSize(word.getLetter(l).container.getWidth(), padSize + 1);
-            gap.getStyleClass().add("gap-ver");
-
-            controller.gridWrapper.getChildren().add(gap);
-
-            gap.setTranslateX(
-                word.getLetter(l).slot.container.getBoundsInParent().getMinX() + 1);
-            gap.setTranslateY(
-                word.getLetter(l).slot.container.getBoundsInParent().getMaxY() - 1);
-
-            word.getLetter(l).slot.container.boundsInParentProperty()
-                .addListener((obs, oldValue, newValue) -> {
-                  gap.setTranslateX(newValue.getMinX() + 1);
-                  gap.setTranslateY(newValue.getMaxY() - 1);
-                });
-
-            gap.prefWidthProperty().bind(word.getLetter(l).container.widthProperty());
-            gap.minWidthProperty().bind(word.getLetter(l).container.widthProperty());
-            gap.maxWidthProperty().bind(word.getLetter(l).container.widthProperty());
-          }
-
-        }
 
         word.getLetter(l).slot.container.setEffect(null);
         word.getLetter(l).slot.container.setMouseTransparent(true);
@@ -763,6 +776,8 @@ public class Grid {
       word.container.getStyleClass().clear();
       word.container.getChildren().clear();
     }
+
+    System.out.println("-----@Grid freezeWords() END-----");
   }
 
 

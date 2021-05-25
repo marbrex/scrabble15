@@ -45,6 +45,7 @@ import scrabble.game.LetterBag;
 import scrabble.game.LetterBar;
 import scrabble.game.LetterBag.Tile;
 import scrabble.game.LetterTile;
+import scrabble.game.Slot;
 import scrabble.game.Word;
 import scrabble.model.AiPlayer;
 import scrabble.model.Dictionary;
@@ -474,20 +475,32 @@ public class GameController {
               int value = tile.getInt("value");
               boolean isBlank = tile.getBoolean("isBlank");
 
-              LetterTile ltrTile = new LetterTile(letter, value, grid.cellSize, thisController);
-              ltrTile.setMouseTransparent(true);
-              ltrTile.isFrozen = true;
-              ltrTile.isNewlyPlaced = false;
-              ltrTile.isBlank = isBlank;
-              if (isBlank) {
-                ltrTile.setPointsVisible(false);
-                ltrTile.setLetterVisible(true);
+              Slot slot = grid.getSlot(col, row);
+
+              System.out.println("Slot is: " + slot);
+              System.out.println(" is free? " + slot.isFree());
+              System.out.println(" is frozen? " + slot.isFrozen);
+              if (slot.isFree()) {
+                LetterTile ltrTile = new LetterTile(letter, value, grid.cellSize, thisController);
+                ltrTile.setMouseTransparent(true);
+                ltrTile.isFrozen = true;
+                ltrTile.container.getStyleClass().add("letter-btn-frozen");
+                ltrTile.isNewlyPlaced = false;
+                ltrTile.isBlank = isBlank;
+                if (isBlank) {
+                  ltrTile.setPointsVisible(false);
+                  ltrTile.setLetterVisible(true);
+                }
+
+                slot.isFrozen = true;
+                slot.setContent(ltrTile);
+                slot.removeEffect();
+
+                ltrTiles.add(ltrTile);
               }
-
-              grid.getSlot(col, row).isFrozen = true;
-              grid.getSlot(col, row).setContent(ltrTile);
-
-              ltrTiles.add(ltrTile);
+              else {
+                ltrTiles.add(slot.content);
+              }
             }
 
             System.out.println("First: " + ltrTiles.get(0));
@@ -499,6 +512,13 @@ public class GameController {
             w.setMouseTransparent(true);
             gridWrapper.getChildren().remove(w.container);
           }
+
+          System.out.println("grid.words: ");
+          grid.words.forEach(word -> {
+            word.getWordAsString();
+            System.out.print(" ");
+          });
+          System.out.print("\n");
         });
       }
 

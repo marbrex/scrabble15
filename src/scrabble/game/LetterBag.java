@@ -237,13 +237,13 @@ public class LetterBag implements Serializable {
 
       float random = r.nextFloat();
 
-      if (random <= 0.05) {
+      if (random <= 0.06) {
         bag.elementSet().forEach(tile -> {
           if (tile.isBlank) {
             subset.add(tile);
           }
         });
-      } else if (random <= 0.45) {
+      } else if (random <= 0.53) {
         bag.elementSet().forEach(tile -> {
           if (tile.isVowel) {
             subset.add(tile);
