@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 import scrabble.model.HumanPlayer;
 
 
@@ -161,7 +162,8 @@ public class AfterGameController implements Initializable {
     this.prepareLoop();
     this.setAnnouncement();
     closeBtn.setOnMouseClicked(e -> {
-      
+      Stage stage = (Stage) closeBtn.getScene().getWindow();
+      stage.close();
     });
   }
 
