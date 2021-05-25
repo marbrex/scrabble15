@@ -17,13 +17,11 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.application.Platform;
-import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -31,23 +29,19 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
-import javafx.stage.Stage;
-import netscape.javascript.JSObject;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import scrabble.game.Grid;
 import scrabble.game.LeaderBoard;
 import scrabble.game.LetterBag;
-import scrabble.game.LetterBar;
 import scrabble.game.LetterBag.Tile;
+import scrabble.game.LetterBar;
 import scrabble.game.LetterTile;
 import scrabble.game.Slot;
 import scrabble.game.Word;
-import scrabble.model.AiPlayer;
 import scrabble.model.Dictionary;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
@@ -58,25 +52,12 @@ import scrabble.network.NetworkGame;
 import scrabble.network.NetworkScreen;
 
 /**
- * <h1>The Main Game Controller linked with "interface.fxml" file.</h1>
+ * The Main Game Controller linked with "interface.fxml" file. It manages every element in the game
+ * field.
  *
- * <h2>Main functions:</h2>
- * <ul>
- * <li>Initialize cells (Rectangle) of the 15x15 grid (GridPane).</li>
- * <li>Initialize proposed letters.</li>
- * </ul>
- *
- * @author Eldar Kasmamytov
+ * @author ekasmamy
  */
 public class GameController {
-
-  /* Some reminders:
-   * - @FXML annotation on a member declares that the FXML loader can
-   * access the member even if it is private.
-   * - Only one controller is allowed per FXML document (must be specified on the root element).
-   * - If the name of an accessible instance variable matches the fx:id attribute of an element,
-   * the object reference from FXML is automatically copied into the controller instance variable.
-   * */
 
   /**
    * List of currently proposed Letters.
@@ -101,12 +82,6 @@ public class GameController {
    */
   @FXML
   public JFXButton shuffleBtn;
-
-  /**
-   * Pane which stores time (located at the top of Side Panel)
-   */
-  @FXML
-  public Pane timePane;
 
   /**
    * The root element in FXML.
@@ -144,12 +119,12 @@ public class GameController {
   public int roundCounter;
 
   /**
-   * protocol for Network communication during a Network Game
+   * Protocol for Network communication during a Network Game.
    */
   private NetworkScreen protocol;
 
   /**
-   * boolean variable to control Host specific actions in a network game
+   * Boolean variable to control Host specific actions in a network game.
    */
   private boolean isHost;
 
@@ -206,18 +181,19 @@ public class GameController {
   /**
    * Constructor for Network games.
    *
-   * @param protocol protocol for server communication
-   * @param isHost variable for host detection
-   * @param mapContent content of a specific field multiplier file
-   * @param players list of the game members
-   * @param dictionary dictionary string chosen by host
+   * @param protocol   protocol for server communication.
+   * @param isHost     variable for host detection.
+   * @param mapContent content of a specific field multiplier file.
+   * @param players    list of the game members.
+   * @param dictionary dictionary string chosen by host.
+   * @param ownID      ID of this player.
    * @author hendiehl
    */
   public GameController(NetworkScreen protocol, boolean isHost, String mapContent,
       ArrayList<Player> players, String dictionary, int ownID) {
     System.out.println("GAME CONTROLER : Own id : " + ownID);
     this.players = players;
-    this.roundCounter = 0; // should be not set here
+    this.roundCounter = 0;
     this.protocol = protocol;
     this.isHost = isHost;
     this.mapContent = mapContent;
@@ -230,7 +206,7 @@ public class GameController {
   }
 
   /**
-   * Method to shutdown the network protocol
+   * Method to shutdown the network protocol.
    *
    * @author hendiehl
    */
@@ -244,17 +220,28 @@ public class GameController {
     }
   }
 
+  /**
+   * Creates essential methods for the move actions' updates between players.
+   *
+   * @author ekasmamy
+   */
   private void initApi() {
     this.api = new NetworkGame() {
 
+      /**
+       * This function will be executed when the server gives the turn permission to the player.
+       *
+       * @author ekasmamy
+       */
       @Override
       public void startMove(int turn, int id) {
         System.out.println("GAME CONTROLLER : startMove called");
         Platform.runLater(() -> {
 
           setRound();
-          if (protocol != null)
-          setPlayerActive(id);
+          if (protocol != null) {
+            setPlayerActive(id);
+          }
 
           // Filling the empty slots in the LetterBar if it's the case
           int freeSlotsCount = letterBar.getCountFreeSlots();
@@ -354,6 +341,12 @@ public class GameController {
         });
       }
 
+      /**
+       * This function will be executed when the player's turn is over.
+       * By time over or by manual turn ending.
+       *
+       * @author ekasmamy
+       */
       @Override
       public void endMove() {
         System.out.println("GAME CONTROLLER : Prepare to end move");
@@ -381,18 +374,18 @@ public class GameController {
 
               ArrayList<Word> wordsInGrid = grid.words;
               int score = 0;
-              String action = "{\n"
+              StringBuilder action = new StringBuilder("{\n"
                   + " \"nb\": \"" + wordsInGrid.size() + "\",\n"
-                  + " \"words\": [\n";
+                  + " \"words\": [\n");
 
               for (int j = 0; j < wordsInGrid.size(); j++) {
                 Word word = wordsInGrid.get(j);
                 if (word.newlyPlaced) {
                   String spelling = word.getWordAsString();
-                  action += "  {\n"
-                      + "   \"word\": \"" + spelling + "\",\n"
-                      + "   \"points\": \"" + word.getPoints() + "\",\n"
-                      + "   \"tiles\": [\n";
+                  action.append("  {\n")
+                      .append("   \"word\": \"").append(spelling).append("\",\n")
+                      .append("   \"points\": \"").append(word.getPoints()).append("\",\n")
+                      .append("   \"tiles\": [\n");
 
                   for (int i = 0; i < word.getWordLength(); i++) {
                     LetterTile letterTile = word.getLetter(i);
@@ -403,31 +396,30 @@ public class GameController {
                       int col = grid.getCellColumn(letterTile);
                       boolean isBlank = letterTile.isBlank;
 
-                      action += "    {\n"
-                          + "     \"letter\": \"" + letter + "\",\n"
-                          + "     \"value\": \"" + value + "\",\n"
-                          + "     \"row\": \"" + row + "\",\n"
-                          + "     \"col\": \"" + col + "\",\n"
-                          + "     \"isBlank\": \"" + isBlank + "\"\n"
-                          + "    }";
+                      action.append("    {\n")
+                          .append("     \"letter\": \"").append(letter).append("\",\n")
+                          .append("     \"value\": \"").append(value).append("\",\n")
+                          .append("     \"row\": \"").append(row).append("\",\n")
+                          .append("     \"col\": \"").append(col).append("\",\n")
+                          .append("     \"isBlank\": \"").append(isBlank).append("\"\n")
+                          .append("    }");
 
                       if (i == word.getWordLength() - 1) {
-                        action += "\n";
+                        action.append("\n");
                       } else {
-                        action += ",\n";
+                        action.append(",\n");
                       }
 
                       letterTile.isNewlyPlaced = false;
                     }
                   }
 
-                  action += "   ]";
+                  action.append("   ]");
 
                   if (j == wordsInGrid.size() - 1) {
-                    action += "\n"
-                        + "  }\n";
+                    action.append("\n" + "  }\n");
                   } else {
-                    action += ",\n";
+                    action.append(",\n");
                   }
 
                   word.newlyPlaced = false;
@@ -436,14 +428,14 @@ public class GameController {
                 }
               }
 
-              action += " ],\n"
-                  + " \"score\": \"" + score + "\"\n"
-                  + "}";
+              action.append(" ],\n")
+                  .append(" \"score\": \"").append(score).append("\"\n")
+                  .append("}");
 
               System.out.println(action);
 //              scoreLabel.setText(String.valueOf(score));
 
-              protocol.sendEndMessage(action, score);
+              protocol.sendEndMessage(action.toString(), score);
             }
 
           }
@@ -453,6 +445,12 @@ public class GameController {
         });
       }
 
+      /**
+       * This function will be executed after a player has ended his turn.
+       * By time over or by manual turn ending.
+       *
+       * @author ekasmamy
+       */
       @Override
       public void getOpponentsInfo(String action, int points, int id) {
         Platform.runLater(() -> {
@@ -465,7 +463,6 @@ public class GameController {
           for (int i = 0; i < words.length(); i++) {
             JSONObject word = words.getJSONObject(i);
             JSONArray tiles = word.getJSONArray("tiles");
-
 
             for (int j = 0; j < tiles.length(); j++) {
               JSONObject tile = tiles.getJSONObject(j);
@@ -498,16 +495,15 @@ public class GameController {
                 slot.removeEffect();
 
                 ltrTiles.add(ltrTile);
-              }
-              else {
+              } else {
                 ltrTiles.add(slot.content);
               }
             }
 
             System.out.println("First: " + ltrTiles.get(0));
-            System.out.println("Last: " + ltrTiles.get(ltrTiles.size()-1));
+            System.out.println("Last: " + ltrTiles.get(ltrTiles.size() - 1));
 
-            Word w = new Word(ltrTiles.get(0), ltrTiles.get(ltrTiles.size()-1), thisController);
+            Word w = new Word(ltrTiles.get(0), ltrTiles.get(ltrTiles.size() - 1), thisController);
             w.newlyPlaced = false;
             w.frozen = true;
             w.setMouseTransparent(true);
@@ -526,8 +522,9 @@ public class GameController {
       /**
        * Method to print an incoming chat message from the chat server to the chat field on the game
        * field.
-       * 
-       * @param message chat string from the chat server
+       *
+       * @param message chat string from the chat server.
+       *
        * @author hendiehl
        */
       @Override
@@ -538,9 +535,10 @@ public class GameController {
       }
 
       /**
-       * Method to send an chat message to the chat server
-       * 
-       * @param message chat message of an lobby member
+       * Method to send an chat message to the chat server.
+       *
+       * @param message chat message of an lobby member.
+       *
        * @author hendiehl
        */
       @Override
@@ -551,49 +549,75 @@ public class GameController {
     };
   }
 
+  /**
+   * Initializes the Grid with a custom Multiplier Map.
+   *
+   * @param mapPath Path to the custom multiplier map.
+   * @author ekasmamy
+   */
   public void initGrid(String mapPath) {
     grid = new Grid(gridPaneUI, mapPath, 15, this);
     grid.initCells();
   }
 
+  /**
+   * Default initializer for the Grid.
+   *
+   * @author ekasmamy
+   */
   public void initGrid() {
     grid = new Grid(gridPaneUI, 15, this);
     grid.initCells();
   }
 
+  /**
+   * Initializes the Dictionary with a custom dictionary. The custom dictionary's content should
+   * follow the defined format. You can find a sample in "resources/dictionaries/dictionary-format.txt".
+   *
+   * @param dictContent Actual content of the custom dictionary.
+   * @author ekasmamy
+   */
   public void initDictionary(String dictContent) {
     // Setting the Dictionary (should be set only once, an error otherwise)
     InputStream in = new ByteArrayInputStream(dictContent.getBytes());
     Dictionary.setDictionary(in);
   }
 
+  /**
+   * Default initializer for the Dictionary.
+   *
+   * @author ekasmamy
+   */
   public void initDictionary() {
     // Setting the Dictionary (should be set only once, an error otherwise)
     InputStream in = getClass().getResourceAsStream("/dictionaries/english-default.txt");
     Dictionary.setDictionary(in);
   }
 
-  public void changeScene(String resource, String style, Event event) {
+  /**
+   * The function responsible for JavaFX Scene switching.
+   *
+   * @param resource FXML file.
+   * @param style    CSS file.
+   * @author ekasmamy
+   * @author skeskinc
+   */
+  public void changeScene(String resource, String style) {
     try {
-//      System.out.println(resource);
       Parent root = FXMLLoader.load(getClass().getResource(resource));
-      /*
-      ImageView btn = ((ImageView) event.getSource());
-      Stage stage = (Stage) btn.getScene().getWindow();
-      Scene scene = new Scene(root, this.root.getScene().getWidth(),
-          this.root.getScene().getHeight());
-      scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
-      stage.setScene(scene);
-      */
       ScrabbleApp.getScene().getStylesheets().clear();
       ScrabbleApp.getScene().getStylesheets().add(getClass().getResource(style).toExternalForm());
       ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e) {
       e.printStackTrace();
-//      System.err.println("Error: " + e.getMessage());
     }
   }
 
+  /**
+   * Initializes the players array for the single player mode.
+   *
+   * @author ekasmamy
+   */
   public void initPlayers() {
     players = new ArrayList<>();
 
@@ -606,12 +630,17 @@ public class GameController {
     leaderBoard = new LeaderBoard(players);
   }
 
+  /**
+   * Sets the "onMouseClicked" event of buttons.
+   *
+   * @author ekasmamy
+   */
   protected void setButtonActions() {
 
     shuffleBtn.setOnMouseClicked(event -> letterBar.shuffle());
 
     quitGame.setOnMouseClicked(event -> {
-      changeScene("/fxml/MainPage.fxml", "/css/mainMenu.css", event);
+      changeScene("/fxml/MainPage.fxml", "/css/mainMenu.css");
     });
 
     okBtn.setOnMouseClicked(event -> {
@@ -620,6 +649,13 @@ public class GameController {
 
   }
 
+  /**
+   * Saves the custom multiplier map in the "{user-dir}/.Scrabble" directory.
+   *
+   * @param content Content of the multiplier map to save.
+   * @return Returns the path to the created map file.
+   * @author ekasmamy
+   */
   protected String saveMultiplierMap(String content) {
     String home = System.getProperty("user.home");
     String slash = System.getProperty("file.separator");
@@ -652,6 +688,11 @@ public class GameController {
     return path;
   }
 
+  /**
+   * Initializes the chat for multiplayer mode.
+   *
+   * @author ekasmamy
+   */
   private void initChat() {
     chatBlock.setPadding(new Insets(10));
 
@@ -696,6 +737,8 @@ public class GameController {
   /**
    * The FXML loader will call the initialize() method after the loading of the FXML document is
    * complete. Initializes both grid cells and proposed letters.
+   *
+   * @author ekasmamy
    */
   @FXML
   private void initialize() {
@@ -748,7 +791,8 @@ public class GameController {
         avatarWrapper.getStyleClass().add("player-avatar-frame");
         avatarWrapper.setAlignment(Pos.CENTER);
 
-        ImageView avatar = new ImageView(new Image(getClass().getResourceAsStream("/img/" + player.getImage())));
+        ImageView avatar = new ImageView(
+            new Image(getClass().getResourceAsStream("/img/" + player.getImage())));
         avatar.setFitHeight(60);
         avatar.setFitWidth(60);
 
@@ -778,7 +822,7 @@ public class GameController {
     letterBar = new LetterBar(this);
 
     initApi();
-    if(this.protocol != null) { //Have to be checked again
+    if (this.protocol != null) { //Have to be checked again
       this.protocol.loadFinished();
     }
     System.out.println("GAME CONTROLLER : Finished loading");
@@ -816,54 +860,54 @@ public class GameController {
    */
 
   /**
-   * Provider method of the grabRandomTile method of LetterBag
+   * Provider method of the grabRandomTile method of LetterBag.
    *
-   * @param tile
+   * @param tile Grabbed random tile.
    */
   public void grabRandomTileAnswer(Tile tile) {
     // do something with Tile
   }
 
   /**
-   * Provider method of the getValueOf method of LetterBag
+   * Provider method of the getValueOf method of LetterBag.
    *
-   * @param value
+   * @param value Value returned.
    */
   public void getValueOfAnswer(int value) {
     // do something with value
   }
 
   /**
-   * Provider method of the getRemainingVowels method of LetterBag
+   * Provider method of the getRemainingVowels method of LetterBag.
    *
-   * @param tiles
+   * @param tiles Multiset of tiles.
    */
   public void getRemainingVowelsAnswer(Multiset<Tile> tiles) {
     // do something with Multiset
   }
 
   /**
-   * Provider method of the getRemainingConsonants method of LetterBag
+   * Provider method of the getRemainingConsonants method of LetterBag.
    *
-   * @param tiles
+   * @param tiles Multiset of tiles.
    */
   public void getRemainingConsonantsAnswer(Multiset<Tile> tiles) {
     // do something with Multiset
   }
 
   /**
-   * Provider method of the getRemainingBlanks method of LetterBag
+   * Provider method of the getRemainingBlanks method of LetterBag.
    *
-   * @param tiles
+   * @param tiles Multiset of tiles.
    */
   public void getRemainingBlanksAnswer(Multiset<Tile> tiles) {
     // do something with Multiset
   }
 
   /**
-   * Provider method of the grabRandomTiles method of LetterBag
+   * Provider method of the grabRandomTiles method of LetterBag.
    *
-   * @param tiles
+   * @param tiles Multiset of tiles.
    */
   public void grabRandomTilesAnswer(Multiset<Tile> tiles) {
     System.out.println("GAME CONTROLLER : grabRandomTilesAnswer received");
@@ -875,23 +919,29 @@ public class GameController {
   }
 
   /**
-   * Provider method of the getRemainingTiles method of LetterBag
+   * Provider method of the getRemainingTiles method of LetterBag.
    *
-   * @param tiles
+   * @param tiles Multiset of tiles.
    */
   public void getRemainingTilesAnswer(Multiset<Tile> tiles) {
     // do something with Multiset
   }
 
   /**
-   * Provider method of the getAmount method of LetterBag
+   * Provider method of the getAmount method of LetterBag.
    *
-   * @param amount
+   * @param amount Amount of remaining tiles in bag.
    */
   public void getAmountAnswer(int amount) {
     // do something with amount
   }
 
+  /**
+   * Draws a green circle around the current player's avatar.
+   *
+   * @param id Player's ID.
+   * @author ekasmamy
+   */
   public void setPlayerActive(int id) {
     System.out.println("ID: " + id);
     playersBlock.getChildren().forEach(block -> {
@@ -906,13 +956,25 @@ public class GameController {
     });
   }
 
+  /**
+   * Changes the round label.
+   *
+   * @author ekasmamy
+   */
   public void setRound() {
     roundLabel.setText(String.valueOf(++roundCounter));
   }
 
-  //testing
+  /**
+   * This function is called when any other player is on move.
+   *
+   * @param turn Current round.
+   * @param id   ID of the player that is on move.
+   * @author ekasmamy
+   */
   public void otherPlayerOnMove(int turn, int id) {
-    System.out.println("GAME CONTROLLER : Other on move ! Turn : " + turn + " with player id : " + id);
+    System.out
+        .println("GAME CONTROLLER : Other on move ! Turn : " + turn + " with player id : " + id);
 
     Platform.runLater(() -> {
 

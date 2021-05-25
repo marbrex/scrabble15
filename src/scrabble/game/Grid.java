@@ -6,15 +6,12 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
 import scrabble.GameController;
 
 /**
- * <h1>scrabble.game.Grid</h1>
+ * scrabble.game.Grid Class is used to stock the internal state of the letters grid.
  *
- * <p>Class is used to stock the internal state of the letters grid.</p>
- *
- * @author Eldar Kasmamytov
+ * @author ekasmamy
  */
 public class Grid {
 
@@ -22,7 +19,7 @@ public class Grid {
 
   private Slot[] slots;
   int size;
-  private int globalSize;
+  private final int globalSize;
 
   private Map map;
 
@@ -36,7 +33,7 @@ public class Grid {
   GridPane container;
 
   /**
-   * Initiates GridPane's settings
+   * Initiates GridPane's settings.
    */
   private void initGrid() {
 
@@ -48,7 +45,7 @@ public class Grid {
   }
 
   /**
-   * Initiates slots (StackPanes) of the GridPane
+   * Initiates slots (StackPanes) of the GridPane.
    */
   public void initCells() {
     for (int column = 0; column < size; column++) {
@@ -63,9 +60,9 @@ public class Grid {
   /**
    * Constructor that creates a square grid.
    *
-   * @param grid       GridPane from the GameController
-   * @param size       GridPane's width and height
-   * @param controller GameController
+   * @param grid       GridPane from the GameController.
+   * @param size       GridPane's width and height.
+   * @param controller GameController.
    */
   public Grid(GridPane grid, int size, GameController controller) {
     this.size = size;
@@ -90,10 +87,10 @@ public class Grid {
   /**
    * Constructor that creates a square grid.
    *
-   * @param grid       GridPane from the GameController
-   * @param mapPath    Path to a map ".txt" file in resources folder
-   * @param size       GridPane's width and height
-   * @param controller GameController
+   * @param grid       GridPane from the GameController.
+   * @param mapPath    Path to a map ".txt" file in resources folder.
+   * @param size       GridPane's width and height.
+   * @param controller GameController.
    */
   public Grid(GridPane grid, String mapPath, int size, GameController controller) {
     this.size = size;
@@ -118,9 +115,9 @@ public class Grid {
   /**
    * Returns the global index (index in 1D array). of the specified cell.
    *
-   * @param column Column of the cell
-   * @param row    Row of the cell
-   * @return Global Index
+   * @param column Column of the cell.
+   * @param row    Row of the cell.
+   * @return Global Index.
    */
   public int getGlobalIndex(int column, int row) {
     return column + size * row;
@@ -129,8 +126,8 @@ public class Grid {
   /**
    * Get a Slot's content (LetterTile) using global index.
    *
-   * @param globalIndex global index of the cell
-   * @return LetterTile
+   * @param globalIndex global index of the cell.
+   * @return LetterTile.
    * @see #getGlobalIndex(int, int)
    */
   public LetterTile getSlotContent(int globalIndex) {
@@ -140,8 +137,8 @@ public class Grid {
   /**
    * Get a Slot using global index.
    *
-   * @param globalIndex global index of the cell
-   * @return Slot
+   * @param globalIndex global index of the cell.
+   * @return Slot.
    */
   public Slot getSlot(int globalIndex) {
     return slots[globalIndex];
@@ -150,9 +147,9 @@ public class Grid {
   /**
    * Get a Slot's content (LetterTile) using column/row indexes.
    *
-   * @param column Column
-   * @param row    Row
-   * @return LetterTile
+   * @param column Column.
+   * @param row    Row.
+   * @return LetterTile.
    */
   public LetterTile getSlotContent(int column, int row) {
     return slots[getGlobalIndex(column, row)].content;
@@ -161,9 +158,9 @@ public class Grid {
   /**
    * Get a Slot using column/row indexes.
    *
-   * @param column Column
-   * @param row    Row
-   * @return Slot
+   * @param column Column.
+   * @param row    Row.
+   * @return Slot.
    */
   public Slot getSlot(int column, int row) {
     return slots[getGlobalIndex(column, row)];
@@ -172,10 +169,10 @@ public class Grid {
   /**
    * Sets the specified Slot's content.
    *
-   * @param column Column of the cell to be set
-   * @param row    Row of the cell to be set
-   * @param letter Letter
-   * @param points Points
+   * @param column Column of the cell to be set.
+   * @param row    Row of the cell to be set.
+   * @param letter Letter.
+   * @param points Points.
    */
   public void setSlotContent(int column, int row, char letter, int points) {
     slots[getGlobalIndex(column, row)].content.setLetter(letter);
@@ -185,9 +182,9 @@ public class Grid {
   /**
    * Sets the specified Slot's content with an LetterTile object.
    *
-   * @param column Column of the cell to be set
-   * @param row    Row of the cell to be set
-   * @param tile   LetterTile
+   * @param column Column of the cell to be set.
+   * @param row    Row of the cell to be set.
+   * @param tile   LetterTile.
    */
   public void setSlotContent(int column, int row, LetterTile tile) {
     slots[getGlobalIndex(column, row)].setContent(tile);
@@ -219,7 +216,7 @@ public class Grid {
   /**
    * Returns a Global Index of the specified Slot.
    *
-   * @param slot Slot
+   * @param slot Slot.
    * @return Global Index if the Cell is in the Grid, -1 otherwise.
    */
   public int getCellIndex(Slot slot) {
@@ -234,7 +231,7 @@ public class Grid {
   /**
    * Returns a Global Index of the specified LetterTile.
    *
-   * @param tile LetterTile
+   * @param tile LetterTile.
    * @return Global Index if the Cell is in the Grid, -1 otherwise.
    */
   public int getCellIndex(LetterTile tile) {
@@ -247,10 +244,10 @@ public class Grid {
   }
 
   /**
-   * Returns an Y coordinate of a specified cell
+   * Returns an Y coordinate of a specified cell.
    *
-   * @param tile Tile that is in Grid
-   * @return Y coordinate (Row)
+   * @param tile Tile that is in Grid.
+   * @return Y coordinate (Row).
    */
   public int getCellRow(LetterTile tile) {
     int glInd;
@@ -266,10 +263,10 @@ public class Grid {
   }
 
   /**
-   * Returns an X coordinate of a specified cell
+   * Returns an X coordinate of a specified cell.
    *
-   * @param tile Tile that is in Grid
-   * @return X coordinate (Column)
+   * @param tile Tile that is in Grid.
+   * @return X coordinate (Column).
    */
   public int getCellColumn(LetterTile tile) {
     int glInd;
@@ -285,28 +282,28 @@ public class Grid {
   }
 
   /**
-   * Get the size of the square GridPane (height=width)
+   * Get the size of the square GridPane (height=width).
    *
-   * @return Number of Slots on each side (height=width)
+   * @return Number of Slots on each side (height=width).
    */
   public int getSize() {
     return size;
   }
 
   /**
-   * Get the Global Size of the Grid
+   * Get the Global Size of the Grid.
    *
-   * @return Total number of Slots
+   * @return Total number of Slots.
    */
   public int getGlobalSize() {
     return globalSize;
   }
 
   /**
-   * Get a Slot that contains the specified LetterTile
+   * Get a Slot that contains the specified LetterTile.
    *
-   * @param tile Slot's content, LetterTile
-   * @return Slot
+   * @param tile Slot's content, LetterTile.
+   * @return Slot.
    */
   public Slot getSlotThatContains(LetterTile tile) {
     for (int i = 0; i < globalSize; i++) {
@@ -317,6 +314,11 @@ public class Grid {
     return null;
   }
 
+  /**
+   * Returns an array of currently present tiles.
+   *
+   * @return ArrayList of currently present LetterTiles.
+   */
   public ArrayList<LetterTile> getTilesInGrid() {
     ArrayList<LetterTile> list = new ArrayList<>();
     for (int i = 0; i < globalSize; i++) {
@@ -327,6 +329,13 @@ public class Grid {
     return list;
   }
 
+  /**
+   * Getter for a specified neighbour of the tile.
+   *
+   * @param tile      LetterTile.
+   * @param neighbour Neighbour LetterTile.
+   * @return Specified neighbour of the tile.
+   */
   public LetterTile getNeighbourCell(LetterTile tile, String neighbour) {
     int glInd;
     for (int column = 0; column < size; column++) {
@@ -368,9 +377,9 @@ public class Grid {
   }
 
   /**
-   * Get the most top existing neighbour
+   * Get the most top existing neighbour.
    *
-   * @return The most top neighbour (LetterTile)
+   * @return The most top neighbour (LetterTile).
    */
   public LetterTile getMostTopOf(LetterTile tile) {
     LetterTile current = tile;
@@ -389,9 +398,9 @@ public class Grid {
   }
 
   /**
-   * Get the most right existing neighbour
+   * Get the most right existing neighbour.
    *
-   * @return The most right neighbour (LetterTile)
+   * @return The most right neighbour (LetterTile).
    */
   public LetterTile getMostRightOf(LetterTile tile) {
     LetterTile current = tile;
@@ -410,9 +419,9 @@ public class Grid {
   }
 
   /**
-   * Get the most bottom existing neighbour
+   * Get the most bottom existing neighbour.
    *
-   * @return The most bottom neighbour (LetterTile)
+   * @return The most bottom neighbour (LetterTile).
    */
   public LetterTile getMostBottomOf(LetterTile tile) {
     LetterTile current = tile;
@@ -431,9 +440,9 @@ public class Grid {
   }
 
   /**
-   * Get the most left existing neighbour
+   * Get the most left existing neighbour.
    *
-   * @return The most left neighbour (LetterTile)
+   * @return The most left neighbour (LetterTile).
    */
   public LetterTile getMostLeftOf(LetterTile tile) {
     LetterTile current = tile;
@@ -452,9 +461,9 @@ public class Grid {
   }
 
   /**
-   * Removes the specified Slot's content (based on the Slot object)
+   * Removes the specified Slot's content (based on the Slot object).
    *
-   * @param slot Slot, the content of which should be removed
+   * @param slot Slot, the content of which should be removed.
    */
   public void removeSlotContent(Slot slot) {
     for (int i = 0; i < globalSize; i++) {
@@ -465,21 +474,21 @@ public class Grid {
   }
 
   /**
-   * Removes the specified Slot's content (based on Column/Row indexes)
+   * Removes the specified Slot's content (based on Column/Row indexes).
    *
-   * @param column Column (X index)
-   * @param row    Row (Y index)
+   * @param column Column (X index).
+   * @param row    Row (Y index).
    */
   public void removeSlotContent(int column, int row) {
     slots[getGlobalIndex(column, row)].removeContent();
   }
 
   /**
-   * Adds a Slot to the specified cell
+   * Adds a Slot to the specified cell.
    *
-   * @param slot   Slot
-   * @param column Column (X)
-   * @param row    Row (Y)
+   * @param slot   Slot.
+   * @param column Column (X).
+   * @param row    Row (Y).
    */
   public void addSlot(Slot slot, int column, int row) {
     int index = getGlobalIndex(column, row);
@@ -492,7 +501,7 @@ public class Grid {
    * Verifies whether placed words are valid. Generates a pop-up window in case of an invalid
    * input.
    *
-   * @return True if input is valid, False otherwise
+   * @return True if input is valid, False otherwise.
    */
   public boolean verifyWordsValidity() {
     System.out.println("\n-----@Grid verifyWordsValidity() START-----");
@@ -565,8 +574,7 @@ public class Grid {
 
           wordsUsingStartSlot++;
           break;
-        }
-        else {
+        } else {
           System.out.print(word.getWordAsString() + " doesn't use that slot");
           System.out.print("check if " + word.getWordAsString() + " uses another start slot...");
         }
@@ -604,7 +612,7 @@ public class Grid {
           System.out.println("ALL WORDS ARE VALID !");
 
           if (nbHorizontal == words.size() - frozenWordsCounter
-              |nbVertical == words.size() - frozenWordsCounter) {
+              | nbVertical == words.size() - frozenWordsCounter) {
             // All words have the same direction
             System.out.println("ALL WORDS HAVE THE SAME DIRECTION !");
 
@@ -675,8 +683,11 @@ public class Grid {
     return res;
   }
 
+  /**
+   * Freezes all currently present words.
+   */
   private void freezeWords() {
-    System.out.println("\nj-----@Grid freezeWords() START-----");
+    System.out.println("\n-----@Grid freezeWords() START-----");
 
     for (Word word : words) {
       // words present in the grid
@@ -760,8 +771,6 @@ public class Grid {
 ////          }
 //
 //        }
-
-
 
         word.getLetter(l).slot.container.setEffect(null);
         word.getLetter(l).slot.container.setMouseTransparent(true);
