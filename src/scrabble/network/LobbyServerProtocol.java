@@ -199,6 +199,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
         this.sendLetterBagResponse(answer);
         break;
     }
+    this.gameInfoController.checkBagSize(); // after every message.
   }
 
   /**
@@ -521,8 +522,11 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       System.err.println(
           "Player : " + players.get(i).getName() + " connected with id " + players.get(i).getId());
     }
+    int ownID = this.player.getId();
+    // the server protocol works on the same machine as the GameInfoController so the id is here in
+    // the instance.
     try {
-      GameMessage msg = new GameMessage(MessageType.GAME, this.player, players, ids);
+      GameMessage msg = new GameMessage(MessageType.GAME, this.player, players, ids, ownID);
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("SERVER PROTOCOL : Game-Message sended");
@@ -643,22 +647,42 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   public void resetGameInfoCon(GameInformationController gameInfoController2) {
     this.gameInfoController = gameInfoController2;
     System.out.println("SERVER PROTOCOL : Game-Info exchange");
-    // Here sending Message : LobbyInfoMessage with new list --> RETURN type
   }
 
   /**
-   * Method to send the client his gained game points in reason that he can save them in his own DB.
+   * Method to inform a client about his game win in reason to save his statistics.
    * 
    * @param points gained in a network game.
    * @author hendiehl
    */
   @Override
-  public void sendDBMessage(Integer integer, boolean won) {
+  public void sendDBMessage(boolean won) {
     try {
-      DBMessage msg = new DBMessage(MessageType.DB, this.player, integer, won);
+      DBMessage msg = new DBMessage(MessageType.DB, this.player, won);
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("SERVER Protocol : DB-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to send the player the result of an network game. Will cause a screen change to the
+   * lobby screen again.
+   * 
+   * @param players List of players classes of the network game, also Ai.
+   * @param points Array of the gained points, in same order like the list.
+   * @author hendiehl
+   */
+  @Override
+  public void sendResultMessage(ArrayList<Player> players, int[] points) {
+    try {
+      ResultMessage msg = new ResultMessage(MessageType.RETURN, this.player, players, points);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : Result-Message sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

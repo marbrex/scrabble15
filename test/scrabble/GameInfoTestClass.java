@@ -339,5 +339,18 @@ class GameInfoTestClass {
 
     }
 
+    @Override
+    public void sendDBMessage(boolean won) {
+      // TODO Auto-generated method stub
+      
+    }
+
+
+    @Override
+    public void sendResultMessage(ArrayList<Player> players, int[] points) {
+      // TODO Auto-generated method stub
+      
+    }
+
   }
 }

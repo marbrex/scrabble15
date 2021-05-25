@@ -16,7 +16,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   /**
    * Dummy protocol of an host which handle the screen update in an lobby/game. Is used as a
    * LobbyServer and a LobbyClient protocol, because a host is located on the same machine as the
-   * server, so a network connection is not needed
+   * server, so a network connection is not needed.
    * 
    * @author hendiehl
    */
@@ -32,6 +32,8 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   private Client chat;
   /** List of all members in the Lobby */
   private ArrayList<Player> players;
+  /** own player id during a network game */
+  private int ownID;
 
 
   /** GameController of an game screen after changing from lobby to game */
@@ -44,7 +46,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * called by the LobbyServer himself after a player decided to host a network game. A
    * LobbyHostProtocol is always part of an lobby.
    * 
-   * @param gameLobby GameLobbyController of the lobby screen
+   * @param gameLobby GameLobbyController of the lobby screen.
    * @param gameInfo Controller class of an network game.
    * @author hendiehl
    */
@@ -227,6 +229,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   @Override
   public void sendGameMessage(ArrayList<Player> players) {
     this.players = players;
+    this.ownID = this.player.getId();
     this.gameLobby.startGame();
   }
 
@@ -351,6 +354,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     Tile tile = this.gameInfoController.grabRandomTile();
     // callback
     this.gameScreen.grabRandomTileAnswer(tile);
+    this.gameInfoController.checkBagSize();
   }
 
   /**
@@ -363,6 +367,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     int i = this.gameInfoController.getValueOf(letter);
     // callback
     this.gameScreen.getValueOfAnswer(i);
+    this.gameInfoController.checkBagSize();
   }
 
   /**
@@ -375,6 +380,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     Multiset<Tile> tiles = this.gameInfoController.getRemainingVowels();
     // callback
     this.gameScreen.getRemainingVowelsAnswer(tiles);
+    this.gameInfoController.checkBagSize();
   }
 
   /**
@@ -387,6 +393,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     Multiset<Tile> tiles = this.gameInfoController.getRemainingConsonants();
     // callback
     this.gameScreen.getRemainingConsonantsAnswer(tiles);
+    this.gameInfoController.checkBagSize();
   }
 
   /**
@@ -399,6 +406,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     Multiset<Tile> tiles = this.gameInfoController.getRemainingBlanks();
     // callback
     this.gameScreen.getRemainingBlanksAnswer(tiles);
+    this.gameInfoController.checkBagSize();
   }
 
   /**
@@ -411,6 +419,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     Multiset<Tile> tiles = this.gameInfoController.grabRandomTiles(count);
     // callback
     this.gameScreen.grabRandomTilesAnswer(tiles);
+    this.gameInfoController.checkBagSize();
   }
 
   /**
@@ -423,6 +432,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     Multiset<Tile> tiles = this.gameInfoController.getRemainingTiles();
     // callback
     this.gameScreen.getRemainingTilesAnswer(tiles);
+    this.gameInfoController.checkBagSize();
   }
 
   /**
@@ -435,6 +445,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     int i = this.gameInfoController.getAmount();
     // callback
     this.gameScreen.getAmountAnswer(i);
+    this.gameInfoController.checkBagSize();
   }
 
   /**
@@ -550,7 +561,33 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * @author hendiehl
    */
   @Override
-  public void sendDBMessage(Integer integer, boolean won) {
+  public void sendDBMessage(boolean won) {
     // Here save the data in the corresponding DB
+  }
+
+  /**
+   * Method to leave the game screen for a new lobby screen and presenting the results of the
+   * network game.
+   * 
+   * @param players Players of the finished network game.
+   * @param points Points gained during the game.
+   * @author hendiehl
+   */
+  @Override
+  public void sendResultMessage(ArrayList<Player> players, int[] points) {
+    if (this.gameScreen != null) {
+
+    }
+  }
+
+  /**
+   * Getter method for the own game id during a network game.
+   * 
+   * @return id of the player during a network game.
+   * @author hendiehl
+   */
+  @Override
+  public int getOwnID() {
+    return this.ownID;
   }
 }

@@ -1,9 +1,7 @@
 package scrabble.network;
 
 import java.util.ArrayList;
-import com.google.common.collect.Multiset;
 import scrabble.GameController;
-import scrabble.game.LetterBag.Tile;
 import scrabble.model.Player;
 
 public interface NetworkScreen {
@@ -32,6 +30,8 @@ public interface NetworkScreen {
   public void loadFinished();
 
   public void setGameScreen(GameController gameScreen);
+
+  public int getOwnID();
 
   public ArrayList<Player> getPlayerList(); // need to send the new list after election
   // Methods of the LetterBag Class for Network use

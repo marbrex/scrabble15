@@ -57,8 +57,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   private HumanPlayer player;
   /** chat client for sending/receiving messages */
   private Client chat;
-
-  // Only testing
+  /** own player id during a game */
+  private int ownID;
+  /** controller of the game screen */
   private GameController gameScreen;
 
 
@@ -224,6 +225,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case DB:
           this.reactToDB(message);
           break;
+        case RETURN:
+          this.reactToReturn(message);
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -241,6 +245,20 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
+   * Method to react to a ReturnMessage. Will cause a screen change.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToReturn(Message message) {
+    ResultMessage msg = (ResultMessage) message;
+    // Changing the screen
+    if (this.gameScreen != null) {
+
+    }
+  }
+
+  /**
    * Method to react to an DB-Message in reason to save the result of an network game in the DB of
    * the local player.
    * 
@@ -250,7 +268,6 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   private void reactToDB(Message message) {
     System.out.println("CLIENT PROTOCOL : DB-Message received");
     DBMessage msg = (DBMessage) message;
-    int points = msg.getPoints();
     boolean won = msg.isWon();
     // Here save the data in corresponding DB
   }
@@ -402,6 +419,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     // Emergency solution because of data loose
     ArrayList<Player> copie = msg.getPlayers();
     int[] ids = msg.getIds();
+    this.ownID = msg.getOwnID();
     for (int i = 0; i < copie.size() && i < 4; i++) {
       copie.get(i).setId(ids[i]);
       System.err.println("Player : " + copie.get(i).getName() + " with id : " + ids[i]);
@@ -940,5 +958,16 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
       e.printStackTrace();
     }
 
+  }
+
+  /**
+   * Method to get the own game id for a network game.
+   * 
+   * @return id Own game id.
+   * @author hendiehl
+   */
+  @Override
+  public int getOwnID() {
+    return this.ownID;
   }
 }

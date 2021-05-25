@@ -28,7 +28,6 @@ import scrabble.network.LobbyClientProtocol;
 import scrabble.network.LobbyHostProtocol;
 import scrabble.network.LobbyServer;
 import scrabble.network.NetworkScreen;
-import scrabble.network.PortsOccupiedException;
 
 public class GameLobbyController implements LobbyController {
   /**
@@ -725,12 +724,12 @@ public class GameLobbyController implements LobbyController {
         if (this.host != null) {
           loader.setControllerFactory(c -> {
             return new LoadingController(this.host, this.isHost, this.contentOfField,
-                this.host.getPlayerList(), this.contentOfDictionary);
+                this.host.getPlayerList(), this.contentOfDictionary, this.host.getOwnID());
           });
         } else {
           loader.setControllerFactory(c -> {
             return new LoadingController(this.client, this.isHost, this.contentOfField,
-                this.client.getPlayerList(), this.contentOfDictionary);
+                this.client.getPlayerList(), this.contentOfDictionary, this.client.getOwnID());
           });
         }
         Parent root = loader.load();

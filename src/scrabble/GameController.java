@@ -214,7 +214,8 @@ public class GameController {
    * @author hendiehl
    */
   public GameController(NetworkScreen protocol, boolean isHost, String mapContent,
-      ArrayList<Player> players, String dictionary) {
+      ArrayList<Player> players, String dictionary, int ownID) {
+    System.out.println("GAME CONTROLER : Own id : " + ownID);
     this.players = players;
     this.roundCounter = 0; // should be not set here
     this.protocol = protocol;

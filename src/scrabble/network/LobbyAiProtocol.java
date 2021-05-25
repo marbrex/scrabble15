@@ -1,7 +1,6 @@
 package scrabble.network;
 
 import java.util.ArrayList;
-import scrabble.GameController;
 import scrabble.model.AiPlayer;
 import scrabble.model.GameInformationController;
 import scrabble.model.Player;
@@ -9,7 +8,7 @@ import scrabble.model.Player;
 public class LobbyAiProtocol implements NetworkPlayer {
   /**
    * AiProtocol is used to fill a network game with ai players if the maximum of players isn't
-   * reached by HumanPlayers. Had the main function to interact with the players during a network
+   * reached by HumanPlayers. Has the main function to interact with the players during a network
    * game by making game turns.
    * 
    * @author hendiehl
@@ -43,8 +42,11 @@ public class LobbyAiProtocol implements NetworkPlayer {
    * @param field game field of the host
    * @author hendiehl
    */
-  public void aiMove(GameController field) {
+  public String aiMove() {
     System.out.println("AI PROTOCOL : Calculate move");
+    this.ai.makeTurn(); // making the turn.
+    String action = this.ai.createJsonString(); // returning the action performed by the Ai.
+    return action;
   }
 
   /**
@@ -52,7 +54,7 @@ public class LobbyAiProtocol implements NetworkPlayer {
    * GameInformationsController with MAX.VALUE, to ensure that AiPlayers always set at the back of
    * the list.
    * 
-   * @param i Integer.MAX_VALUE set by the GameInfoController
+   * @param i Integer.MAX_VALUE set by the GameInfoController.
    * @author hendiehl
    */
   @Override
@@ -72,59 +74,64 @@ public class LobbyAiProtocol implements NetworkPlayer {
   }
 
   // --------------------------------------------------------------------------
-  // LobbyAiProtocol is a filler for missing HumanPlayer so the network Messages are not needed
+  // LobbyAiProtocol is a filler for missing HumanPlayer so the network Messages are not needed.
   @Override
   public void updateLobbyinformation(ArrayList<Player> playersArrayList) {
-    // Not in use because of Non-Network communication
+    // Not in use because of Non-Network communication.
   }
 
   @Override
   public void sendFullMessage() {
-    // Not in use because of Non-Network communication
+    // Not in use because of Non-Network communication.
   }
 
   @Override
   public void sendStartMessage() {
-    // Not in use because of Non-Network communication
+    // Not in use because of Non-Network communication.
   }
 
   @Override
   public void sendGameMessage(ArrayList<Player> players) {
-    // Not in use because of Non-Network communication
+    // Not in use because of Non-Network communication.
   }
 
   @Override
   public void informOther(int turn, int id) {
-    // Not in use because of Non-Network communication
+    // Not in use because of Non-Network communication.
   }
 
   @Override
   public void sendFieldMessage(String path) {
-    // Not in use because of Non-Network communication
+    // Not in use because of Non-Network communication.
   }
 
   @Override
   public void sendDictionaryMessage(String dictionaryContent) {
-    // Not in use because of Non-Network communication
+    // Not in use because of Non-Network communication.
   }
 
   @Override
   public void startMove(int turn, int id) {
-    // Not in use because of Non-Network communication
+    // Not in use because of Non-Network communication.
   }
 
   @Override
   public void sendActionMessage(String action, int points, int id) {
-    // Not in use because of Non-Network communication
+    // Not in use because of Non-Network communication.
   }
 
   @Override
   public void resetGameInfoCon(GameInformationController game) {
-    // Not in use because of Non-Network communication
+    // Not in use because of Non-Network communication.
   }
 
   @Override
-  public void sendDBMessage(Integer integer, boolean won) {
-    // Not in use because of Non-Network communication
+  public void sendDBMessage(boolean won) {
+    // Not in use because of Non-Network communication.
+  }
+
+  @Override
+  public void sendResultMessage(ArrayList<Player> players, int[] points) {
+    // Not in use because of Non-Network communication.
   }
 }

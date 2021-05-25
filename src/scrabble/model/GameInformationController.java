@@ -441,7 +441,7 @@ public class GameInformationController {
   // players in a network game they need to get access to a global instance over the network
 
   /**
-   * Method to get access to the grabRandomTile method in an Network game
+   * Method to get access to the grabRandomTile method in an Network game.
    * 
    * @return random tile from Letter Bag
    * @author hendiehl
@@ -451,7 +451,7 @@ public class GameInformationController {
   }
 
   /**
-   * Method to get access to the getValueOf method in an network game
+   * Method to get access to the getValueOf method in an network game.
    * 
    * @param letter
    * @return value of the letter
@@ -462,7 +462,7 @@ public class GameInformationController {
   }
 
   /**
-   * Method to get access to the getRemainingVowels method in an network game
+   * Method to get access to the getRemainingVowels method in an network game.
    * 
    * @return vowels of the letter bag
    * @author hendiehl
@@ -472,7 +472,7 @@ public class GameInformationController {
   }
 
   /**
-   * Method to get access to the getRemainingConsonants method in an network game
+   * Method to get access to the getRemainingConsonants method in an network game.
    * 
    * @return consonants of the letter bag
    * @author hendiehl
@@ -482,7 +482,7 @@ public class GameInformationController {
   }
 
   /**
-   * Method to get access to the getRemainingBlanks method in an network game
+   * Method to get access to the getRemainingBlanks method in an network game.
    * 
    * @return blanks of the letter bag
    * @author hendiehl
@@ -492,7 +492,7 @@ public class GameInformationController {
   }
 
   /**
-   * Method to get access to the grabRandomTiles(int count) method in an network game
+   * Method to get access to the grabRandomTiles(int count) method in an network game.
    * 
    * @param count amount of tiles
    * @return tiles of the letter bag
@@ -503,7 +503,7 @@ public class GameInformationController {
   }
 
   /**
-   * Method to get access to the getRemainingTiles method in an network game
+   * Method to get access to the getRemainingTiles method in an network game.
    * 
    * @return remaining tiles of the letter bag
    * @author hendiehl
@@ -513,7 +513,7 @@ public class GameInformationController {
   }
 
   /**
-   * Method to get access to the getAmount method in an network game
+   * Method to get access to the getAmount method in an network game.
    * 
    * @return amount of the letter bag
    * @author hendiehl
@@ -536,7 +536,7 @@ public class GameInformationController {
 
   /**
    * Method to set the content of an multiplier file chosen by host. Will be send to all Player
-   * after the game started
+   * after the game started.
    * 
    * @param path content of the chosen file
    * @author hendiehl
@@ -548,9 +548,9 @@ public class GameInformationController {
 
   /**
    * Method to set the content of an dictionary file chosen by host. Will send it to all Player
-   * after the game started
+   * after the game started.
    * 
-   * @param content of an file chosen by host
+   * @param content of an file chosen by host.
    * @author hendiehl
    */
   public void setDictionary(String content) {
@@ -612,9 +612,9 @@ public class GameInformationController {
    */
   private void initCheckMap() {
     for (NetworkPlayer player : players) {
-      if (player instanceof LobbyAiProtocol) { // AiProtocols don't need loading time
+      if (player instanceof LobbyAiProtocol) { // AiProtocols don't need loading time.
         this.initCheck.put(player, true);
-        // setting them ready from beginning
+        // setting them ready from beginning.
       } else { // HumanPlayers
         this.initCheck.put(player, false);
       }
@@ -630,7 +630,20 @@ public class GameInformationController {
    * @author hendiehl
    */
   public void prepareLobbyReturn(ArrayList<NetworkPlayer> list) {
-    this.mainServer.prepareLobbyReturn(list); // reset the controller
-    // This controller is from this point on out dated and not in use anymore
+    this.mainServer.prepareLobbyReturn(list); // reset the controller.
+    // This controller is from this point on, out dated and not in use anymore.
+  }
+
+  /**
+   * Method to check the remaining size of the letter bag in reason to inform the GameHandler if the
+   * bag becomes empty. Need to be called after every access.
+   * 
+   * @author hendiehl
+   */
+  public synchronized void checkBagSize() {
+    System.out.println("GAME INFO : Actual LetterBag size : " + this.bag.getAmount());
+    if (this.bag.getAmount() <= 0) {
+      this.gameHandler.informAboutBag();
+    }
   }
 }
