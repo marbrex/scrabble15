@@ -137,8 +137,8 @@ public class ChooseProfileController implements Initializable {
     for (int i = 0; i < labels.size(); i++) {
       if (i <= players.size() - 1) {
         labels.get(i).setText(players.get(i).getName());
-        circles.get(i).setFill(new ImagePattern(new Image(
-            getClass().getResourceAsStream("/img/" + players.get(i).getImage()))));
+        circles.get(i).setFill(new ImagePattern(
+            new Image(getClass().getResourceAsStream("/img/" + players.get(i).getImage()))));
       } else {
         labels.get(i).setText("Empty");
         labels.get(i).setTextFill(Color.web("#FF0000", 0.8));
@@ -150,7 +150,7 @@ public class ChooseProfileController implements Initializable {
     // Action on Continue-Button
     continueButton.setOnMouseClicked(event -> {
       if (Profile.getPlayer() != null) {
-        if(DBInformation.isFullscreen(Profile.getPlayer())) {
+        if (DBInformation.isFullscreen(Profile.getPlayer())) {
           ScrabbleApp.getStage().setFullScreen(true);
         } else {
           ScrabbleApp.getStage().setFullScreen(false);

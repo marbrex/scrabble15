@@ -1,8 +1,8 @@
 package scrabble;
 
+import com.jfoenix.controls.JFXButton;
 import java.io.IOException;
 import java.net.URL;
-import com.jfoenix.controls.JFXButton;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ResourceBundle;
