@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity"
+	minHeight="-Infinity" minWidth="-Infinity" prefHeight="466.0"
+	prefWidth="328.0" style="-fx-background-color: #d4d4d4;"
+	xmlns="http://javafx.com/javafx/11.0.2"
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="scrabble.AfterGameController">
+	<center>
+		<VBox alignment="CENTER" prefHeight="324.0" prefWidth="331.0"
+			spacing="30.0" BorderPane.alignment="CENTER">
+			<children>
+				<VBox alignment="TOP_CENTER" prefHeight="92.0"
+					prefWidth="331.0" spacing="2.0">
+					<children>
+						<Label text="Winner:" textFill="#1e9a19">
+							<font>
+								<Font name="Candara Bold" size="25.0" />
+							</font>
+						</Label>
+						<Circle fx:id="playerOne" fill="WHITE" radius="38.0"
+							stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" />
+						<Label fx:id="playeroneLbl" text="playeroneLabel">
+							<font>
+								<Font name="Consolas" size="14.0" />
+							</font>
+						</Label>
+						<Label fx:id="scoreOne" text="Score: ">
+							<font>
+								<Font name="Consolas" size="14.0" />
+							</font>
+						</Label>
+					</children>
+				</VBox>
+				<Line endX="100.0" startX="-229.12008666992188"
+					startY="0.592890202999115" />
+				<HBox alignment="CENTER" prefHeight="0.0" prefWidth="331.0"
+					spacing="40.0">
+					<children>
+						<VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0"
+							spacing="5.0">
+							<children>
+								<Label text="2.">
+									<font>
+										<Font name="Consolas" size="15.0" />
+									</font>
+								</Label>
+								<Circle fx:id="playerTwo" fill="WHITE" radius="38.0"
+									stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" />
+								<Label fx:id="playertwoLbl" text="playertwoLabel">
+									<font>
+										<Font name="Consolas" size="14.0" />
+									</font>
+								</Label>
+								<Label fx:id="scoreTwo" text="Score: ">
+									<font>
+										<Font name="Consolas" size="14.0" />
+									</font>
+								</Label>
+							</children>
+						</VBox>
+						<VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0"
+							spacing="5.0">
+							<children>
+								<Label text="3.">
+									<font>
+										<Font name="Consolas" size="15.0" />
+									</font>
+								</Label>
+								<Circle fx:id="playerThree" fill="WHITE" radius="38.0"
+									stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" />
+								<Label fx:id="playerthreeLbl" text="playerthreelabel">
+									<font>
+										<Font name="Consolas" size="14.0" />
+									</font>
+								</Label>
+								<Label fx:id="scoreThree" text="Score: ">
+									<font>
+										<Font name="Consolas" size="14.0" />
+									</font>
+								</Label>
+							</children>
+						</VBox>
+						<VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0"
+							spacing="5.0">
+							<children>
+								<Label text="4.">
+									<font>
+										<Font name="Consolas" size="15.0" />
+									</font>
+								</Label>
+								<Circle fx:id="playerFour" fill="WHITE" radius="38.0"
+									stroke="BLACK" strokeType="INSIDE" strokeWidth="5.0" />
+								<Label fx:id="playerfourLbl" text="playerfourlabel">
+									<font>
+										<Font name="Consolas" size="14.0" />
+									</font>
+								</Label>
+								<Label fx:id="scoreFour" text="Score: ">
+									<font>
+										<Font name="Consolas" size="14.0" />
+									</font>
+								</Label>
+							</children>
+						</VBox>
+					</children>
+				</HBox>
+				<HBox alignment="BOTTOM_CENTER" prefHeight="94.0"
+					prefWidth="331.0" spacing="80.0">
+					<children>
+						<JFXButton fx:id="closeBtn" prefHeight="39.0"
+							prefWidth="106.0" style="-fx-background-color: BLACK;"
+							text="Close" textFill="WHITE">
+							<font>
+								<Font size="18.0" />
+							</font>
+						</JFXButton>
+					</children>
+				</HBox>
+			</children>
+		</VBox>
+	</center>
+	<top>
+		<VBox alignment="CENTER" prefHeight="10.0" prefWidth="328.0"
+			BorderPane.alignment="CENTER">
+			<children>
+				<Label text="Announcement">
+					<font>
+						<Font name="Candara Bold" size="34.0" />
+					</font>
+				</Label>
+			</children>
+		</VBox>
+	</top>
+</BorderPane>
