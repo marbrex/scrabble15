@@ -4,7 +4,6 @@ import com.google.common.collect.Multiset;
 import scrabble.GameController;
 import scrabble.game.Grid;
 import scrabble.game.LetterBag;
-import scrabble.game.LetterBar;
 import scrabble.game.LetterTile;
 import scrabble.game.Word;
 
@@ -23,6 +22,7 @@ public class AiPlayer extends Player implements Serializable {
 
   private String[] difficulty = {"easy", "hard"};
   private String chosenDifficulty;
+  private GameController gc;
   
   /** The letters that aiplayer uses to construct new words. */
   private List<LetterTile> ailetters = new ArrayList<LetterTile>();
@@ -66,6 +66,16 @@ public class AiPlayer extends Player implements Serializable {
    */
   public String getDifficulty() {
     return this.chosenDifficulty;
+  }
+
+  /**
+   * Sets Game Controller
+   *
+   * @author astarche
+   * @param gc Game Controller
+   */
+  public void setController(GameController gc){
+    this.gc = gc;
   }
 
   /**
@@ -169,10 +179,9 @@ public class AiPlayer extends Player implements Serializable {
    * Make turn.
    *
    * @author astarche
-   * @param gc Game Controller
-   * @return constructed word
+   * @return constructed word in form of json
    */
-  public Word makeTurn(GameController gc) {
+  public Word makeTurn() {
     List<LetterTile> lettersOnGrid = gc.grid.getTilesInGrid();
     String word = null;
     boolean flag = false;
@@ -245,11 +254,79 @@ public class AiPlayer extends Player implements Serializable {
     ailetters.remove(ailetters.size() - 1);
     return new Word(wordOnGrid.get(0), wordOnGrid.get(wordOnGrid.size() - 1), gc);
   }
+  /**
+   * Returns changes done to the grid during the last turn in form of json.
+   *
+   * @author astarche
+   * @return string with changes in form of json
+   */
+  public String createJsonString() {
+    ArrayList<Word> wordsInGrid = gc.grid.words;
+    int score = 0;
+    String action = "{\n"
+            + " \"nb\": \"" + wordsInGrid.size() + "\",\n"
+            + " \"words\": [\n";
+
+    for (int j = 0; j < wordsInGrid.size(); j++) {
+      Word word = wordsInGrid.get(j);
+      if (word.newlyPlaced) {
+        String spelling = word.getWordAsString();
+        action += "  {\n"
+                + "   \"word\": \"" + spelling + "\",\n"
+                + "   \"points\": \"" + word.getPoints() + "\",\n"
+                + "   \"tiles\": [\n";
+
+        for (int i = 0; i < word.getWordLength(); i++) {
+          LetterTile letterTile = word.getLetter(i);
+          if (letterTile.isNewlyPlaced) {
+            char letter = letterTile.getLetter();
+            int value = letterTile.getPoints();
+            int row = gc.grid.getCellRow(letterTile);
+            int col = gc.grid.getCellColumn(letterTile);
+            boolean isBlank = letterTile.isBlank;
+
+            action += "    {\n"
+                    + "     \"letter\": \"" + letter + "\",\n"
+                    + "     \"value\": \"" + value + "\",\n"
+                    + "     \"row\": \"" + row + "\",\n"
+                    + "     \"col\": \"" + col + "\",\n"
+                    + "     \"isBlank\": \"" + isBlank + "\"\n"
+                    + "    }";
+
+            if (i == word.getWordLength() - 1) {
+              action += "\n";
+            } else {
+              action += ",\n";
+            }
+
+            letterTile.isNewlyPlaced = false;
+          }
+        }
+
+        action += "   ]";
+
+        if (j == wordsInGrid.size() - 1) {
+          action += "\n"
+                  + "  }\n";
+        } else {
+          action += ",\n";
+        }
+
+        word.newlyPlaced = false;
+
+        score += word.getPoints();
+      }
+    }
+
+    action += " ],\n"
+            + " \"score\": \"" + score + "\"\n"
+            + "}";
+    return action;
+  }
 
   /**
    * Adds tiles over the given slot.
-   *
-   * @param column the column of the slot
+   *  @param column the column of the slot
    * @param row the row of the slot
    * @param part string with letters that need to be added
    * @param gc Game Controller
@@ -416,7 +493,8 @@ public class AiPlayer extends Player implements Serializable {
   public void giveLettersToAiPlayer(GameController gc){
     String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     Random random = new Random();
-    for (int i = 0;i < 5 - ailetters.size();i++){
+    int sz = ailetters.size();
+    for (int i = 0;i < 5 - sz;i++){
       ailetters.add(new LetterTile(alphabet.charAt(random.nextInt(alphabet.length())), 1, 10,
               gc));
     }
