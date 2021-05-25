@@ -35,13 +35,6 @@ public class Slot {
    */
   private void initShape() {
 
-    InnerShadow is = new InnerShadow();
-    is.setColor(Color.DARKGRAY);
-    is.setOffsetX(-5);
-    is.setOffsetY(5);
-    is.setHeight(20);
-    is.setWidth(20);
-
     container = new StackPane();
 
     container.getStyleClass().add("slot");
@@ -66,7 +59,7 @@ public class Slot {
     container.setPrefSize(size, size);
     container.setMinSize(size, size);
     container.setMaxSize(size, size);
-    container.setEffect(is);
+    setEffect();
 
     // Binding size of the Slot to size of the GridPane
     controller.grid.container.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -233,6 +226,7 @@ public class Slot {
     }
     content = null;
     isFree = true;
+    setEffect();
     if (multiplier != null && multiplier != Multiplier.NO) {
       container.getChildren().add(new Label(multiplier.getAsString()));
     }
@@ -251,6 +245,7 @@ public class Slot {
       content = tile;
       tile.slot = this;
       isFree = false;
+      removeEffect();
     }
   }
 
@@ -272,5 +267,20 @@ public class Slot {
    */
   public Multiplier getMultiplier() {
     return multiplier;
+  }
+
+  public void setEffect() {
+    InnerShadow is = new InnerShadow();
+    is.setColor(Color.DARKGRAY);
+    is.setOffsetX(-5);
+    is.setOffsetY(5);
+    is.setHeight(20);
+    is.setWidth(20);
+
+    container.setEffect(is);
+  }
+
+  public void removeEffect() {
+    container.setEffect(null);
   }
 }

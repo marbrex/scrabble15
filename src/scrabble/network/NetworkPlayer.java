@@ -36,7 +36,11 @@ public interface NetworkPlayer {
   public void sendDictionaryMessage(String dictionaryContent);
 
   public void sendActionMessage(String action, int points, int id);
-  
+
   public void resetGameInfoCon(GameInformationController game);
+
+  public void sendDBMessage(boolean won);
+
+  public void sendResultMessage(ArrayList<Player> players, int[] points);
 
 }

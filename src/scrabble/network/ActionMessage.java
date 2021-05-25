@@ -11,6 +11,7 @@ public class ActionMessage extends Message {
    * @author hendiehl
    */
 
+  private static final long serialVersionUID = 1L;
   private int points;
   private String action;
   private int id;
@@ -18,7 +19,7 @@ public class ActionMessage extends Message {
   /**
    * Constructor which sets the action string which holds information about the action a player
    * performed in his latest move and the points he gained through this action. Also the id of the
-   * player will be send in reason to add the action of an other player on the own game field
+   * player will be send in reason to add the action of an other player on the own game field.
    * 
    * @param type MessageType of the message
    * @param owner Owner of the message
@@ -45,7 +46,7 @@ public class ActionMessage extends Message {
   }
 
   /**
-   * Getter for the string representation of actions a player performed in his move
+   * Getter for the string representation of actions a player performed in his move.
    * 
    * @return action string
    * @author hendiehl

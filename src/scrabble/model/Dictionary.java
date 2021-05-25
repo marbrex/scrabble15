@@ -1,14 +1,14 @@
 package scrabble.model;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Collections;
+import java.util.List;
 import scrabble.game.Word;
 
 /**
@@ -144,7 +144,7 @@ public class Dictionary {
       }
     }
   }
-  
+
   /**
    * Removing words, which are present multiple times.
    * 
@@ -154,5 +154,5 @@ public class Dictionary {
     set = new HashSet<String>(words);
     words = new ArrayList<String>(set);
     Collections.sort(words);
- }
+  }
 }

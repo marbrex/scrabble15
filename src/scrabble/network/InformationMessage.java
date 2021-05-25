@@ -13,16 +13,18 @@ public class InformationMessage extends Message implements Serializable {
    * 
    * @author hendiehl
    */
+
+  private static final long serialVersionUID = 1L;
   private GameStatusType status;
   private int lobbyPlayers;
 
   /**
-   * Constructor for the first informations which will be send to a client
+   * Constructor for the first informations which will be send to a client.
    * 
-   * @param type
-   * @param owner
-   * @param status status of the lobby = in lobby or in game
-   * @param amount amount of the players in a lobby
+   * @param type MessageType of the message.
+   * @param owner Owner of the message.
+   * @param status Status of the lobby = in lobby or in game.
+   * @param amount Amount of the players in a lobby.
    * @author hendiehl
    */
   public InformationMessage(MessageType type, Player owner, GameStatusType status, int amount) {
@@ -32,7 +34,7 @@ public class InformationMessage extends Message implements Serializable {
   }
 
   /**
-   * Getter of the MessageType to identify a join possibility from the start
+   * Getter of the MessageType to identify a join possibility from the start.
    * 
    * @return status GameStatusType
    * @author hendiehl
@@ -42,7 +44,7 @@ public class InformationMessage extends Message implements Serializable {
   }
 
   /**
-   * Getter of the amount of players in a lobby
+   * Getter of the amount of players in a lobby.
    * 
    * @return player amount
    * @author hendiehl

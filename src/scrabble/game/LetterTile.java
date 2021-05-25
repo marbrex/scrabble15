@@ -29,7 +29,7 @@ public class LetterTile implements Serializable {
   public boolean isFrozen;
   public boolean isNewlyPlaced;
 
-  Slot slot;
+  public Slot slot;
 
   // Neighbours
   private LetterTile top;

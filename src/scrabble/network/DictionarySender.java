@@ -15,7 +15,7 @@ public class DictionarySender extends Thread {
 
   /**
    * Constructor which sets the GameInformationController in purpose to get the a chosen dictionary
-   * and start the send procedure for each client
+   * and start the send procedure for each client.
    * 
    * @param game corresponding GameInformationController
    * @author hendiehl
@@ -25,7 +25,7 @@ public class DictionarySender extends Thread {
   }
 
   /**
-   * Run method of the thread class for independent call hierarchy of the StartGameHandler
+   * Run method of the thread class for independent call hierarchy of the StartGameHandler.
    * 
    * @author hendiehl
    */

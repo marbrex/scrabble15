@@ -15,13 +15,14 @@ public class LobbyInformationMessage extends Message implements Serializable {
    */
   /** list of all human player in the lobby */
   private ArrayList<Player> players;
+  private static final long serialVersionUID = 1L;
 
   /**
-   * Constructor for setting the list of players in a lobby
+   * Constructor for setting the list of players in a lobby.
    * 
-   * @param type type of the network message
-   * @param owner owner of the network message
-   * @param players list of human lobby players
+   * @param type type of the network message.
+   * @param owner owner of the network message.
+   * @param players list of human lobby players.
    * @author hendiehl
    */
   public LobbyInformationMessage(MessageType type, Player owner, ArrayList<Player> players) {
@@ -30,9 +31,9 @@ public class LobbyInformationMessage extends Message implements Serializable {
   }
 
   /**
-   * Getter method for the player list
+   * Getter method for the player list.
    * 
-   * @return list of the players in the lobby
+   * @return list of the players in the lobby.
    * @author hendiehl
    */
   public ArrayList<Player> getPlayers() {

@@ -62,6 +62,8 @@ public class LoadingController implements Initializable {
   private double progress = 0;
 
   private int randomNumber;
+  
+  private int ownID;
 
   /**
    * Constructor for a network game which has the function to briefly save game necessary
@@ -72,15 +74,17 @@ public class LoadingController implements Initializable {
    * @param mapContent content of a multiplier field file
    * @param players members of the game
    * @param dictionary content of a dictionary file
+   * @param ownID Id of the own player during a network game.
    * @author hendiehl
    */
   public LoadingController(NetworkScreen protocol, boolean isHost, String mapContent,
-      ArrayList<Player> players, String dictionary) {
+      ArrayList<Player> players, String dictionary, int ownID) {
     this.protocol = protocol;
     this.isHost = isHost;
     this.mapContent = mapContent;
     this.players = players;
     this.dictionary = dictionary;
+    this.ownID = ownID;
   }
 
   /**
@@ -182,7 +186,7 @@ public class LoadingController implements Initializable {
             } else {
               FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/interface.fxml"));
               loader.setControllerFactory(c -> {
-                return new GameController(protocol, isHost, mapContent, players, dictionary);
+                return new GameController(protocol, isHost, mapContent, players, dictionary, ownID);
               });
               root = loader.load();
             }

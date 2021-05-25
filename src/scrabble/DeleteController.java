@@ -1,7 +1,7 @@
 package scrabble;
 
-import java.io.IOException;
 import com.jfoenix.controls.JFXButton;
+import java.io.IOException;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

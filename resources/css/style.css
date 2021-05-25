@@ -317,6 +317,11 @@
   /*-fx-padding: -5;*/
 }
 
+.letter-btn-frozen {
+  -fx-border-color: gray;
+  -fx-background-color: #31d3ff;
+}
+
 .letter-btn-hor-min {
   -fx-border-radius: 7px 0 0 7px;
   -fx-background-radius: 7px 0 0 7px;

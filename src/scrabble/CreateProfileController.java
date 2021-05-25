@@ -1,6 +1,7 @@
 package scrabble;
 
 import com.jfoenix.controls.JFXButton;
+import java.io.IOException;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -16,7 +17,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.Database;
-import java.io.IOException;
 
 
 /**
