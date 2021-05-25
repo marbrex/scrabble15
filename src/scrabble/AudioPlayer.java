@@ -1,12 +1,17 @@
 package scrabble;
 
-import jaco.mp3.player.MP3Player;
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.SourceDataLine;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+
+
 /**
  * scrabble.AudioPlayer is used to play mp3 or wav files
  *
@@ -14,36 +19,39 @@ import java.io.IOException;
  */
 public class AudioPlayer {
 
-    private final MP3Player player;
+    private Player player;
+    private FileInputStream file;
 
     /**
      * Constructor that instantiates a new audio player.
-     */
-    public AudioPlayer(){
-        this.player = new MP3Player();
-        this.player.setRepeat(true);
-    }
-
-    /**
-     * Plays an mp3 file.
      *
-     * @param path path to the mp3 file
+     * @param path path to the file
      */
-    public void playMp3(String path){
+    public AudioPlayer(String path){
         StringBuilder sb = new StringBuilder(path);
         sb.delete(0, 5);
-        File file = new File(sb.toString());
-        if (this.player.getPlayList().isEmpty()){
-            this.player.addToPlayList(file);
+        try {
+            this.file = new FileInputStream(sb.toString());
+            this.player = new Player(file);
+        }catch (FileNotFoundException | JavaLayerException e){
+            e.printStackTrace();
         }
-        this.player.play();
+    }
+    public void playMp3(){
+        if (this.player != null) {
+            try {
+                this.player.play();
+            } catch (JavaLayerException jle) {
+                jle.printStackTrace();
+            }
+        }
     }
     /**
      * Get MP3Player
      *
      * @return the player
      */
-    public MP3Player getPlayer(){
+    public Player getPlayer(){
         return this.player;
     }
 
@@ -53,7 +61,7 @@ public class AudioPlayer {
      * @param path the path
      * @throws Exception the exception
      */
-    public void playWav(String path) throws Exception{
+    public void playWav(String path) throws Exception {
         StringBuilder sb = new StringBuilder(path);
         sb.delete(0, 5);
         File file = new File(sb.toString());
