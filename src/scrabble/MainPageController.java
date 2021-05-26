@@ -120,6 +120,10 @@ public class MainPageController implements Initializable {
     buttons.add(multiPlayerBtn);
 
     JFXButton tutorialBtn = new JFXButton("Tutorial");
+    tutorialBtn.setOnAction(event -> {
+      setNetworkMode(false);
+      changeScene("/fxml/interfaceTutorial.fxml", "/css/style.css", event);
+    });
     tutorialBtn.getStyleClass().add("button");
     buttons.add(tutorialBtn);
 

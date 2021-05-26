@@ -1,19 +1,25 @@
 package scrabble;
 
 import com.google.common.collect.Multiset;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.*;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 import scrabble.game.LeaderBoard;
 import scrabble.game.LetterBag;
 import scrabble.game.LetterBag.Tile;
@@ -34,6 +40,136 @@ import scrabble.model.Profile;
  * @author Eldar Kasmamytov
  */
 public class SingleGameController extends GameController {
+  private AiPlayer aiPlayer;
+
+  private final List<String> dialogLines = new ArrayList<String>();
+
+  private TextArea dialogWindow;
+
+  private ImageView im;
+
+  private BorderPane dialogPane;
+
+  private static int indx = 0;
+
+  /**
+   * Initialize narrator.
+   *
+   * @return the border pane
+   */
+  private BorderPane initializeNarrator(){
+    VBox mainBlock = new VBox();
+    this.dialogPane = new BorderPane();
+    mainBlock.setAlignment(Pos.CENTER);
+    this.dialogWindow = new TextArea();
+    dialogWindow.setOpacity(0.8);
+    dialogWindow.setWrapText(true);
+    dialogWindow.setFont(new Font("System", 30));
+    dialogWindow.setEditable(false);
+    this.dialogPane.getStyleClass().add("popup-error-block");
+    this.im = new ImageView(new Image(getClass().getResourceAsStream("/img/anonyms.png")));
+    im.setFitWidth(250);
+    im.setFitHeight(250);
+    mainBlock.getChildren().add(im);
+    mainBlock.getChildren().add(dialogWindow);
+    this.dialogPane.setCenter(mainBlock);
+    return this.dialogPane;
+  }
+
+  /**
+   * Show narrator.
+   */
+  private void showNarrator(){
+    this.gridWrapper.getChildren().add(this.dialogPane);
+  }
+
+  /**
+   * Hide narrator.
+   */
+  private void hideNarrator(){
+    this.gridWrapper.getChildren().remove(this.dialogPane);
+  }
+
+  /**
+   * Show rules.
+   */
+  private void showRules(){
+    if (!this.gridWrapper.getChildren().contains(this.dialogPane)){
+      showNarrator();
+    }
+    indx = 2;
+    this.dialogWindow.setText(dialogLines.get(1));
+    this.im.setOnMouseClicked(mouseEvent -> {
+      if (indx < 16) {
+        this.dialogWindow.setText(dialogLines.get(indx));
+        indx++;
+      }else{
+        hideNarrator();
+      }
+    });
+  }
+
+
+  /**
+   * Initialize dialog.
+   */
+  private void initializeDialog(){
+    try {
+      String path = getClass().getResource("/dialog/dialog.txt").toString();
+      StringBuilder sb = new StringBuilder(path);
+      sb.delete(0, 5);
+      File file = new File(sb.toString());
+      Scanner scanner = new Scanner(file);
+      while (scanner.hasNextLine()){
+        String line = scanner.nextLine();
+        dialogLines.add(line);
+      }
+    }catch (FileNotFoundException e){
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Play guide.
+   */
+  private void playGuide(){
+    showNarrator();
+    initializeDialog();
+    dialogWindow.appendText("Welcome, " + Profile.getPlayer().getName() +
+            "!\nThis is Anonymous! Today I am going to " +
+            "teach you how to play scrabble! Click on me to continue!");
+    this.im.setOnMouseClicked(mouseEvent -> {
+      if (indx < 23) {
+        dialogWindow.setText(dialogLines.get(indx));
+        indx++;
+      }else{
+        hideNarrator();
+      }
+    });
+    ScrabbleApp.getScene().setOnKeyPressed(keyEvent -> {
+      if (keyEvent.getCode() == KeyCode.R){
+        if (!this.gridWrapper.getChildren().contains(this.dialogPane)){
+          showNarrator();
+        }
+        showRules();
+      }else if (keyEvent.getCode() == KeyCode.H){
+        if (!this.gridWrapper.getChildren().contains(this.dialogPane)){
+          showNarrator();
+        }
+        dialogWindow.setText(aiPlayer.helpPoorHuman());
+      }
+    });
+    okBtn.setOnAction(event -> {
+      if (grid.verifyWordsValidity()){
+        Platform.runLater(() ->{
+          aiPlayer.makeTurn();
+        });
+      }
+    });
+  }
+
+
+
 
   public void startMove() {
 
@@ -91,9 +227,12 @@ public class SingleGameController extends GameController {
             sec--;
           }
         }
-
-        timerLabel
-            .setText((min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec));
+        int finalMin = min;
+        int finalSec = sec;
+        Platform.runLater(() -> {
+          timerLabel.setText((finalMin < 10 ? "0" + finalMin : finalMin) + ":" + (finalSec < 10 ? "0" + finalSec : finalSec));
+        });
+        //timerLabel.setText((min < 10 ? "0" + min : min) + ":" + (sec < 10 ? "0" + sec : sec));
 
         if (min >= 3) {
           timerLabel.setTextFill(Paint.valueOf("green"));
@@ -172,7 +311,7 @@ public class SingleGameController extends GameController {
       avatarWrapper.getStyleClass().add("player-avatar-frame");
       avatarWrapper.setAlignment(Pos.CENTER);
 
-      ImageView avatar = new ImageView(new Image(getClass().getResourceAsStream("img/" + player.getImage())));
+      ImageView avatar = new ImageView(new Image(getClass().getResourceAsStream("/img/" + player.getImage())));
       avatar.setFitHeight(60);
       avatar.setFitWidth(60);
 
@@ -199,6 +338,9 @@ public class SingleGameController extends GameController {
    */
   @FXML
   private void initialize() {
+    this.dialogPane = initializeNarrator();
+    this.aiPlayer = new AiPlayer();
+    this.aiPlayer.setController(this);
 
     initDictionary();
 
@@ -220,9 +362,12 @@ public class SingleGameController extends GameController {
 
     sideBar.maxHeightProperty().bind(mainBlock.heightProperty());
 
-    setButtonActions();
+    //setButtonActions();
 
     startMove();
+    this.aiPlayer.giveLettersToAiPlayer(LetterBag.getInstance());
+    this.aiPlayer.displayTiles();
+    playGuide();
 
   }
 
