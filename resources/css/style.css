@@ -17,9 +17,10 @@
 }
 
 #round-counter {
-  -fx-border-width: 1px;
+  -fx-border-width: 2px;
   -fx-border-color: black;
   -fx-border-radius: 50%;
+  -fx-background-radius: 50%;
   -fx-padding: 0 5px;
   -fx-font-weight: bold;
 }
@@ -39,10 +40,6 @@
   -fx-opacity: 0.6;
 }
 
-#time-block {
-  /*-fx-background-color: orange;*/
-}
-
 #players-block {
   /*-fx-background-color: #ffbf70;*/
 }
@@ -59,8 +56,14 @@
 
 .players-score {
   -fx-font-weight: bold;
-  -fx-font-size: 15px;
+  -fx-font-size: 16px;
+  -fx-text-fill: black;
 }
+
+.players-score-active {
+  -fx-text-fill: green;
+}
+
 
 #chat {
   -fx-background-color: rgb(200,200,200);
@@ -435,4 +438,13 @@
   -fx-stroke-type: outside;
   -fx-stroke-line-join: round;
   -fx-stroke-line-cap: round;
+}
+
+#bag-btn {
+  -fx-opacity: 1;
+}
+
+#bag-btn:hover {
+  -fx-opacity: 0.6;
+  -fx-cursor: hand;
 }

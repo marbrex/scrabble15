@@ -1,5 +1,7 @@
 package scrabble;
 
+import animatefx.animation.GlowText;
+import animatefx.animation.Pulse;
 import com.google.common.collect.Multiset;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
@@ -16,6 +18,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -82,6 +86,12 @@ public class GameController {
    */
   @FXML
   public JFXButton shuffleBtn;
+
+  @FXML
+  public StackPane bagBtn;
+
+  @FXML
+  public Label bagCount;
 
   /**
    * The root element in FXML.
@@ -283,7 +293,6 @@ public class GameController {
             public void run() {
               Platform.runLater(() -> {
 
-//                System.out.println("Time is over - moving tiles in grid back to bar..");
                 // moving all tiles in grid back to bar
                 letterBar.putTilesBackToBar();
 
@@ -333,6 +342,11 @@ public class GameController {
                   timerLabel.setTextFill(Paint.valueOf("orange"));
                 } else if (min >= 0) {
                   timerLabel.setTextFill(Paint.valueOf("red"));
+
+                  if (sec <= 15) {
+                    Pulse pulse = new Pulse(timerLabel);
+                    pulse.play();
+                  }
                 }
 
               });
@@ -460,6 +474,7 @@ public class GameController {
           // here the actions of a other player will be received
           System.out.println("GAME CONTROLLER : Other action received in controller");
 
+          protocol.getAmount();
           addToScoreOfPlayer(id, points);
           ArrayList<LetterTile> ltrTiles = new ArrayList<>();
 
@@ -803,10 +818,9 @@ public class GameController {
 
         Label nickname = new Label(player.getName());
         nickname.getStyleClass().add("players-name");
+
         Label score = new Label(String.valueOf(player.getScore()));
         score.getStyleClass().add("players-score");
-        System.out.println("ID transmitted: " + player.getId());
-        System.out.println("ID profile: " + playerID);
 
         avatarWrapper.getChildren().add(avatar);
         playerBlock.setLeft(avatarWrapper);
@@ -917,6 +931,8 @@ public class GameController {
       // updating the LetterBar
       letterBar.fillGaps(tiles);
       letterBar.display();
+
+      protocol.getAmount();
     });
   }
 
@@ -935,7 +951,9 @@ public class GameController {
    * @param amount Amount of remaining tiles in bag.
    */
   public void getAmountAnswer(int amount) {
-    // do something with amount
+    Platform.runLater(() -> {
+      bagCount.setText(String.valueOf(amount));
+    });
   }
 
   /**
@@ -954,6 +972,10 @@ public class GameController {
       if (getIntID(block.getId()) == id) {
         System.out.println("Found! ID: " + block.getId());
         playerBlock.getLeft().getStyleClass().add("player-avatar-frame-active");
+
+        Pulse pulse = new Pulse(playerBlock.getLeft());
+        pulse.setCycleCount(2);
+        pulse.play();
       }
     });
   }
@@ -989,6 +1011,15 @@ public class GameController {
         System.out.println("Found! ID: " + block.getId());
         int currentScore = Integer.parseInt(scoreLabel.getText());
         scoreLabel.setText(String.valueOf(currentScore + points));
+        scoreLabel.getStyleClass().add("players-score-active");
+        scoreLabel.setManaged(false);
+
+        Pulse pulse = new Pulse(scoreLabel);
+        pulse.setOnFinished(actionEvent -> {
+          scoreLabel.getStyleClass().removeAll("players-score-active");
+          scoreLabel.setManaged(true);
+        });
+        pulse.play();
       }
     });
   }
@@ -1008,6 +1039,7 @@ public class GameController {
 
       setRound();
       setPlayerActive(id);
+      protocol.getAmount();
 
     });
   }
