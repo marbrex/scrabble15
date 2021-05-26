@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import scrabble.GameController;
+import scrabble.model.Letter;
 
 /**
  * scrabble.game.Grid Class is used to stock the internal state of the letters grid.
@@ -537,9 +538,6 @@ public class Grid {
 
     int validWords = 0;
     int wordsUsingStartSlot = 0;
-    int frozenWordsCounter = 0;
-    int nbHorizontal = 0;
-    int nbVertical = 0;
 
     for (Word word : words) {
       System.out.println("current word: " + word.getWordAsString());
@@ -550,18 +548,6 @@ public class Grid {
       // (by counting the number of valid words and comparing it to number of all words)
       if (word.isValid()) {
         validWords++;
-      }
-
-      // Counting the number of frozen words, current horizontal and vertical words
-      if (!word.frozen) {
-        if (word.isHorizontal()) {
-          nbHorizontal++;
-        }
-        if (word.isVertical()) {
-          nbVertical++;
-        }
-      } else {
-        frozenWordsCounter++;
       }
 
       System.out.println("validStartingSlots: ");
@@ -580,6 +566,53 @@ public class Grid {
         }
       }
     }
+
+    // ======== START checking if every tile is in the same direction ========
+    ArrayList<LetterTile> justPlacedTiles = new ArrayList<>();
+    for (LetterTile letterTile : getTilesInGrid()) {
+      if (!letterTile.isFrozen) {
+        justPlacedTiles.add(letterTile);
+      }
+    }
+
+    LetterTile letterTile1 = justPlacedTiles.get(0);
+    int col1 = getCellColumn(letterTile1);
+    int row1 = getCellRow(letterTile1);
+
+    int sameRowCount = 0;
+    int sameColCount = 0;
+    boolean sameDirection = false;
+
+    // it's enough to compare 1 tile with every other tile
+    for (int j = 1; j < justPlacedTiles.size(); j++) {
+      LetterTile letterTile2 = justPlacedTiles.get(j);
+      int col2 = getCellColumn(letterTile2);
+      int row2 = getCellRow(letterTile2);
+
+      if (row1 == row2 && col1 != col2) {
+        // 2 tiles are horizontally positioned on the same row
+
+        sameRowCount++;
+      }
+      else if (col1 == col2 && row1 != row2) {
+        // 2 tiles are vertically positioned in the same column
+
+        sameColCount++;
+      }
+      else {
+        // 2 tiles aren't in the same direction
+
+        sameDirection = false;
+        break;
+      }
+    }
+
+    // comparing
+    // only 1 of these 2 expressions in IF should be TRUE (they cannot be both true)
+    if (sameRowCount == justPlacedTiles.size() - 1 || sameColCount == justPlacedTiles.size() - 1) {
+      sameDirection = true;
+    }
+    // ======== END checking if every tile is in the same direction ========
 
     boolean noSingleTiles = true;
     // Checking if there are Single LetterTiles in the Grid
@@ -611,8 +644,7 @@ public class Grid {
           // All words present in the grid are valid
           System.out.println("ALL WORDS ARE VALID !");
 
-          if (nbHorizontal == words.size() - frozenWordsCounter
-              | nbVertical == words.size() - frozenWordsCounter) {
+          if (sameDirection) {
             // All words have the same direction
             System.out.println("ALL WORDS HAVE THE SAME DIRECTION !");
 
