@@ -123,6 +123,37 @@ public class Client extends Thread {
   }
 
   /**
+   * Sending a message to everyone, that a player has found specific word.
+   * 
+   * @param word Specific word that has been found in the game
+   * @author skeskinc
+   */
+  public void sendWordMessageToServer(String word) {
+    toServer.println(username + " has put a word: " + word + ".");
+    toServer.flush();
+  }
+
+  /**
+   * Sending a message to everyone, that a player is passing his turn.
+   * 
+   * @author skeskinc
+   */
+  public void sendPassToServer() {
+    toServer.println(username + " passed his turn.");
+    toServer.flush();
+  }
+
+  /**
+   * Sending a message to everyone, that a player has left the game.
+   * 
+   * @author skeskinc
+   */
+  public void sendLeaveGameToServer() {
+    toServer.println(username + " has left the game.");
+    toServer.flush();
+  }
+
+  /**
    * Disconnecting from the Chat-Server.
    * 
    * @author astarche
