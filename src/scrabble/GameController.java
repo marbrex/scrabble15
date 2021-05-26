@@ -163,7 +163,9 @@ public class GameController {
 
   GameController thisController = this;
 
-  Label scoreLabel;
+  ArrayList<Label> scoreLabels = new ArrayList<>();
+
+  int playerID;
 
   /**
    * Default constructor.
@@ -198,6 +200,7 @@ public class GameController {
     this.isHost = isHost;
     this.mapContent = mapContent;
     this.dictContent = dictionary;
+    this.playerID = ownID;
 
     players.forEach(player -> {
       System.out.println("\n" + player.getName() + " HAS ID : " + player.getId());
@@ -433,7 +436,7 @@ public class GameController {
                   .append("}");
 
               System.out.println(action);
-//              scoreLabel.setText(String.valueOf(score));
+              addToScoreOfPlayer(playerID, score);
 
               protocol.sendEndMessage(action.toString(), score);
             }
@@ -456,6 +459,8 @@ public class GameController {
         Platform.runLater(() -> {
           // here the actions of a other player will be received
           System.out.println("GAME CONTROLLER : Other action received in controller");
+
+          addToScoreOfPlayer(id, points);
           ArrayList<LetterTile> ltrTiles = new ArrayList<>();
 
           JSONObject data = new JSONObject(action);
@@ -785,7 +790,7 @@ public class GameController {
         playerBlock.getStyleClass().add("players-block");
         playerBlock.setPadding(new Insets(10, 30, 10, 30));
         System.out.println(player.getName() + " has ID: " + player.getId());
-        playerBlock.setId(String.valueOf(player.getId()));
+        playerBlock.setId("player-block-" + String.valueOf(player.getId()));
 
         StackPane avatarWrapper = new StackPane();
         avatarWrapper.getStyleClass().add("player-avatar-frame");
@@ -801,10 +806,7 @@ public class GameController {
         Label score = new Label(String.valueOf(player.getScore()));
         score.getStyleClass().add("players-score");
         System.out.println("ID transmitted: " + player.getId());
-        System.out.println("ID profile: " + Profile.getPlayer().getId());
-        if (player.getId() == Profile.getPlayer().getId()) {
-          scoreLabel = score;
-        }
+        System.out.println("ID profile: " + playerID);
 
         avatarWrapper.getChildren().add(avatar);
         playerBlock.setLeft(avatarWrapper);
@@ -949,11 +951,16 @@ public class GameController {
       BorderPane playerBlock = (BorderPane) block;
       playerBlock.getLeft().getStyleClass().remove("player-avatar-frame-active");
 
-      if (Integer.parseInt(block.getId()) == id) {
+      if (getIntID(block.getId()) == id) {
         System.out.println("Found! ID: " + block.getId());
         playerBlock.getLeft().getStyleClass().add("player-avatar-frame-active");
       }
     });
+  }
+
+  public int getIntID(String id) {
+    String[] split = id.split("-");
+    return Integer.parseInt(split[split.length-1]);
   }
 
   /**
@@ -963,6 +970,27 @@ public class GameController {
    */
   public void setRound() {
     roundLabel.setText(String.valueOf(++roundCounter));
+  }
+
+  /**
+   * Changes the score and the label of this player.
+   *
+   * @param points Points to add to the current score.
+   *
+   * @author ekasmamy
+   */
+  public void addToScoreOfPlayer(int playerId, int points) {
+    playersBlock.getChildren().forEach(block -> {
+      System.out.println("Current player block ID: " + block.getId());
+      BorderPane playerBlock = (BorderPane) block;
+      Label scoreLabel = (Label) playerBlock.getRight();
+
+      if (getIntID(block.getId()) == playerId) {
+        System.out.println("Found! ID: " + block.getId());
+        int currentScore = Integer.parseInt(scoreLabel.getText());
+        scoreLabel.setText(String.valueOf(currentScore + points));
+      }
+    });
   }
 
   /**
