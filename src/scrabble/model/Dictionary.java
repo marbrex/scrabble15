@@ -6,7 +6,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import scrabble.game.Word;
 
@@ -20,8 +20,7 @@ public class Dictionary {
   private static BufferedReader in;
   private static List<String> words = new ArrayList<String>();
   private static List<String> definitions = new ArrayList<String>();
-  private static LinkedHashSet<String> wordSet;
-
+  private static LinkedHashMap<String, String> dictionary = new LinkedHashMap<String, String>();
 
   /**
    * Setting the Dictionary.
@@ -53,23 +52,27 @@ public class Dictionary {
             break;
           }
         }
-        if (word.matches("[a-zA-Z]+")) {
+        if (word.matches("[a-zA-Z]+") && word.length() <= 15) {
           // Looking at definitions
           for (int i = 0; i < c.length - 1; i++) {
             if (Character.isWhitespace(c[i]) && !Character.isWhitespace(c[i + 1])) {
               definition = msg.substring(i + 1, c.length);
               definitions.add(definition);
+              dictionary.put(word, definition);
               break;
             } else if (Character.isWhitespace(c[i]) && Character.isWhitespace(c[i + 1])) {
               definitions.add("No definition found.");
+              dictionary.put(word, "No definition found.");
               break;
             } else if (i == c.length - 2 && Character.isDefined(c[i + 1])) {
               definitions.add("No definition found.");
+              dictionary.put(word, "No definition found.");
               break;
             }
           }
         }
       }
+      // Removing duplicated words and definitions.
       removeDuplicates();
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
@@ -158,8 +161,9 @@ public class Dictionary {
    * @author skeskinc
    */
   public static void removeDuplicates() {
-    wordSet = new LinkedHashSet<String>(words);
-    words = new ArrayList<String>(wordSet);
+    words = new ArrayList<String>(dictionary.keySet());
+    definitions = new ArrayList<String>(dictionary.values());
+
   }
 
 }
