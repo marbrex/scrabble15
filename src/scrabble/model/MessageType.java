@@ -27,4 +27,5 @@ public enum MessageType {
   ACTION, // message to inform about the move action of somebody else.
   RETURN, // message to return to the lobby from the gameScreen.
   DB, // message to inform a player about his game results.
+  SIZE, // message to inform game members about the letter bag size.
 }

@@ -131,7 +131,14 @@ public class LobbyAiProtocol implements NetworkPlayer {
   }
 
   @Override
-  public void sendResultMessage(ArrayList<Player> players, int[] points) {
+  public void sendResultMessage(ArrayList<Player> players, int[] points,
+      ArrayList<Player> ordered) {
     // Not in use because of Non-Network communication.
+  }
+
+  @Override
+  public void sendBagSize(int size) {
+    // TODO Auto-generated method stub
+    
   }
 }

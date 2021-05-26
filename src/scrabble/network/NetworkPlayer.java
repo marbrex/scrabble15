@@ -41,6 +41,8 @@ public interface NetworkPlayer {
 
   public void sendDBMessage(boolean won);
 
-  public void sendResultMessage(ArrayList<Player> players, int[] points);
+  public void sendResultMessage(ArrayList<Player> players, int[] points, ArrayList<Player> ordered);
+
+  public void sendBagSize(int size);
 
 }

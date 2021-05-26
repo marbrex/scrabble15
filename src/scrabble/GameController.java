@@ -52,6 +52,7 @@ import scrabble.model.Player;
 import scrabble.model.Profile;
 import scrabble.network.LobbyClientProtocol;
 import scrabble.network.LobbyHostProtocol;
+import scrabble.network.LobbyServer;
 import scrabble.network.NetworkGame;
 import scrabble.network.NetworkScreen;
 
@@ -565,6 +566,11 @@ public class GameController {
       public void sendChatMessage(String message) {
         protocol.sendChatMessage(message); // sending the message
       }
+      
+      @Override
+      public void informAboutTileAmount(int size) {
+        System.out.println("GAME CONTROLLER : Tiles left in bag : " + size);
+      }
 
     };
   }
@@ -1041,6 +1047,63 @@ public class GameController {
       setPlayerActive(id);
       protocol.getAmount();
 
+    });
+  }
+  
+  /**
+   * Method to change the screen to a lobby screen after a game ends. Version for clients.
+   * 
+   * @param protocol protocol of the network player.
+   * @param isHost condition about host protocol
+   * @author hendiehl
+   */
+  public void getToAfterGame(NetworkScreen protocol, boolean isHost) {
+    Platform.runLater(() -> {
+      try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GameLobby.fxml"));
+        loader.setControllerFactory(c -> {
+          return new GameLobbyController(isHost, protocol);
+        });
+        Parent root = loader.load();
+        GameLobbyController glc = loader.<GameLobbyController>getController();
+        this.protocol.setLobbyController(glc);
+        ScrabbleApp.getScene().getStylesheets().clear();
+        ScrabbleApp.getScene().getStylesheets()
+            .add(getClass().getResource("/css/style.css").toExternalForm());
+        ScrabbleApp.getScene().setRoot(root);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    });
+  }
+
+  /**
+   * Method to change the screen to a lobby screen after a game ends. Version for hosts.
+   * 
+   * @param protocol protocol of the network player.
+   * @param server LobbyServer of the host.
+   * @param isHost condition about host protocol
+   * @author hendiehl
+   */
+  public void getToAfterGame(NetworkScreen protocol, boolean isHost, LobbyServer server) {
+    Platform.runLater(() -> {
+      try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GameLobby.fxml"));
+        loader.setControllerFactory(c -> {
+          return new GameLobbyController(isHost, server, protocol);
+        });
+        Parent root = loader.load();
+        GameLobbyController glc = loader.<GameLobbyController>getController();
+        this.protocol.setLobbyController(glc);
+        ScrabbleApp.getScene().getStylesheets().clear();
+        ScrabbleApp.getScene().getStylesheets()
+            .add(getClass().getResource("/css/style.css").toExternalForm());
+        ScrabbleApp.getScene().setRoot(root);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     });
   }
 }

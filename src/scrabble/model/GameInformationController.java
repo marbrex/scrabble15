@@ -646,4 +646,25 @@ public class GameInformationController {
       this.gameHandler.informAboutBag();
     }
   }
+
+  /**
+   * Getter method to get the main Server in reason to set them to the new LobbyController.
+   * 
+   * @return mainServer of the actual network lobby/game instance.
+   * @author hendiehl
+   */
+  public LobbyServer getCorrespondingServer() {
+    return this.mainServer;
+  }
+
+  /**
+   * Method to send the bag size to every player after an access to it.
+   * 
+   * @author hendiehl
+   */
+  public void sendBagSize() {
+    for (NetworkPlayer player : this.players) {
+      player.sendBagSize(this.bag.getAmount());
+    }
+  }
 }

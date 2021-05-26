@@ -297,7 +297,14 @@ class GameHandlerTest {
     }
 
     @Override
-    public void sendResultMessage(ArrayList<Player> players, int[] points) {
+    public void sendResultMessage(ArrayList<Player> players, int[] points,
+        ArrayList<Player> ordered) {
+      // TODO Auto-generated method stub
+      
+    }
+
+    @Override
+    public void sendBagSize(int size) {
       // TODO Auto-generated method stub
       
     }

@@ -12,14 +12,15 @@ public class StartMessage extends Message {
    */
   /** array representation of the player sequence chosen by a member of a lobby */
   private int[] sequence;
+  private static final long serialVersionUID = 1L;
 
   /**
    * Constructor to create a StartMessage, which have the purpose to transmit the player sequence
-   * chosen by a specific member of a lobby
+   * chosen by a specific member of a lobby.
    * 
-   * @param type Type of the Message, here type START
-   * @param owner Owner of the Message
-   * @param sequence array representation of the Message
+   * @param type Type of the Message, here type START.
+   * @param owner Owner of the Message.
+   * @param sequence array representation of the Message.
    * @author hendiehl
    */
   public StartMessage(MessageType type, Player owner, int[] sequence) {
@@ -28,7 +29,7 @@ public class StartMessage extends Message {
   }
 
   /**
-   * Getter of the array representation of the player sequence
+   * Getter of the array representation of the player sequence.
    * 
    * @return
    * @author hendiehl

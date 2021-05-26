@@ -21,4 +21,7 @@ public interface NetworkGame {
 
   public void sendChatMessage(String message); // used by a player to send a chat message to the
                                                // other players --> connected with an send Button
+
+  public void informAboutTileAmount(int size); // inform about the amount tiles left in the
+                                               // LetterBag
 }

@@ -6,10 +6,13 @@ public class PortsOccupiedException extends Exception {
    * 
    * @author hendiehl
    */
+
+  private static final long serialVersionUID = 1L;
+
   /**
-   * Constructor with an specific exception message
+   * Constructor with an specific exception message.
    * 
-   * @param msg message string of the exception
+   * @param msg message string of the exception.
    * @author hendiehl
    */
   public PortsOccupiedException(String msg) {

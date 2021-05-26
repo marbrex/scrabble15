@@ -1,6 +1,7 @@
 package scrabble;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -24,6 +25,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import scrabble.model.Player;
 import scrabble.network.LobbyClientProtocol;
 import scrabble.network.LobbyHostProtocol;
 import scrabble.network.LobbyServer;
@@ -137,15 +139,43 @@ public class GameLobbyController implements LobbyController {
   /**
    * Constructor which will be called when a host return from an network game back to the lobby. The
    * old server will be used again in this case, because it holds the list about the connected
-   * clients so they can start a game again.
+   * clients so they can start a game again. Version for host.
    * 
-   * @param isHost boolean condition about an call by host
-   * @param old LobbyServer which was used and started in an lobby before
+   * @param isHost boolean condition about an call by host.
+   * @param old LobbyServer which was used and started in an lobby before.
+   * @param protocol Protocol instance of the existing host or client protocol.
    * @author hendiehl
    */
-  public GameLobbyController(boolean isHost, LobbyServer old) {
+  public GameLobbyController(boolean isHost, LobbyServer old, NetworkScreen protocol) {
     this.isHost = isHost;
     this.server = old;
+    this.back = true;
+    this.chatUser = protocol;
+    if (protocol instanceof LobbyHostProtocol) {
+      this.host = (LobbyHostProtocol) protocol;
+    } else {
+      this.client = (LobbyClientProtocol) protocol;
+    }
+  }
+
+  /**
+   * Constructor which will be called when a host return from an network game back to the lobby. The
+   * old server will be used again in this case, because it holds the list about the connected
+   * clients so they can start a game again. Version for client.
+   * 
+   * @param isHost boolean condition about an call by host.
+   * @param protocol Protocol instance of the existing host or client protocol.
+   * @author hendiehl
+   */
+  public GameLobbyController(boolean isHost, NetworkScreen protocol) {
+    this.isHost = isHost;
+    this.back = true;
+    this.chatUser = protocol;
+    if (protocol instanceof LobbyHostProtocol) {
+      this.host = (LobbyHostProtocol) protocol;
+    } else {
+      this.client = (LobbyClientProtocol) protocol;
+    }
   }
 
   /**
@@ -177,7 +207,13 @@ public class GameLobbyController implements LobbyController {
     }
     this.seperator = System.lineSeparator(); // getting the line separator for Unix or Windows
     this.setUpTimer();
-    // this.startTimer();
+    if (back) { // returning after game.
+      if (this.host != null) {
+        // is a host
+      } else if (this.client != null) {
+        // is a client
+      }
+    }
   }
 
   /**
@@ -756,5 +792,17 @@ public class GameLobbyController implements LobbyController {
    */
   public void setNewServer(LobbyServer newOne) {
     this.server = newOne;
+  }
+
+  public void showWinScreen(ArrayList<Player> playersResult, int[] pointsResult) {
+    System.out.println("LOBBY CONTROLLER : Win screen");
+    /*
+     * Platform.runLater(() -> { try { FXMLLoader loader = new
+     * FXMLLoader(getClass().getResource("/fxml/AfterGame.fxml")); loader.setControllerFactory(c ->
+     * { return new AfterGameController(playersResult, pointsResult); }); Parent root1 = (Parent)
+     * loader.load(); Stage stage = new Stage(); stage.setScene(new Scene(root1, 400, 400));
+     * stage.show(); } catch (IOException e) { // TODO Auto-generated catch block
+     * e.printStackTrace(); } });
+     */
   }
 }

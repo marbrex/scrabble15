@@ -200,6 +200,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
         break;
     }
     this.gameInfoController.checkBagSize(); // after every message.
+    this.gameInfoController.sendBagSize();
   }
 
   /**
@@ -677,12 +678,35 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * @author hendiehl
    */
   @Override
-  public void sendResultMessage(ArrayList<Player> players, int[] points) {
+  public void sendResultMessage(ArrayList<Player> players, int[] points,
+      ArrayList<Player> ordered) {
     try {
-      ResultMessage msg = new ResultMessage(MessageType.RETURN, this.player, players, points);
+      ResultMessage msg =
+          new ResultMessage(MessageType.RETURN, this.player, players, points, ordered);
       this.out.writeObject(msg);
       this.out.flush();
+      this.sequencePos = 0; // setting election back
       System.out.println("SERVER PROTOCOL : Result-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to set the actual amount of tiles left in the LetterBag to every player. A
+   * AceptedMessage is used because it provides the right parameter.
+   * 
+   * @param size Tiles left in the LetterBag
+   * @author hendiehl
+   */
+  @Override
+  public void sendBagSize(int size) {
+    try {
+      AceptedMessage msg = new AceptedMessage(MessageType.SIZE, this.player, size);
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : SIZE-Message sended");
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
