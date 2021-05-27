@@ -1,13 +1,13 @@
 package scrabble;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import java.io.File;
-import java.sql.Connection;
-import java.sql.SQLException;
 import org.junit.jupiter.api.Test;
 import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.DBUpdate;
@@ -32,7 +32,7 @@ public class DBTest {
    */
   @BeforeAll
   public static void setDatabase() {
-    Database.connectToDB();
+    Database.connectToDb();
     Database.setConnection("Scrabble15Test.db");
     connection = Database.getConnection();
     Database.createTables();
@@ -73,7 +73,7 @@ public class DBTest {
           connection.getMetaData().getTables(null, null, "SETTINGS", null).next();
       boolean statisticsExists =
           connection.getMetaData().getTables(null, null, "STATISTICS", null).next();
-      boolean multiplayerExists =
+      final boolean multiplayerExists =
           connection.getMetaData().getTables(null, null, "MULTIPLAYER", null).next();
       assertEquals(playersExists, true);
       assertEquals(settingsExists, true);
@@ -163,7 +163,7 @@ public class DBTest {
    */
   @AfterAll
   public static void closingConnection() {
-    Database.disconnectDB();
+    Database.disconnectDb();
     File file = new File(System.getProperty("user.home") + System.getProperty("file.separator")
         + ".Scrabble" + System.getProperty("file.separator") + "Scrabble15Test.db");
     if (file.exists()) {

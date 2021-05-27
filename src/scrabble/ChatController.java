@@ -63,7 +63,7 @@ public class ChatController implements Initializable {
 
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
-		myClient = new Client(this, username);
+		myClient = new Client(username);
 		myClient.connect();
 		myClient.start();
 		

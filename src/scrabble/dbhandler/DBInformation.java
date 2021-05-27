@@ -108,8 +108,8 @@ public class DBInformation {
   /**
    * Loads one player profile on given index.
    * 
-   * @return human-player profile, which was loaded from Database
    * @param index loading profile regarding given index
+   * @return human-player profile, which was loaded from Database
    * @author skeskinc
    */
   public static HumanPlayer loadProfile(int index) {
@@ -126,8 +126,8 @@ public class DBInformation {
   /**
    * Returns all statistics of an Player in a List.
    * 
-   * @return a list of all player statistics from one player
    * @param player getting statistics from given human-player
+   * @return a list of all player statistics from one player
    * @author skeskinc
    */
   public static List<String> getPlayerStatistic(HumanPlayer player) {
@@ -251,8 +251,8 @@ public class DBInformation {
   /**
    * Returns the Ratio of Win-/Loserate.
    * 
-   * @return win-/loserate of a player
    * @param player current human-player for win-/lose-ratio
+   * @return win-/loserate of a player
    * @author skeskinc
    * @author mraucher
    */
@@ -280,8 +280,8 @@ public class DBInformation {
   /**
    * Returns the total game played by any player.
    * 
-   * @return total games played of a player
    * @param name given Name
+   * @return total games played of a player
    * @author mraucher
    */
   public int totGamePlayed(String name) {

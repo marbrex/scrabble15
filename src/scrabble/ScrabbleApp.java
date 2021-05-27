@@ -23,7 +23,7 @@ public class ScrabbleApp extends Application {
 
   final private double windowMinWidth = 620;
   final private double windowMinHeight = 500;
-  
+
   private static Scene scene;
   private static Stage stage;
 
@@ -52,25 +52,25 @@ public class ScrabbleApp extends Application {
     primaryStage.setTitle("Scrabble");
     primaryStage.getIcons().add(appIcon);
     primaryStage.setScene(scene);
-//    primaryStage.setFullScreen(true);
+    // primaryStage.setFullScreen(true);
     primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
     primaryStage.show();
     setScene(scene);
     setStage(primaryStage);
   }
-  
+
   public void setScene(Scene scene) {
     ScrabbleApp.scene = scene;
   }
-  
+
   public static Scene getScene() {
     return scene;
   }
-  
+
   public void setStage(Stage stage) {
     ScrabbleApp.stage = stage;
   }
-  
+
   public static Stage getStage() {
     return stage;
   }
@@ -83,7 +83,7 @@ public class ScrabbleApp extends Application {
    * @author skeskinc
    */
   public static void main(String[] args) {
-    Database.connectToDB();
+    Database.connectToDb();
     Database.createTables();
     launch(args);
   }
