@@ -44,8 +44,7 @@ public class Database {
   }
 
   /**
-   * Setting connection for specific Database.
-   * Useful for JUnit-Test.
+   * Setting connection for specific Database. Useful for JUnit-Test.
    * 
    * @param name Name of the Database
    * @author skeskinc

@@ -75,8 +75,7 @@ public class StatisticsController implements Initializable {
     this.txtLost.setText("Games lost: " + plyr.getGamesLost());
     this.txtRatio.setText("Win/Lose Ratio: " + plyr.getWinRate() + "");
 
-    this.img
-        .setImage(new Image(getClass().getResourceAsStream("/scrabble/img/" + plyr.getImage())));
+    this.img.setImage(new Image(getClass().getResourceAsStream("/img/" + plyr.getImage())));
 
     /*
      * try { String fileSeperator = System.getProperty("file.separator"); this.img.setImage(new
