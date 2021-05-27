@@ -156,6 +156,18 @@ public class Dictionary {
   }
 
   /**
+   * Returns the definition of the given word.
+   * 
+   * @param word Given word to search the definition for
+   * @return Definition of a word
+   * @author skeskinc
+   */
+  public static String getDefinition(String word) {
+    String definition = dictionary.get(word);
+    return definition;
+  }
+
+  /**
    * Removing duplicate words.
    * 
    * @author skeskinc
@@ -163,7 +175,6 @@ public class Dictionary {
   public static void removeDuplicates() {
     words = new ArrayList<String>(dictionary.keySet());
     definitions = new ArrayList<String>(dictionary.values());
-
   }
 
 }
