@@ -22,8 +22,8 @@ public class Word {
   private int wordLength;
   private int points;
   private boolean isValid;
-  private boolean isHorizontal;
-  private boolean isVertical;
+  boolean isHorizontal;
+  boolean isVertical;
   public boolean frozen;
   public boolean newlyPlaced;
 
@@ -47,17 +47,16 @@ public class Word {
       System.out.println("wordsGrid NOT empty");
 
       for (int k = 0; k < controller.grid.words.size(); k++) {
-        System.out.println(k + "th word in wordsGrid: ");
-        controller.grid.words.get(k).display();
-        System.out.print("\n");
-        if ((this.isVertical && controller.grid.words.get(k).isVertical) |(this.isHorizontal
+
+        if ((this.isVertical && controller.grid.words.get(k).isVertical) || (this.isHorizontal
             && controller.grid.words.get(k).isHorizontal)) {
+
           if (this.getCommonLetter(controller.grid.words.get(k)) != null) {
-            System.out.print("in 1st IF");
+
             if (this.containsWord(controller.grid.words.get(k))) {
+
               System.out.println("the word contains " + k + "th word in wordsGrid");
               controller.gridWrapper.getChildren().remove(controller.grid.words.get(k).container);
-              controller.grid.words.remove(k);
             }
           }
         }
@@ -568,5 +567,29 @@ public class Word {
 
   public void setMouseTransparent(boolean value) {
     container.setMouseTransparent(value);
+  }
+
+  public void removeSubWords() {
+    if (!controller.grid.words.isEmpty()) {
+
+      System.out.println("wordsGrid NOT empty");
+
+      for (int k = 0; k < controller.grid.words.size(); k++) {
+
+        if ((this.isVertical && controller.grid.words.get(k).isVertical) || (this.isHorizontal
+            && controller.grid.words.get(k).isHorizontal)) {
+
+          if (this.getCommonLetter(controller.grid.words.get(k)) != null) {
+
+            if (this.containsWord(controller.grid.words.get(k))) {
+
+              System.out.println("the word contains " + k + "th word in wordsGrid");
+              controller.gridWrapper.getChildren().remove(controller.grid.words.get(k).container);
+              controller.grid.words.remove(k);
+            }
+          }
+        }
+      }
+    }
   }
 }

@@ -498,6 +498,41 @@ public class Grid {
     slots[index] = slot;
   }
 
+  public void removeSubWords() {
+    if (!words.isEmpty()) {
+
+      for (int k = 0; k < words.size() - 1; k++) {
+        Word word1 = words.get(k);
+
+        for (int l = k + 1; l < words.size(); l++) {
+          Word word2 = words.get(l);
+
+          if ((word1.isVertical && word2.isVertical) ||
+              (word1.isHorizontal && word2.isHorizontal)) {
+
+            if (word1.getCommonLetter(word2) != null) {
+
+              if (word1.containsWord(word2)) {
+
+                System.out.println("the word \"" + word1 + "\" contains \"" + word2 + "\"");
+                controller.gridWrapper.getChildren().remove(word2.container);
+                words.remove(word2);
+              }
+              else if (word2.containsWord(word1)) {
+
+                System.out.println("the word \"" + word2 + "\" contains \"" + word1 + "\"");
+                controller.gridWrapper.getChildren().remove(word1.container);
+                words.remove(word1);
+              }
+            }
+          }
+
+        }
+
+      }
+    }
+  }
+
   /**
    * Verifies whether placed words are valid. Generates a pop-up window in case of an invalid
    * input.
@@ -510,15 +545,22 @@ public class Grid {
 
     ArrayList<Slot> validStartingSlots = new ArrayList<>();
 
-    if (controller.roundCounter == 1) {
-      System.out.println("1st round");
-      // It's 1st round
+    ArrayList<LetterTile> presentTiles = new ArrayList<>();
+    for (LetterTile letterTile : getTilesInGrid()) {
+      if (letterTile.isFrozen) {
+        presentTiles.add(letterTile);
+      }
+    }
+
+    if (presentTiles.isEmpty()) {
+      System.out.println("Valid Starting Slot is CENTER");
+
       // Adding the center slot as Starting Point
       validStartingSlots.add(getSlot(size / 2, size / 2));
 
     } else {
-      System.out.println("2nd+ round");
-      // It's 2nd+ round
+      System.out.println("Valid Starting Slots are SLOTS ALREADY PRESENT IN THE GRID");
+
       // Searching all frozen words and adding them into Starting Slots Array
 
       System.out.println("Words:");
@@ -534,6 +576,8 @@ public class Grid {
           System.out.print("\n");
         }
       }
+
+      removeSubWords();
     }
 
     int validWords = 0;
@@ -575,41 +619,50 @@ public class Grid {
       }
     }
 
-    LetterTile letterTile1 = justPlacedTiles.get(0);
-    int col1 = getCellColumn(letterTile1);
-    int row1 = getCellRow(letterTile1);
-
-    int sameRowCount = 0;
-    int sameColCount = 0;
     boolean sameDirection = false;
+    if (!justPlacedTiles.isEmpty()) {
+      // there are newly placed tiles
 
-    // it's enough to compare 1 tile with every other tile
-    for (int j = 1; j < justPlacedTiles.size(); j++) {
-      LetterTile letterTile2 = justPlacedTiles.get(j);
-      int col2 = getCellColumn(letterTile2);
-      int row2 = getCellRow(letterTile2);
+      LetterTile letterTile1 = justPlacedTiles.get(0);
+      int col1 = getCellColumn(letterTile1);
+      int row1 = getCellRow(letterTile1);
 
-      if (row1 == row2 && col1 != col2) {
-        // 2 tiles are horizontally positioned on the same row
+      int sameRowCount = 0;
+      int sameColCount = 0;
 
-        sameRowCount++;
+      // it's enough to compare 1 tile with every other tile
+      for (int j = 1; j < justPlacedTiles.size(); j++) {
+        LetterTile letterTile2 = justPlacedTiles.get(j);
+        int col2 = getCellColumn(letterTile2);
+        int row2 = getCellRow(letterTile2);
+
+        if (row1 == row2 && col1 != col2) {
+          // 2 tiles are horizontally positioned on the same row
+
+          sameRowCount++;
+        } else if (col1 == col2 && row1 != row2) {
+          // 2 tiles are vertically positioned in the same column
+
+          sameColCount++;
+        } else {
+          // 2 tiles aren't in the same direction
+
+          sameDirection = false;
+          break;
+        }
       }
-      else if (col1 == col2 && row1 != row2) {
-        // 2 tiles are vertically positioned in the same column
 
-        sameColCount++;
+      // comparing
+      // only 1 of these 2 expressions in IF should be TRUE (they cannot be both true)
+      if (sameRowCount == justPlacedTiles.size() - 1
+          || sameColCount == justPlacedTiles.size() - 1) {
+        sameDirection = true;
       }
-      else {
-        // 2 tiles aren't in the same direction
 
-        sameDirection = false;
-        break;
-      }
     }
+    else {
+      // there are no newly placed tiles
 
-    // comparing
-    // only 1 of these 2 expressions in IF should be TRUE (they cannot be both true)
-    if (sameRowCount == justPlacedTiles.size() - 1 || sameColCount == justPlacedTiles.size() - 1) {
       sameDirection = true;
     }
     // ======== END checking if every tile is in the same direction ========
