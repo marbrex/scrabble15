@@ -366,8 +366,8 @@ public class GameController {
        */
       @Override
       public void endMove() {
-        System.out.println("GAME CONTROLLER : Prepare to end move");
         Platform.runLater(() -> {
+          System.out.println("\n----- START @GameController endMove() -----");
 
           // verifying the player's input
           boolean validInput = grid.verifyWordsValidity();
@@ -397,6 +397,11 @@ public class GameController {
 
               for (int j = 0; j < wordsInGrid.size(); j++) {
                 Word word = wordsInGrid.get(j);
+                System.out.println("\nCurrent word: " + word.getWordAsString());
+                System.out.println("is newly placed: " + word.newlyPlaced);
+                System.out.println("is frozen: " + word.frozen);
+                System.out.println("letters:");
+
                 if (word.newlyPlaced) {
                   String spelling = word.getWordAsString();
                   action.append("  {\n")
@@ -406,6 +411,10 @@ public class GameController {
 
                   for (int i = 0; i < word.getWordLength(); i++) {
                     LetterTile letterTile = word.getLetter(i);
+                    System.out.println("Current letter: " + letterTile.getLetter());
+                    System.out.println("is newly placed: " + letterTile.isNewlyPlaced);
+                    System.out.println("is frozen: " + letterTile.isFrozen);
+
                     if (letterTile.isNewlyPlaced) {
                       char letter = letterTile.getLetter();
                       int value = letterTile.getPoints();
@@ -426,20 +435,17 @@ public class GameController {
                       } else {
                         action.append(",\n");
                       }
-
-                      letterTile.isNewlyPlaced = false;
                     }
                   }
 
-                  action.append("   ]");
+                  action.append("   ]\n"
+                      + "  }");
 
                   if (j == wordsInGrid.size() - 1) {
-                    action.append("\n" + "  }\n");
+                    action.append("\n");
                   } else {
                     action.append(",\n");
                   }
-
-                  word.newlyPlaced = false;
 
                   score += word.getPoints();
                 }
@@ -453,12 +459,29 @@ public class GameController {
               addToScoreOfPlayer(playerID, score);
 
               protocol.sendEndMessage(action.toString(), score);
+
+              // setting just placed words' and its tiles' "isNewlyPlaced" property to false
+              for (int j = 0; j < wordsInGrid.size(); j++) {
+                Word word = wordsInGrid.get(j);
+
+                if (word.newlyPlaced) {
+
+                  for (int i = 0; i < word.getWordLength(); i++) {
+                    LetterTile letterTile = word.getLetter(i);
+
+                    letterTile.isNewlyPlaced = false;
+                  }
+
+                  word.newlyPlaced = false;
+                }
+              }
             }
 
           }
 
           // TODO: update the LeaderBoard
 
+          System.out.println("----- END @GameController endMove() -----");
         });
       }
 
