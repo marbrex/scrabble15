@@ -1,9 +1,10 @@
 package scrabble.network;
 
+import java.io.Serializable;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
 
-public class StartMessage extends Message {
+public class StartMessage extends Message implements Serializable {
   /**
    * Message which will be send to inform the players that a game will be started soon. Will be used
    * to inform the lobby members that there election result should be send to the server to start.
@@ -31,7 +32,7 @@ public class StartMessage extends Message {
   /**
    * Getter of the array representation of the player sequence.
    * 
-   * @return
+   * @return sequence of the player order voted in the election.
    * @author hendiehl
    */
   public int[] getSequence() {

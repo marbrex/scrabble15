@@ -1,9 +1,10 @@
 package scrabble.network;
 
+import java.io.Serializable;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
 
-public class OtherMessage extends Message {
+public class OtherMessage extends Message implements Serializable {
   /**
    * Message to inform players in a game which players is actually on move.
    * 

@@ -1,19 +1,20 @@
 package scrabble.network;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
 
-public class ResultMessage extends Message {
+public class ResultMessage extends Message implements Serializable {
   /**
    * ResultMessage which will be used to inform players about a finished network game. Will also
    * lead to an screen change to a lobby screen.
    * 
    * @author hendiehl
    */
-
+  
   private static final long serialVersionUID = 1L;
-  private ArrayList<Player> players; // Protocol representation and order
+  private ArrayList<Player> players; // Protocol representation and order.
   private int[] points;
   private ArrayList<Player> ordered; // After game screen representation and order.
 
@@ -38,7 +39,7 @@ public class ResultMessage extends Message {
 
   /**
    * Getter of the players which participated in a network game. Is used for the intern protocol
-   * list;
+   * list.
    * 
    * @return players ArrayList of the players.
    * @author hendiehl

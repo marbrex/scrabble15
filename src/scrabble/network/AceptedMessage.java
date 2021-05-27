@@ -1,9 +1,10 @@
 package scrabble.network;
 
+import java.io.Serializable;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
 
-public class AceptedMessage extends Message {
+public class AceptedMessage extends Message implements Serializable {
   /**
    * Message to inform a player that his join was successful. Will start the screen change from the
    * finder screen to the lobby screen.

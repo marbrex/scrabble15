@@ -1,9 +1,10 @@
 package scrabble.network;
 
+import java.io.Serializable;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
 
-public class EndMessage extends Message {
+public class EndMessage extends Message implements Serializable {
   /**
    * EndMessages will be send after a player ends his move, they have the function to inform the
    * other players about the actions a player performed. It will also send the points of a player
@@ -11,7 +12,7 @@ public class EndMessage extends Message {
    * 
    * @author hendiehl
    */
-
+  
   private static final long serialVersionUID = 1L;
   private int points;
   private String action;
@@ -20,10 +21,10 @@ public class EndMessage extends Message {
    * Constructor which sets the action string which holds information about the action a player
    * performed in his latest move and the points he gained through this action.
    * 
-   * @param type MessageType of the message
-   * @param owner Owner of the message
-   * @param action move information in string format
-   * @param points points a player gained in his latest move
+   * @param type MessageType of the message.
+   * @param owner Owner of the message.
+   * @param action move information in string format.
+   * @param points points a player gained in his latest move.
    * @author hendiehl
    */
   public EndMessage(MessageType type, Player owner, String action, int points) {

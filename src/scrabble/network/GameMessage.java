@@ -1,17 +1,18 @@
 package scrabble.network;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
 
-public class GameMessage extends Message {
+public class GameMessage extends Message implements Serializable {
   /**
    * GameMessage class for sending the clients a list of players for the game. The Id's are saved
    * separately because in case of a send with players which id was set before the id's are lost
    * during message transmission. There is no logical explanation for data loose but the id's were
    * wrong transmitted by sending them within the player class.
    */
-
+  
   private static final long serialVersionUID = 1L;
   private ArrayList<Player> players;
   private int[] ids;

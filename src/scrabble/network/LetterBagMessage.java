@@ -11,7 +11,7 @@ public class LetterBagMessage extends Message implements Serializable {
    * 
    * @author hendiehl
    */
-
+  
   private static final long serialVersionUID = 1L;
   private int count;
   private char letter;

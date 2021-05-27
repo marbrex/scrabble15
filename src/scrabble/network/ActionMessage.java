@@ -1,16 +1,17 @@
 package scrabble.network;
 
+import java.io.Serializable;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
 
-public class ActionMessage extends Message {
+public class ActionMessage extends Message implements Serializable {
   /**
    * Message class for sending move informations to all other players. Will send action informations
    * and gained points in reason to update the game field of others.
    * 
    * @author hendiehl
    */
-
+  
   private static final long serialVersionUID = 1L;
   private int points;
   private String action;

@@ -1,9 +1,10 @@
 package scrabble.network;
 
+import java.io.Serializable;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
 
-public class MoveMessage extends Message {
+public class MoveMessage extends Message implements Serializable {
   /**
    * Move message which is send to player if he is on move during a network game. Will hold a turn
    * variable to inform the player about the turn counter.
@@ -11,9 +12,9 @@ public class MoveMessage extends Message {
    * @author hendiehl
    */
 
-  private static final long serialVersionUID = 1L;
   private int turn;
   private int id;
+  private static final long serialVersionUID = 1L;
 
   /**
    * Constructor which sets the turn variable to send a client information about the turn counter
