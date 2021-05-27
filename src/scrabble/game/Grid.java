@@ -345,25 +345,25 @@ public class Grid {
         if (tile == slots[glInd].content) {
           switch (neighbour) {
             case "top":
-              if (row != 0) {
+              if (row - 1 >= 0) {
                 return getSlotContent(column, row - 1);
               } else {
                 return null;
               }
             case "right":
-              if (column != size) {
+              if (column + 1 < size) {
                 return getSlotContent(column + 1, row);
               } else {
                 return null;
               }
             case "bottom":
-              if (row != size) {
+              if (row + 1 < size) {
                 return getSlotContent(column, row + 1);
               } else {
                 return null;
               }
             case "left":
-              if (column != 0) {
+              if (column - 1 >= 0) {
                 return getSlotContent(column - 1, row);
               } else {
                 return null;
@@ -576,9 +576,9 @@ public class Grid {
           System.out.print("\n");
         }
       }
-
-      removeSubWords();
     }
+
+    removeSubWords();
 
     int validWords = 0;
     int wordsUsingStartSlot = 0;
