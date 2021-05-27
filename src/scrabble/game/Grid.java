@@ -283,6 +283,44 @@ public class Grid {
   }
 
   /**
+   * Returns an Y coordinate of a specified cell.
+   *
+   * @param slot Slot that is in Grid.
+   * @return Y coordinate (Row).
+   */
+  public int getCellRow(Slot slot) {
+    int glInd;
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
+        glInd = getGlobalIndex(column, row);
+        if (slot == slots[glInd]) {
+          return row;
+        }
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Returns an X coordinate of a specified cell.
+   *
+   * @param slot Slot that is in Grid.
+   * @return X coordinate (Column).
+   */
+  public int getCellColumn(Slot slot) {
+    int glInd;
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
+        glInd = getGlobalIndex(column, row);
+        if (slot == slots[glInd]) {
+          return column;
+        }
+      }
+    }
+    return -1;
+  }
+
+  /**
    * Get the size of the square GridPane (height=width).
    *
    * @return Number of Slots on each side (height=width).
