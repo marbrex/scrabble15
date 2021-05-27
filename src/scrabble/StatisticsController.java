@@ -74,14 +74,17 @@ public class StatisticsController implements Initializable {
     this.txtWon.setText("Games won: " + plyr.getGamesWon());
     this.txtLost.setText("Games lost: " + plyr.getGamesLost());
     this.txtRatio.setText("Win/Lose Ratio: " + plyr.getWinRate() + "");
-    try {
-      String fileSeperator = System.getProperty("file.separator");
-      this.img.setImage(new Image(new FileInputStream("." + fileSeperator + "src" +
-          fileSeperator + "main" + fileSeperator + "resources"
-          + fileSeperator + "img" + fileSeperator + plyr.getImage())));
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    }
+
+    this.img
+        .setImage(new Image(getClass().getResourceAsStream("/scrabble/img/" + plyr.getImage())));
+
+    /*
+     * try { String fileSeperator = System.getProperty("file.separator"); this.img.setImage(new
+     * Image(new FileInputStream("." + fileSeperator + "src" + fileSeperator + "main" +
+     * fileSeperator + "resources" + fileSeperator + "img" + fileSeperator + plyr.getImage()))); }
+     * catch (FileNotFoundException e) { e.printStackTrace(); }
+     */
+
 
     // pie chart with wins vs. losses will only be shown if at least one game was played.
     if (plyr.getGamesLost() + plyr.getGamesWon() > 0) {
