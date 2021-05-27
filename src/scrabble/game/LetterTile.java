@@ -51,69 +51,72 @@ public class LetterTile implements Serializable {
         char l = bag.getLetterInAlphabet(j);
         int v = bag.getValueInAlphabet(j);
 
-        LetterTile ltrTile = new LetterTile(l, v, cellSize, controller);
-        ltrTile.setPointsVisible(false);
-        ltrTile.isBlank = true;
-        ltrTile.container.setOnDragDetected(null);
-        ltrTile.container.setOnDragDone(null);
-        ltrTile.container.setOnMouseDragged(null);
-        ltrTile.container.setOnMouseReleased(null);
-        ltrTile.container.setOnMouseClicked(clickEvent -> {
-          System.out.println(ltrTile + " - @onMouseClicked");
+        if (l != '\0' && v != 0) {
 
-          // Creating a new Letter letterTile
-          LetterTile tile = new LetterTile(l, v, controller.grid.cellSize, controller);
+          LetterTile ltrTile = new LetterTile(l, v, cellSize, controller);
+          ltrTile.setPointsVisible(false);
+          ltrTile.isBlank = true;
+          ltrTile.container.setOnDragDetected(null);
+          ltrTile.container.setOnDragDone(null);
+          ltrTile.container.setOnMouseDragged(null);
+          ltrTile.container.setOnMouseReleased(null);
+          ltrTile.container.setOnMouseClicked(clickEvent -> {
+            System.out.println(ltrTile + " - @onMouseClicked");
 
-          System.out.println(ltrTile + " - @onMouseClicked - created a tile");
+            // Creating a new Letter letterTile
+            LetterTile tile = new LetterTile(l, v, controller.grid.cellSize, controller);
 
-          tile.setLetterVisible(true);
-          tile.setPointsVisible(false);
-          tile.isBlank = true;
+            System.out.println(ltrTile + " - @onMouseClicked - created a tile");
 
-          System.out.println(ltrTile + " - @onMouseClicked - set the tile");
+            tile.setLetterVisible(true);
+            tile.setPointsVisible(false);
+            tile.isBlank = true;
 
-          controller.popupBlankBlock.setVisible(false);
-          controller.okBtn.setDisable(false);
+            System.out.println(ltrTile + " - @onMouseClicked - set the tile");
 
-          System.out.println(ltrTile + " - @onMouseClicked - removed popup and turned on OK btn");
+            controller.popupBlankBlock.setVisible(false);
+            controller.okBtn.setDisable(false);
 
-          // Adding the Letter to the Slot
-          pointedSlot.setContent(tile);
+            System.out.println(ltrTile + " - @onMouseClicked - removed popup and turned on OK btn");
 
-          System.out.println(ltrTile + " - @onMouseClicked - Added the Letter to the Slot");
+            // Adding the Letter to the Slot
+            pointedSlot.setContent(tile);
 
-          // Checking if there are any Neighbours
-          // Getting First and Last letter, both for Horizontal and Vertical
-          LetterTile mostTop = controller.grid.getMostTopOf(tile);
-          LetterTile mostRight = controller.grid.getMostRightOf(tile);
-          LetterTile mostBottom = controller.grid.getMostBottomOf(tile);
-          LetterTile mostLeft = controller.grid.getMostLeftOf(tile);
+            System.out.println(ltrTile + " - @onMouseClicked - Added the Letter to the Slot");
 
-          System.out.println(ltrTile + " - @onMouseClicked - got the neighbours");
+            // Checking if there are any Neighbours
+            // Getting First and Last letter, both for Horizontal and Vertical
+            LetterTile mostTop = controller.grid.getMostTopOf(tile);
+            LetterTile mostRight = controller.grid.getMostRightOf(tile);
+            LetterTile mostBottom = controller.grid.getMostBottomOf(tile);
+            LetterTile mostLeft = controller.grid.getMostLeftOf(tile);
 
-          System.out.println(ltrTile + " - @onMouseClicked - mostTop=" + mostTop);
-          System.out.println(ltrTile + " - @onMouseClicked - mostRight=" + mostRight);
-          System.out.println(ltrTile + " - @onMouseClicked - mostBottom=" + mostBottom);
-          System.out.println(ltrTile + " - @onMouseClicked - mostLeft=" + mostLeft);
-          System.out.println(ltrTile + " - @onMouseClicked - tile=" + tile);
+            System.out.println(ltrTile + " - @onMouseClicked - got the neighbours");
 
-          if (mostLeft != tile || mostRight != tile) {
-            // There are HORIZONTAL neighbours
-            System.out.println(ltrTile + " - @onMouseClicked - creating a horizontal word");
-            new Word(mostLeft, mostRight, controller);
-          }
+            System.out.println(ltrTile + " - @onMouseClicked - mostTop=" + mostTop);
+            System.out.println(ltrTile + " - @onMouseClicked - mostRight=" + mostRight);
+            System.out.println(ltrTile + " - @onMouseClicked - mostBottom=" + mostBottom);
+            System.out.println(ltrTile + " - @onMouseClicked - mostLeft=" + mostLeft);
+            System.out.println(ltrTile + " - @onMouseClicked - tile=" + tile);
 
-          if (mostTop != tile || mostBottom != tile) {
-            // There are VERTICAL neighbours
-            System.out.println(ltrTile + " - @onMouseClicked - creating a vertical word");
-            new Word(mostTop, mostBottom, controller);
-          }
+            if (mostLeft != tile || mostRight != tile) {
+              // There are HORIZONTAL neighbours
+              System.out.println(ltrTile + " - @onMouseClicked - creating a horizontal word");
+              new Word(mostLeft, mostRight, controller);
+            }
 
-          controller.popupBlankMessage.getChildren().clear();
-          System.out.println(ltrTile + " - @onMouseClicked - finish");
-        });
+            if (mostTop != tile || mostBottom != tile) {
+              // There are VERTICAL neighbours
+              System.out.println(ltrTile + " - @onMouseClicked - creating a vertical word");
+              new Word(mostTop, mostBottom, controller);
+            }
 
-        controller.popupBlankMessage.getChildren().add(ltrTile.container);
+            controller.popupBlankMessage.getChildren().clear();
+            System.out.println(ltrTile + " - @onMouseClicked - finish");
+          });
+
+          controller.popupBlankMessage.getChildren().add(ltrTile.container);
+        }
       }
 
       controller.okBtn.setDisable(true);
