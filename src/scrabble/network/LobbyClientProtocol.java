@@ -1040,7 +1040,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
 
   @Override
   public void informLobbyReturn() {
-    System.out.println("HOST PROTOCOL : Lobby load finish");
+    System.out.println("CLIENT PROTOCOL : Lobby load finish");
     if (this.gameLobbyController != null) {
       this.updateLobbyinformation();
       this.gameLobbyController.showWinScreen(playerResult, pointsResult);

@@ -153,8 +153,10 @@ public class GameLobbyController implements LobbyController {
     this.chatUser = protocol;
     if (protocol instanceof LobbyHostProtocol) {
       this.host = (LobbyHostProtocol) protocol;
+      this.host.setLobbyController(this);
     } else {
       this.client = (LobbyClientProtocol) protocol;
+      this.client.setLobbyController(this);
     }
   }
 
@@ -173,8 +175,10 @@ public class GameLobbyController implements LobbyController {
     this.chatUser = protocol;
     if (protocol instanceof LobbyHostProtocol) {
       this.host = (LobbyHostProtocol) protocol;
+      this.host.setLobbyController(this);
     } else {
       this.client = (LobbyClientProtocol) protocol;
+      this.client.setLobbyController(this);
     }
   }
 
@@ -209,9 +213,9 @@ public class GameLobbyController implements LobbyController {
     this.setUpTimer();
     if (back) { // returning after game.
       if (this.host != null) {
-        // is a host
+        this.host.informLobbyReturn();
       } else if (this.client != null) {
-        // is a client
+        this.client.informLobbyReturn();
       }
     }
   }
@@ -796,13 +800,20 @@ public class GameLobbyController implements LobbyController {
 
   public void showWinScreen(ArrayList<Player> playersResult, int[] pointsResult) {
     System.out.println("LOBBY CONTROLLER : Win screen");
-    /*
-     * Platform.runLater(() -> { try { FXMLLoader loader = new
-     * FXMLLoader(getClass().getResource("/fxml/AfterGame.fxml")); loader.setControllerFactory(c ->
-     * { return new AfterGameController(playersResult, pointsResult); }); Parent root1 = (Parent)
-     * loader.load(); Stage stage = new Stage(); stage.setScene(new Scene(root1, 400, 400));
-     * stage.show(); } catch (IOException e) { // TODO Auto-generated catch block
-     * e.printStackTrace(); } });
-     */
+    Platform.runLater(() -> {
+      try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/AfterGame.fxml"));
+        loader.setControllerFactory(c -> {
+          return new AfterGameController(playersResult, pointsResult);
+        });
+        Parent root1 = (Parent) loader.load();
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root1, 400, 400));
+        stage.show();
+      } catch (IOException e) { // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    });
+
   }
 }

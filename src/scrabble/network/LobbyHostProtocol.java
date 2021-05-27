@@ -624,7 +624,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    */
   @Override
   public void setLobbyController(GameLobbyController glc) {
-    System.out.println("CLIENT PROTOCOL : From game to lobby");
+    System.out.println("HOST PROTOCOL : From game to lobby");
     this.gameLobby = glc;
     this.gameScreen = null;
   }

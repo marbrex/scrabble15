@@ -244,14 +244,17 @@ public class GameHandler extends Thread {
     JSONArray words = data.getJSONArray("words");
     // AiPlayer points have to be calculated on a special way
     if (words.length() == 0) {
+      System.out.println("GAME HANDLER : Actionless Ai move");
+      this.actionlessMove++;
+    } else {
       for (NetworkPlayer player : this.players) {
         if (player instanceof LobbyServerProtocol) {
           player.sendActionMessage(action, 0, this.actual.getPlayer().getId());
           // Only LobbyServerProtocols need to be informed.
         }
       }
-    } else {
-      System.out.println("GAME HANDLER : Actionless Ai move");
+      this.actionlessMove = 0;
+
     }
 
   }

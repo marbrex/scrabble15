@@ -56,8 +56,11 @@ public class GameInformationController {
   public GameInformationController(LobbyServer mainServer, ArrayList<NetworkPlayer> players) {
     this.mainServer = mainServer;
     this.players = players; // Set List from beginning
-    this.status = GameStatusType.GAME; // will stop Player joins !!!!!!!!!!!!!!!!!!!!!!!
+    this.status = GameStatusType.LOBBY; // will stop Player joins !!!!!!!!!!!!!!!!!!!!!!!
     this.check = new HashMap<NetworkPlayer, Boolean>();
+    for (NetworkPlayer player : players) {
+      this.check.put(player, false);
+    }
     this.initCheck = new HashMap<NetworkPlayer, Boolean>();
   }
 

@@ -1091,6 +1091,7 @@ public class GameController {
    * @author hendiehl
    */
   public void getToAfterGame(NetworkScreen protocol, boolean isHost) {
+    System.out.println("GAME CONTROLLER : Client screen change");
     Platform.runLater(() -> {
       try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GameLobby.fxml"));
@@ -1098,8 +1099,6 @@ public class GameController {
           return new GameLobbyController(isHost, protocol);
         });
         Parent root = loader.load();
-        GameLobbyController glc = loader.<GameLobbyController>getController();
-        this.protocol.setLobbyController(glc);
         ScrabbleApp.getScene().getStylesheets().clear();
         ScrabbleApp.getScene().getStylesheets()
             .add(getClass().getResource("/css/style.css").toExternalForm());
@@ -1120,6 +1119,7 @@ public class GameController {
    * @author hendiehl
    */
   public void getToAfterGame(NetworkScreen protocol, boolean isHost, LobbyServer server) {
+    System.out.println("GAME CONTROLLER : Host screen change");
     Platform.runLater(() -> {
       try {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GameLobby.fxml"));
@@ -1127,8 +1127,6 @@ public class GameController {
           return new GameLobbyController(isHost, server, protocol);
         });
         Parent root = loader.load();
-        GameLobbyController glc = loader.<GameLobbyController>getController();
-        this.protocol.setLobbyController(glc);
         ScrabbleApp.getScene().getStylesheets().clear();
         ScrabbleApp.getScene().getStylesheets()
             .add(getClass().getResource("/css/style.css").toExternalForm());
