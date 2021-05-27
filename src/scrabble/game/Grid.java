@@ -545,15 +545,22 @@ public class Grid {
 
     ArrayList<Slot> validStartingSlots = new ArrayList<>();
 
-    if (controller.roundCounter == 1) {
-      System.out.println("1st round");
-      // It's 1st round
+    ArrayList<LetterTile> presentTiles = new ArrayList<>();
+    for (LetterTile letterTile : getTilesInGrid()) {
+      if (letterTile.isFrozen) {
+        presentTiles.add(letterTile);
+      }
+    }
+
+    if (presentTiles.isEmpty()) {
+      System.out.println("Valid Starting Slot is CENTER");
+
       // Adding the center slot as Starting Point
       validStartingSlots.add(getSlot(size / 2, size / 2));
 
     } else {
-      System.out.println("2nd+ round");
-      // It's 2nd+ round
+      System.out.println("Valid Starting Slots are SLOTS ALREADY PRESENT IN THE GRID");
+
       // Searching all frozen words and adding them into Starting Slots Array
 
       System.out.println("Words:");
