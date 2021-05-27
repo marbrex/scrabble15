@@ -633,8 +633,15 @@ public class GameInformationController {
    * @author hendiehl
    */
   public void prepareLobbyReturn(ArrayList<NetworkPlayer> list) {
-    this.mainServer.prepareLobbyReturn(list); // reset the controller.
-    // This controller is from this point on, out dated and not in use anymore.
+    /*
+     * In a normal network lobby a mainServer is always set, the condition is only needed in
+     * connection with the test constructor in reson to test network functionality in a non network
+     * jUnit test.
+     */
+    if (this.mainServer != null) {
+      this.mainServer.prepareLobbyReturn(list); // reset the controller.
+      // This controller is from this point on, out dated and not in use anymore.
+    }
   }
 
   /**

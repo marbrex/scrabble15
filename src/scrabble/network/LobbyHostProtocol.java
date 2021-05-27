@@ -63,6 +63,16 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   }
 
   /**
+   * Constructor for only testing purpose. Is needed for network internal actions during a non
+   * network JUnit test.
+   * 
+   * @author hendiehl
+   */
+  public LobbyHostProtocol() {
+
+  }
+
+  /**
    * Method to load the actual chosen player instance of an HumanPlayer chosen in the MainMenu or by
    * app start. Will be loaded from the Database.
    * 

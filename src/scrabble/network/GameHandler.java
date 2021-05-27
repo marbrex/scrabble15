@@ -33,6 +33,8 @@ public class GameHandler extends Thread {
   private NetworkPlayer winner;
   private boolean loading;
   private boolean bagIsEmpty;
+  // is used to get a different behavior for a wanted and a unwanted ending
+  private boolean isShutdown;
 
   // should i control a specific notify call ?
   /**
@@ -52,7 +54,7 @@ public class GameHandler extends Thread {
       for (NetworkPlayer player : this.players) {
         if (player instanceof LobbyHostProtocol) {
           this.points.put(player, 0);
-          this.host = (LobbyHostProtocol) player; // setting host;
+          this.setHost((LobbyHostProtocol) player); // setting host;
         } else {
           this.points.put(player, 0);
         }
@@ -74,12 +76,14 @@ public class GameHandler extends Thread {
       System.out.println("GAME HANDLER : Make complete turn");
       this.makeATurn(); // Perhaps wrapping it in a synchronized method ?
     }
-    // Here the GameHandler stop the turn procedure --> game ends.
-    this.sendPrepareMessages(); // gave them time to see a information about lobby return
-    this.calculateWinner(); // Calculate the winner with gained points.
-    this.sendDBMessage(); // sending the win condition to the player DB.
-    this.prepareLobbyReturn();
-    // Create a new Instance of an GameInfoController and sending the results to other players.
+    if (!this.isShutdown) {
+      // Here the GameHandler stop the turn procedure --> game ends.
+      this.sendPrepareMessages(); // gave them time to see a information about lobby return
+      this.calculateWinner(); // Calculate the winner with gained points.
+      this.sendDBMessage(); // sending the win condition to the player DB.
+      this.prepareLobbyReturn();
+      // Create a new Instance of an GameInfoController and sending the results to other players.
+    }
     System.err.println("GAME HANDLER : Outrun");
   }
 
@@ -341,6 +345,7 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   private void processAction(String action, int points) {
+    System.out.println("GAME HANDLER : Action : " + action);
     JSONObject data = new JSONObject(action);
     JSONArray words = data.getJSONArray("words");
     int add = points + this.points.get(actual);
@@ -382,6 +387,7 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   public void shutdown() {
+    this.isShutdown = true;
     this.gameIsOn = false;
     this.invokeTurnPhase(); // In case the thread is waiting
   }
@@ -467,5 +473,15 @@ public class GameHandler extends Thread {
    */
   public void informAboutBag() {
     this.bagIsEmpty = true;
+  }
+
+  /**
+   * Method to set the host of the lobby, to get his GameController instance for the AiPlayers. Is
+   * mainly extracted as own method to be used in the GameHandlerTest class.
+   * 
+   * @author hendiehl
+   */
+  public void setHost(LobbyHostProtocol host) {
+    this.host = host;
   }
 }
