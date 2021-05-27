@@ -200,7 +200,6 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
         break;
     }
     this.gameInfoController.checkBagSize(); // after every message.
-    this.gameInfoController.sendBagSize();
   }
 
   /**
@@ -707,6 +706,43 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       this.out.writeObject(msg);
       this.out.flush();
       System.out.println("SERVER PROTOCOL : SIZE-Message sended");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to inform the player in the game screen about a player who the game. Here is a
+   * AceptedMessage used because it provides the right parameter.
+   * 
+   * @param id of the player who left the game.
+   * @author hendiehl
+   */
+  @Override
+  public void sendDeleteMessage(int id) {
+    try {
+      AceptedMessage msg = new AceptedMessage(MessageType.DELET, this.player, id);
+      this.out.writeObject(msg);
+      this.out.flush();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+
+  }
+
+  /**
+   * Method to inform a player in game that the game is about to end.
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void sendPrepMessageChange() {
+    try {
+      Message msg = new Message(MessageType.PREP, this.player);
+      this.out.writeObject(msg);
+      this.out.flush();
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

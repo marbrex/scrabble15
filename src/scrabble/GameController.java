@@ -571,6 +571,16 @@ public class GameController {
       public void informAboutTileAmount(int size) {
         System.out.println("GAME CONTROLLER : Tiles left in bag : " + size);
       }
+      
+      @Override
+      public void informAboutLeave(int id) {
+        System.out.println("GAME CONTROLLER : Player left");
+      }
+
+      @Override
+      public void informGameEnd() {
+        System.out.println("GAME CONTROLLER : Game ends");
+      }
 
     };
   }

@@ -1,8 +1,10 @@
 package scrabble.model;
 
-public enum LetterBagType {
+import java.io.Serializable;
+
+public enum LetterBagType implements Serializable {
   /**
-   * Enum to identify LetterBag methods via network server call
+   * Enum to identify LetterBag methods via network server call.
    * 
    * @author hendiehl
    */

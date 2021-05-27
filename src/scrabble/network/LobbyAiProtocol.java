@@ -139,6 +139,18 @@ public class LobbyAiProtocol implements NetworkPlayer {
   @Override
   public void sendBagSize(int size) {
     // TODO Auto-generated method stub
-    
+
+  }
+
+  @Override
+  public void sendDeleteMessage(int id) {
+    // TODO Auto-generated method stub
+
+  }
+
+  @Override
+  public void sendPrepMessageChange() {
+    // TODO Auto-generated method stub
+
   }
 }

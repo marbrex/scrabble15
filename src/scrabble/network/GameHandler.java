@@ -75,6 +75,7 @@ public class GameHandler extends Thread {
       this.makeATurn(); // Perhaps wrapping it in a synchronized method ?
     }
     // Here the GameHandler stop the turn procedure --> game ends.
+    this.sendPrepareMessages(); // gave them time to see a information about lobby return
     this.calculateWinner(); // Calculate the winner with gained points.
     this.sendDBMessage(); // sending the win condition to the player DB.
     this.prepareLobbyReturn();
@@ -212,7 +213,6 @@ public class GameHandler extends Thread {
         System.out.println("GAME HANDLER : Ai action = " + action);
         // points have to be calculated.
         this.informAiActions(action); // special inform fo AiPlayer moves.
-        this.actionlessMove++;
       } else { // In case : LobbyHost- or LobbyServerProtocol
         System.out.println("GAME HANDLER : Human move");
         this.actual = player;
@@ -224,6 +224,7 @@ public class GameHandler extends Thread {
         // Perhaps here not needed
       }
       this.turn++; // increase the turn counter
+      this.game.sendBagSize(); // after every turn.
     }
 
   }
@@ -431,7 +432,29 @@ public class GameHandler extends Thread {
       }
     }
     // Now the players have to be informed.
+    for (NetworkPlayer other : this.players) {
+      other.sendDeleteMessage(player.getPlayer().getId());
+    }
+  }
 
+  /**
+   * Method to inform all players that they will leave the game screens in a couple of seconds.
+   * 
+   * @author hendiehl
+   */
+  public synchronized void sendPrepareMessages() {
+    for (NetworkPlayer player : this.players) {
+      if (!(player instanceof LobbyAiProtocol)) {
+        player.sendPrepMessageChange();
+      }
+    }
+    // Gave them time to wait --> 5 seconds
+    try {
+      this.wait(5000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**

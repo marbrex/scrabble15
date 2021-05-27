@@ -24,4 +24,8 @@ public interface NetworkGame {
 
   public void informAboutTileAmount(int size); // inform about the amount tiles left in the
                                                // LetterBag
+
+  public void informAboutLeave(int id);
+
+  public void informGameEnd();
 }

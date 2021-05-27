@@ -235,6 +235,12 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case SIZE:
           this.reactToSize(message);
           break;
+        case PREP:
+          this.reactToPrep(message);
+          break;
+        case DELET:
+          this.reactToDelet(message);
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -248,6 +254,32 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to inform a player in game that a other player has left the game. A AceptedMesseage is
+   * used because its provide the same parameters.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToDelet(Message message) {
+    AceptedMessage msg = (AceptedMessage) message;
+    if (this.gameScreen != null) {
+      this.gameScreen.api.informAboutLeave(msg.getPort());
+    }
+  }
+
+  /**
+   * Method to inform a player in game that the game is bout to end.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToPrep(Message message) {
+    if (this.gameScreen != null) {
+      this.gameScreen.api.informGameEnd();
     }
   }
 

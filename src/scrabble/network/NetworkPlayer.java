@@ -45,4 +45,8 @@ public interface NetworkPlayer {
 
   public void sendBagSize(int size);
 
+  public void sendDeleteMessage(int id);
+
+  public void sendPrepMessageChange();
+
 }

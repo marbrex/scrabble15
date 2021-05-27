@@ -359,7 +359,6 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     // callback
     this.gameScreen.grabRandomTileAnswer(tile);
     this.gameInfoController.checkBagSize();
-    this.gameInfoController.sendBagSize();
   }
 
   /**
@@ -373,7 +372,6 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     // callback
     this.gameScreen.getValueOfAnswer(i);
     this.gameInfoController.checkBagSize();
-    this.gameInfoController.sendBagSize();
   }
 
   /**
@@ -387,7 +385,6 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     // callback
     this.gameScreen.getRemainingVowelsAnswer(tiles);
     this.gameInfoController.checkBagSize();
-    this.gameInfoController.sendBagSize();
   }
 
   /**
@@ -401,7 +398,6 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     // callback
     this.gameScreen.getRemainingConsonantsAnswer(tiles);
     this.gameInfoController.checkBagSize();
-    this.gameInfoController.sendBagSize();
   }
 
   /**
@@ -415,7 +411,6 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     // callback
     this.gameScreen.getRemainingBlanksAnswer(tiles);
     this.gameInfoController.checkBagSize();
-    this.gameInfoController.sendBagSize();
   }
 
   /**
@@ -429,7 +424,6 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     // callback
     this.gameScreen.grabRandomTilesAnswer(tiles);
     this.gameInfoController.checkBagSize();
-    this.gameInfoController.sendBagSize();
   }
 
   /**
@@ -443,7 +437,6 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     // callback
     this.gameScreen.getRemainingTilesAnswer(tiles);
     this.gameInfoController.checkBagSize();
-    this.gameInfoController.sendBagSize();
   }
 
   /**
@@ -457,7 +450,6 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     // callback
     this.gameScreen.getAmountAnswer(i);
     this.gameInfoController.checkBagSize();
-    this.gameInfoController.sendBagSize();
   }
 
   /**
@@ -647,6 +639,33 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   public void sendBagSize(int size) {
     if (this.gameScreen != null) {
       this.gameScreen.api.informAboutTileAmount(size);
+    }
+  }
+
+  /**
+   * Method to inform the player in the game screen about a player who the game.
+   * 
+   * @param id of the player who left the game.
+   * @author hendiehl
+   */
+  @Override
+  public void sendDeleteMessage(int id) {
+    System.out.println("HOST PROTOCOL : Delete-Message send");
+    if (this.gameScreen != null) {
+      this.gameScreen.api.informAboutLeave(id);
+    }
+  }
+
+  /**
+   * Method to inform a player in game that the game is about to end.
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void sendPrepMessageChange() {
+    System.out.println("HOST PROTOCOL : Prep-Message send");
+    if (this.gameScreen != null) {
+      this.gameScreen.api.informGameEnd();
     }
   }
 }

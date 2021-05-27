@@ -359,5 +359,19 @@ class GameInfoTestClass {
 
     }
 
+
+    @Override
+    public void sendDeleteMessage(int id) {
+      // TODO Auto-generated method stub
+
+    }
+
+
+    @Override
+    public void sendPrepMessageChange() {
+      // TODO Auto-generated method stub
+
+    }
+
   }
 }

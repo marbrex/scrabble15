@@ -1,6 +1,8 @@
 package scrabble.model;
 
-public enum MessageType {
+import java.io.Serializable;
+
+public enum MessageType implements Serializable {
   /**
    * Enum of different types of network messages, used to identify the messages and react
    * specifically.
@@ -28,4 +30,6 @@ public enum MessageType {
   RETURN, // message to return to the lobby from the gameScreen.
   DB, // message to inform a player about his game results.
   SIZE, // message to inform game members about the letter bag size.
+  DELET, // message to inform about a player leave during a game.
+  PREP, // message to inform about a coming screen change
 }
