@@ -10,11 +10,9 @@ import javafx.scene.layout.AnchorPane;
 import scrabble.GameController;
 
 /**
- * <h1>scrabble.game.LetterTile</h1>
+ * scrabble.game.LetterTile class represents Tiles with letters and points.
  *
- * <p>This class represents Tiles with letters and points.</p>
- *
- * @author Eldar Kasmamytov
+ * @author ekasmamy
  */
 public class LetterTile implements Serializable {
 
@@ -37,6 +35,12 @@ public class LetterTile implements Serializable {
   private LetterTile bottom;
   private LetterTile left;
 
+  /**
+   * Replaces the tile to a specified empty slot.
+   *
+   * @param pointedSlot Empty slot.
+   * @author ekasmamy
+   */
   private void moveTileTo(Slot pointedSlot) {
     // Creating a new LetterTile
     if (isBlank) {
@@ -174,7 +178,7 @@ public class LetterTile implements Serializable {
         // Removing the highlighting box of the Word that was containing the moved LetterTile
         controller.gridWrapper.getChildren().remove(word.container);
       }
-      word.container.setViewOrder(controller.minViewOrder+1);
+      word.container.setViewOrder(controller.minViewOrder + 1);
     }
     for (Word word : wordsToRemove) {
       // Removing the Word that was containing the moved LetterTile (BACK-END)
@@ -195,7 +199,7 @@ public class LetterTile implements Serializable {
 
         if (!frozenWord) {
           Word shrank = new Word(word.getLetter(1), word.getLast(), controller);
-          shrank.container.setViewOrder(controller.minViewOrder+2);
+          shrank.container.setViewOrder(controller.minViewOrder + 2);
         }
       }
 
@@ -212,7 +216,7 @@ public class LetterTile implements Serializable {
         if (!frozenWord) {
           int ltrIdx = word.getWordLength() - 2;
           Word shrank = new Word(word.getFirst(), word.getLetter(ltrIdx), controller);
-          shrank.container.setViewOrder(controller.minViewOrder+2);
+          shrank.container.setViewOrder(controller.minViewOrder + 2);
         }
       }
     }
@@ -227,28 +231,19 @@ public class LetterTile implements Serializable {
   }
 
   /**
-   * Initiates the FRONT-end part (AnchorPane with 2 Labels inside)
+   * Initiates the FRONT-end part (AnchorPane with 2 Labels inside).
    *
-   * @param ltr Letter to put inside the tile
-   * @param pts Points
+   * @param ltr Letter to put inside the tile.
+   * @param pts Points.
+   * @author ekasmamy
    */
   private void initShape(char ltr, int pts) {
-
-    /*
-    DropShadow ds = new DropShadow();
-    ds.setHeight(20);
-    ds.setWidth(20);
-    ds.setOffsetY(-3);
-    ds.setOffsetX(3);
-    ds.setColor(Color.GRAY);
-    */
 
     container = new AnchorPane();
     container.getStyleClass().add("letter-btn");
     container.setPrefSize(cellSize, cellSize);
     container.setMinSize(cellSize, cellSize);
     container.setMaxSize(cellSize, cellSize);
-    // container.setEffect(ds);
 
     letter = new Label(String.valueOf(ltr));
     if (ltr == '\0') {
@@ -419,9 +414,10 @@ public class LetterTile implements Serializable {
   }
 
   /**
-   * Constructor, that takes a GameController in parameters
+   * Constructor, that takes a GameController in parameters.
    *
-   * @param controller GameController
+   * @param controller GameController.
+   * @author ekasmamy
    */
   public LetterTile(GameController controller) {
     cellSize = 50;
@@ -432,12 +428,13 @@ public class LetterTile implements Serializable {
   }
 
   /**
-   * Constructor
+   * Constructor.
    *
-   * @param letter     Letter to put inside the tile
-   * @param points     Points
-   * @param cellSize   Tile's size (in pixels)
-   * @param controller GameController
+   * @param letter     Letter to put inside the tile.
+   * @param points     Points.
+   * @param cellSize   Tile's size (in pixels).
+   * @param controller GameController.
+   * @author ekasmamy
    */
   public LetterTile(char letter, int points, double cellSize, GameController controller) {
     this.cellSize = cellSize;
@@ -447,95 +444,122 @@ public class LetterTile implements Serializable {
     initShape(letter, points);
   }
 
+  /**
+   * Sets the letter's and value's visible property of the current tile to the specified value.
+   *
+   * @param val Boolean value.
+   * @author ekasmamy
+   */
   public void setVisible(boolean val) {
     setLetterVisible(val);
     setPointsVisible(val);
   }
 
+  /**
+   * Set points visible or not.
+   *
+   * @param val Boolean value.
+   * @author ekasmamy
+   */
   public void setPointsVisible(boolean val) {
     points.setVisible(val);
   }
 
+  /**
+   * Set letter visible or not.
+   *
+   * @param val Boolean value.
+   * @author ekasmamy
+   */
   public void setLetterVisible(boolean val) {
     letter.setVisible(val);
   }
 
   /**
-   * Sets the top neighbour
+   * Sets the top neighbour.
    *
-   * @param top Top neighbour (LetterTile)
+   * @param top Top neighbour (LetterTile).
+   * @author ekasmamy
    */
   public void setTop(LetterTile top) {
     this.top = top;
   }
 
   /**
-   * Sets the right neighbour
+   * Sets the right neighbour.
    *
-   * @param right right neighbour (LetterTile)
+   * @param right right neighbour (LetterTile).
+   * @author ekasmamy
    */
   public void setRight(LetterTile right) {
     this.right = right;
   }
 
   /**
-   * Sets the bottom neighbour
+   * Sets the bottom neighbour.
    *
-   * @param bottom bottom neighbour (LetterTile)
+   * @param bottom bottom neighbour (LetterTile).
+   * @author ekasmamy
    */
   public void setBottom(LetterTile bottom) {
     this.bottom = bottom;
   }
 
   /**
-   * Sets the left neighbour
+   * Sets the left neighbour.
    *
-   * @param left left neighbour (LetterTile)
+   * @param left left neighbour (LetterTile).
+   * @author ekasmamy
    */
   public void setLeft(LetterTile left) {
     this.left = left;
   }
 
   /**
-   * Get the top neighbour
+   * Get the top neighbour.
    *
-   * @return Top neighbour (LetterTile)
+   * @return Top neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getTop() {
     return top;
   }
 
   /**
-   * Get the right neighbour
+   * Get the right neighbour.
    *
-   * @return right neighbour (LetterTile)
+   * @return right neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getRight() {
     return right;
   }
 
   /**
-   * Get the bottom neighbour
+   * Get the bottom neighbour.
    *
-   * @return bottom neighbour (LetterTile)
+   * @return bottom neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getBottom() {
     return bottom;
   }
 
   /**
-   * Get the left neighbour
+   * Get the left neighbour.
    *
-   * @return left neighbour (LetterTile)
+   * @return left neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getLeft() {
     return left;
   }
 
   /**
-   * Get the most top existing neighbour
+   * Get the most top existing neighbour.
    *
-   * @return The most top neighbour (LetterTile)
+   * @return The most top neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getMostTop() {
     LetterTile current = this;
@@ -546,9 +570,10 @@ public class LetterTile implements Serializable {
   }
 
   /**
-   * Get the most right existing neighbour
+   * Get the most right existing neighbour.
    *
-   * @return The most right neighbour (LetterTile)
+   * @return The most right neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getMostRight() {
     LetterTile current = this;
@@ -559,9 +584,10 @@ public class LetterTile implements Serializable {
   }
 
   /**
-   * Get the most bottom existing neighbour
+   * Get the most bottom existing neighbour.
    *
-   * @return The most bottom neighbour (LetterTile)
+   * @return The most bottom neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getMostBottom() {
     LetterTile current = this;
@@ -572,9 +598,10 @@ public class LetterTile implements Serializable {
   }
 
   /**
-   * Get the most left existing neighbour
+   * Get the most left existing neighbour.
    *
-   * @return The most left neighbour (LetterTile)
+   * @return The most left neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getMostLeft() {
     LetterTile current = this;
@@ -587,81 +614,101 @@ public class LetterTile implements Serializable {
   }
 
   /**
-   * Adds a Tile at the top of the most top existing neighbour
+   * Adds a Tile at the top of the most top existing neighbour.
    *
-   * @param top Tile to be added (LetterTile)
+   * @param top Tile to be added (LetterTile).
+   * @author ekasmamy
    */
   public void addTop(LetterTile top) {
     getMostTop().top = top;
   }
 
   /**
-   * Adds a Tile at the right of the most right existing neighbour
+   * Adds a Tile at the right of the most right existing neighbour.
    *
-   * @param right Tile to be added (LetterTile)
+   * @param right Tile to be added (LetterTile).
+   * @author ekasmamy
    */
   public void addRight(LetterTile right) {
     getMostRight().right = right;
   }
 
   /**
-   * Adds a Tile at the bottom of the most bottom existing neighbour
+   * Adds a Tile at the bottom of the most bottom existing neighbour.
    *
-   * @param bottom Tile to be added (LetterTile)
+   * @param bottom Tile to be added (LetterTile).
+   * @author ekasmamy
    */
   public void addBottom(LetterTile bottom) {
     getMostBottom().bottom = bottom;
   }
 
   /**
-   * Adds a Tile at the left of the most left existing neighbour
+   * Adds a Tile at the left of the most left existing neighbour.
    *
-   * @param left Tile to be added (LetterTile)
+   * @param left Tile to be added (LetterTile).
+   * @author ekasmamy
    */
   public void addLeft(LetterTile left) {
     getMostLeft().left = left;
   }
 
   /**
-   * Set Tile's letter
+   * Set Tile's letter.
    *
-   * @param letter Letter to set
+   * @param letter Letter to set.
+   * @author ekasmamy
    */
   public void setLetter(char letter) {
     this.letter.setText(String.valueOf(letter));
   }
 
   /**
-   * Set Tile's points
+   * Set Tile's points.
    *
-   * @param points Letter to set
+   * @param points Letter to set.
+   * @author ekasmamy
    */
   public void setPoints(int points) {
     this.points.setText(String.valueOf(points));
   }
 
   /**
-   * Get Tile's letter
+   * Get Tile's letter.
    *
-   * @return Letter
+   * @return Letter.
+   * @author ekasmamy
    */
   public char getLetter() {
     return letter.getText().charAt(0);
   }
 
   /**
-   * Get Tile's points
+   * Get Tile's points.
    *
-   * @return Points
+   * @return Points.
+   * @author ekasmamy
    */
   public int getPoints() {
     return Integer.parseInt(points.getText());
   }
 
+  /**
+   * Disables or not the tile.
+   *
+   * @param value Boolean value.
+   * @author ekasmamy
+   */
   public void setDisable(boolean value) {
     container.setDisable(value);
   }
 
+  /**
+   * Activates or deactivates the mouse events of the tile.
+   *
+   * @param value Boolean value.
+   * @author ekasmamy
+   */
   public void setMouseTransparent(boolean value) {
     container.setMouseTransparent(value);
   }

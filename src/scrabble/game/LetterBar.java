@@ -11,11 +11,9 @@ import scrabble.GameController;
 import scrabble.game.LetterBag.Tile;
 
 /**
- * <h1>scrabble.game.LetterBar</h1>
+ * scrabble.game.LetterBar class is an internal state of the letter bar at the bottom.
  *
- * <p>LetterBar class is an internal state of the letter bar at the bottom.</p>
- *
- * @author Eldar Kasmamytov
+ * @author ekasmamy
  */
 public class LetterBar {
 
@@ -27,57 +25,21 @@ public class LetterBar {
   private int size;
 
   /**
-   * Array of "Cell"s
+   * Array of "Cell"s.
    */
   private Slot[] slots;
 
   /**
    * Initiates the FRONT-end part. Creates a Slot and a LetterTile and puts the slot in
-   * "lettersBlock" (HBox)
+   * "lettersBlock" (HBox).
+   *
+   * @author ekasmamy
    */
   public void initBar() {
 
     for (int i = 0; i < size; i++) {
 
       Slot slot = new Slot(controller);
-
-//      slot.container.setOnDragDropped(event -> {
-//        // data dropped
-//        // System.out.println("onDragDropped");
-//
-//        // if there is a string data on dragboard, read it and use it
-//        Dragboard db = event.getDragboard();
-//        boolean success = false;
-//        if (db.hasString()) {
-//
-//          Map<String, String> params = new HashMap<>();
-//          String paramsString = db.getString();
-//          String[] pairs = paramsString.split("&");
-//          for (String p : pairs) {
-//            String[] pair = p.split("=");
-//            params.put(pair[0], pair[1]);
-//          }
-//
-//          LetterTile ltrTile;
-//          if (Boolean.parseBoolean(params.get("isBlank"))) {
-//            ltrTile = new LetterTile(controller);
-//            ltrTile.isBlank = true;
-//          } else {
-//            char letter = params.get("letter").charAt(0);
-//            int points = Integer.parseInt(params.get("points"));
-//            ltrTile = new LetterTile(letter, points, controller.grid.cellSize, controller);
-//            ltrTile.isBlank = false;
-//          }
-//          slot.setContent(ltrTile);
-//
-//          success = true;
-//        }
-//        /* let the source know whether the string was successfully
-//         * transferred and used */
-//        event.setDropCompleted(success);
-//
-//        event.consume();
-//      });
 
       slots[i] = slot;
       controller.lettersBlock.getChildren().add(slots[i].container);
@@ -89,7 +51,8 @@ public class LetterBar {
   /**
    * Constructor that sets the "size" of the bar to 7.
    *
-   * @param controller GameController
+   * @param controller GameController.
+   * @author ekasmamy
    */
   public LetterBar(GameController controller) {
     size = 7;
@@ -103,8 +66,9 @@ public class LetterBar {
   /**
    * Constructor which sets the number of slots to "size".
    *
-   * @param size       The number of slots
-   * @param controller GameController
+   * @param size       The number of slots.
+   * @param controller GameController.
+   * @author ekasmamy
    */
   public LetterBar(int size, GameController controller) {
     this.size = size;
@@ -117,6 +81,8 @@ public class LetterBar {
 
   /**
    * Default Constructor.
+   *
+   * @author ekasmamy
    */
   public LetterBar() {
     size = 7;
@@ -124,9 +90,10 @@ public class LetterBar {
   }
 
   /**
-   * Constructor without need to specify "GameController"
+   * Constructor without need to specify "GameController".
    *
-   * @param size The number of Slots
+   * @param size The number of Slots.
+   * @author ekasmamy
    */
   public LetterBar(int size) {
     this.size = size;
@@ -135,6 +102,8 @@ public class LetterBar {
 
   /**
    * Shuffles the letters inside the bar.
+   *
+   * @author ekasmamy
    */
   public void shuffle() {
 
@@ -167,9 +136,10 @@ public class LetterBar {
   }
 
   /**
-   * Checks whether all slots of the Letter Bar are occupied
+   * Checks whether all slots of the Letter Bar are occupied.
    *
-   * @return True if full, False otherwise
+   * @return True if full, False otherwise.
+   * @author ekasmamy
    */
   public boolean isFull() {
     int counter = 0;
@@ -184,6 +154,8 @@ public class LetterBar {
 
   /**
    * Displays the current internal state of the bar in the console.
+   *
+   * @author ekasmamy
    */
   public void display() {
     System.out.println("\nLetter Bar: ");
@@ -206,8 +178,9 @@ public class LetterBar {
   /**
    * Get a Slot.
    *
-   * @param index Index of the slot
-   * @return Slot
+   * @param index Index of the slot.
+   * @return Slot.
+   * @author ekasmamy
    */
   public Slot getSlot(int index) {
     return slots[index];
@@ -216,18 +189,20 @@ public class LetterBar {
   /**
    * Set a Slot.
    *
-   * @param index Index of the slot
-   * @param slot  Slot
+   * @param index Index of the slot.
+   * @param slot  Slot.
+   * @author ekasmamy
    */
   public void setSlot(int index, Slot slot) {
     slots[index] = slot;
   }
 
   /**
-   * Get a Slot that contains the specified LetterTile
+   * Get a Slot that contains the specified LetterTile.
    *
-   * @param tile LetterTile
-   * @return Slot
+   * @param tile LetterTile.
+   * @return Slot.
+   * @author ekasmamy
    */
   public Slot getSlotThatContains(LetterTile tile) {
     for (int i = 0; i < size; i++) {
@@ -238,6 +213,12 @@ public class LetterBar {
     return null;
   }
 
+  /**
+   * Returns a list of all tiles present in the bar.
+   *
+   * @return List of all tiles present in the bar.
+   * @author ekasmamy
+   */
   public ArrayList<LetterTile> getTilesInBar() {
     ArrayList<LetterTile> list = new ArrayList<>();
     for (Slot slot : slots) {
@@ -248,6 +229,12 @@ public class LetterBar {
     return list;
   }
 
+  /**
+   * Returns a list of empty slots in the bar.
+   *
+   * @return List of empty slots in the bar.
+   * @author ekasmamy
+   */
   public ArrayList<Slot> getEmptySlots() {
     ArrayList<Slot> list = new ArrayList<>();
     for (Slot slot : slots) {
@@ -258,6 +245,11 @@ public class LetterBar {
     return list;
   }
 
+  /**
+   * Returns every just placed and not frozen tiles in the grid back to the bar.
+   *
+   * @author ekasmamy
+   */
   public void putTilesBackToBar() {
     System.out.println("@LetterBar - putTilesBackToBar()");
     Iterator<Word> it = controller.grid.words.iterator();
@@ -284,6 +276,12 @@ public class LetterBar {
     }
   }
 
+  /**
+   * Returns a number of empty slots in the bar.
+   *
+   * @return Number of empty slots in the bar.
+   * @author ekasmamy
+   */
   public int getCountFreeSlots() {
     int counter = 0;
     for (Slot slot : slots) {
@@ -294,6 +292,12 @@ public class LetterBar {
     return counter;
   }
 
+  /**
+   * Fills the empty slots with tiles from the bag.
+   *
+   * @param tileSet Set of tiles from the bag.
+   * @author ekasmamy
+   */
   public void fillGaps(Multiset<Tile> tileSet) {
     System.out.println(this + " - @fillGaps()");
     if (tileSet.size() == getCountFreeSlots()) {
@@ -310,6 +314,12 @@ public class LetterBar {
     }
   }
 
+  /**
+   * Returns the size of the bar.
+   *
+   * @return Size of the bar.
+   * @author ekasmamy
+   */
   public int getSize() {
     return size;
   }

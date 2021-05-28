@@ -3,24 +3,22 @@ package scrabble.game;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Random;
 
 /**
- * <h1>scrabble.game.LetterBag</h1>
- *
- * <p>This is Singleton class that can be instantiated only once.</p>
- * <p>To create the single instance use: LetterBag.getInstance()</p>
+ * scrabble.game.LetterBag is a Singleton class that can be instantiated only once. To create the
+ * single instance, use: LetterBag.getInstance().
  *
  * @author ekasmamy
  */
 public class LetterBag implements Serializable {
 
   /**
-   * <h1>scrabble.game.LetterBag.Tile</h1>
+   * scrabble.game.LetterBag.Tile class shouldn't be used to create actual Letter Tiles. To create
+   * an actual letter tile use scrabble.game.LetterTile class instead.
    *
-   * <p>This class shouldn't be used to create actual Letter Tiles.</p>
-   * <p>To create an actual letter tile use scrabble.game.LetterTile class instead</p>
-   *
+   * @author ekasmamy
    * @see scrabble.game.LetterTile
    */
   public static class Tile implements Serializable {
@@ -54,6 +52,8 @@ public class LetterBag implements Serializable {
   /**
    * Default Constructor. This constructor should not be accessed directly. Use getInstance() method
    * instead.
+   *
+   * @author ekasmamy
    */
   private LetterBag() {
     bag = HashMultiset.create();
@@ -65,6 +65,7 @@ public class LetterBag implements Serializable {
    * This will create an instance if there is no one, or just return already created instance.
    *
    * @return The single instance of LetterBag
+   * @author ekasmamy
    */
   public static LetterBag getInstance() {
     if (instance == null) {
@@ -76,6 +77,8 @@ public class LetterBag implements Serializable {
 
   /**
    * Internal method that is used to fill the LetterBag with Tiles.
+   *
+   * @author ekasmamy
    */
   public void fillBag() {
     originalSize = 0;
@@ -106,9 +109,44 @@ public class LetterBag implements Serializable {
   }
 
   /**
+   * Exchanges a Collection of LetterTiles with other random tiles in the bag.
+   *
+   * @param tilesToExchange Collection of LetterTiles to exchange.
+   * @return A new set of Tiles of the same size.
+   * @author ekasmamy
+   */
+  public Multiset<Tile> exchangeLetterTiles(Collection<LetterTile> tilesToExchange) {
+    Multiset<Tile> set = HashMultiset.create();
+    for (int i = 0; i < tilesToExchange.size(); i++) {
+      set.add(grabRandomTile());
+    }
+    tilesToExchange.forEach(tile -> {
+      bag.add(new Tile(tile.getLetter(), tile.getPoints()));
+    });
+    return set;
+  }
+
+  /**
+   * Exchanges a Collection of Tiles with other random tiles in the bag.
+   *
+   * @param tilesToExchange Collection of Tiles to exchange.
+   * @return A new set of Tiles of the same size.
+   * @author ekasmamy
+   */
+  public Multiset<Tile> exchangeTiles(Collection<Tile> tilesToExchange) {
+    Multiset<Tile> set = HashMultiset.create();
+    for (int i = 0; i < tilesToExchange.size(); i++) {
+      set.add(grabRandomTile());
+    }
+    bag.addAll(tilesToExchange);
+    return set;
+  }
+
+  /**
    * Returns the original quantity letter tiles in the bag.
    *
    * @return Original quantity of letter tiles in the bag.
+   * @author ekasmamy
    */
   public int getOriginalAmount() {
     return originalSize;
@@ -117,8 +155,9 @@ public class LetterBag implements Serializable {
   /**
    * Returns the remaining quantity of the specified letter tile.
    *
-   * @param letter letter (char)
+   * @param letter Letter (char).
    * @return Remaining quantity of the specified letter tile.
+   * @author ekasmamy
    */
   public int getAmountOf(char letter) {
     for (Tile tile : bag.elementSet()) {
@@ -132,8 +171,9 @@ public class LetterBag implements Serializable {
   /**
    * Returns the original quantity of the specified letter tile.
    *
-   * @param letter letter (char)
+   * @param letter Letter (char).
    * @return Original quantity of the specified letter tile.
+   * @author ekasmamy
    */
   public int getOriginalAmountOf(char letter) {
     char[] charArray = alphabet.toCharArray();
@@ -151,6 +191,7 @@ public class LetterBag implements Serializable {
    * directly.
    *
    * @param tile Letter tile to remove from the bag.
+   * @author ekasmamy
    */
   private void removeTile(Tile tile) {
     for (Tile t : bag.elementSet()) {
@@ -166,6 +207,7 @@ public class LetterBag implements Serializable {
    *
    * @param letter letter tile (char)
    * @return Current value of the specified letter tile.
+   * @author ekasmamy
    */
   public int getValueOf(char letter) {
     for (Tile tile : bag.elementSet()) {
@@ -180,6 +222,7 @@ public class LetterBag implements Serializable {
    * Returns a Multiset containing remaining vowels in the bag.
    *
    * @return Multiset containing remaining vowels in the bag.
+   * @author ekasmamy
    */
   public Multiset<Tile> getRemainingVowels() {
     Multiset<Tile> set = HashMultiset.create();
@@ -195,6 +238,7 @@ public class LetterBag implements Serializable {
    * Returns a Multiset containing remaining consonants in the bag.
    *
    * @return Multiset containing remaining consonants in the bag.
+   * @author ekasmamy
    */
   public Multiset<Tile> getRemainingConsonants() {
     Multiset<Tile> set = HashMultiset.create();
@@ -210,6 +254,7 @@ public class LetterBag implements Serializable {
    * Returns a Multiset containing remaining blank tiles in the bag.
    *
    * @return Multiset containing remaining blank tiles in the bag.
+   * @author ekasmamy
    */
   public Multiset<Tile> getRemainingBlanks() {
     Multiset<Tile> set = HashMultiset.create();
@@ -224,7 +269,8 @@ public class LetterBag implements Serializable {
   /**
    * Picks a letter tile from the bag. And laos removes the picked tile from the bag.
    *
-   * @return Tile
+   * @return Tile.
+   * @author ekasmamy
    */
   public Tile grabRandomTile() {
     Tile res = new Tile();
@@ -278,8 +324,9 @@ public class LetterBag implements Serializable {
    * Returns a Multiset containing "count" random tiles from the bag. These tiles are removed from
    * the bag.
    *
-   * @param count number of tiles top grab
+   * @param count Number of tiles top grab.
    * @return Multiset containing "count" random tiles from the bag.
+   * @author ekasmamy
    */
   public Multiset<Tile> grabRandomTiles(int count) {
     Multiset<Tile> set = HashMultiset.create();
@@ -294,6 +341,7 @@ public class LetterBag implements Serializable {
    * will not affect the original bag.
    *
    * @return Copy Multiset containing all remaining tiles.
+   * @author ekasmamy
    */
   public Multiset<Tile> getRemainingTiles() {
     Multiset<Tile> set = HashMultiset.create();
@@ -309,6 +357,7 @@ public class LetterBag implements Serializable {
    * Get current size of the bag.
    *
    * @return Current size of the bag.
+   * @author ekasmamy
    */
   public int getAmount() {
     return bag.size();
@@ -318,6 +367,7 @@ public class LetterBag implements Serializable {
    * Returns initial alphabet's size.
    *
    * @return Initial alphabet's size.
+   * @author ekasmamy
    */
   public int getAlphabetSize() {
     return alphabet.length();
@@ -326,8 +376,9 @@ public class LetterBag implements Serializable {
   /**
    * Returns n'th letter in the initial alphabet.
    *
-   * @param index n'th letter
-   * @return n'th letter in the initial alphabet.
+   * @param index N'th letter.
+   * @return N'th letter in the initial alphabet.
+   * @author ekasmamy
    */
   public char getLetterInAlphabet(int index) {
     return Character.toUpperCase(alphabet.charAt(index));
@@ -336,62 +387,12 @@ public class LetterBag implements Serializable {
   /**
    * Returns n'th letter's value in the initial alphabet.
    *
-   * @param index n'th letter's value
-   * @return n'th letter's value in the initial alphabet.
+   * @param index N'th letter's value.
+   * @return N'th letter's value in the initial alphabet.
+   * @author ekasmamy
    */
   public int getValueInAlphabet(int index) {
     return values[index];
-  }
-
-  public static void main(String[] args) {
-    LetterBag ltrBag = LetterBag.getInstance();
-
-    for (int i = 0; i < 7; i++) {
-      Tile t = ltrBag.grabRandomTile();
-      if (t.isBlank) {
-        System.out.print("[BLANK] ");
-      } else {
-        System.out.print("[" + t.letter + ", " + t.value + "] ");
-      }
-    }
-
-    System.out.print("\n");
-    System.out.println("Size is: " + ltrBag.getAmount());
-
-    ltrBag.grabRandomTiles(7).forEach(tile -> {
-      if (tile.isBlank) {
-        System.out.print("[BLANK] ");
-      } else {
-        System.out.print("[" + tile.letter + ", " + tile.value + "] ");
-      }
-    });
-
-    System.out.print("\n");
-    System.out.println("Size is: " + ltrBag.getAmount());
-
-    ltrBag.grabRandomTiles(3).forEach(tile -> {
-      if (tile.isBlank) {
-        System.out.print("[BLANK] ");
-      } else {
-        System.out.print("[" + tile.letter + ", " + tile.value + "] ");
-      }
-    });
-
-    System.out.print("\n");
-    System.out.println("Size is: " + ltrBag.getAmount());
-
-    ltrBag.bag.clear();
-
-    ltrBag.grabRandomTiles(7).forEach(tile -> {
-      if (tile == null) {
-        System.out.print("[NULL] ");
-      } else if (tile.isBlank) {
-        System.out.print("[BLANK] ");
-      } else {
-        System.out.print("[" + tile.letter + ", " + tile.value + "] ");
-      }
-    });
-
   }
 
 }

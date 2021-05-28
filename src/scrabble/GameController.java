@@ -180,12 +180,20 @@ public class GameController {
 
   /**
    * Default constructor.
+   *
+   * @author ekasmamy
    */
   public GameController() {
     roundCounter = 0;
     bag = LetterBag.getInstance();
   }
 
+  /**
+   * Constructor.
+   *
+   * @param bag LetterBag.
+   * @author ekasmamy
+   */
   public GameController(LetterBag bag) {
     roundCounter = 0;
     this.bag = bag;
@@ -589,12 +597,12 @@ public class GameController {
       public void sendChatMessage(String message) {
         protocol.sendChatMessage(message); // sending the message
       }
-      
+
       @Override
       public void informAboutTileAmount(int size) {
         System.out.println("GAME CONTROLLER : Tiles left in bag : " + size);
       }
-      
+
       @Override
       public void informAboutLeave(int id) {
         System.out.println("GAME CONTROLLER : Player left");
@@ -740,8 +748,7 @@ public class GameController {
       writer.write(content);
       writer.close();
     } catch (Exception error) {
-//      System.err.println("Error on saving the custom map into a file");
-//      System.err.println("Error code: " + error.getMessage());
+      error.printStackTrace();
     }
 
     return path;
@@ -1019,9 +1026,16 @@ public class GameController {
     });
   }
 
+  /**
+   * Extracts and returns an integer ID from the css id.
+   *
+   * @param id CSS ID property.
+   * @return Integer ID.
+   * @author ekasmamy
+   */
   public int getIntID(String id) {
     String[] split = id.split("-");
-    return Integer.parseInt(split[split.length-1]);
+    return Integer.parseInt(split[split.length - 1]);
   }
 
   /**
@@ -1037,7 +1051,6 @@ public class GameController {
    * Changes the score and the label of this player.
    *
    * @param points Points to add to the current score.
-   *
    * @author ekasmamy
    */
   public void addToScoreOfPlayer(int playerId, int points) {
@@ -1082,12 +1095,12 @@ public class GameController {
 
     });
   }
-  
+
   /**
    * Method to change the screen to a lobby screen after a game ends. Version for clients.
-   * 
+   *
    * @param protocol protocol of the network player.
-   * @param isHost condition about host protocol
+   * @param isHost   condition about host protocol.
    * @author hendiehl
    */
   public void getToAfterGame(NetworkScreen protocol, boolean isHost) {
@@ -1112,10 +1125,10 @@ public class GameController {
 
   /**
    * Method to change the screen to a lobby screen after a game ends. Version for hosts.
-   * 
+   *
    * @param protocol protocol of the network player.
-   * @param server LobbyServer of the host.
-   * @param isHost condition about host protocol
+   * @param server   LobbyServer of the host.
+   * @param isHost   condition about host protocol.
    * @author hendiehl
    */
   public void getToAfterGame(NetworkScreen protocol, boolean isHost, LobbyServer server) {

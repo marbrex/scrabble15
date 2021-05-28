@@ -8,14 +8,16 @@ import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
 
 /**
- * <h1>scrabble.game.LeaderBoard</h1>
+ * scrabble.game.LeaderBoard
  *
- * @author Eldar Kasmamytov
+ * @author ekasmamy
  */
 public class LeaderBoard {
 
   /**
-   * Comparator function for the TreeSet
+   * Comparator function for the TreeSet.
+   *
+   * @author ekasmamy
    */
   static class ScoreComparator implements Comparator<Player> {
 
@@ -25,14 +27,17 @@ public class LeaderBoard {
   }
 
   /**
-   * Sorted set of all players in a game (Humans or AI)
+   * Sorted set of all players in a game (Humans or AI).
+   *
+   * @author ekasmamy
    */
   private TreeSet<Player> players;
 
   /**
-   * Common constructor for MULTIPLAYER mode
+   * Common constructor for MULTIPLAYER mode.
    *
-   * @param playersList A players' list including the host (<= 4)
+   * @param playersList A players' list including the host (<= 4).
+   * @author ekasmamy
    */
   public LeaderBoard(List<Player> playersList) {
     if (playersList.size() <= 4) {
@@ -42,10 +47,11 @@ public class LeaderBoard {
   }
 
   /**
-   * Constructor for SINGLE PLAYER mode
+   * Constructor for SINGLE PLAYER mode.
    *
-   * @param host   A real player who created the game
-   * @param nbBots Number of Bots (1 <= nbBots <= 3)
+   * @param host   A real player who created the game.
+   * @param nbBots Number of Bots (1 <= nbBots <= 3).
+   * @author ekasmamy
    */
   public LeaderBoard(HumanPlayer host, int nbBots) {
     if (nbBots >= 1 && nbBots <= 3) {
@@ -58,10 +64,11 @@ public class LeaderBoard {
   }
 
   /**
-   * Constructor for MULTIPLAYER mode with ONLY REAL PLAYERS
+   * Constructor for MULTIPLAYER mode with ONLY REAL PLAYERS.
    *
-   * @param host   A real player who created the game
-   * @param guests Real players who have join the game (<= 3)
+   * @param host   A real player who created the game.
+   * @param guests Real players who have join the game (<= 3).
+   * @author ekasmamy
    */
   public LeaderBoard(HumanPlayer host, List<HumanPlayer> guests) {
     if (guests.size() <= 3) {
@@ -72,11 +79,12 @@ public class LeaderBoard {
   }
 
   /**
-   * Constructor for MULTIPLAYER MIXED mode
+   * Constructor for MULTIPLAYER MIXED mode.
    *
-   * @param host   A real player who created the game
-   * @param guests Real players who have join the game (guests.size() + bots.size() <= 3)
-   * @param bots   Bots (guests.size() + bots.size() <= 3)
+   * @param host   A real player who created the game.
+   * @param guests Real players who have join the game (guests.size() + bots.size() <= 3).
+   * @param bots   Bots (guests.size() + bots.size() <= 3).
+   * @author ekasmamy
    */
   public LeaderBoard(HumanPlayer host, List<HumanPlayer> guests, List<AiPlayer> bots) {
     if (guests.size() + bots.size() <= 3) {
@@ -88,41 +96,43 @@ public class LeaderBoard {
   }
 
   /**
-   * Getter
+   * Getter for the player with a highest score.
    *
-   * @return A player with a highest score
+   * @return A player with a highest score.
+   * @author ekasmamy
    */
   public Player getGreatest() {
     return players.last();
   }
 
   /**
-   * Getter
+   * Getter for the player with a lowest score.
    *
-   * @return A player with a lowest score
+   * @return A player with a lowest score.
+   * @author ekasmamy
    */
   public Player getLowest() {
     return players.first();
   }
 
   /**
-   * Removes the specified player (Human or AI)
+   * Removes the specified player (Human or AI).
    *
-   * @param player Player (Human or AI)
+   * @param player Player (Human or AI).
+   * @author ekasmamy
    */
   public void removePlayer(Player player) {
     players.remove(player);
   }
 
   /**
-   * Getter
+   * Getter a number of players in a game.
    *
-   * @return A number of players in a game
+   * @return A number of players in a game.
+   * @author ekasmamy
    */
   public int getNumberOfPlayers() {
     return players.size();
   }
-
-  // TODO: Getter for the game Host
 
 }

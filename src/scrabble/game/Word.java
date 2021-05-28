@@ -8,11 +8,9 @@ import scrabble.GameController;
 import scrabble.model.Dictionary;
 
 /**
- * <h1>scrabble.game.Word</h1>
+ * scrabble.game.Word class that is needed to detect, store and verify words.
  *
- * <p>Word class that is needed to detect, store and verify words.</p>
- *
- * @author Eldar Kasmamytov
+ * @author ekasmamy
  */
 public class Word {
 
@@ -34,7 +32,9 @@ public class Word {
   Label pointsLabel;
 
   /**
-   * Initiates the FRONT-end part (AnchorPane that contains a Label of points)
+   * Initiates the FRONT-end part (AnchorPane that contains a Label of points).
+   *
+   * @author ekasmamy
    */
   private void initShape() {
     System.out.println("\n-----@Word initShape() START-----");
@@ -137,7 +137,8 @@ public class Word {
   /**
    * Default Constructor.
    *
-   * @param controller GameController
+   * @param controller GameController.
+   * @author ekasmamy
    */
   public Word(GameController controller) {
     w = new LinkedList<>();
@@ -162,9 +163,10 @@ public class Word {
    * word has no empty gaps, i.e. the word is FULL. If thw word is full, then it checks if the word
    * is VALID.
    *
-   * @param start      Starting point of the Word (First Letter)
-   * @param end        Ending point of the Word (Last Letter)
-   * @param controller Controller
+   * @param start      Starting point of the Word (First Letter).
+   * @param end        Ending point of the Word (Last Letter).
+   * @param controller Controller.
+   * @author ekasmamy
    */
   public Word(LetterTile start, LetterTile end, GameController controller) {
     System.out.println("\n-----@Word Constructor START-----");
@@ -341,13 +343,15 @@ public class Word {
   }
 
   /**
-   * Checks whether thw Word contains the specified tile
+   * Checks whether thw Word contains the specified tile.
    *
-   * @param tile LetterTile
-   * @return TRUE if contains, FALSE otherwise
+   * @param tile LetterTile.
+   * @return TRUE if contains, FALSE otherwise.
+   * @author ekasmamy
    */
   public boolean contains(LetterTile tile) {
-    System.out.println("\n-----@Word " + getWordAsString() + " contains(" + tile.getLetter() + ") START-----");
+    System.out.println(
+        "\n-----@Word " + getWordAsString() + " contains(" + tile.getLetter() + ") START-----");
     for (int i = 0; i < wordLength; i++) {
       System.out.println("Comparing: ");
       System.out.println(w.get(i) + " - " + w.get(i).getLetter());
@@ -359,15 +363,17 @@ public class Word {
       }
     }
     System.out.println("return false ");
-    System.out.println("-----@Word " + getWordAsString() + " contains(" + tile.getLetter() + ") END-----");
+    System.out.println(
+        "-----@Word " + getWordAsString() + " contains(" + tile.getLetter() + ") END-----");
     return false;
   }
 
   /**
-   * Get a LetterTile at index "i"
+   * Get a LetterTile at index "i".
    *
-   * @param i Index in the Word
-   * @return LetterTile at position "i"
+   * @param i Index in the Word.
+   * @return LetterTile at position "i".
+   * @author ekasmamy
    */
   public LetterTile getLetter(int i) {
     return w.get(i);
@@ -376,8 +382,9 @@ public class Word {
   /**
    * Checks whether the Word is part of another Word.
    *
-   * @param word Word (length should be >= of this Word)
-   * @return TRUE if is part, FALSE otherwise
+   * @param word Word (length should be >= of this Word).
+   * @return TRUE if is part, FALSE otherwise.
+   * @author ekasmamy
    */
   public boolean isPartOf(Word word) {
     boolean result = false;
@@ -423,8 +430,9 @@ public class Word {
   /**
    * Checks whether the Word contains another Word.
    *
-   * @param word Word (length should be <= of this Word)
-   * @return TRUE if contains, FALSE otherwise
+   * @param word Word (length should be <= of this Word).
+   * @return TRUE if contains, FALSE otherwise.
+   * @author ekasmamy
    */
   public boolean containsWord(Word word) {
     boolean result = false;
@@ -439,12 +447,12 @@ public class Word {
   /**
    * Returns a common LetterTile of two Words.
    *
-   * @param word Another Word
-   * @return Common LetterTile
+   * @param word Another Word.
+   * @return Common LetterTile.
+   * @author ekasmamy
    */
   public LetterTile getCommonLetter(Word word) {
     System.out.println("@getCommonLetter");
-//    if (!containsWord(word) || !isPartOf(word)) {
     for (int i = 0; i < wordLength; i++) {
       for (int j = 0; j < word.wordLength; j++) {
         if (w.get(i) == word.w.get(j)) {
@@ -452,10 +460,14 @@ public class Word {
         }
       }
     }
-//    }
     return null;
   }
 
+  /**
+   * Displays the word in the console.
+   *
+   * @author ekasmamy
+   */
   public void display() {
     for (LetterTile l : w) {
       System.out.print(l.getLetter());
@@ -465,7 +477,8 @@ public class Word {
   /**
    * Specifies the cell as an ending point of a word.
    *
-   * @param tile Cell in Grid, containing a letter
+   * @param tile Cell in Grid, containing a letter.
+   * @author ekasmamy
    */
   public void addCellEnd(LetterTile tile) {
     w.addLast(tile);
@@ -474,7 +487,8 @@ public class Word {
   /**
    * Specifies the cell as a starting point of a word.
    *
-   * @param tile tile in Grid, containing a letter
+   * @param tile tile in Grid, containing a letter.
+   * @author ekasmamy
    */
   public void addCellStart(LetterTile tile) {
     w.addFirst(tile);
@@ -483,7 +497,8 @@ public class Word {
   /**
    * Removes specified Cell from the word.
    *
-   * @param tile tile in Grid, containing a letter
+   * @param tile tile in Grid, containing a letter.
+   * @author ekasmamy
    */
   public void removeCell(LetterTile tile) {
     w.remove(tile);
@@ -492,7 +507,8 @@ public class Word {
   /**
    * Returns the whole word as a String.
    *
-   * @return Word as "String"
+   * @return Word as "String".
+   * @author ekasmamy
    */
   public String getWordAsString() {
     String str = "";
@@ -506,6 +522,7 @@ public class Word {
    * Getter of Points.
    *
    * @return Total points of the Word.
+   * @author ekasmamy
    */
   public int getPoints() {
     return points;
@@ -514,7 +531,8 @@ public class Word {
   /**
    * Getter of Length.
    *
-   * @return Total Length of the Word (Number of Letters)
+   * @return Total Length of the Word (Number of Letters).
+   * @author ekasmamy
    */
   public int getWordLength() {
     return wordLength;
@@ -523,7 +541,8 @@ public class Word {
   /**
    * Returns True if the Word is valid, otherwise False.
    *
-   * @return isValid
+   * @return isValid.
+   * @author ekasmamy
    */
   public boolean isValid() {
     return isValid;
@@ -532,7 +551,8 @@ public class Word {
   /**
    * Returns True if the Word is horizontal, otherwise False.
    *
-   * @return isHorizontal
+   * @return isHorizontal.
+   * @author ekasmamy
    */
   public boolean isHorizontal() {
     return isHorizontal;
@@ -541,55 +561,40 @@ public class Word {
   /**
    * Returns True if the Word is vertical, otherwise False.
    *
-   * @return isVertical
+   * @return isVertical.
+   * @author ekasmamy
    */
   public boolean isVertical() {
     return isVertical;
   }
 
   /**
-   * Get First LetterTile
+   * Get First LetterTile.
    *
-   * @return First LetterTile
+   * @return First LetterTile.
+   * @author ekasmamy
    */
   public LetterTile getFirst() {
     return w.getFirst();
   }
 
   /**
-   * Get Last LetterTile
+   * Get Last LetterTile.
    *
-   * @return Last LetterTile
+   * @return Last LetterTile.
+   * @author ekasmamy
    */
   public LetterTile getLast() {
     return w.getLast();
   }
 
+  /**
+   * Activates or deactivates the mouse events of the word.
+   *
+   * @param value Boolean value.
+   * @author ekasmamy
+   */
   public void setMouseTransparent(boolean value) {
     container.setMouseTransparent(value);
-  }
-
-  public void removeSubWords() {
-    if (!controller.grid.words.isEmpty()) {
-
-      System.out.println("wordsGrid NOT empty");
-
-      for (int k = 0; k < controller.grid.words.size(); k++) {
-
-        if ((this.isVertical && controller.grid.words.get(k).isVertical) || (this.isHorizontal
-            && controller.grid.words.get(k).isHorizontal)) {
-
-          if (this.getCommonLetter(controller.grid.words.get(k)) != null) {
-
-            if (this.containsWord(controller.grid.words.get(k))) {
-
-              System.out.println("the word contains " + k + "th word in wordsGrid");
-              controller.gridWrapper.getChildren().remove(controller.grid.words.get(k).container);
-              controller.grid.words.remove(k);
-            }
-          }
-        }
-      }
-    }
   }
 }
