@@ -37,7 +37,7 @@ public class RegStaTest {
    */
   @BeforeAll
   public static void setDatabase() {
-    Database.connectToDB();
+    Database.connectToDb();
     Database.setConnection("Scrabble15Test.db");
     connection = Database.getConnection();
     Database.createTables();
@@ -170,7 +170,7 @@ public class RegStaTest {
    */
   @AfterAll
   public static void closingConnection() {
-    Database.disconnectDB();
+    Database.disconnectDb();
     File file = new File(System.getProperty("user.home") + System.getProperty("file.separator")
         + ".Scrabble" + System.getProperty("file.separator") + "Scrabble15Test.db");
     if (file.exists()) {
