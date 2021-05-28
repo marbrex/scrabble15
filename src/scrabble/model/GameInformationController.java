@@ -56,8 +56,11 @@ public class GameInformationController {
   public GameInformationController(LobbyServer mainServer, ArrayList<NetworkPlayer> players) {
     this.mainServer = mainServer;
     this.players = players; // Set List from beginning
-    this.status = GameStatusType.GAME; // will stop Player joins !!!!!!!!!!!!!!!!!!!!!!!
+    this.status = GameStatusType.LOBBY; // will stop Player joins !!!!!!!!!!!!!!!!!!!!!!!
     this.check = new HashMap<NetworkPlayer, Boolean>();
+    for (NetworkPlayer player : players) {
+      this.check.put(player, false);
+    }
     this.initCheck = new HashMap<NetworkPlayer, Boolean>();
   }
 
@@ -630,8 +633,15 @@ public class GameInformationController {
    * @author hendiehl
    */
   public void prepareLobbyReturn(ArrayList<NetworkPlayer> list) {
-    this.mainServer.prepareLobbyReturn(list); // reset the controller.
-    // This controller is from this point on, out dated and not in use anymore.
+    /*
+     * In a normal network lobby a mainServer is always set, the condition is only needed in
+     * connection with the test constructor in reson to test network functionality in a non network
+     * jUnit test.
+     */
+    if (this.mainServer != null) {
+      this.mainServer.prepareLobbyReturn(list); // reset the controller.
+      // This controller is from this point on, out dated and not in use anymore.
+    }
   }
 
   /**
@@ -644,6 +654,27 @@ public class GameInformationController {
     System.out.println("GAME INFO : Actual LetterBag size : " + this.bag.getAmount());
     if (this.bag.getAmount() <= 0) {
       this.gameHandler.informAboutBag();
+    }
+  }
+
+  /**
+   * Getter method to get the main Server in reason to set them to the new LobbyController.
+   * 
+   * @return mainServer of the actual network lobby/game instance.
+   * @author hendiehl
+   */
+  public LobbyServer getCorrespondingServer() {
+    return this.mainServer;
+  }
+
+  /**
+   * Method to send the bag size to every player after an access to it.
+   * 
+   * @author hendiehl
+   */
+  public void sendBagSize() {
+    for (NetworkPlayer player : this.players) {
+      player.sendBagSize(this.bag.getAmount());
     }
   }
 }

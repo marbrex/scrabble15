@@ -32,7 +32,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   /** socket conection to the server */
   private Socket server;
   /** output to the server */
-  private ObjectOutputStream out;
+  private ObjectOutputStream outStream;
   /** input to the server */
   private ObjectInputStream in;
   /** standard connection port */
@@ -61,6 +61,12 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   private int ownID;
   /** controller of the game screen */
   private GameController gameScreen;
+  /** List for one time use in after game screen, is ordered by points */
+  private ArrayList<Player> playerResult;
+  /** Points gained by players during a game, same order as ordered */
+  private int[] pointsResult;
+  /** Sender thread to provide a queue ordered sending. */
+  private SenderHoldBackQueue out;
 
 
 
@@ -99,8 +105,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
       try {
         this.server = new Socket(adress, port);
         this.in = new ObjectInputStream(server.getInputStream());
-        this.out = new ObjectOutputStream(server.getOutputStream());
+        this.outStream = new ObjectOutputStream(server.getOutputStream());
         this.isRunning = true;
+        this.out = new SenderHoldBackQueue(outStream);
         System.out.println("CLIENT PROTOCOL : Connected with socket : " + this.port);
       } catch (ConnectException e) {
         System.out.println("CLIENT PROTOCOL : No connection at port " + this.port);
@@ -135,8 +142,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     this.gameFinderController = controller;
     this.server = new Socket(adress, ownPort);
     this.in = new ObjectInputStream(server.getInputStream());
-    this.out = new ObjectOutputStream(server.getOutputStream());
+    this.outStream = new ObjectOutputStream(server.getOutputStream());
     this.isRunning = true;
+    this.out = new SenderHoldBackQueue(outStream);
     this.port = ownPort;
     this.ownPort = true;
     this.loadPlayer();
@@ -228,6 +236,15 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case RETURN:
           this.reactToReturn(message);
           break;
+        case SIZE:
+          this.reactToSize(message);
+          break;
+        case PREP:
+          this.reactToPrep(message);
+          break;
+        case DELET:
+          this.reactToDelet(message);
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -245,16 +262,61 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   }
 
   /**
+   * Method to inform a player in game that a other player has left the game. A AceptedMesseage is
+   * used because its provide the same parameters.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToDelet(Message message) {
+    AceptedMessage msg = (AceptedMessage) message;
+    if (this.gameScreen != null) {
+      this.gameScreen.api.informAboutLeave(msg.getPort());
+    }
+  }
+
+  /**
+   * Method to inform a player in game that the game is bout to end.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToPrep(Message message) {
+    if (this.gameScreen != null) {
+      this.gameScreen.api.informGameEnd();
+    }
+  }
+
+  /**
+   * Method to react to an Size-Message wrapped in a AceptedMessage. Used to show the players the
+   * amount of tiles in the bag on the game screen.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToSize(Message message) {
+    System.out.println("CLIENT PROTOCOL : Size-Message received");
+    AceptedMessage msg = (AceptedMessage) message;
+    if (this.gameScreen != null) {
+      this.gameScreen.api.informAboutTileAmount(msg.getPort());
+      // AceptedMessage is just used to not create a own message class.
+    }
+  }
+
+  /**
    * Method to react to a ReturnMessage. Will cause a screen change.
    * 
    * @param message
    * @author hendiehl
    */
   private void reactToReturn(Message message) {
+    System.out.println("CLIENT PROTCOL : Return-Message received");
     ResultMessage msg = (ResultMessage) message;
-    // Changing the screen
+    this.lobbyPlayers = msg.getPlayers();
+    this.playerResult = msg.getOrdered();
+    this.pointsResult = msg.getPoints();
     if (this.gameScreen != null) {
-
+      this.gameScreen.getToAfterGame(this, false); // changing screens.
     }
   }
 
@@ -439,18 +501,12 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   private void reactToStartMessage(Message message) {
     System.out.println("CLIENT PROTOCOL : Start-Message received");
-    try {
-      if (this.gameLobbyController != null) {
-        StartMessage msg = new StartMessage(MessageType.START, this.player,
-            this.gameLobbyController.getPositionList());
-        this.out.writeObject(msg);
-        this.out.flush();
-      }
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    if (this.gameLobbyController != null) {
+      StartMessage msg = new StartMessage(MessageType.START, this.player,
+          this.gameLobbyController.getPositionList());
+      this.out.writeObject(msg);
+      this.out.flush();
     }
-
   }
 
   /**
@@ -584,6 +640,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     try { // if a input or output stream is closed the other close himself and the close method
           // throw the exception
       if (this.server != null) {
+        this.out.shutdwon(); // shutdown the queue
         this.server.close();
       }
       // System.out.println("connection closed");
@@ -616,10 +673,21 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @param glc
    * @author hendiehl
    */
+  @Override
   public void setLobbyController(GameLobbyController glc) {
-    this.gameFinderController = null;
-    this.gameLobbyController = glc;
-    this.updateLobbyinformation();
+    if (this.gameFinderController != null) { // from finder screen in lobby screen
+      System.out.println("CLIENT PROTOCOL : From finder to lobby");
+      this.gameFinderController = null;
+      this.gameLobbyController = glc;
+      if (this.lobbyPlayers != null) {
+        this.updateLobbyinformation();
+      }
+    } else if (this.gameScreen != null) { // from game screen to lobby screen
+      System.out.println("CLIENT PROTOCOL : From game to lobby");
+      this.gameScreen = null;
+      this.gameLobbyController = glc;
+      this.updateLobbyinformation();
+    }
   }
 
   /**
@@ -647,14 +715,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   public void sendJoinMessage() {
     Message msg = new Message(MessageType.JOIN, this.player);
-    try {
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("CLIENT PROTOCOL : Join-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("CLIENT PROTOCOL : Join-Message sended");
   }
 
   /**
@@ -669,17 +732,12 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     if (this.chat != null) {
       this.chat.sendLeaveMessageToServer();
     }
-    try {
-      if (this.server != null) {
-        if (!this.server.isClosed()) {
-          this.out.writeObject(msg);
-          this.out.flush();
-          System.out.println("CLIENT PROTOCOL : Shutdown-Message sended");
-        }
+    if (this.server != null) {
+      if (!this.server.isClosed()) {
+        this.out.writeObject(msg);
+        this.out.flush();
+        System.out.println("CLIENT PROTOCOL : Shutdown-Message sended");
       }
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
     }
   }
 
@@ -759,16 +817,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   @Override
   public void sendEndMessage(String action, int points) {
-    try {
-      EndMessage msg = new EndMessage(MessageType.END, this.player, action, points);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("CLIENT PROTOCOL : End-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
+    EndMessage msg = new EndMessage(MessageType.END, this.player, action, points);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("CLIENT PROTOCOL : End-Message sended");
   }
 
   /**
@@ -803,15 +855,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   @Override
   public void grabRandomTile() {
-    try {
-      LetterBagMessage msg =
-          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRT);
-      this.out.writeObject(msg);
-      this.out.flush();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    LetterBagMessage msg =
+        new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRT);
+    this.out.writeObject(msg);
+    this.out.flush();
   }
 
   /**
@@ -821,15 +868,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   @Override
   public void getValueOf(char letter) {
-    try {
-      LetterBagMessage msg =
-          new LetterBagMessage(MessageType.BAG, this.player, 0, letter, LetterBagType.GV);
-      this.out.writeObject(msg);
-      this.out.flush();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    LetterBagMessage msg =
+        new LetterBagMessage(MessageType.BAG, this.player, 0, letter, LetterBagType.GV);
+    this.out.writeObject(msg);
+    this.out.flush();
   }
 
   /**
@@ -839,15 +881,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   @Override
   public void getRemainingVowels() {
-    try {
-      LetterBagMessage msg =
-          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRV);
-      this.out.writeObject(msg);
-      this.out.flush();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    LetterBagMessage msg =
+        new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRV);
+    this.out.writeObject(msg);
+    this.out.flush();
   }
 
   /**
@@ -857,15 +894,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   @Override
   public void getRemainingConsonants() {
-    try {
-      LetterBagMessage msg =
-          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRC);
-      this.out.writeObject(msg);
-      this.out.flush();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    LetterBagMessage msg =
+        new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRC);
+    this.out.writeObject(msg);
+    this.out.flush();
   }
 
   /**
@@ -875,15 +907,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   @Override
   public void getRemainingBlanks() {
-    try {
-      LetterBagMessage msg =
-          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRB);
-      this.out.writeObject(msg);
-      this.out.flush();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    LetterBagMessage msg =
+        new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRB);
+    this.out.writeObject(msg);
+    this.out.flush();
   }
 
   /**
@@ -893,15 +920,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   @Override
   public void grabRandomTiles(int count) {
-    try {
-      LetterBagMessage msg =
-          new LetterBagMessage(MessageType.BAG, this.player, count, '0', LetterBagType.GRTS);
-      this.out.writeObject(msg);
-      this.out.flush();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    LetterBagMessage msg =
+        new LetterBagMessage(MessageType.BAG, this.player, count, '0', LetterBagType.GRTS);
+    this.out.writeObject(msg);
+    this.out.flush();
   }
 
   /**
@@ -911,15 +933,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   @Override
   public void getRemainingTiles() {
-    try {
-      LetterBagMessage msg =
-          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRET);
-      this.out.writeObject(msg);
-      this.out.flush();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    LetterBagMessage msg =
+        new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GRET);
+    this.out.writeObject(msg);
+    this.out.flush();
   }
 
   /**
@@ -929,15 +946,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   @Override
   public void getAmount() {
-    try {
-      LetterBagMessage msg =
-          new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GA);
-      this.out.writeObject(msg);
-      this.out.flush();
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    LetterBagMessage msg =
+        new LetterBagMessage(MessageType.BAG, this.player, 0, '0', LetterBagType.GA);
+    this.out.writeObject(msg);
+    this.out.flush();
   }
 
   /**
@@ -948,16 +960,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    */
   @Override
   public void loadFinished() {
-    try {
-      Message msg = new Message(MessageType.LOAD, this.player);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("CLIENT PROTOCOL : Load-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
+    Message msg = new Message(MessageType.LOAD, this.player);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("CLIENT PROTOCOL : Load-Message sended");
   }
 
   /**
@@ -969,5 +975,16 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   @Override
   public int getOwnID() {
     return this.ownID;
+  }
+
+  @Override
+  public void informLobbyReturn() {
+    System.out.println("CLIENT PROTOCOL : Lobby load finish");
+    if (this.gameLobbyController != null) {
+      this.updateLobbyinformation();
+      this.gameLobbyController.showWinScreen(playerResult, pointsResult);
+    }
+    this.playerResult = null;
+    this.pointsResult = null;
   }
 }

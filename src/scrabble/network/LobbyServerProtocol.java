@@ -26,7 +26,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   /** connected client */
   private Socket client;
   /* output to client */
-  private ObjectOutputStream out;
+  private ObjectOutputStream outStream;
   /* input from client */
   private ObjectInputStream in;
   /* Corresponding overall lobby server from the protocol */
@@ -40,6 +40,8 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   private HumanPlayer player;
   /** Variable to compare the position in the list to create a game sequence of human player */
   private int sequencePos;
+  /** Sender thread to provide a queue ordered sending. */
+  private SenderHoldBackQueue out;
 
   /**
    * Constructor of the LobbyProtocol which are used to get in contact with players who want to join
@@ -54,12 +56,12 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       GameInformationController gameInfoController) {
     try {
       this.corespondingServer = server;
-      this.out = new ObjectOutputStream(s.getOutputStream());
+      this.outStream = new ObjectOutputStream(s.getOutputStream());
       this.in = new ObjectInputStream(s.getInputStream());
       this.gameInfoController = gameInfoController;
       this.isRunning = true;
-      this.player = new HumanPlayer(); // need to be changed !!!!!!!!!!!!!!!!!!!!!!future -> getting
-                                       // from first Join message
+      this.player = new HumanPlayer();
+      this.out = new SenderHoldBackQueue(outStream);
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -209,14 +211,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * @author hendiehl
    */
   private void sendLetterBagResponse(LetterMultisetReturnMessage msg) {
-    try {
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : LMR-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : LMR-Message sended");
   }
 
   /**
@@ -296,14 +293,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   private void sendRejectInfomation() { // after this a protocol should be shutdown !!!!!!!!!!!!!!!!
     Message msg = new Message(MessageType.REJECTED, this.player);
-    try {
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Reject-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Reject-Message sended");
   }
 
   /**
@@ -316,17 +308,12 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     // System.out.println("Send lobby information after client add");
     Message msg =
         new AceptedMessage(MessageType.ACEPTED, this.player, this.corespondingServer.getChatPort());
-    try {
-      this.out.writeObject(msg); // only acceptence message
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Accept-Message sended");
-      // other Message from here onwards
-      // Update all Lobbys
-      this.gameInfoController.updateAllLobbys(); // here the new list is send to all players
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    this.out.writeObject(msg); // only acceptence message
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Accept-Message sended");
+    // other Message from here onwards
+    // Update all Lobbys
+    this.gameInfoController.updateAllLobbys(); // here the new list is send to all players
   }
 
   /**
@@ -338,14 +325,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     // System.out.println("Send basic lobby information");
     InformationMessage iM = new InformationMessage(MessageType.INFORMATION, this.player,
         this.gameInfoController.getStatus(), this.gameInfoController.getPlayerAmount());
-    try {
-      this.out.writeObject(iM);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Information-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    this.out.writeObject(iM);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Information-Message sended");
   }
 
   /**
@@ -356,6 +338,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   private void closeConnection() { // change !!!!!!!!!!!!!!!!!!!!!
     try {
       if (this.client != null) {
+        this.out.shutdwon(); // shutdown the queue
         this.client.close(); // close also in and output stream
       }
     } catch (IOException e) {
@@ -388,19 +371,14 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   public void sendShutdownMsg() { // critical
     Message msg = new Message(MessageType.SHUTDOWN, this.player);
-    try {
-      if (this.client != null && !this.client.isClosed()) { // Doesn't go in here ??????ß
-        this.out.writeObject(msg);
-        this.out.flush();
-        System.out.println("SERVER PROTOCOL : Shutdown-Message sended");
-      } else { // only trying purpose !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Here problem in
-               // kick procedure
-        this.out.writeObject(msg);
-        this.out.flush(); // change
-      }
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+    if (this.client != null && !this.client.isClosed()) { // Doesn't go in here ??????ß
+      this.out.writeObject(msg);
+      this.out.flush();
+      System.out.println("SERVER PROTOCOL : Shutdown-Message sended");
+    } else { // only trying purpose !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Here problem in
+             // kick procedure
+      this.out.writeObject(msg);
+      this.out.flush(); // change
     }
   }
 
@@ -423,14 +401,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     // System.out.println("Update the Lobby information");
     LobbyInformationMessage msg =
         new LobbyInformationMessage(MessageType.LOBBY, this.player, players);
-    try {
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Lobby-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Lobby-Update sended");
   }
 
   /**
@@ -440,16 +413,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * @author hendiehl
    */
   public void sendKickMessage() {
-    try {
-      Message msg = new Message(MessageType.KICK, this.player);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Kick-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
+    Message msg = new Message(MessageType.KICK, this.player);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Kick-Message sended");
   }
 
   /**
@@ -477,15 +444,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * @author hendiehl
    */
   public void sendFullMessage() {
-    try {
-      Message msg = new Message(MessageType.FULL, this.player);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Full-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    Message msg = new Message(MessageType.FULL, this.player);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Full-Message sended");
   }
 
   /**
@@ -496,15 +458,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   @Override
   public void sendStartMessage() {
-    try {
-      Message msg = new Message(MessageType.START, this.player);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Start-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    Message msg = new Message(MessageType.START, this.player);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Start-Message sended");
   }
 
   /**
@@ -525,15 +482,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
     int ownID = this.player.getId();
     // the server protocol works on the same machine as the GameInfoController so the id is here in
     // the instance.
-    try {
-      GameMessage msg = new GameMessage(MessageType.GAME, this.player, players, ids, ownID);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Game-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    GameMessage msg = new GameMessage(MessageType.GAME, this.player, players, ids, ownID);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Game-Message sended");
   }
 
   /**
@@ -543,16 +495,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   @Override
   public void startMove(int turn, int id) {
-    try {
-      MoveMessage msg = new MoveMessage(MessageType.MOVE, this.player, turn, id);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Move-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
+    MoveMessage msg = new MoveMessage(MessageType.MOVE, this.player, turn, id);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Move-Message sended");
   }
 
   /**
@@ -564,15 +510,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   @Override
   public void informOther(int turn, int id) {
-    try {
-      OtherMessage msg = new OtherMessage(MessageType.OTHER, this.player, turn, id);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Other-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    OtherMessage msg = new OtherMessage(MessageType.OTHER, this.player, turn, id);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Other-Message sended");
   }
 
   /**
@@ -583,15 +524,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   @Override
   public void sendFieldMessage(String path) {
-    try {
-      FieldMessage msg = new FieldMessage(MessageType.FIELD, this.player, path);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Field-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    FieldMessage msg = new FieldMessage(MessageType.FIELD, this.player, path);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Field-Message sended");
   }
 
   /**
@@ -602,17 +538,11 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   @Override
   public void sendDictionaryMessage(String dictionaryContent) {
-    try {
-      FieldMessage msg = new FieldMessage(MessageType.DICT, this.player, dictionaryContent);
-      // because of same type of Message content the FieldMessage can also be used
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Dictionary sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
+    FieldMessage msg = new FieldMessage(MessageType.DICT, this.player, dictionaryContent);
+    // because of same type of Message content the FieldMessage can also be used
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Dictionary sended");
   }
 
   /**
@@ -625,15 +555,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   @Override
   public void sendActionMessage(String action, int points, int id) {
-    try {
-      ActionMessage msg = new ActionMessage(MessageType.ACTION, this.player, action, points, id);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Action-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    ActionMessage msg = new ActionMessage(MessageType.ACTION, this.player, action, points, id);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Action-Message sended");
   }
 
   /**
@@ -657,15 +582,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    */
   @Override
   public void sendDBMessage(boolean won) {
-    try {
-      DBMessage msg = new DBMessage(MessageType.DB, this.player, won);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER Protocol : DB-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+    DBMessage msg = new DBMessage(MessageType.DB, this.player, won);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER Protocol : DB-Message sended");
   }
 
   /**
@@ -677,15 +597,56 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * @author hendiehl
    */
   @Override
-  public void sendResultMessage(ArrayList<Player> players, int[] points) {
-    try {
-      ResultMessage msg = new ResultMessage(MessageType.RETURN, this.player, players, points);
-      this.out.writeObject(msg);
-      this.out.flush();
-      System.out.println("SERVER PROTOCOL : Result-Message sended");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
+  public void sendResultMessage(ArrayList<Player> players, int[] points,
+      ArrayList<Player> ordered) {
+    ResultMessage msg =
+        new ResultMessage(MessageType.RETURN, this.player, players, points, ordered);
+    this.out.writeObject(msg);
+    this.out.flush();
+    this.sequencePos = 0; // setting election back
+    System.out.println("SERVER PROTOCOL : Result-Message sended");
+  }
+
+  /**
+   * Method to set the actual amount of tiles left in the LetterBag to every player. A
+   * AceptedMessage is used because it provides the right parameter.
+   * 
+   * @param size Tiles left in the LetterBag
+   * @author hendiehl
+   */
+  @Override
+  public void sendBagSize(int size) {
+    AceptedMessage msg = new AceptedMessage(MessageType.SIZE, this.player, size);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : SIZE-Message sended");
+  }
+
+  /**
+   * Method to inform the player in the game screen about a player who the game. Here is a
+   * AceptedMessage used because it provides the right parameter.
+   * 
+   * @param id of the player who left the game.
+   * @author hendiehl
+   */
+  @Override
+  public void sendDeleteMessage(int id) {
+    AceptedMessage msg = new AceptedMessage(MessageType.DELET, this.player, id);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Delete-Message sended");
+  }
+
+  /**
+   * Method to inform a player in game that the game is about to end.
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void sendPrepMessageChange() {
+    Message msg = new Message(MessageType.PREP, this.player);
+    this.out.writeObject(msg);
+    this.out.flush();
+    System.out.println("SERVER PROTOCOL : Prepare-Message sended");
   }
 }

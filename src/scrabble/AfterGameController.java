@@ -15,7 +15,7 @@ import javafx.scene.image.Image;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import scrabble.model.HumanPlayer;
+import scrabble.model.Player;
 
 
 /**
@@ -64,7 +64,7 @@ public class AfterGameController implements Initializable {
   @FXML
   private JFXButton closeBtn;
 
-  private List<HumanPlayer> playerList = new ArrayList<HumanPlayer>();
+  private List<Player> playerList = new ArrayList<Player>();
 
   private int[] points;
 
@@ -81,7 +81,7 @@ public class AfterGameController implements Initializable {
    * @param points Current Score in a right order
    * @author skeskinc
    */
-  public AfterGameController(List<HumanPlayer> playerList, int[] points) {
+  public AfterGameController(List<Player> playerList, int[] points) {
     this.playerList = playerList;
     this.points = points;
   }

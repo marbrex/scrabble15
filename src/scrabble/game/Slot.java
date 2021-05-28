@@ -7,14 +7,10 @@ import javafx.scene.paint.Color;
 import scrabble.GameController;
 
 /**
- * <h1>scrabble.game.Slot</h1>
+ * scrabble.game.Slot class represents a Slot, in which a LetterTile can be placed. Used in the Grid
+ * and LetterBar classes.
  *
- * <p>
- * This class represents a Slot, in which a LetterTile can be placed. Used in the Grid and LetterBar
- * classes.
- * </p>
- *
- * @author Eldar Kasmamytov
+ * @author ekasmamy
  */
 public class Slot {
 
@@ -31,7 +27,9 @@ public class Slot {
   StackPane container;
 
   /**
-   * Initiates the FRONT-end part (StackPane)
+   * Initiates the FRONT-end part (StackPane).
+   *
+   * @author ekasmamy
    */
   private void initShape() {
 
@@ -76,40 +74,14 @@ public class Slot {
       container.setMaxWidth((newValue.doubleValue() - temp) / controller.grid.size);
     });
 
-//    container.setOnDragEntered(event -> {
-//      // the drag-and-drop gesture entered the target
-//       System.out.println(this + " - onDragEntered");
-//
-//      // show to the user that it is an actual gesture target
-//      if (event.getGestureSource() != container &&
-//          event.getDragboard().hasString()) {
-//        container.getStyleClass().removeAll("slot-dl", "slot-tl", "slot-dw", "slot-tw");
-//        container.getStyleClass().add("slot-on-drag-entered");
-//      }
-//
-//      event.consume();
-//    });
-
-//    container.setOnDragExited(event -> {
-//       System.out.println(this + " - onDragExited");
-//
-//      // mouse moved away, remove the graphical cues
-//      container.getStyleClass().removeAll("slot-on-drag-entered");
-//      if (multiplier != null && multiplier != Multiplier.NO) {
-//        String style = "slot-" + multiplier.getAsString().toLowerCase(Locale.ROOT);
-//        container.getStyleClass().add(style);
-//      }
-//
-//      event.consume();
-//    });
-
     container.setViewOrder(2);
   }
 
   /**
-   * Constructor
+   * Constructor.
    *
-   * @param controller GameController
+   * @param controller GameController.
+   * @author ekasmamy
    */
   public Slot(GameController controller) {
     size = 30;
@@ -121,10 +93,11 @@ public class Slot {
   }
 
   /**
-   * Constructor
+   * Constructor.
    *
-   * @param multiplier Set the multiplier on creation
-   * @param controller GameController
+   * @param multiplier Set the multiplier on creation.
+   * @param controller GameController.
+   * @author ekasmamy
    */
   public Slot(Multiplier multiplier, GameController controller) {
     size = 30;
@@ -137,10 +110,11 @@ public class Slot {
   }
 
   /**
-   * Constructor
+   * Constructor.
    *
-   * @param tile       Set the Tile on creation
-   * @param controller GameController
+   * @param tile       Set the Tile on creation.
+   * @param controller GameController.
+   * @author ekasmamy
    */
   public Slot(LetterTile tile, GameController controller) {
     size = 30;
@@ -154,11 +128,12 @@ public class Slot {
   }
 
   /**
-   * Constructor
+   * Constructor.
    *
-   * @param tile       LetterTile
-   * @param multiplier Multiplier
-   * @param controller GameController
+   * @param tile       LetterTile.
+   * @param multiplier Multiplier.
+   * @param controller GameController.
+   * @author ekasmamy
    */
   public Slot(LetterTile tile, Multiplier multiplier, GameController controller) {
     size = 30;
@@ -173,10 +148,11 @@ public class Slot {
   }
 
   /**
-   * Constructor
+   * Constructor.
    *
-   * @param size       Size (number of cells, width=height)
-   * @param controller GameController
+   * @param size       Size (number of cells, width=height).
+   * @param controller GameController.
+   * @author ekasmamy
    */
   public Slot(double size, GameController controller) {
     this.size = size;
@@ -188,11 +164,12 @@ public class Slot {
   }
 
   /**
-   * Constructor
+   * Constructor.
    *
-   * @param size       Size (number of cells, width=height)
-   * @param tile       LetterTile
-   * @param controller GameController
+   * @param size       Size (number of cells, width=height).
+   * @param tile       LetterTile.
+   * @param controller GameController.
+   * @author ekasmamy
    */
   public Slot(double size, LetterTile tile, GameController controller) {
     this.size = size;
@@ -208,14 +185,17 @@ public class Slot {
   /**
    * Checks whether the slot has content.
    *
-   * @return TRUE if has content, FALSE otherwise
+   * @return TRUE if has content, FALSE otherwise.
+   * @author ekasmamy
    */
   public boolean isFree() {
     return content == null;
   }
 
   /**
-   * Removes the content of the Slot
+   * Removes the content of the Slot.
+   *
+   * @author ekasmamy
    */
   public void removeContent() {
     if (!container.getChildren().isEmpty()) {
@@ -233,9 +213,10 @@ public class Slot {
   }
 
   /**
-   * Sets the content of the Slot (re-write)
+   * Sets the content of the Slot (re-write).
    *
-   * @param tile LetterTile
+   * @param tile LetterTile.
+   * @author ekasmamy
    * @see scrabble.game.LetterTile
    */
   public void setContent(LetterTile tile) {
@@ -250,9 +231,10 @@ public class Slot {
   }
 
   /**
-   * Sets the Multiplier
+   * Sets the Multiplier.
    *
-   * @param multiplier Multiplier
+   * @param multiplier Multiplier.
+   * @author ekasmamy
    * @see scrabble.game.Multiplier
    */
   public void setMultiplier(Multiplier multiplier) {
@@ -260,15 +242,21 @@ public class Slot {
   }
 
   /**
-   * Get the Multiplier
+   * Get the Multiplier.
    *
-   * @return Multiplier
+   * @return Multiplier.
+   * @author ekasmamy
    * @see scrabble.game.Multiplier
    */
   public Multiplier getMultiplier() {
     return multiplier;
   }
 
+  /**
+   * Sets an inner shadow effect.
+   *
+   * @author ekasmamy
+   */
   public void setEffect() {
     InnerShadow is = new InnerShadow();
     is.setColor(Color.DARKGRAY);
@@ -280,6 +268,11 @@ public class Slot {
     container.setEffect(is);
   }
 
+  /**
+   * Removes every effect applied.
+   *
+   * @author ekasmamy
+   */
   public void removeEffect() {
     container.setEffect(null);
   }

@@ -13,11 +13,9 @@ import java.util.Scanner;
 import scrabble.ScrabbleApp;
 
 /**
- * <h1>scrabble.game.Map</h1>
+ * scrabble.game.Map class represents a grid of Multipliers (DW,DL,TW,TL,NO).
  *
- * <p>This class represents a grid of Multipliers (DW,DL,TW,TL,NO)</p>
- *
- * @author Eldar Kasmamytov
+ * @author ekasmamy
  */
 public class Map {
 
@@ -27,6 +25,8 @@ public class Map {
 
   /**
    * Default Constructor.
+   *
+   * @author ekasmamy
    */
   Map() {
     cells = new ArrayList<Multiplier>();
@@ -37,9 +37,10 @@ public class Map {
 
   /**
    * Constructor that loads a Map from the specified text file. This file should follow some
-   * formatting rules (see "maps/default-map.txt" for an example)
+   * formatting rules (see "maps/default-map.txt" for an example).
    *
-   * @param path Path to the file in resources
+   * @param path Path to the file in resources.
+   * @author ekasmamy
    */
   Map(String path) {
     cells = new ArrayList<Multiplier>();
@@ -50,7 +51,9 @@ public class Map {
 
   /**
    * Loads the default map. This file should follow some formatting rules (see
-   * "maps/default-map.txt" for an example)
+   * "maps/default-map.txt" for an example).
+   *
+   * @author ekasmamy
    */
   private void loadMap() {
     try {
@@ -59,8 +62,7 @@ public class Map {
       if (Files.exists(p)) {
         InputStream in = new FileInputStream(new File(path));
         scanner = new Scanner(new InputStreamReader(in));
-      }
-      else {
+      } else {
         InputStream in = getClass().getResourceAsStream(path);
         scanner = new Scanner(new InputStreamReader(in));
       }
@@ -70,7 +72,6 @@ public class Map {
         Scanner lineScanner = new Scanner(line);
         while (lineScanner.hasNext()) {
           String multiplier = lineScanner.next();
-          // System.out.print(multiplier + " ");
 
           switch (multiplier) {
             case "DL":
@@ -90,9 +91,10 @@ public class Map {
               break;
           }
         }
+
         lineScanner.close();
         size++;
-        // System.out.print("\n");
+
       }
       scanner.close();
     } catch (Exception e) {
@@ -101,19 +103,21 @@ public class Map {
   }
 
   /**
-   * Get the Multiplier at global index "index"
+   * Get the Multiplier at global index "index".
    *
-   * @param index Global Index
-   * @return Multiplier
+   * @param index Global Index.
+   * @return Multiplier.
+   * @author ekasmamy
    */
   public Multiplier getMultiplier(int index) {
     return cells.get(index);
   }
 
   /**
-   * Get the size of the Map, number of cells (height=width)
+   * Get the size of the Map, number of cells (height=width).
    *
-   * @return Number of cells on each side (height=width)
+   * @return Number of cells on each side (height=width).
+   * @author ekasmamy
    */
   public int getSize() {
     return size;

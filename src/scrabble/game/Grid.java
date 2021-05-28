@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import scrabble.GameController;
+import scrabble.model.Letter;
 
 /**
  * scrabble.game.Grid Class is used to stock the internal state of the letters grid.
@@ -34,6 +35,8 @@ public class Grid {
 
   /**
    * Initiates GridPane's settings.
+   *
+   * @author ekasmamy
    */
   private void initGrid() {
 
@@ -46,6 +49,8 @@ public class Grid {
 
   /**
    * Initiates slots (StackPanes) of the GridPane.
+   *
+   * @author ekasmamy
    */
   public void initCells() {
     for (int column = 0; column < size; column++) {
@@ -63,6 +68,7 @@ public class Grid {
    * @param grid       GridPane from the GameController.
    * @param size       GridPane's width and height.
    * @param controller GameController.
+   * @author ekasmamy
    */
   public Grid(GridPane grid, int size, GameController controller) {
     this.size = size;
@@ -91,6 +97,7 @@ public class Grid {
    * @param mapPath    Path to a map ".txt" file in resources folder.
    * @param size       GridPane's width and height.
    * @param controller GameController.
+   * @author ekasmamy
    */
   public Grid(GridPane grid, String mapPath, int size, GameController controller) {
     this.size = size;
@@ -118,6 +125,7 @@ public class Grid {
    * @param column Column of the cell.
    * @param row    Row of the cell.
    * @return Global Index.
+   * @author ekasmamy
    */
   public int getGlobalIndex(int column, int row) {
     return column + size * row;
@@ -128,6 +136,7 @@ public class Grid {
    *
    * @param globalIndex global index of the cell.
    * @return LetterTile.
+   * @author ekasmamy
    * @see #getGlobalIndex(int, int)
    */
   public LetterTile getSlotContent(int globalIndex) {
@@ -139,6 +148,7 @@ public class Grid {
    *
    * @param globalIndex global index of the cell.
    * @return Slot.
+   * @author ekasmamy
    */
   public Slot getSlot(int globalIndex) {
     return slots[globalIndex];
@@ -150,6 +160,7 @@ public class Grid {
    * @param column Column.
    * @param row    Row.
    * @return LetterTile.
+   * @author ekasmamy
    */
   public LetterTile getSlotContent(int column, int row) {
     return slots[getGlobalIndex(column, row)].content;
@@ -161,6 +172,7 @@ public class Grid {
    * @param column Column.
    * @param row    Row.
    * @return Slot.
+   * @author ekasmamy
    */
   public Slot getSlot(int column, int row) {
     return slots[getGlobalIndex(column, row)];
@@ -173,6 +185,7 @@ public class Grid {
    * @param row    Row of the cell to be set.
    * @param letter Letter.
    * @param points Points.
+   * @author ekasmamy
    */
   public void setSlotContent(int column, int row, char letter, int points) {
     slots[getGlobalIndex(column, row)].content.setLetter(letter);
@@ -185,6 +198,7 @@ public class Grid {
    * @param column Column of the cell to be set.
    * @param row    Row of the cell to be set.
    * @param tile   LetterTile.
+   * @author ekasmamy
    */
   public void setSlotContent(int column, int row, LetterTile tile) {
     slots[getGlobalIndex(column, row)].setContent(tile);
@@ -192,6 +206,8 @@ public class Grid {
 
   /**
    * Displays the current internal state of the grid in the console.
+   *
+   * @author ekasmamy
    */
   public void display() {
     System.out.println("\nInternal State: ");
@@ -218,6 +234,7 @@ public class Grid {
    *
    * @param slot Slot.
    * @return Global Index if the Cell is in the Grid, -1 otherwise.
+   * @author ekasmamy
    */
   public int getCellIndex(Slot slot) {
     for (int i = 0; i < globalSize; i++) {
@@ -233,6 +250,7 @@ public class Grid {
    *
    * @param tile LetterTile.
    * @return Global Index if the Cell is in the Grid, -1 otherwise.
+   * @author ekasmamy
    */
   public int getCellIndex(LetterTile tile) {
     for (int i = 0; i < globalSize; i++) {
@@ -248,6 +266,7 @@ public class Grid {
    *
    * @param tile Tile that is in Grid.
    * @return Y coordinate (Row).
+   * @author ekasmamy
    */
   public int getCellRow(LetterTile tile) {
     int glInd;
@@ -267,6 +286,7 @@ public class Grid {
    *
    * @param tile Tile that is in Grid.
    * @return X coordinate (Column).
+   * @author ekasmamy
    */
   public int getCellColumn(LetterTile tile) {
     int glInd;
@@ -282,9 +302,50 @@ public class Grid {
   }
 
   /**
+   * Returns an Y coordinate of a specified cell.
+   *
+   * @param slot Slot that is in Grid.
+   * @return Y coordinate (Row).
+   * @author ekasmamy
+   */
+  public int getCellRow(Slot slot) {
+    int glInd;
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
+        glInd = getGlobalIndex(column, row);
+        if (slot == slots[glInd]) {
+          return row;
+        }
+      }
+    }
+    return -1;
+  }
+
+  /**
+   * Returns an X coordinate of a specified cell.
+   *
+   * @param slot Slot that is in Grid.
+   * @return X coordinate (Column).
+   * @author ekasmamy
+   */
+  public int getCellColumn(Slot slot) {
+    int glInd;
+    for (int column = 0; column < size; column++) {
+      for (int row = 0; row < size; row++) {
+        glInd = getGlobalIndex(column, row);
+        if (slot == slots[glInd]) {
+          return column;
+        }
+      }
+    }
+    return -1;
+  }
+
+  /**
    * Get the size of the square GridPane (height=width).
    *
    * @return Number of Slots on each side (height=width).
+   * @author ekasmamy
    */
   public int getSize() {
     return size;
@@ -294,6 +355,7 @@ public class Grid {
    * Get the Global Size of the Grid.
    *
    * @return Total number of Slots.
+   * @author ekasmamy
    */
   public int getGlobalSize() {
     return globalSize;
@@ -304,6 +366,7 @@ public class Grid {
    *
    * @param tile Slot's content, LetterTile.
    * @return Slot.
+   * @author ekasmamy
    */
   public Slot getSlotThatContains(LetterTile tile) {
     for (int i = 0; i < globalSize; i++) {
@@ -318,6 +381,7 @@ public class Grid {
    * Returns an array of currently present tiles.
    *
    * @return ArrayList of currently present LetterTiles.
+   * @author ekasmamy
    */
   public ArrayList<LetterTile> getTilesInGrid() {
     ArrayList<LetterTile> list = new ArrayList<>();
@@ -335,6 +399,7 @@ public class Grid {
    * @param tile      LetterTile.
    * @param neighbour Neighbour LetterTile.
    * @return Specified neighbour of the tile.
+   * @author ekasmamy
    */
   public LetterTile getNeighbourCell(LetterTile tile, String neighbour) {
     int glInd;
@@ -344,25 +409,25 @@ public class Grid {
         if (tile == slots[glInd].content) {
           switch (neighbour) {
             case "top":
-              if (row != 0) {
+              if (row - 1 >= 0) {
                 return getSlotContent(column, row - 1);
               } else {
                 return null;
               }
             case "right":
-              if (column != size) {
+              if (column + 1 < size) {
                 return getSlotContent(column + 1, row);
               } else {
                 return null;
               }
             case "bottom":
-              if (row != size) {
+              if (row + 1 < size) {
                 return getSlotContent(column, row + 1);
               } else {
                 return null;
               }
             case "left":
-              if (column != 0) {
+              if (column - 1 >= 0) {
                 return getSlotContent(column - 1, row);
               } else {
                 return null;
@@ -380,6 +445,7 @@ public class Grid {
    * Get the most top existing neighbour.
    *
    * @return The most top neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getMostTopOf(LetterTile tile) {
     LetterTile current = tile;
@@ -401,6 +467,7 @@ public class Grid {
    * Get the most right existing neighbour.
    *
    * @return The most right neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getMostRightOf(LetterTile tile) {
     LetterTile current = tile;
@@ -422,6 +489,7 @@ public class Grid {
    * Get the most bottom existing neighbour.
    *
    * @return The most bottom neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getMostBottomOf(LetterTile tile) {
     LetterTile current = tile;
@@ -443,6 +511,7 @@ public class Grid {
    * Get the most left existing neighbour.
    *
    * @return The most left neighbour (LetterTile).
+   * @author ekasmamy
    */
   public LetterTile getMostLeftOf(LetterTile tile) {
     LetterTile current = tile;
@@ -464,6 +533,7 @@ public class Grid {
    * Removes the specified Slot's content (based on the Slot object).
    *
    * @param slot Slot, the content of which should be removed.
+   * @author ekasmamy
    */
   public void removeSlotContent(Slot slot) {
     for (int i = 0; i < globalSize; i++) {
@@ -478,6 +548,7 @@ public class Grid {
    *
    * @param column Column (X index).
    * @param row    Row (Y index).
+   * @author ekasmamy
    */
   public void removeSlotContent(int column, int row) {
     slots[getGlobalIndex(column, row)].removeContent();
@@ -489,6 +560,7 @@ public class Grid {
    * @param slot   Slot.
    * @param column Column (X).
    * @param row    Row (Y).
+   * @author ekasmamy
    */
   public void addSlot(Slot slot, int column, int row) {
     int index = getGlobalIndex(column, row);
@@ -498,10 +570,54 @@ public class Grid {
   }
 
   /**
+   * Removes words that are contained by another word.
+   *
+   * @author ekasmamy
+   */
+  public void removeSubWords() {
+    if (!words.isEmpty()) {
+
+      for (int k = 0; k < words.size() - 1; k++) {
+        Word word1 = words.get(k);
+
+        for (int l = k + 1; l < words.size(); l++) {
+          Word word2 = words.get(l);
+
+          if ((word1.isVertical && word2.isVertical) ||
+              (word1.isHorizontal && word2.isHorizontal)) {
+
+            if (word1.getCommonLetter(word2) != null) {
+
+              if (word1.containsWord(word2)) {
+
+                System.out.println(
+                    "the word \"" + word1.getWordAsString() + "\" contains \"" + word2
+                        .getWordAsString() + "\"");
+                controller.gridWrapper.getChildren().remove(word2.container);
+                words.remove(word2);
+              } else if (word2.containsWord(word1)) {
+
+                System.out.println(
+                    "the word \"" + word2.getWordAsString() + "\" contains \"" + word1
+                        .getWordAsString() + "\"");
+                controller.gridWrapper.getChildren().remove(word1.container);
+                words.remove(word1);
+              }
+            }
+          }
+
+        }
+
+      }
+    }
+  }
+
+  /**
    * Verifies whether placed words are valid. Generates a pop-up window in case of an invalid
    * input.
    *
    * @return True if input is valid, False otherwise.
+   * @author ekasmamy
    */
   public boolean verifyWordsValidity() {
     System.out.println("\n-----@Grid verifyWordsValidity() START-----");
@@ -509,15 +625,22 @@ public class Grid {
 
     ArrayList<Slot> validStartingSlots = new ArrayList<>();
 
-    if (controller.roundCounter == 1) {
-      System.out.println("1st round");
-      // It's 1st round
+    ArrayList<LetterTile> presentTiles = new ArrayList<>();
+    for (LetterTile letterTile : getTilesInGrid()) {
+      if (letterTile.isFrozen) {
+        presentTiles.add(letterTile);
+      }
+    }
+
+    if (presentTiles.isEmpty()) {
+      System.out.println("Valid Starting Slot is CENTER");
+
       // Adding the center slot as Starting Point
       validStartingSlots.add(getSlot(size / 2, size / 2));
 
     } else {
-      System.out.println("2nd+ round");
-      // It's 2nd+ round
+      System.out.println("Valid Starting Slots are SLOTS ALREADY PRESENT IN THE GRID");
+
       // Searching all frozen words and adding them into Starting Slots Array
 
       System.out.println("Words:");
@@ -535,11 +658,10 @@ public class Grid {
       }
     }
 
+    removeSubWords();
+
     int validWords = 0;
     int wordsUsingStartSlot = 0;
-    int frozenWordsCounter = 0;
-    int nbHorizontal = 0;
-    int nbVertical = 0;
 
     for (Word word : words) {
       System.out.println("current word: " + word.getWordAsString());
@@ -550,18 +672,6 @@ public class Grid {
       // (by counting the number of valid words and comparing it to number of all words)
       if (word.isValid()) {
         validWords++;
-      }
-
-      // Counting the number of frozen words, current horizontal and vertical words
-      if (!word.frozen) {
-        if (word.isHorizontal()) {
-          nbHorizontal++;
-        }
-        if (word.isVertical()) {
-          nbVertical++;
-        }
-      } else {
-        frozenWordsCounter++;
       }
 
       System.out.println("validStartingSlots: ");
@@ -581,6 +691,61 @@ public class Grid {
       }
     }
 
+    // ======== START checking if every tile is in the same direction ========
+    ArrayList<LetterTile> justPlacedTiles = new ArrayList<>();
+    for (LetterTile letterTile : getTilesInGrid()) {
+      if (!letterTile.isFrozen) {
+        justPlacedTiles.add(letterTile);
+      }
+    }
+
+    boolean sameDirection = false;
+    if (!justPlacedTiles.isEmpty()) {
+      // there are newly placed tiles
+
+      LetterTile letterTile1 = justPlacedTiles.get(0);
+      int col1 = getCellColumn(letterTile1);
+      int row1 = getCellRow(letterTile1);
+
+      int sameRowCount = 0;
+      int sameColCount = 0;
+
+      // it's enough to compare 1 tile with every other tile
+      for (int j = 1; j < justPlacedTiles.size(); j++) {
+        LetterTile letterTile2 = justPlacedTiles.get(j);
+        int col2 = getCellColumn(letterTile2);
+        int row2 = getCellRow(letterTile2);
+
+        if (row1 == row2 && col1 != col2) {
+          // 2 tiles are horizontally positioned on the same row
+
+          sameRowCount++;
+        } else if (col1 == col2 && row1 != row2) {
+          // 2 tiles are vertically positioned in the same column
+
+          sameColCount++;
+        } else {
+          // 2 tiles aren't in the same direction
+
+          sameDirection = false;
+          break;
+        }
+      }
+
+      // comparing
+      // only 1 of these 2 expressions in IF should be TRUE (they cannot be both true)
+      if (sameRowCount == justPlacedTiles.size() - 1
+          || sameColCount == justPlacedTiles.size() - 1) {
+        sameDirection = true;
+      }
+
+    } else {
+      // there are no newly placed tiles
+
+      sameDirection = true;
+    }
+    // ======== END checking if every tile is in the same direction ========
+
     boolean noSingleTiles = true;
     // Checking if there are Single LetterTiles in the Grid
     for (Slot slot : slots) {
@@ -596,6 +761,7 @@ public class Grid {
     }
 
     System.out.println("words using starting slots: " + wordsUsingStartSlot);
+    System.out.println("valid words: " + validWords);
     System.out.println("grid.words.size(): " + words.size());
 
     String errorMessage = "";
@@ -611,8 +777,7 @@ public class Grid {
           // All words present in the grid are valid
           System.out.println("ALL WORDS ARE VALID !");
 
-          if (nbHorizontal == words.size() - frozenWordsCounter
-              | nbVertical == words.size() - frozenWordsCounter) {
+          if (sameDirection) {
             // All words have the same direction
             System.out.println("ALL WORDS HAVE THE SAME DIRECTION !");
 
@@ -622,14 +787,6 @@ public class Grid {
           }
 
         } else {
-
-//        if (startingSlotUsed) {
-//          // at least one of the previous letters is used by a word
-//          System.out.println("AT LEAST 1 OF PREVIOUS LETTERS IS USED !");
-//        }
-//        else {
-//          System.err.println("USE AT LEAST 1 OF PREVIOUS LETTERS TO MAKE A WORD !");
-//        }
 
           errorMessage = "ALL NEW WORDS SHOULD BE VALID !";
           System.err.println(errorMessage);
@@ -685,6 +842,8 @@ public class Grid {
 
   /**
    * Freezes all currently present words.
+   *
+   * @author ekasmamy
    */
   private void freezeWords() {
     System.out.println("\n-----@Grid freezeWords() START-----");
@@ -699,79 +858,6 @@ public class Grid {
         word.getLetter(l).container.getStyleClass().add("letter-btn");
         word.getLetter(l).container.getStyleClass().add("letter-btn-frozen");
 
-//        if (word.isHorizontal()) {
-//
-//          if (l == 0) {
-//            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-min");
-//          } else if (l < word.getWordLength() - 1) {
-//            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-mid");
-//          } else if (l == word.getWordLength() - 1) {
-//            word.getLetter(l).container.getStyleClass().add("letter-btn-hor-max");
-//          }
-//
-////          if (l < word.getWordLength() - 1) {
-////            StackPane gap = new StackPane();
-////            gap.setViewOrder(--controller.minViewOrder);
-////            gap.setPrefSize(padSize + 1, word.getLetter(l).container.getHeight());
-////            gap.setMinSize(padSize + 1, word.getLetter(l).container.getHeight());
-////            gap.setMaxSize(padSize + 1, word.getLetter(l).container.getHeight());
-////            gap.getStyleClass().add("gap-hor");
-////
-////            controller.gridWrapper.getChildren().add(gap);
-////
-////            gap.setTranslateX(
-////                word.getLetter(l).slot.container.getBoundsInParent().getMaxX() - 1);
-////            gap.setTranslateY(
-////                word.getLetter(l).slot.container.getBoundsInParent().getMinY());
-////
-////            word.getLetter(l).slot.container.boundsInParentProperty()
-////                .addListener((obs, oldValue, newValue) -> {
-////                  gap.setTranslateX(newValue.getMaxX() - 1);
-////                  gap.setTranslateY(newValue.getMinY());
-////                });
-////
-////            gap.prefHeightProperty().bind(word.getLetter(l).container.heightProperty());
-////            gap.minHeightProperty().bind(word.getLetter(l).container.heightProperty());
-////            gap.maxHeightProperty().bind(word.getLetter(l).container.heightProperty());
-////          }
-//
-//        } else if (word.isVertical()) {
-//
-//          if (l == 0) {
-//            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-min");
-//          } else if (l < word.getWordLength() - 1) {
-//            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-mid");
-//          } else if (l == word.getWordLength() - 1) {
-//            word.getLetter(l).container.getStyleClass().add("letter-btn-ver-max");
-//          }
-//
-////          if (l < word.getWordLength() - 1) {
-////            StackPane gap = new StackPane();
-////            gap.setPrefSize(word.getLetter(l).container.getWidth(), padSize + 1);
-////            gap.setMinSize(word.getLetter(l).container.getWidth(), padSize + 1);
-////            gap.setMaxSize(word.getLetter(l).container.getWidth(), padSize + 1);
-////            gap.getStyleClass().add("gap-ver");
-////
-////            controller.gridWrapper.getChildren().add(gap);
-////
-////            gap.setTranslateX(
-////                word.getLetter(l).slot.container.getBoundsInParent().getMinX() + 1);
-////            gap.setTranslateY(
-////                word.getLetter(l).slot.container.getBoundsInParent().getMaxY() - 1);
-////
-////            word.getLetter(l).slot.container.boundsInParentProperty()
-////                .addListener((obs, oldValue, newValue) -> {
-////                  gap.setTranslateX(newValue.getMinX() + 1);
-////                  gap.setTranslateY(newValue.getMaxY() - 1);
-////                });
-////
-////            gap.prefWidthProperty().bind(word.getLetter(l).container.widthProperty());
-////            gap.minWidthProperty().bind(word.getLetter(l).container.widthProperty());
-////            gap.maxWidthProperty().bind(word.getLetter(l).container.widthProperty());
-////          }
-//
-//        }
-
         word.getLetter(l).slot.container.setEffect(null);
         word.getLetter(l).slot.container.setMouseTransparent(true);
         word.getLetter(l).slot.isFrozen = true;
@@ -781,7 +867,6 @@ public class Grid {
       }
 
       word.frozen = true;
-//      controller.gridWrapper.getChildren().remove(words.get(w).container);
       word.container.getStyleClass().clear();
       word.container.getChildren().clear();
     }

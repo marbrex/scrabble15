@@ -13,7 +13,7 @@ public class InformationMessage extends Message implements Serializable {
    * 
    * @author hendiehl
    */
-
+  
   private static final long serialVersionUID = 1L;
   private GameStatusType status;
   private int lobbyPlayers;
@@ -36,7 +36,7 @@ public class InformationMessage extends Message implements Serializable {
   /**
    * Getter of the MessageType to identify a join possibility from the start.
    * 
-   * @return status GameStatusType
+   * @return status GameStatusType.
    * @author hendiehl
    */
   public GameStatusType getStatus() {
@@ -46,7 +46,7 @@ public class InformationMessage extends Message implements Serializable {
   /**
    * Getter of the amount of players in a lobby.
    * 
-   * @return player amount
+   * @return player amount.
    * @author hendiehl
    */
   public int getLobbyPlayers() {

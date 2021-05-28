@@ -1,16 +1,17 @@
 package scrabble.network;
 
+import java.io.Serializable;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
 
-public class DBMessage extends Message {
+public class DBMessage extends Message implements Serializable {
   /**
    * DBMessage which will be send after an network game to inform a player about his gained points
    * and his game win.
    * 
    * @author hendiehl
    */
-
+  
   private static final long serialVersionUID = 1L;
   private boolean won;
 

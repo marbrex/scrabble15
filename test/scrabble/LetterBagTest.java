@@ -13,6 +13,11 @@ import org.junit.jupiter.api.Test;
 import scrabble.game.LetterBag;
 import scrabble.game.LetterBag.Tile;
 
+/**
+ * This is a JUnit test class for the scrabble.game.LetterBag class.
+ *
+ * @author ekasmamy
+ */
 @DisplayName("JUnit 5 - Letter Bag Test")
 public class LetterBagTest {
 
@@ -86,6 +91,66 @@ public class LetterBagTest {
     System.out.println("└─@grabTilesTest END");
   }
 
+  @Test
+  @DisplayName("exchangeTilesTest")
+  void exchangeTilesTest() {
+    System.out.println("\n┌─@exchangeTilesTest START");
+
+    System.out.println("│ Grabbing random tiles...");
+    Multiset<Tile> set = bag.grabRandomTiles(7);
+
+    assertTrue(!set.isEmpty(), "[grabbed set is empty]");
+
+    System.out.println("│ Checking the bag's size...");
+    int originalSize = bag.getOriginalAmount();
+    int newSize = bag.getAmount();
+    System.out.println("│ Remaining Tiles = " + newSize);
+    System.out.println("│ Original Size = " + originalSize);
+
+    assertTrue(newSize < originalSize, "[error]");
+
+    System.out.println("│");
+    System.out.println("│ Grabbed Tiles:");
+    set.forEach(t -> {
+      System.out.println("│");
+      System.out.println("│ Grabbed Tile = [" + t.letter + ", " + t.value + "]");
+
+      assertNotEquals(null, t, "[error]");
+
+      System.out.println("│ Checking the tile's count in the bag...");
+      int remainAmount = bag.getAmountOf(t.letter);
+      int originalAmount = bag.getOriginalAmountOf(t.letter);
+      System.out.println("│ Remaining amount of Tiles with this letter = " + remainAmount);
+      System.out.println("│ Original amount of Tiles with this letter = " + originalAmount);
+
+      assertTrue(remainAmount < originalAmount, "[error]");
+    });
+
+    System.out.println("│ Exchanging the grabbed tiles with random tiles in the bag...");
+    Multiset<Tile> exchangedSet = bag.exchangeTiles(set);
+
+    assertTrue(!exchangedSet.isEmpty(), "[exchanged set is empty]");
+
+    System.out.println("│");
+    System.out.println("│ Exchanged Tiles:");
+    exchangedSet.forEach(t -> {
+      System.out.println("│");
+      System.out.println("│ Grabbed Tile = [" + t.letter + ", " + t.value + "]");
+
+      assertNotEquals(null, t, "[error]");
+
+      System.out.println("│ Checking the tile's count in the bag...");
+      int remainAmount = bag.getAmountOf(t.letter);
+      int originalAmount = bag.getOriginalAmountOf(t.letter);
+      System.out.println("│ Remaining amount of Tiles with this letter = " + remainAmount);
+      System.out.println("│ Original amount of Tiles with this letter = " + originalAmount);
+
+      assertTrue(remainAmount < originalAmount, "[error]");
+    });
+
+    System.out.println("└─@exchangeTilesTest END");
+  }
+
   @BeforeAll
   static void beforeAll() {
     System.out.println("\n┌─@beforeAll START");
@@ -99,12 +164,18 @@ public class LetterBagTest {
   @BeforeEach
   void beforeEach() {
     System.out.println("\n┌─@beforeEach START");
+
+    System.out.println("│ Letter Bag Size = " + bag.getAmount());
+
     System.out.println("└─@beforeEach END");
   }
 
   @AfterEach
   void afterEach() {
     System.out.println("\n┌─@afterEach START");
+
+    System.out.println("│ Letter Bag Size = " + bag.getAmount());
+
     System.out.println("└─@afterEach END");
   }
 

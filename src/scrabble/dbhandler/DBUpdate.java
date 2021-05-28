@@ -1,10 +1,10 @@
 package scrabble.dbhandler;
 
-import java.io.File;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import scrabble.model.*;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import scrabble.model.HumanPlayer;
 
 /**
  * scrabble.dbhandler.DBUpdate class to update player statistics and settings.
@@ -109,10 +109,11 @@ public class DBUpdate {
   /**
    * Updating the window mode of the Game.
    * 
+   * @param id the settingsid to set-up fullscreen or not
    * @param fullscreen true, if the profile wants to have fullscreen, else false.
    * @author skeskinc
    */
-  public static void updateSceneMode(int settings_id, boolean fullscreen) {
+  public static void updateSceneMode(int id, boolean fullscreen) {
 
     String windowMode;
     if (fullscreen) {
@@ -122,8 +123,8 @@ public class DBUpdate {
     }
     try {
       stmt = Database.getConnection().createStatement();
-      stmt.executeUpdate("UPDATE Settings SET SceneMode = '" + windowMode + "' WHERE SettingsId = "
-          + settings_id + ";");
+      stmt.executeUpdate(
+          "UPDATE Settings SET SceneMode = '" + windowMode + "' WHERE SettingsId = " + id + ";");
     } catch (SQLException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -133,16 +134,16 @@ public class DBUpdate {
   /**
    * Updates the AI Difficulty.
    * 
-   * @param settings_id the settingsId to identify the settings entry to be updated
+   * @param id the settingsId to identify the settings entry to be updated
    * @param difficulty the new difficulty of AI to be updated in the database
    * @author mraucher
    * @author skeskinc
    */
-  public static void updateAIDifficulty(int settings_id, String difficulty) {
+  public static void updateAiDifficulty(int id, String difficulty) {
     try {
       stmt = Database.getConnection().createStatement();
-      stmt.executeUpdate("UPDATE Settings SET AIDifficulty = '" + difficulty
-          + "' WHERE SettingsId = " + settings_id + ";");
+      stmt.executeUpdate(
+          "UPDATE Settings SET AIDifficulty = '" + difficulty + "' WHERE SettingsId = " + id + ";");
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -151,16 +152,16 @@ public class DBUpdate {
   /**
    * Updates the Sound-Level of the Game.
    * 
-   * @param settings_id the settingsId to identify the settings entry to be updated
-   * @param the new soundlevel to be updated in the database
+   * @param id the settingsId to identify the settings entry to be updated
+   * @param soundlevel new soundlevel to be updated in the database
    * @author mraucher
    * @author skeskinc
    */
-  public static void updateSoundLevel(int settings_id, double soundlevel) {
+  public static void updateSoundLevel(int id, double soundlevel) {
     try {
       stmt = Database.getConnection().createStatement();
-      stmt.executeUpdate("UPDATE Settings SET SoundLevel = " + soundlevel + " WHERE SettingsId = "
-          + settings_id + ";");
+      stmt.executeUpdate(
+          "UPDATE Settings SET SoundLevel = " + soundlevel + " WHERE SettingsId = " + id + ";");
     } catch (SQLException e) {
       e.printStackTrace();
     }
@@ -169,16 +170,16 @@ public class DBUpdate {
   /**
    * Updates the Switch sound state.
    * 
-   * @param settings_id the settingsId to identify the settings entry to be updated
+   * @param id the settingsId to identify the settings entry to be updated
    * @param soundOn the new flag for soundOn (=true) / soundOf (=false)
    * @author mraucher
    * @author skeskinc
    */
-  public static void updateSoundSwitcher(int settings_id, boolean soundOn) {
+  public static void updateSoundSwitcher(int id, boolean soundOn) {
     try {
       stmt = Database.getConnection().createStatement();
       stmt.executeUpdate(
-          "UPDATE Settings SET SoundOn = " + soundOn + " WHERE SettingsId = " + settings_id + ";");
+          "UPDATE Settings SET SoundOn = " + soundOn + " WHERE SettingsId = " + id + ";");
     } catch (SQLException e) {
       e.printStackTrace();
     }

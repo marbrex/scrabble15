@@ -6,8 +6,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import scrabble.game.Word;
 
@@ -16,14 +15,12 @@ import scrabble.game.Word;
  * 
  * @author skeskinc
  */
-
 public class Dictionary {
 
   private static BufferedReader in;
   private static List<String> words = new ArrayList<String>();
   private static List<String> definitions = new ArrayList<String>();
-  private static HashSet<String> set;
-
+  private static LinkedHashMap<String, String> dictionary = new LinkedHashMap<String, String>();
 
   /**
    * Setting the Dictionary.
@@ -43,6 +40,7 @@ public class Dictionary {
       while ((msg = in.readLine()) != null) {
         c = msg.toCharArray();
         word = null;
+        // Looking at the words
         for (int i = 0; i < c.length; i++) {
           if (Character.isWhitespace(c[i])) {
             word = msg.substring(0, i);
@@ -54,15 +52,28 @@ public class Dictionary {
             break;
           }
         }
-        for (int i = 0; i < c.length - 1; i++) {
-          if (Character.isWhitespace(c[i]) && !Character.isWhitespace(c[i + 1])) {
-            definition = msg.substring(i + 1, c.length);
-            definitions.add(definition);
-            break;
+        if (word.matches("[a-zA-Z]+") && word.length() <= 15) {
+          // Looking at definitions
+          for (int i = 0; i < c.length - 1; i++) {
+            if (Character.isWhitespace(c[i]) && !Character.isWhitespace(c[i + 1])) {
+              definition = msg.substring(i + 1, c.length);
+              definitions.add(definition);
+              dictionary.put(word, definition);
+              break;
+            } else if (Character.isWhitespace(c[i]) && Character.isWhitespace(c[i + 1])) {
+              definitions.add("No definition found.");
+              dictionary.put(word, "No definition found.");
+              break;
+            } else if (i == c.length - 2 && Character.isDefined(c[i + 1])) {
+              definitions.add("No definition found.");
+              dictionary.put(word, "No definition found.");
+              break;
+            }
           }
         }
       }
-      removeDoubles();
+      // Removing duplicated words and definitions.
+      removeDuplicates();
     } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -126,7 +137,6 @@ public class Dictionary {
   public static void addWord(Word word) {
     if (!matches(word)) {
       words.add(word.getWordAsString());
-      Collections.sort(words);
     }
   }
 
@@ -146,13 +156,25 @@ public class Dictionary {
   }
 
   /**
-   * Removing words, which are present multiple times.
+   * Returns the definition of the given word.
+   * 
+   * @param word Given word to search the definition for
+   * @return Definition of a word
+   * @author skeskinc
+   */
+  public static String getDefinition(String word) {
+    String definition = dictionary.get(word);
+    return definition;
+  }
+
+  /**
+   * Removing duplicate words.
    * 
    * @author skeskinc
    */
-  public static void removeDoubles() {
-    set = new HashSet<String>(words);
-    words = new ArrayList<String>(set);
-    Collections.sort(words);
+  public static void removeDuplicates() {
+    words = new ArrayList<String>(dictionary.keySet());
+    definitions = new ArrayList<String>(dictionary.values());
   }
+
 }

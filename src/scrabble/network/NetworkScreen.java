@@ -2,6 +2,7 @@ package scrabble.network;
 
 import java.util.ArrayList;
 import scrabble.GameController;
+import scrabble.GameLobbyController;
 import scrabble.model.Player;
 
 public interface NetworkScreen {
@@ -32,6 +33,10 @@ public interface NetworkScreen {
   public void setGameScreen(GameController gameScreen);
 
   public int getOwnID();
+
+  public void informLobbyReturn();
+
+  public void setLobbyController(GameLobbyController glc);
 
   public ArrayList<Player> getPlayerList(); // need to send the new list after election
   // Methods of the LetterBag Class for Network use

@@ -9,26 +9,28 @@ import scrabble.model.Player;
 
 public class LetterMultisetReturnMessage extends Message implements Serializable {
   /**
-   * Network message for returning LetterBag operations in a network game Send by Server to client
+   * Network message for returning LetterBag operations in a network game Send by Server to client.
    * Every Method will send with this Message and will be recognized through Enum; Used for :
    * getRemainingVowels = GRV getRemainingConsonants = GRC getRemainingBlanks = GRB grabRandomTiles
    * = GRTS getRemainingTiles = GRET getAmount() = GA getValueOf = GV grabRandomTile = GRT
    * 
    * @author hendiehl
    */
+  
+  private static final long serialVersionUID = 1L;
   private Multiset<Tile> tiles;
   private int answer;
   private Tile tile;
   private LetterBagType type2;
 
   /**
-   * Constructor for the return message. Will be used by all LetterBag network operations
+   * Constructor for the return message. Will be used by all LetterBag network operations.
    * 
-   * @param type Type of the network message
-   * @param owner Owner of the message
-   * @param tiles Multiset of Tiles : can be null if not needed
-   * @param count int value of the amount and value operation : can be 0 if not needed
-   * @param tile tile of the grabRandom method : can be null if not needed
+   * @param type Type of the network message.
+   * @param owner Owner of the message.
+   * @param tiles Multiset of Tiles : can be null if not needed.
+   * @param count int value of the amount and value operation : can be 0 if not needed.
+   * @param tile tile of the grabRandom method : can be null if not needed.
    * @author hendiehl
    */
   public LetterMultisetReturnMessage(MessageType type, Player owner, Multiset<Tile> tiles,
@@ -42,9 +44,9 @@ public class LetterMultisetReturnMessage extends Message implements Serializable
 
   /**
    * Getter of the tile multiset used for : getRemainingVowels getRemainingConsonants
-   * getRemainingBlanks grabRandomTiles getRemainingTiles
+   * getRemainingBlanks grabRandomTiles getRemainingTiles.
    * 
-   * @return multiset of tiles
+   * @return multiset of tiles.
    * @author hendiehl
    */
   public Multiset<Tile> getTiles() {
@@ -52,9 +54,9 @@ public class LetterMultisetReturnMessage extends Message implements Serializable
   }
 
   /**
-   * Getter of the int answer used for : getAmount() getValueOf
+   * Getter of the int answer used for : getAmount() getValueOf.
    * 
-   * @return int answeer
+   * @return int answer.
    * @author hendiehl
    */
   public int getAnswer() {
@@ -62,9 +64,9 @@ public class LetterMultisetReturnMessage extends Message implements Serializable
   }
 
   /**
-   * Getter of the tile used for grabRandomTile method
+   * Getter of the tile used for grabRandomTile method.
    * 
-   * @return random tile of Letter Bag
+   * @return random tile of Letter Bag.
    * @author hendiehl
    */
   public Tile getTile() {
@@ -72,9 +74,9 @@ public class LetterMultisetReturnMessage extends Message implements Serializable
   }
 
   /**
-   * Method to get the LetterBagMessageType to identify which method should be performed
+   * Method to get the LetterBagMessageType to identify which method should be performed.
    * 
-   * @return LetterBagMessagetype
+   * @return LetterBagMessagetype.
    * @author hendiehl
    */
   public LetterBagType getType2() {

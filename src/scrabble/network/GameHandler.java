@@ -3,6 +3,8 @@ package scrabble.network;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import scrabble.model.AiPlayer;
 import scrabble.model.GameInformationController;
 import scrabble.model.Player;
@@ -31,6 +33,8 @@ public class GameHandler extends Thread {
   private NetworkPlayer winner;
   private boolean loading;
   private boolean bagIsEmpty;
+  // is used to get a different behavior for a wanted and a unwanted ending
+  private boolean isShutdown;
 
   // should i control a specific notify call ?
   /**
@@ -50,7 +54,7 @@ public class GameHandler extends Thread {
       for (NetworkPlayer player : this.players) {
         if (player instanceof LobbyHostProtocol) {
           this.points.put(player, 0);
-          this.host = (LobbyHostProtocol) player; // setting host;
+          this.setHost((LobbyHostProtocol) player); // setting host;
         } else {
           this.points.put(player, 0);
         }
@@ -72,11 +76,14 @@ public class GameHandler extends Thread {
       System.out.println("GAME HANDLER : Make complete turn");
       this.makeATurn(); // Perhaps wrapping it in a synchronized method ?
     }
-    // Here the GameHandler stop the turn procedure --> game ends.
-    this.calculateWinner(); // Calculate the winner with gained points.
-    this.sendDBMessage(); // sending the win condition to the player DB.
-    this.prepareLobbyReturn(); // Create a new Instance of an GameInfoController.
-    this.sendResults(); // Sending game results for showing purpose and switching screens.
+    if (!this.isShutdown) {
+      // Here the GameHandler stop the turn procedure --> game ends.
+      this.sendPrepareMessages(); // gave them time to see a information about lobby return
+      this.calculateWinner(); // Calculate the winner with gained points.
+      this.sendDBMessage(); // sending the win condition to the player DB.
+      this.prepareLobbyReturn();
+      // Create a new Instance of an GameInfoController and sending the results to other players.
+    }
     System.err.println("GAME HANDLER : Outrun");
   }
 
@@ -98,11 +105,13 @@ public class GameHandler extends Thread {
   }
 
   /**
-   * Method to send the results of an network game for showing purpose.
+   * Method to send the results of an network game for showing purpose and for protocol internal
+   * saving.
    * 
+   * @param list of players in protocol internal order = the host at the beginning.
    * @author hendiehl
    */
-  private void sendResults() {
+  private void sendResults(ArrayList<Player> list2) {
     System.out.println("GAME HANDLER : Prepare result sending");
     // Here a GameMessage can be used again because of same parameters.
     int[] points = new int[4];
@@ -119,7 +128,7 @@ public class GameHandler extends Thread {
     for (NetworkPlayer player : this.players) {
       if (!(player instanceof LobbyAiProtocol)) {
         // sending results to all players.
-        player.sendResultMessage(list, points);
+        player.sendResultMessage(list2, points, list);
         // The receive of this message will cause a screen change.
       }
     }
@@ -205,8 +214,9 @@ public class GameHandler extends Thread {
         this.waitAiTime(); // Only in purpose to show AiPlayer on the field --> 10sek
         LobbyAiProtocol ai = (LobbyAiProtocol) player; // special move method of AiPlayer
         String action = ai.aiMove(); // calculating a move by the AiPlayer.
+        System.out.println("GAME HANDLER : Ai action = " + action);
         // points have to be calculated.
-        this.informAiActions(action, 0); // special inform fo AiPlayer moves.
+        this.informAiActions(action); // special inform fo AiPlayer moves.
       } else { // In case : LobbyHost- or LobbyServerProtocol
         System.out.println("GAME HANDLER : Human move");
         this.actual = player;
@@ -218,29 +228,37 @@ public class GameHandler extends Thread {
         // Perhaps here not needed
       }
       this.turn++; // increase the turn counter
+      this.game.sendBagSize(); // after every turn.
     }
 
   }
 
   /**
    * Special Method to inform about AiPlayer actions. They only need to send to other HumanPLayers
-   * which are not the host, because they work on the host gird instance.
+   * which are not the host, because they work on the host gird instance. They also need a special
+   * way to calculate move points, because the work on the host grid.
    * 
    * @param action action String of an AiPlayer.
    * @param i points gained by an AiPlayer.
    * @author hendiehl
    */
-  private void informAiActions(String action, int i) {
+  private void informAiActions(String action) {
     System.out.println("GAME HANDLER : Inform about AiAction");
-    if (!action.matches("")) {
+    JSONObject data = new JSONObject(action);
+    JSONArray words = data.getJSONArray("words");
+    // AiPlayer points have to be calculated on a special way
+    if (words.length() == 0) {
+      System.out.println("GAME HANDLER : Actionless Ai move");
+      this.actionlessMove++;
+    } else {
       for (NetworkPlayer player : this.players) {
         if (player instanceof LobbyServerProtocol) {
-          player.sendActionMessage(action, i, this.actual.getPlayer().getId());
+          player.sendActionMessage(action, 0, this.actual.getPlayer().getId());
           // Only LobbyServerProtocols need to be informed.
         }
       }
-    } else {
-      System.out.println("GAME HANDLER : Actionless Ai move");
+      this.actionlessMove = 0;
+
     }
 
   }
@@ -327,16 +345,21 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   private void processAction(String action, int points) {
-    if (action.matches("")) { // move without action
-      System.out.println("GAME HANDLER : Actionless move");
-      this.actionlessMove++; // increase counter
-    } else {
-      System.out.println("GAME HANDLER : Action move");
-      this.actionlessMove = 0; // setting back counter
-      int point = points + this.points.get(actual); // adding points
-      this.points.replace(actual, point); // replacing points
+    System.out.println("GAME HANDLER : Action : " + action);
+    JSONObject data = new JSONObject(action);
+    JSONArray words = data.getJSONArray("words");
+    int add = points + this.points.get(actual);
+    this.points.replace(actual, add);
+    if (words.length() == 0) { // Move without action move
+      this.actionlessMove++;
+      System.out.println("GAME HANDLER : Move without action");
+      System.out.println("GAME HANDLER : Actionless counter : " + this.actionlessMove);
+    } else { // move with action
+      this.actionlessMove = 0;
       this.informActions(action, points);
+      System.out.println("GAME HANDLER : Move with action");
     }
+    System.out.println("GAME HANDLER : Poinst of actual : " + this.points.get(actual));
   }
 
   /**
@@ -364,6 +387,7 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   public void shutdown() {
+    this.isShutdown = true;
     this.gameIsOn = false;
     this.invokeTurnPhase(); // In case the thread is waiting
   }
@@ -380,7 +404,8 @@ public class GameHandler extends Thread {
 
   /**
    * Method to return from the game field to the lobby after the game finished. Will prepare a new
-   * list of members without the LobbyAiProtocols
+   * list of members without the LobbyAiProtocols. Will also start the result sending to change
+   * leave the game screen.
    * 
    * @author hendiehl
    */
@@ -394,6 +419,12 @@ public class GameHandler extends Thread {
     }
     this.game.prepareLobbyReturn(list); // changing the GameInfoController and the screen by all
                                         // members
+    // The List is now ordered in protocol intern order.
+    ArrayList<Player> list2 = new ArrayList<Player>(); // need to select the player classes.
+    for (NetworkPlayer player : list) {
+      list2.add(player.getPlayer()); // only real players.
+    }
+    this.sendResults(list2);
   }
 
   /**
@@ -410,7 +441,29 @@ public class GameHandler extends Thread {
       }
     }
     // Now the players have to be informed.
+    for (NetworkPlayer other : this.players) {
+      other.sendDeleteMessage(player.getPlayer().getId());
+    }
+  }
 
+  /**
+   * Method to inform all players that they will leave the game screens in a couple of seconds.
+   * 
+   * @author hendiehl
+   */
+  public synchronized void sendPrepareMessages() {
+    for (NetworkPlayer player : this.players) {
+      if (!(player instanceof LobbyAiProtocol)) {
+        player.sendPrepMessageChange();
+      }
+    }
+    // Gave them time to wait --> 5 seconds
+    try {
+      this.wait(5000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -420,5 +473,15 @@ public class GameHandler extends Thread {
    */
   public void informAboutBag() {
     this.bagIsEmpty = true;
+  }
+
+  /**
+   * Method to set the host of the lobby, to get his GameController instance for the AiPlayers. Is
+   * mainly extracted as own method to be used in the GameHandlerTest class.
+   * 
+   * @author hendiehl
+   */
+  public void setHost(LobbyHostProtocol host) {
+    this.host = host;
   }
 }

@@ -1,25 +1,27 @@
 package scrabble.network;
 
+import java.io.Serializable;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
 
-public class OtherMessage extends Message {
+public class OtherMessage extends Message implements Serializable {
   /**
-   * Message to inform players in a game which players is actually on move
+   * Message to inform players in a game which players is actually on move.
    * 
    * @author hendiehl
    */
   private int turn;
   private int id;
+  private static final long serialVersionUID = 1L;
 
   /**
    * Constructor to set the position of the player who is actually on the move and the a turn
-   * counter Send to the other players
+   * counter. Send to the other players.
    * 
-   * @param type MessageType
-   * @param owner Owner of the message
-   * @param turn turn counter of the actual game status
-   * @param id id of the player who is actually on move
+   * @param type MessageType.
+   * @param owner Owner of the message.
+   * @param turn turn counter of the actual game status.
+   * @param id id of the player who is actually on move.
    * @author hendiehl
    */
   public OtherMessage(MessageType type, Player owner, int turn, int id) {
@@ -29,9 +31,9 @@ public class OtherMessage extends Message {
   }
 
   /**
-   * Getter for the int representation of the player position in the list
+   * Getter for the int representation of the player position in the list.
    * 
-   * @return turn counter
+   * @return turn counter.
    * @author hendiehl
    */
   public int getTurn() {
@@ -39,9 +41,9 @@ public class OtherMessage extends Message {
   }
 
   /**
-   * Getter of the id of the player which was given the move action
+   * Getter of the id of the player which was given the move action.
    * 
-   * @return player id during the game
+   * @return player id during the game.
    */
   public int getId() {
     return id;

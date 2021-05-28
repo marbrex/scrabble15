@@ -107,13 +107,13 @@ public class SettingsController implements Initializable {
       hard.setSelected(true);
       easy.setSelected(false);
       difficultyHard = true;
-      DBUpdate.updateAIDifficulty(settingsId, "Hard");
+      DBUpdate.updateAiDifficulty(settingsId, "Hard");
     });
     easy.setOnAction(event -> {
       hard.setSelected(false);
       easy.setSelected(true);
       difficultyHard = false;
-      DBUpdate.updateAIDifficulty(settingsId, "Easy");
+      DBUpdate.updateAiDifficulty(settingsId, "Easy");
     });
     lowerBlock.getChildren().add(hard);
     lowerBlock.getChildren().add(easy);

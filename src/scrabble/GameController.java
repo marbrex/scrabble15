@@ -1,5 +1,7 @@
 package scrabble;
 
+import animatefx.animation.GlowText;
+import animatefx.animation.Pulse;
 import com.google.common.collect.Multiset;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
@@ -16,6 +18,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -48,6 +52,7 @@ import scrabble.model.Player;
 import scrabble.model.Profile;
 import scrabble.network.LobbyClientProtocol;
 import scrabble.network.LobbyHostProtocol;
+import scrabble.network.LobbyServer;
 import scrabble.network.NetworkGame;
 import scrabble.network.NetworkScreen;
 
@@ -82,6 +87,12 @@ public class GameController {
    */
   @FXML
   public JFXButton shuffleBtn;
+
+  @FXML
+  public StackPane bagBtn;
+
+  @FXML
+  public Label bagCount;
 
   /**
    * The root element in FXML.
@@ -163,16 +174,26 @@ public class GameController {
 
   GameController thisController = this;
 
-  Label scoreLabel;
+  ArrayList<Label> scoreLabels = new ArrayList<>();
+
+  int playerID;
 
   /**
    * Default constructor.
+   *
+   * @author ekasmamy
    */
   public GameController() {
     roundCounter = 0;
     bag = LetterBag.getInstance();
   }
 
+  /**
+   * Constructor.
+   *
+   * @param bag LetterBag.
+   * @author ekasmamy
+   */
   public GameController(LetterBag bag) {
     roundCounter = 0;
     this.bag = bag;
@@ -198,6 +219,7 @@ public class GameController {
     this.isHost = isHost;
     this.mapContent = mapContent;
     this.dictContent = dictionary;
+    this.playerID = ownID;
 
     players.forEach(player -> {
       System.out.println("\n" + player.getName() + " HAS ID : " + player.getId());
@@ -280,7 +302,6 @@ public class GameController {
             public void run() {
               Platform.runLater(() -> {
 
-//                System.out.println("Time is over - moving tiles in grid back to bar..");
                 // moving all tiles in grid back to bar
                 letterBar.putTilesBackToBar();
 
@@ -330,6 +351,11 @@ public class GameController {
                   timerLabel.setTextFill(Paint.valueOf("orange"));
                 } else if (min >= 0) {
                   timerLabel.setTextFill(Paint.valueOf("red"));
+
+                  if (sec <= 15) {
+                    Pulse pulse = new Pulse(timerLabel);
+                    pulse.play();
+                  }
                 }
 
               });
@@ -349,8 +375,8 @@ public class GameController {
        */
       @Override
       public void endMove() {
-        System.out.println("GAME CONTROLLER : Prepare to end move");
         Platform.runLater(() -> {
+          System.out.println("\n----- START @GameController endMove() -----");
 
           // verifying the player's input
           boolean validInput = grid.verifyWordsValidity();
@@ -380,6 +406,11 @@ public class GameController {
 
               for (int j = 0; j < wordsInGrid.size(); j++) {
                 Word word = wordsInGrid.get(j);
+                System.out.println("\nCurrent word: " + word.getWordAsString());
+                System.out.println("is newly placed: " + word.newlyPlaced);
+                System.out.println("is frozen: " + word.frozen);
+                System.out.println("letters:");
+
                 if (word.newlyPlaced) {
                   String spelling = word.getWordAsString();
                   action.append("  {\n")
@@ -389,6 +420,10 @@ public class GameController {
 
                   for (int i = 0; i < word.getWordLength(); i++) {
                     LetterTile letterTile = word.getLetter(i);
+                    System.out.println("Current letter: " + letterTile.getLetter());
+                    System.out.println("is newly placed: " + letterTile.isNewlyPlaced);
+                    System.out.println("is frozen: " + letterTile.isFrozen);
+
                     if (letterTile.isNewlyPlaced) {
                       char letter = letterTile.getLetter();
                       int value = letterTile.getPoints();
@@ -409,20 +444,17 @@ public class GameController {
                       } else {
                         action.append(",\n");
                       }
-
-                      letterTile.isNewlyPlaced = false;
                     }
                   }
 
-                  action.append("   ]");
+                  action.append("   ]\n"
+                      + "  }");
 
                   if (j == wordsInGrid.size() - 1) {
-                    action.append("\n" + "  }\n");
+                    action.append("\n");
                   } else {
                     action.append(",\n");
                   }
-
-                  word.newlyPlaced = false;
 
                   score += word.getPoints();
                 }
@@ -433,15 +465,32 @@ public class GameController {
                   .append("}");
 
               System.out.println(action);
-//              scoreLabel.setText(String.valueOf(score));
+              addToScoreOfPlayer(playerID, score);
 
               protocol.sendEndMessage(action.toString(), score);
+
+              // setting just placed words' and its tiles' "isNewlyPlaced" property to false
+              for (int j = 0; j < wordsInGrid.size(); j++) {
+                Word word = wordsInGrid.get(j);
+
+                if (word.newlyPlaced) {
+
+                  for (int i = 0; i < word.getWordLength(); i++) {
+                    LetterTile letterTile = word.getLetter(i);
+
+                    letterTile.isNewlyPlaced = false;
+                  }
+
+                  word.newlyPlaced = false;
+                }
+              }
             }
 
           }
 
           // TODO: update the LeaderBoard
 
+          System.out.println("----- END @GameController endMove() -----");
         });
       }
 
@@ -456,6 +505,9 @@ public class GameController {
         Platform.runLater(() -> {
           // here the actions of a other player will be received
           System.out.println("GAME CONTROLLER : Other action received in controller");
+
+          protocol.getAmount();
+          addToScoreOfPlayer(id, points);
           ArrayList<LetterTile> ltrTiles = new ArrayList<>();
 
           JSONObject data = new JSONObject(action);
@@ -544,6 +596,21 @@ public class GameController {
       @Override
       public void sendChatMessage(String message) {
         protocol.sendChatMessage(message); // sending the message
+      }
+
+      @Override
+      public void informAboutTileAmount(int size) {
+        System.out.println("GAME CONTROLLER : Tiles left in bag : " + size);
+      }
+
+      @Override
+      public void informAboutLeave(int id) {
+        System.out.println("GAME CONTROLLER : Player left");
+      }
+
+      @Override
+      public void informGameEnd() {
+        System.out.println("GAME CONTROLLER : Game ends");
       }
 
     };
@@ -681,8 +748,7 @@ public class GameController {
       writer.write(content);
       writer.close();
     } catch (Exception error) {
-//      System.err.println("Error on saving the custom map into a file");
-//      System.err.println("Error code: " + error.getMessage());
+      error.printStackTrace();
     }
 
     return path;
@@ -785,7 +851,7 @@ public class GameController {
         playerBlock.getStyleClass().add("players-block");
         playerBlock.setPadding(new Insets(10, 30, 10, 30));
         System.out.println(player.getName() + " has ID: " + player.getId());
-        playerBlock.setId(String.valueOf(player.getId()));
+        playerBlock.setId("player-block-" + String.valueOf(player.getId()));
 
         StackPane avatarWrapper = new StackPane();
         avatarWrapper.getStyleClass().add("player-avatar-frame");
@@ -798,13 +864,9 @@ public class GameController {
 
         Label nickname = new Label(player.getName());
         nickname.getStyleClass().add("players-name");
+
         Label score = new Label(String.valueOf(player.getScore()));
         score.getStyleClass().add("players-score");
-        System.out.println("ID transmitted: " + player.getId());
-        System.out.println("ID profile: " + Profile.getPlayer().getId());
-        if (player.getId() == Profile.getPlayer().getId()) {
-          scoreLabel = score;
-        }
 
         avatarWrapper.getChildren().add(avatar);
         playerBlock.setLeft(avatarWrapper);
@@ -915,6 +977,8 @@ public class GameController {
       // updating the LetterBar
       letterBar.fillGaps(tiles);
       letterBar.display();
+
+      protocol.getAmount();
     });
   }
 
@@ -933,7 +997,9 @@ public class GameController {
    * @param amount Amount of remaining tiles in bag.
    */
   public void getAmountAnswer(int amount) {
-    // do something with amount
+    Platform.runLater(() -> {
+      bagCount.setText(String.valueOf(amount));
+    });
   }
 
   /**
@@ -949,11 +1015,27 @@ public class GameController {
       BorderPane playerBlock = (BorderPane) block;
       playerBlock.getLeft().getStyleClass().remove("player-avatar-frame-active");
 
-      if (Integer.parseInt(block.getId()) == id) {
+      if (getIntID(block.getId()) == id) {
         System.out.println("Found! ID: " + block.getId());
         playerBlock.getLeft().getStyleClass().add("player-avatar-frame-active");
+
+        Pulse pulse = new Pulse(playerBlock.getLeft());
+        pulse.setCycleCount(2);
+        pulse.play();
       }
     });
+  }
+
+  /**
+   * Extracts and returns an integer ID from the css id.
+   *
+   * @param id CSS ID property.
+   * @return Integer ID.
+   * @author ekasmamy
+   */
+  public int getIntID(String id) {
+    String[] split = id.split("-");
+    return Integer.parseInt(split[split.length - 1]);
   }
 
   /**
@@ -963,6 +1045,35 @@ public class GameController {
    */
   public void setRound() {
     roundLabel.setText(String.valueOf(++roundCounter));
+  }
+
+  /**
+   * Changes the score and the label of this player.
+   *
+   * @param points Points to add to the current score.
+   * @author ekasmamy
+   */
+  public void addToScoreOfPlayer(int playerId, int points) {
+    playersBlock.getChildren().forEach(block -> {
+      System.out.println("Current player block ID: " + block.getId());
+      BorderPane playerBlock = (BorderPane) block;
+      Label scoreLabel = (Label) playerBlock.getRight();
+
+      if (getIntID(block.getId()) == playerId) {
+        System.out.println("Found! ID: " + block.getId());
+        int currentScore = Integer.parseInt(scoreLabel.getText());
+        scoreLabel.setText(String.valueOf(currentScore + points));
+        scoreLabel.getStyleClass().add("players-score-active");
+        scoreLabel.setManaged(false);
+
+        Pulse pulse = new Pulse(scoreLabel);
+        pulse.setOnFinished(actionEvent -> {
+          scoreLabel.getStyleClass().removeAll("players-score-active");
+          scoreLabel.setManaged(true);
+        });
+        pulse.play();
+      }
+    });
   }
 
   /**
@@ -980,7 +1091,63 @@ public class GameController {
 
       setRound();
       setPlayerActive(id);
+      protocol.getAmount();
 
+    });
+  }
+
+  /**
+   * Method to change the screen to a lobby screen after a game ends. Version for clients.
+   *
+   * @param protocol protocol of the network player.
+   * @param isHost   condition about host protocol.
+   * @author hendiehl
+   */
+  public void getToAfterGame(NetworkScreen protocol, boolean isHost) {
+    System.out.println("GAME CONTROLLER : Client screen change");
+    Platform.runLater(() -> {
+      try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GameLobby.fxml"));
+        loader.setControllerFactory(c -> {
+          return new GameLobbyController(isHost, protocol);
+        });
+        Parent root = loader.load();
+        ScrabbleApp.getScene().getStylesheets().clear();
+        ScrabbleApp.getScene().getStylesheets()
+            .add(getClass().getResource("/css/style.css").toExternalForm());
+        ScrabbleApp.getScene().setRoot(root);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
+    });
+  }
+
+  /**
+   * Method to change the screen to a lobby screen after a game ends. Version for hosts.
+   *
+   * @param protocol protocol of the network player.
+   * @param server   LobbyServer of the host.
+   * @param isHost   condition about host protocol.
+   * @author hendiehl
+   */
+  public void getToAfterGame(NetworkScreen protocol, boolean isHost, LobbyServer server) {
+    System.out.println("GAME CONTROLLER : Host screen change");
+    Platform.runLater(() -> {
+      try {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GameLobby.fxml"));
+        loader.setControllerFactory(c -> {
+          return new GameLobbyController(isHost, server, protocol);
+        });
+        Parent root = loader.load();
+        ScrabbleApp.getScene().getStylesheets().clear();
+        ScrabbleApp.getScene().getStylesheets()
+            .add(getClass().getResource("/css/style.css").toExternalForm());
+        ScrabbleApp.getScene().setRoot(root);
+      } catch (IOException e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+      }
     });
   }
 }

@@ -1,11 +1,10 @@
 package scrabble.game;
 
 /**
- * <h1>scrabble.game.Multiplier</h1>
+ * scrabble.game.Multiplier enum represents Multipliers (DW,DL,TW,TL,NO), which can be assigned to a
+ * Slot.
  *
- * <p>This class represents Multipliers (DW,DL,TW,TL,NO), which can be assigned to a Slot</p>
- *
- * @author Eldar Kasmamytov
+ * @author ekasmamy
  */
 public enum Multiplier {
   DL("LETTER", 2),
@@ -18,10 +17,11 @@ public enum Multiplier {
   private final int value;
 
   /**
-   * Default Constructor
+   * Default Constructor.
    *
-   * @param scope Scope ("WORD"/"LETTER"/"")
-   * @param value Value (1/2/3)
+   * @param scope Scope ("WORD"/"LETTER"/"").
+   * @param value Value (1/2/3).
+   * @author ekasmamy
    */
   Multiplier(String scope, int value) {
     this.scope = scope;
@@ -29,27 +29,30 @@ public enum Multiplier {
   }
 
   /**
-   * Get the scope
+   * Get the scope.
    *
-   * @return Scope (string)
+   * @return Scope (string).
+   * @author ekasmamy
    */
   public String getScope() {
     return scope;
   }
 
   /**
-   * Get the value
+   * Get the value.
    *
-   * @return value
+   * @return value.
+   * @author ekasmamy
    */
   public int getValue() {
     return value;
   }
 
   /**
-   * Get the code name of the multiplier
+   * Get the code name of the multiplier.
    *
-   * @return code name
+   * @return code name.
+   * @author ekasmamy
    */
   public String getAsString() {
     String result;

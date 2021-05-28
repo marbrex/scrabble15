@@ -34,8 +34,12 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   private ArrayList<Player> players;
   /** own player id during a network game */
   private int ownID;
-
-
+  /** player list only for show winner, because the normal one need different order */
+  private ArrayList<Player> playersResult; // in order of the game win => only one time use.
+  /** int array for the points gained during a network game */
+  private int[] pointsResult;
+  /** short save variable for the LobbyServer to set them to the new LobbyController */
+  private LobbyServer shortSave;
   /** GameController of an game screen after changing from lobby to game */
   private GameController gameScreen;
 
@@ -56,6 +60,16 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     this.loadPlayer();
     System.out.println("HOST PROTOCOL : Protocol created");
     this.updateLobbyinformation(new ArrayList<Player>(Arrays.asList(this.player)));
+  }
+
+  /**
+   * Constructor for only testing purpose. Is needed for network internal actions during a non
+   * network JUnit test.
+   * 
+   * @author hendiehl
+   */
+  public LobbyHostProtocol() {
+
   }
 
   /**
@@ -548,9 +562,9 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    */
   @Override
   public void resetGameInfoCon(GameInformationController game) {
+    this.shortSave = this.gameInfoController.getCorrespondingServer();
     this.gameInfoController = game;
     System.out.println("HOST PROTOCOL : Game-Info exchange");
-    // Here open new Lobby with old server.
   }
 
   /**
@@ -574,10 +588,15 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * @author hendiehl
    */
   @Override
-  public void sendResultMessage(ArrayList<Player> players, int[] points) {
+  public void sendResultMessage(ArrayList<Player> players, int[] points, ArrayList<Player> humans) {
+    this.playersResult = humans;
+    this.pointsResult = points;
+    this.players = players;
     if (this.gameScreen != null) {
-
+      this.gameScreen.getToAfterGame(this, true, this.shortSave);
+      this.shortSave = null;
     }
+    this.sequencePos = 0; // setting election back;
   }
 
   /**
@@ -589,5 +608,74 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   @Override
   public int getOwnID() {
     return this.ownID;
+  }
+
+  /**
+   * Method to load a winner screen after a player returned from a network game back to the lobby.
+   * Will be called by the lobby after it finished loading to load the screen with data which has
+   * been send to the protocol before.
+   */
+  @Override
+  public void informLobbyReturn() {
+    System.out.println("HOST PROTOCOL : Lobby load finish");
+    if (this.gameLobby != null) {
+      this.updateLobbyinformation(players);
+      this.gameLobby.showWinScreen(this.playersResult, this.pointsResult);
+      this.playersResult = null; // only once needed
+      this.pointsResult = null;
+    }
+  }
+
+  /**
+   * Method to change the controller of the screen when new window is loaded.
+   * 
+   * @param glc
+   * @author hendiehl
+   */
+  @Override
+  public void setLobbyController(GameLobbyController glc) {
+    System.out.println("HOST PROTOCOL : From game to lobby");
+    this.gameLobby = glc;
+    this.gameScreen = null;
+  }
+
+  /**
+   * Method to inform the player about tiles left in the LetterBag.
+   * 
+   * @param size Tiles left in the message bag.
+   * @author hendiehl
+   */
+  @Override
+  public void sendBagSize(int size) {
+    if (this.gameScreen != null) {
+      this.gameScreen.api.informAboutTileAmount(size);
+    }
+  }
+
+  /**
+   * Method to inform the player in the game screen about a player who the game.
+   * 
+   * @param id of the player who left the game.
+   * @author hendiehl
+   */
+  @Override
+  public void sendDeleteMessage(int id) {
+    System.out.println("HOST PROTOCOL : Delete-Message send");
+    if (this.gameScreen != null) {
+      this.gameScreen.api.informAboutLeave(id);
+    }
+  }
+
+  /**
+   * Method to inform a player in game that the game is about to end.
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void sendPrepMessageChange() {
+    System.out.println("HOST PROTOCOL : Prep-Message send");
+    if (this.gameScreen != null) {
+      this.gameScreen.api.informGameEnd();
+    }
   }
 }

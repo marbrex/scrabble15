@@ -7,21 +7,24 @@ import scrabble.model.Player;
 
 public class LetterBagMessage extends Message implements Serializable {
   /**
-   * Network message to perform a LetterBag method via the network. Send by a client to the server
+   * Network message to perform a LetterBag method via the network. Send by a client to the server.
    * 
    * @author hendiehl
    */
+  
+  private static final long serialVersionUID = 1L;
   private int count;
   private char letter;
   private LetterBagType type2;
 
   /**
-   * Constructor for the LetterBagMessage
+   * Constructor for the LetterBagMessage.
    * 
-   * @param type Type of the NetworkMessage
-   * @param owner owner of the message
-   * @param count count integer for the grabRandomTile method : can be 0 if not needed
-   * @param letter letter char for the getValueOf method can be 0 if not needed
+   * @param type Type of the NetworkMessage.
+   * @param owner owner of the message.
+   * @param count count integer for the grabRandomTile method : can be 0 if not needed.
+   * @param letter letter char for the getValueOf method can be 0 if not needed.
+   * @author hendiehl
    */
   public LetterBagMessage(MessageType type, Player owner, int count, char letter,
       LetterBagType type2) {
@@ -32,9 +35,9 @@ public class LetterBagMessage extends Message implements Serializable {
   }
 
   /**
-   * Getter of the count integer used if it is used for the grabRandomTile method
+   * Getter of the count integer used if it is used for the grabRandomTile method.
    * 
-   * @return count integer
+   * @return count integer.
    * @author hendiehl
    */
   public int getCount() {
@@ -42,9 +45,9 @@ public class LetterBagMessage extends Message implements Serializable {
   }
 
   /**
-   * getter for the letter char used if it is used for the getValueOf method
+   * getter for the letter char used if it is used for the getValueOf method.
    * 
-   * @return letter char
+   * @return letter char.
    * @author hendiehl
    */
   public char getLetter() {
@@ -52,9 +55,9 @@ public class LetterBagMessage extends Message implements Serializable {
   }
 
   /**
-   * Method to get the LetterBagMessageType to identify which method should be performed
+   * Method to get the LetterBagMessageType to identify which method should be performed.
    * 
-   * @return LetterBagMessagetype
+   * @return LetterBagMessagetype.
    * @author hendiehl
    */
   public LetterBagType getType2() {
