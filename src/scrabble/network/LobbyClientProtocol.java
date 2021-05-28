@@ -39,7 +39,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   /** standard connection port */
   private int port = 11111;
   /** network address for local network connections */
-  private String adress = "localhost";
+  private String adress = "192.168.178.20";
   /** own port number if wanted */
   private boolean ownPort;
   // Control

@@ -49,7 +49,7 @@ public class Client extends Thread {
    */
   public Client(NetworkScreen client, int port, String username) {
     this.port = port;
-    this.hostName = "localhost";
+    this.hostName = "192.168.178.20";
     this.client = client;
     this.username = username;
   }
