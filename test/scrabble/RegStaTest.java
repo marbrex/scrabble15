@@ -2,13 +2,13 @@ package scrabble;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -107,7 +107,7 @@ public class RegStaTest {
     // in DBInformation don't effect this test
     Statement stmt = connection.createStatement();
     ResultSet resultSet = stmt.executeQuery("SELECT Count(*) FROM PLAYERS WHERE Name ='John'");
-    Assertions.assertThat(resultSet.getInt(1) <= 1); // max. one player with name "John" in DB
+    assertTrue(resultSet.getInt(1) <= 1); // max. one player with name "John" in DB
 
   }
 
