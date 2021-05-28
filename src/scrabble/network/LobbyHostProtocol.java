@@ -8,6 +8,7 @@ import scrabble.model.Player;
 import scrabble.model.Profile;
 import scrabble.GameController;
 import scrabble.GameLobbyController;
+import scrabble.dbhandler.DBUpdate;
 import scrabble.game.LetterBag.Tile;
 import scrabble.model.GameInformationController;
 import scrabble.model.GameStatusType;
@@ -577,6 +578,14 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
   @Override
   public void sendDBMessage(boolean won) {
     // Here save the data in the corresponding DB
+    System.out.println("HOST PROTOCOL : DB-Message sended");
+    if (won) {
+      System.out.println("HOST PROTOCOL : Host win" + won);
+      DBUpdate.updateGamesWon(this.player);
+    } else {
+      System.out.println("HOST : PROTOCOL : Host win : " + won);
+      DBUpdate.updateGamesLost(this.player);
+    }
   }
 
   /**
@@ -676,6 +685,38 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     System.out.println("HOST PROTOCOL : Prep-Message send");
     if (this.gameScreen != null) {
       this.gameScreen.api.informGameEnd();
+    }
+  }
+
+  /**
+   * Method to send a word message in the chat, to inform other players about placed words.
+   *
+   * @param word A word placed on the game field.
+   * @author hendiehl
+   */
+  @Override
+  public void sendWordMessage(String word) {
+    this.chat.sendWordMessageToServer(word);
+  }
+
+  /**
+   * Method to send a pass message in the chat to inform players about a player pass.
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void sendPassMessage() {
+    this.chat.sendPassToServer();
+  }
+
+  /**
+   * Method to inform the host about a full lobby, in reason to lead him to a game start.
+   * 
+   * @author hendiehl
+   */
+  public void informAboutLobby() {
+    if (this.gameLobby != null) {
+      this.gameLobby.setTimeLabel("Lobby is full, please start the game.");
     }
   }
 }

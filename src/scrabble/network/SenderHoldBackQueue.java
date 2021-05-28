@@ -2,6 +2,7 @@ package scrabble.network;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.SocketException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -103,6 +104,9 @@ public class SenderHoldBackQueue {
           out.flush();
           System.out.println("SENDER : sended");
           System.out.println("SENDER : size : " + holder.size());
+        } catch (SocketException e) {
+          System.err.println("SENDER : Socket closed");
+          isRunning = false;
         } catch (IOException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();

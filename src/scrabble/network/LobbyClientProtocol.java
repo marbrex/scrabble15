@@ -17,6 +17,7 @@ import scrabble.model.Profile;
 import scrabble.GameController;
 import scrabble.GameFinderController;
 import scrabble.GameLobbyController;
+import scrabble.dbhandler.DBUpdate;
 import scrabble.game.LetterBag.Tile;
 import scrabble.model.GameStatusType;
 import scrabble.model.MessageType;
@@ -331,7 +332,13 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     System.out.println("CLIENT PROTOCOL : DB-Message received");
     DBMessage msg = (DBMessage) message;
     boolean won = msg.isWon();
-    // Here save the data in corresponding DB
+    if (won) {
+      System.out.println("CLIENT PROTOCOL : Client win" + won);
+      DBUpdate.updateGamesWon(this.player);
+    } else {
+      System.out.println("CLIENT : PROTOCOL : Client win : " + won);
+      DBUpdate.updateGamesLost(this.player);
+    }
   }
 
   /**
@@ -977,6 +984,12 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     return this.ownID;
   }
 
+  /**
+   * Method to inform the protocol about the finished screen loading of the lobby. Is used to open
+   * the AfterGameScreen in the lobby.
+   * 
+   * @author hendiehl
+   */
   @Override
   public void informLobbyReturn() {
     System.out.println("CLIENT PROTOCOL : Lobby load finish");
@@ -986,5 +999,26 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     }
     this.playerResult = null;
     this.pointsResult = null;
+  }
+
+  /**
+   * Method to send a word message in the chat, to inform other players about placed words.
+   *
+   * @param word A word placed on the game field.
+   * @author hendiehl
+   */
+  @Override
+  public void sendWordMessage(String word) {
+    this.chat.sendWordMessageToServer(word);
+  }
+
+  /**
+   * Method to send a pass message in the chat to inform players about a player pass.
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void sendPassMessage() {
+    this.chat.sendPassToServer();
   }
 }

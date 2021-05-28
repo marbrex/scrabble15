@@ -7,16 +7,14 @@ import com.jfoenix.controls.JFXButton;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
-import javafx.stage.Stage;
 
 public class MenuController {
   /**
-   * Controller of the network game menu screen, which have the function to give a player the option to choose
-   * between hosting a game or joining a game.
+   * Controller of the network game menu screen, which have the function to give a player the option
+   * to choose between hosting a game or joining a game.
    * 
    * @author hendiehl
    */
@@ -31,16 +29,20 @@ public class MenuController {
   private StackPane root;
   @FXML
   private ImageView background;
+
   /**
-   * Initialize method of JavaFX which loads the background
+   * Initialize method of JavaFX which loads the background.
+   * 
    * @author hendiehl
    */
   @FXML
   public void initialize() {
     this.loadBackground();
   }
+
   /**
    * Method which handles the ActionEvent of the back button in reason to return to the main screen.
+   * 
    * @author hendiehl
    */
   @FXML
@@ -49,14 +51,14 @@ public class MenuController {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/MainPage.fxml"));
       Parent root = loader.load();
       /*
-      Stage stage = (Stage) this.backButton.getScene().getWindow();
-      Scene scene =
-          new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-      scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
-      stage.setScene(scene);
-      */
+       * Stage stage = (Stage) this.backButton.getScene().getWindow(); Scene scene = new Scene(root,
+       * this.root.getScene().getWidth(), this.root.getScene().getHeight());
+       * scene.getStylesheets().add(getClass().getResource("css/mainMenu.css").toExternalForm());
+       * stage.setScene(scene);
+       */
       ScrabbleApp.getScene().getStylesheets().clear();
-      ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("/css/mainMenu.css").toExternalForm());
+      ScrabbleApp.getScene().getStylesheets()
+          .add(getClass().getResource("/css/mainMenu.css").toExternalForm());
       ScrabbleApp.getScene().setRoot(root);
     } catch (IOException e1) {
       // TODO Auto-generated catch block
@@ -69,6 +71,7 @@ public class MenuController {
   /**
    * Method to react to the host game button and open up the GameLobby screen with specific
    * constructor and setting up a method if the window is closed.
+   * 
    * @author hendiehl
    */
   @FXML
@@ -90,20 +93,17 @@ public class MenuController {
       Parent root = loader.load();
       GameLobbyController lobbyController = loader.<GameLobbyController>getController();
       /*
-      Stage stage = (Stage) this.hostGameButton.getScene().getWindow();
-      stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight())); // before 700, but need of space
-      stage.setMinWidth(900);
-      stage.setMinHeight(800);
-      stage.setOnHidden(e -> {
-        lobbyController.shutdown();
-      });
-      */
+       * Stage stage = (Stage) this.hostGameButton.getScene().getWindow(); stage.setScene(new
+       * Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight())); // before
+       * 700, but need of space stage.setMinWidth(900); stage.setMinHeight(800); stage.setOnHidden(e
+       * -> { lobbyController.shutdown(); });
+       */
       ScrabbleApp.getScene().getStylesheets().clear();
       ScrabbleApp.getScene().setRoot(root);
       ScrabbleApp.getStage().setOnHidden(e -> {
         lobbyController.shutdown();
       });
-      if(!ScrabbleApp.getStage().isFullScreen()) {
+      if (!ScrabbleApp.getStage().isFullScreen()) {
         ScrabbleApp.getStage().setMinWidth(900);
         ScrabbleApp.getStage().setMinHeight(800);
       }
@@ -116,6 +116,7 @@ public class MenuController {
   /**
    * Method to react to the join game button and open the GameFinder screen and setting up an method
    * if the window is closed.
+   * 
    * @author hendiehl
    */
   @FXML
@@ -132,15 +133,12 @@ public class MenuController {
       FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/GameFinder.fxml"));
       Parent root = loader.load();
       GameFinderController finderController = loader.<GameFinderController>getController();
-     /*
-      Stage stage = (Stage) this.joinGameButton.getScene().getWindow();
-      stage.setScene(new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
-      stage.setMinWidth(900);
-      stage.setMinHeight(700);
-      stage.setOnHidden(e -> {
-        finderController.shutdown();
-      });
-      */
+      /*
+       * Stage stage = (Stage) this.joinGameButton.getScene().getWindow(); stage.setScene(new
+       * Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight()));
+       * stage.setMinWidth(900); stage.setMinHeight(700); stage.setOnHidden(e -> {
+       * finderController.shutdown(); });
+       */
       ScrabbleApp.getScene().getStylesheets().clear();
       ScrabbleApp.getScene().setRoot(root);
       ScrabbleApp.getStage().setOnHidden(e -> {
@@ -153,7 +151,8 @@ public class MenuController {
   }
 
   /**
-   * Method to set the background image
+   * Method to set the background image.
+   * 
    * @author hendiehl
    */
   private void loadBackground() {

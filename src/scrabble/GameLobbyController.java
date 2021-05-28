@@ -538,6 +538,14 @@ public class GameLobbyController implements LobbyController {
   private void startButtonAction() {
     // this.stopTimer(); // test
     if (this.host != null) {
+      this.kick0.setDisable(true);
+      this.kick0.setVisible(false);
+      this.kick1.setDisable(true);
+      this.kick1.setVisible(false);
+      this.kick2.setDisable(true);
+      this.kick2.setVisible(false);
+      this.kick3.setDisable(true);
+      this.kick3.setVisible(false);
       this.host.startGame();
     }
   }

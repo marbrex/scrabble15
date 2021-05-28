@@ -8,6 +8,7 @@ import scrabble.game.LetterBag.Tile;
 import scrabble.game.LetterBag;
 import scrabble.network.GameHandler;
 import scrabble.network.LobbyAiProtocol;
+import scrabble.network.LobbyHostProtocol;
 import scrabble.network.LobbyServer;
 import scrabble.network.LobbyServerProtocol;
 import scrabble.network.NetworkPlayer;
@@ -121,7 +122,7 @@ public class GameInformationController {
 
   /**
    * Method to add players to a game. Only adds a player if the maximum of 4 players are not
-   * reached. Will be executed by several threads
+   * reached. Will be executed by several threads.
    * 
    * @param player player which want to be added
    * @return information about the success of add procedure
@@ -140,16 +141,17 @@ public class GameInformationController {
   }
 
   /**
-   * Method to check maximum player amount in the lobby and activate the game procedure
+   * Method to check maximum player amount in the lobby and inform the host about activating the
+   * game procedure.
    * 
    * @author hendiehl
    */
-  public void checkLobbySize() { // here add a condition that it will only be tested if not in Game
-                                 // --> because of after game lobby
+  public void checkLobbySize() {
     if (this.players.size() == 4) {
       System.err.println("Maximum Player Amount Joined");
-      this.lobbyFull(); // will be called before the last lobby updates
-                        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      // The host is GameInfoController internal every time the first player in list.
+      LobbyHostProtocol host = (LobbyHostProtocol) this.players.get(0);
+      host.informAboutLobby();
     }
   }
 

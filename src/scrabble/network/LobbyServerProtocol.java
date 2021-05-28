@@ -280,7 +280,6 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       this.player = (HumanPlayer) message.getOwner();
       this.sendLobbyInformation();
       this.gameInfoController.checkLobbySize();
-      // Implement if for error code 5
     } else {
       this.sendRejectInfomation(); // should the protocol be shutdown ?
     }

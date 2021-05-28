@@ -38,6 +38,10 @@ public interface NetworkScreen {
 
   public void setLobbyController(GameLobbyController glc);
 
+  public void sendWordMessage(String word);
+
+  public void sendPassMessage();
+
   public ArrayList<Player> getPlayerList(); // need to send the new list after election
   // Methods of the LetterBag Class for Network use
 
