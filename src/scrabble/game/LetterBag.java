@@ -77,8 +77,9 @@ public class LetterBag implements Serializable {
   /**
    * Internal method that is used to fill the LetterBag with Tiles.
    */
-  private void fillBag() {
+  public void fillBag() {
     originalSize = 0;
+    bag.clear();
     if (bag.isEmpty()) {
       char[] alphabetArray = alphabet.toCharArray();
 
