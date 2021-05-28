@@ -1,10 +1,14 @@
 package scrabble.dbhandler;
 
 import java.io.File;
-import java.sql.*;
+import java.sql.SQLException;
+import java.sql.DriverManager;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import scrabble.model.*;
+import scrabble.model.HumanPlayer;
 
 /**
  * scrabble.dbhandler.Database class to connect to the Database, creating and being able to delete
@@ -26,7 +30,7 @@ public class Database {
    * @author mraucher
    * @author skeskinc
    */
-  public static void connectToDB() {
+  public static void connectToDb() {
     try {
       Class.forName("org.sqlite.JDBC");
       new File(System.getProperty("user.home") + System.getProperty("file.separator") + ".Scrabble")
@@ -67,7 +71,7 @@ public class Database {
    * @author mraucher
    * @author skeskinc
    */
-  public static void disconnectDB() {
+  public static void disconnectDb() {
     try {
       stmt = null;
       pstmt = null;
@@ -86,13 +90,16 @@ public class Database {
    */
   public static void createTables() {
     List<String> sqlstatements = new ArrayList<String>();
-    sqlstatements.add(
-        "CREATE TABLE IF NOT EXISTS Statistics (Statistic_Id INT PRIMARY KEY, Player_Name references Players (Name));");
-    sqlstatements.add(
-        "CREATE TABLE IF NOT EXISTS Settings (SettingsId INT PRIMARY KEY, SoundOn BOOLEAN NOT NULL,"
-            + "SoundLevel DOUBLE NOT NULL, SceneMode VARCHAR(25) NOT NULL, AIDifficulty VARCHAR(25) NOT NULL);");
+    sqlstatements.add("CREATE TABLE IF NOT EXISTS Statistics (Statistic_Id INT PRIMARY KEY,"
+        + " Player_Name references Players (Name));");
+    sqlstatements.add("CREATE TABLE IF NOT EXISTS Settings (SettingsId INT PRIMARY KEY,"
+        + " SoundOn BOOLEAN NOT NULL,"
+        + "SoundLevel DOUBLE NOT NULL, SceneMode VARCHAR(25) NOT NULL,"
+        + " AIDifficulty VARCHAR(25) NOT NULL);");
     sqlstatements.add("CREATE TABLE IF NOT EXISTS Players (Name VARCHAR(15) PRIMARY KEY NOT NULL, "
-        + " GamesWon INT NOT NULL, GamesLost INT NOT NULL, Winrate DOUBLE NOT NULL, Image INT NOT NULL, SettingsId references Settings (Id));");
+        + " GamesWon INT NOT NULL, GamesLost INT NOT NULL,"
+        + " Winrate DOUBLE NOT NULL, Image INT NOT NULL, "
+        + "SettingsId references Settings (Id));");
     try {
       stmt = connection.createStatement();
       for (String sql : sqlstatements) {
@@ -227,7 +234,7 @@ public class Database {
   /**
    * Fills in statistics table with Statistic Data.
    * 
-   * @throws SQLException
+   * @throws SQLException Throwing Exception for any failures
    * @author mraucher
    */
   public static void fillStatisticTable(String[][] statisticData) throws SQLException {

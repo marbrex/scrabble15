@@ -1,14 +1,13 @@
 package scrabble.network;
 
-import java.io.IOException;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 
-import scrabble.ChatController;
 
 /**
  * scrabble.network.Client class for Client connections to the Chat.
@@ -22,8 +21,6 @@ public class Client extends Thread {
   private Socket socket = null;
   private BufferedReader fromServer = null;
   private PrintWriter toServer = null;
-  private ChatController chatcontroller;
-  private ArrayList<ChatController> allController = new ArrayList<ChatController>();
   private String username;
   private boolean running;
   private NetworkScreen client;
@@ -36,11 +33,9 @@ public class Client extends Thread {
    * @author astarche
    * @author skeskinc
    */
-  public Client(ChatController cc, String username) {
+  public Client(String username) {
     this.hostName = "localhost";
     this.port = 2222;
-    this.chatcontroller = cc;
-    this.allController.add(chatcontroller);
     this.username = username;
   }
 
