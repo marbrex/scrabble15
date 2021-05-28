@@ -234,11 +234,13 @@ public class GameController {
    */
   public void shutdown() {
     System.out.println("GAME CONTROLLER : Shutdown initialized");
-    if (this.protocol instanceof LobbyClientProtocol) {
-      ((LobbyClientProtocol) this.protocol).shutdownProtocol(true);
-    } else if (this.protocol instanceof LobbyHostProtocol) {
-      ((LobbyHostProtocol) this.protocol).shutdown();
-
+    if (this.protocol != null) { // could be a non network game.
+      if (this.protocol instanceof LobbyClientProtocol) {
+        ((LobbyClientProtocol) this.protocol).shutdownProtocol(true);
+      } else if (this.protocol instanceof LobbyHostProtocol) {
+        ((LobbyHostProtocol) this.protocol).shutdown();
+      }
+      this.timer.cancel(); // cancel the timer
     }
   }
 
@@ -1121,6 +1123,7 @@ public class GameController {
         e.printStackTrace();
       }
     });
+    this.timer.cancel();
   }
 
   /**
@@ -1149,5 +1152,6 @@ public class GameController {
         e.printStackTrace();
       }
     });
+    this.timer.cancel();
   }
 }
