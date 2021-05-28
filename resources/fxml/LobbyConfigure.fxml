@@ -23,6 +23,7 @@
          <children>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="250.0" spacing="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
+                  <Label fx:id="hostIP" text="IP of Host :" />
                   <JFXRadioButton fx:id="autoPort" onAction="#autoPortAction" text="Auto Port" />
                   <Label fx:id="current" text="Current Port :" />
                   <Label fx:id="info" text="Range : 1000-65535" />

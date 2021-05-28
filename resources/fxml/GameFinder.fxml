@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
@@ -13,7 +15,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<StackPane fx:id="root" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: #9e846b;" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.GameFinderController">
+<StackPane fx:id="root" alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" style="-fx-background-color: #9e846b;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.GameFinderController">
    <children>
       <ImageView fx:id="background" fitHeight="344.0" fitWidth="391.0" pickOnBounds="true" preserveRatio="true" />
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0">
@@ -37,6 +39,9 @@
                      </effect>
                   </TextField>
                   <JFXButton fx:id="search" buttonType="RAISED" disable="true" onAction="#searchAction" opacity="0.5" text="Search" visible="false" />
+                  <JFXRadioButton fx:id="adressSwitch" onAction="#adressSwitchAction" opacity="0.5" text="Set Host Adress" />
+                  <JFXTextField fx:id="hostAdress" opacity="0.5" promptText="Host Adress" visible="false" />
+                  <JFXButton fx:id="setAdress" onAction="#setAdressAction" opacity="0.5" text="Set" visible="false" />
                </children></VBox>
          </children>
          <padding>

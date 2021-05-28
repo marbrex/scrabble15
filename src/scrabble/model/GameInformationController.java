@@ -245,15 +245,15 @@ public class GameInformationController {
    * 
    * @author hendiehl
    */
-  public synchronized void deletePlayer(NetworkPlayer player) { // Possibility of a Deadlock,
-                                                                // because of the election
+  public synchronized void deletePlayer(NetworkPlayer player) {
+    System.out.println("GAME HANDLER : Player deletion");
     if (this.players.contains(player)) {
       this.players.remove(player);
       this.check.remove(player);
       if (this.gameHandler == null) { // the game doesn't started
         this.updateAllLobbys();
-        this.checkGameStart(); // just in case that a player left the lobby directly after all other
-                               // players send their sequence
+        this.checkGameStart();
+        System.out.println("GAME HANDLER : Player delete in Lobby");
       } else { // the game is on
         this.initCheck.remove(player); // deleting him from the loading check map.
         this.invokeGameHandler(); // prevent deadlock while waiting for loading.

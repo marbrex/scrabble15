@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 
 import com.jfoenix.controls.JFXButton;
-
+import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,6 +45,13 @@ public class GameFinderController implements LobbyController {
   private JFXButton search;
   @FXML
   private StackPane root;
+  @FXML
+  private RadioButton adressSwitch;
+  @FXML
+  private JFXTextField hostAdress;
+  @FXML
+  private JFXButton setAdress;
+  private String hostIP = "localhost";
   private LobbyClientProtocol clientProtocol;
 
 
@@ -201,7 +208,7 @@ public class GameFinderController implements LobbyController {
   private void initialize() {
     this.loadBackground();
     System.out.println("GAME FINDER : Activate auto search");
-    clientProtocol = new LobbyClientProtocol(this);
+    clientProtocol = new LobbyClientProtocol(this, this.hostIP);
     clientProtocol.start();
     this.useOwnPort.setDisable(false);
   }
@@ -264,7 +271,7 @@ public class GameFinderController implements LobbyController {
       if (port <= 65535) {
         this.clientProtocol.shutdownProtocol(true);
         try {
-          this.clientProtocol = new LobbyClientProtocol(this, port);
+          this.clientProtocol = new LobbyClientProtocol(this, port, this.hostIP);
           this.clientProtocol.start();
           System.out.println("GAME FINDER : Connection on port");
           // this.joinBtn.setDisable(false);
@@ -285,7 +292,7 @@ public class GameFinderController implements LobbyController {
     } else if (this.checkAutoSearch(this.portField.getText())) {
       System.out.println("GAME FINDER : Activate auto search");
       this.clientProtocol.shutdownProtocol(true);
-      this.clientProtocol = new LobbyClientProtocol(this);
+      this.clientProtocol = new LobbyClientProtocol(this, this.hostIP);
       this.clientProtocol.start();
       this.setStatusLabel2("Search Network Game");
     } else {
@@ -379,5 +386,21 @@ public class GameFinderController implements LobbyController {
    */
   private void loadBackground() {
     this.background.setImage(new Image(getClass().getResourceAsStream("/img/GameFinder.jpg")));
+  }
+  @FXML
+  private void adressSwitchAction() {
+    if (this.adressSwitch.isSelected()) {
+      this.hostAdress.setVisible(true);
+      this.setAdress.setVisible(true);
+    } else {
+      this.hostIP = "localhost";
+    }
+  }
+
+  @FXML
+  private void setAdressAction() {
+    String adress = this.hostAdress.getText();
+    this.hostIP = adress;
+    this.setStatusLabel2("Please activate socket search again");
   }
 }

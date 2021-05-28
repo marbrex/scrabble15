@@ -39,7 +39,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   /** standard connection port */
   private int port = 11111;
   /** network address for local network connections */
-  private String adress = "192.168.178.20";
+  private String adress;
   /** own port number if wanted */
   private boolean ownPort;
   // Control
@@ -79,7 +79,8 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @param controller Controller of the GameFinder screen
    * @author hendiehl
    */
-  public LobbyClientProtocol(GameFinderController controller) {
+  public LobbyClientProtocol(GameFinderController controller, String adress) {
+    this.adress = adress;
     this.gameFinderController = controller;
     this.loadPlayer();
   }
@@ -138,8 +139,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @throws IOException
    * @author hendiehl
    */
-  public LobbyClientProtocol(GameFinderController controller, int ownPort)
+  public LobbyClientProtocol(GameFinderController controller, int ownPort, String adress)
       throws ConnectException, IOException {
+    this.adress = adress;
     this.gameFinderController = controller;
     this.server = new Socket(adress, ownPort);
     this.in = new ObjectInputStream(server.getInputStream());

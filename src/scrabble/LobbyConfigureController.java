@@ -7,6 +7,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.BindException;
 import java.net.ConnectException;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextField;
@@ -51,6 +56,8 @@ public class LobbyConfigureController {
   private Label multiplierLabel;
   @FXML
   private Label path;
+  @FXML
+  private Label hostIP;
 
   private boolean autoSet;
   private int runningPort;
@@ -75,6 +82,33 @@ public class LobbyConfigureController {
     this.seperator = System.lineSeparator();
     this.corresponding = corresponding;
   }
+  /**
+   * 
+   * @author hendiehl
+   */
+  private void setHostIP() {
+    String adress = "";
+    try {
+      Enumeration<NetworkInterface> interfaces;
+      interfaces = NetworkInterface.getNetworkInterfaces();
+      while (interfaces.hasMoreElements()) {
+        NetworkInterface networkInterface = interfaces.nextElement();
+        if (networkInterface.isLoopback())
+          continue;
+        for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
+          InetAddress broadcast = interfaceAddress.getBroadcast();
+          if (broadcast == null)
+            continue;
+          adress = interfaceAddress.getAddress().getHostAddress();
+          System.out.println(adress);
+        }
+      }
+    } catch (SocketException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    this.hostIP.setText("IP of Host : " + adress);
+  }
 
   /**
    * Initialize method of JavaFx which sets the port controls in dependence of the present selection
@@ -84,6 +118,7 @@ public class LobbyConfigureController {
    */
   @FXML
   private void initialize() {
+    this.setHostIP();
     if (this.autoSet) { // Server runs on standard port
       this.current.setText("Current port : " + this.runningPort);
       this.autoPort.setSelected(true);
