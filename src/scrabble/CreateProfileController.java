@@ -64,16 +64,7 @@ public class CreateProfileController {
    */
   public void changeScene(String resource, String style, Event event) {
     try {
-  //    System.out.println(resource);
       Parent root = FXMLLoader.load(getClass().getResource(resource));
-      /*
-      Button btn = ((Button) event.getSource());
-      Stage stage = (Stage) btn.getScene().getWindow();
-      Scene scene =
-          new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-      scene.getStylesheets().add(getClass().getResource(style).toExternalForm());
-      stage.setScene(scene);
-      */
       ScrabbleApp.getScene().getStylesheets().clear();
       ScrabbleApp.getScene().getStylesheets().add(getClass().getResource(style).toExternalForm());
       ScrabbleApp.getScene().setRoot(root);
@@ -108,8 +99,7 @@ public class CreateProfileController {
   @FXML
   private void initialize() {
     // Loading all images which are available for profile creation
-    ImageView im =
-        new ImageView(new Image(getClass().getResourceAsStream("/img/male.png")));
+    ImageView im = new ImageView(new Image(getClass().getResourceAsStream("/img/male.png")));
     im.setFitHeight(50);
     im.setFitWidth(50);
     ((StackPane) avatarsBlock.getChildren().get(0)).getChildren().add(im);

@@ -1,12 +1,11 @@
 package scrabble.network;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 
 
 /**
@@ -28,7 +27,6 @@ public class Client extends Thread {
   /**
    * Constructor for test-application which is not implemented in actual game.
    * 
-   * @param cc ChatController of test-application
    * @param username Name of the connected user
    * @author astarche
    * @author skeskinc
