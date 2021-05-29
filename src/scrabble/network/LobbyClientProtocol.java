@@ -649,8 +649,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     try { // if a input or output stream is closed the other close himself and the close method
           // throw the exception
       if (this.server != null) {
-        this.out.shutdwon(); // shutdown the queue
-        this.server.close();
+        this.out.shutdwon(this.server); // shutdown the queue
       }
       // System.out.println("connection closed");
     } catch (IOException e) {
@@ -786,7 +785,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @author hendiehl
    */
   public void startChatClient(int port) {
-    this.chat = new Client(this, port, this.player.getName());
+    this.chat = new Client(this, port, this.player.getName(), this.adress);
     this.chat.connect();
     this.chat.start();
     this.chat.sendJoinMessageToServer();

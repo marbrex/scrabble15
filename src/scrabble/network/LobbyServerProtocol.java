@@ -337,8 +337,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   private void closeConnection() { // change !!!!!!!!!!!!!!!!!!!!!
     try {
       if (this.client != null) {
-        this.out.shutdwon(); // shutdown the queue
-        this.client.close(); // close also in and output stream
+        this.out.shutdwon(this.client); // shutdown the queue
       }
     } catch (IOException e) {
       // TODO Auto-generated catch block

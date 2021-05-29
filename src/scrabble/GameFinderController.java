@@ -4,15 +4,14 @@ import java.io.IOException;
 import java.net.ConnectException;
 
 import com.jfoenix.controls.JFXButton;
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXRadioButton;
 import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -28,13 +27,13 @@ public class GameFinderController implements LobbyController {
   @FXML
   private JFXButton joinBtn;
   @FXML
-  private TextField portField;
+  private JFXTextField portField;
   @FXML
-  private RadioButton useOwnPort;
+  private JFXRadioButton useOwnPort;
   @FXML
   private Label statusLabel;
   @FXML
-  private CheckBox portBox;
+  private JFXCheckBox portBox;
   @FXML
   private JFXButton backButton;
   @FXML
@@ -46,7 +45,7 @@ public class GameFinderController implements LobbyController {
   @FXML
   private StackPane root;
   @FXML
-  private RadioButton adressSwitch;
+  private JFXRadioButton adressSwitch;
   @FXML
   private JFXTextField hostAdress;
   @FXML
@@ -269,6 +268,7 @@ public class GameFinderController implements LobbyController {
       System.out.println("GAME FINDER : Port input accepted");
       int port = Integer.valueOf(this.portField.getText());
       if (port <= 65535) {
+        this.portBox.setSelected(false);
         this.clientProtocol.shutdownProtocol(true);
         try {
           this.clientProtocol = new LobbyClientProtocol(this, port, this.hostIP);
@@ -292,6 +292,7 @@ public class GameFinderController implements LobbyController {
     } else if (this.checkAutoSearch(this.portField.getText())) {
       System.out.println("GAME FINDER : Activate auto search");
       this.clientProtocol.shutdownProtocol(true);
+      this.portBox.setSelected(false);
       this.clientProtocol = new LobbyClientProtocol(this, this.hostIP);
       this.clientProtocol.start();
       this.setStatusLabel2("Search Network Game");
@@ -387,6 +388,13 @@ public class GameFinderController implements LobbyController {
   private void loadBackground() {
     this.background.setImage(new Image(getClass().getResourceAsStream("/img/GameFinder.jpg")));
   }
+
+  /**
+   * Method to handle the action event of the adressSwitch RadioButton. Is used to show the host IP
+   * controls.
+   * 
+   * @author hendiehl
+   */
   @FXML
   private void adressSwitchAction() {
     if (this.adressSwitch.isSelected()) {
@@ -394,13 +402,44 @@ public class GameFinderController implements LobbyController {
       this.setAdress.setVisible(true);
     } else {
       this.hostIP = "localhost";
+      this.setStatusLabel("The local host is now the address");
+      this.setStatusLabel2("Please type in a new port");
+      this.hostAdress.setVisible(false);
+      this.setAdress.setVisible(false);
     }
   }
 
+  /**
+   * Method to handle the action event of the setAdress button. Will check the IP string and start a
+   * new client protocol.
+   * 
+   * @author hendiehl
+   */
   @FXML
   private void setAdressAction() {
     String adress = this.hostAdress.getText();
-    this.hostIP = adress;
-    this.setStatusLabel2("Please activate socket search again");
+    if (this.checkIP(adress)) {
+      this.hostIP = adress;
+      this.portBox.setSelected(false);
+      this.clientProtocol.shutdownProtocol(true);
+      this.clientProtocol = new LobbyClientProtocol(this, this.hostIP);
+      this.clientProtocol.start();
+      this.setStatusLabel("New address is set !");
+    } else {
+      this.setStatusLabel("Not a valid address");
+      this.setStatusLabel2("Please type in a new one");
+    }
+
+  }
+
+  /**
+   * Method to check the IP address to a simple IP form, consisting of number connected with a dot.
+   * 
+   * @param ip of the host given by user.
+   * @return acceptance of IP form.
+   * @author hendiehl
+   */
+  private boolean checkIP(String ip) {
+    return ip.matches("^([\\d]{1,3}\\.){3,}[\\d]{1,}$");
   }
 }

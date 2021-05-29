@@ -42,14 +42,15 @@ public class Client extends Thread {
   /**
    * Constructor to print chat Message to an GameLobby or an GameField Version for an Lobby Client.
    * 
-   * @param client protocol of the corresponding user
-   * @param port port on which the Chat server listen -> given by the network protocol
-   * @param username name of the Human Player instance
+   * @param client protocol of the corresponding user.
+   * @param port port on which the Chat server listen -> given by the network protocol.
+   * @param username name of the Human Player instance.
+   * @param ip of the host for connection.
    * @author hendiehl
    */
-  public Client(NetworkScreen client, int port, String username) {
+  public Client(NetworkScreen client, int port, String username, String ip) {
     this.port = port;
-    this.hostName = "192.168.178.20";
+    this.hostName = ip;
     this.client = client;
     this.username = username;
   }

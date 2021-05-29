@@ -207,7 +207,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * @author hendiehl
    */
   public void startChatClient(int port) {
-    this.chat = new Client(this, port, this.player.getName());
+    this.chat = new Client(this, port, this.player.getName(), "localhost");
     this.chat.connect();
     this.chat.start();
     System.out.println("HOST PROTOCOL : Chat client started");
