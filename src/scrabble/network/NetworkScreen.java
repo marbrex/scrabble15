@@ -63,7 +63,7 @@ public interface NetworkScreen {
 
   public void getAmount();
   
-  public void exchangeLetterTiles(Collection<LetterTile> tilesToExchange);
+  public void exchangeLetterTiles(ArrayList<LetterTile> tilesToExchange);
   // others will follow
   public void getAmountOf(char letter);
 }

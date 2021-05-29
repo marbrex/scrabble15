@@ -1,7 +1,7 @@
 package scrabble.network;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.ArrayList;
 import scrabble.game.LetterTile;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
@@ -14,7 +14,7 @@ public class ExchangeMessage extends Message implements Serializable {
    */
 
   private static final long serialVersionUID = 1L;
-  private Collection<LetterTile> tile;
+  private ArrayList<LetterTile> tile;
 
   /**
    * Constructor which sets the tiles of a player which wants to exchange his tiles.
@@ -23,7 +23,7 @@ public class ExchangeMessage extends Message implements Serializable {
    * @param owner
    * @param tilesToExchange
    */
-  public ExchangeMessage(MessageType type, Player owner, Collection<LetterTile> tilesToExchange) {
+  public ExchangeMessage(MessageType type, Player owner, ArrayList<LetterTile> tilesToExchange) {
     super(type, owner);
     this.tile = tilesToExchange;
   }
@@ -34,7 +34,7 @@ public class ExchangeMessage extends Message implements Serializable {
    * @return LetterTiles of player
    * @author hendiehl
    */
-  public Collection<LetterTile> getTile() {
+  public ArrayList<LetterTile> getTile() {
     return tile;
   }
 

@@ -729,7 +729,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    * @author hendiehl
    */
   @Override
-  public void exchangeLetterTiles(Collection<LetterTile> tilesToExchange) {
+  public void exchangeLetterTiles(ArrayList<LetterTile> tilesToExchange) {
     Multiset<Tile> tiles = this.gameInfoController.exchangeLetterTiles(tilesToExchange);
     // callback
     this.gameScreen.exchangeLetterTilesAnswer(tiles);
