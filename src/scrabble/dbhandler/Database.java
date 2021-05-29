@@ -178,7 +178,8 @@ public class Database {
   private static void fillPlayerTable(int settingsId, String name, int imageindex) {
     try {
       pstmt = connection.prepareStatement(
-          "INSERT INTO Players (Name,GamesWon,GamesLost,Winrate,Image,SettingsId) VALUES (?,?,?,?,?,?);");
+          "INSERT INTO Players (Name,GamesWon,GamesLost,Winrate,Image,SettingsId)"
+          + " VALUES (?,?,?,?,?,?);");
       pstmt.setString(1, name);
       pstmt.setInt(2, 0);
       pstmt.setInt(3, 0);
@@ -202,7 +203,8 @@ public class Database {
   private static void fillSettingsTable(int id) {
     try {
       pstmt = connection.prepareStatement(
-          "INSERT INTO Settings (SettingsId,SoundOn,SoundLevel,SceneMode,AIDifficulty) VALUES (?,?,?,?,?);");
+          "INSERT INTO Settings (SettingsId,SoundOn,SoundLevel,SceneMode,AIDifficulty)"
+          + " VALUES (?,?,?,?,?);");
       pstmt.setInt(1, id);
       pstmt.setBoolean(2, true);
       pstmt.setDouble(3, 50.0);
