@@ -734,4 +734,20 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     // callback
     this.gameScreen.exchangeLetterTilesAnswer(tiles);
   }
+
+  /**
+   * Method to get the remaining quantity of the specified letter tile.
+   * 
+   * @param letter which should be check
+   * @author hendiehl
+   */
+  @Override
+  public void getAmountOf(char letter) {
+    int a = this.gameInfoController.getAmountOf(letter);
+    // callback
+    if (this.gameScreen != null) {
+      this.gameScreen.getAmountOfAnswer(a);
+    }
+
+  }
 }

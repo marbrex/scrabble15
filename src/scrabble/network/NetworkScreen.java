@@ -65,4 +65,5 @@ public interface NetworkScreen {
   
   public void exchangeLetterTiles(Collection<LetterTile> tilesToExchange);
   // others will follow
+  public void getAmountOf(char letter);
 }

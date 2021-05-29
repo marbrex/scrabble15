@@ -202,12 +202,12 @@ public class GameController {
   /**
    * Constructor for Network games.
    *
-   * @param protocol   protocol for server communication.
-   * @param isHost     variable for host detection.
+   * @param protocol protocol for server communication.
+   * @param isHost variable for host detection.
    * @param mapContent content of a specific field multiplier file.
-   * @param players    list of the game members.
+   * @param players list of the game members.
    * @param dictionary dictionary string chosen by host.
-   * @param ownID      ID of this player.
+   * @param ownID ID of this player.
    * @author hendiehl
    */
   public GameController(NetworkScreen protocol, boolean isHost, String mapContent,
@@ -370,8 +370,8 @@ public class GameController {
       }
 
       /**
-       * This function will be executed when the player's turn is over.
-       * By time over or by manual turn ending.
+       * This function will be executed when the player's turn is over. By time over or by manual
+       * turn ending.
        *
        * @author ekasmamy
        */
@@ -402,9 +402,8 @@ public class GameController {
 
               ArrayList<Word> wordsInGrid = grid.words;
               int score = 0;
-              StringBuilder action = new StringBuilder("{\n"
-                  + " \"nb\": \"" + wordsInGrid.size() + "\",\n"
-                  + " \"words\": [\n");
+              StringBuilder action = new StringBuilder(
+                  "{\n" + " \"nb\": \"" + wordsInGrid.size() + "\",\n" + " \"words\": [\n");
 
               for (int j = 0; j < wordsInGrid.size(); j++) {
                 Word word = wordsInGrid.get(j);
@@ -415,8 +414,7 @@ public class GameController {
 
                 if (word.newlyPlaced) {
                   String spelling = word.getWordAsString();
-                  action.append("  {\n")
-                      .append("   \"word\": \"").append(spelling).append("\",\n")
+                  action.append("  {\n").append("   \"word\": \"").append(spelling).append("\",\n")
                       .append("   \"points\": \"").append(word.getPoints()).append("\",\n")
                       .append("   \"tiles\": [\n");
 
@@ -433,10 +431,9 @@ public class GameController {
                       int col = grid.getCellColumn(letterTile);
                       boolean isBlank = letterTile.isBlank;
 
-                      action.append("    {\n")
-                          .append("     \"letter\": \"").append(letter).append("\",\n")
-                          .append("     \"value\": \"").append(value).append("\",\n")
-                          .append("     \"row\": \"").append(row).append("\",\n")
+                      action.append("    {\n").append("     \"letter\": \"").append(letter)
+                          .append("\",\n").append("     \"value\": \"").append(value)
+                          .append("\",\n").append("     \"row\": \"").append(row).append("\",\n")
                           .append("     \"col\": \"").append(col).append("\",\n")
                           .append("     \"isBlank\": \"").append(isBlank).append("\"\n")
                           .append("    }");
@@ -449,8 +446,7 @@ public class GameController {
                     }
                   }
 
-                  action.append("   ]\n"
-                      + "  }");
+                  action.append("   ]\n" + "  }");
 
                   if (j == wordsInGrid.size() - 1) {
                     action.append("\n");
@@ -462,8 +458,7 @@ public class GameController {
                 }
               }
 
-              action.append(" ],\n")
-                  .append(" \"score\": \"").append(score).append("\"\n")
+              action.append(" ],\n").append(" \"score\": \"").append(score).append("\"\n")
                   .append("}");
 
               System.out.println(action);
@@ -497,8 +492,8 @@ public class GameController {
       }
 
       /**
-       * This function will be executed after a player has ended his turn.
-       * By time over or by manual turn ending.
+       * This function will be executed after a player has ended his turn. By time over or by manual
+       * turn ending.
        *
        * @author ekasmamy
        */
@@ -641,7 +636,8 @@ public class GameController {
 
   /**
    * Initializes the Dictionary with a custom dictionary. The custom dictionary's content should
-   * follow the defined format. You can find a sample in "resources/dictionaries/dictionary-format.txt".
+   * follow the defined format. You can find a sample in
+   * "resources/dictionaries/dictionary-format.txt".
    *
    * @param dictContent Actual content of the custom dictionary.
    * @author ekasmamy
@@ -667,7 +663,7 @@ public class GameController {
    * The function responsible for JavaFX Scene switching.
    *
    * @param resource FXML file.
-   * @param style    CSS file.
+   * @param style CSS file.
    * @author ekasmamy
    * @author skeskinc
    */
@@ -825,7 +821,7 @@ public class GameController {
 
       initChat();
 
-      this.protocol.setGameScreen(this); //setting controller to protocol
+      this.protocol.setGameScreen(this); // setting controller to protocol
 
       if (dictContent.isEmpty()) {
         // if dictionary content transferred by the lobby is empty => use default dictionary
@@ -859,8 +855,8 @@ public class GameController {
         avatarWrapper.getStyleClass().add("player-avatar-frame");
         avatarWrapper.setAlignment(Pos.CENTER);
 
-        ImageView avatar = new ImageView(
-            new Image(getClass().getResourceAsStream("/img/" + player.getImage())));
+        ImageView avatar =
+            new ImageView(new Image(getClass().getResourceAsStream("/img/" + player.getImage())));
         avatar.setFitHeight(60);
         avatar.setFitWidth(60);
 
@@ -886,7 +882,7 @@ public class GameController {
     letterBar = new LetterBar(this);
 
     initApi();
-    if (this.protocol != null) { //Have to be checked again
+    if (this.protocol != null) { // Have to be checked again
       this.protocol.loadFinished();
     }
     System.out.println("GAME CONTROLLER : Finished loading");
@@ -1082,7 +1078,7 @@ public class GameController {
    * This function is called when any other player is on move.
    *
    * @param turn Current round.
-   * @param id   ID of the player that is on move.
+   * @param id ID of the player that is on move.
    * @author ekasmamy
    */
   public void otherPlayerOnMove(int turn, int id) {
@@ -1102,7 +1098,7 @@ public class GameController {
    * Method to change the screen to a lobby screen after a game ends. Version for clients.
    *
    * @param protocol protocol of the network player.
-   * @param isHost   condition about host protocol.
+   * @param isHost condition about host protocol.
    * @author hendiehl
    */
   public void getToAfterGame(NetworkScreen protocol, boolean isHost) {
@@ -1130,8 +1126,8 @@ public class GameController {
    * Method to change the screen to a lobby screen after a game ends. Version for hosts.
    *
    * @param protocol protocol of the network player.
-   * @param server   LobbyServer of the host.
-   * @param isHost   condition about host protocol.
+   * @param server LobbyServer of the host.
+   * @param isHost condition about host protocol.
    * @author hendiehl
    */
   public void getToAfterGame(NetworkScreen protocol, boolean isHost, LobbyServer server) {
@@ -1154,11 +1150,18 @@ public class GameController {
     });
     this.timer.cancel();
   }
-  
+
   /**
    * 
    */
   public void exchangeLetterTilesAnswer(Multiset<Tile> tiles) {
+
+  }
+
+  /**
+   * 
+   */
+  public void getAmountOfAnswer(int answer) {
 
   }
 }

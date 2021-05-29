@@ -702,4 +702,15 @@ public class GameInformationController {
   public void fillBag() {
     this.bag.fillBag();
   }
+
+  /**
+   * Method which returns the remaining quantity of the specified letter tile from the LetterBag.
+   * 
+   * @param letter Letter which should be check.
+   * @return amount of letters.
+   * @author hendrik
+   */
+  public int getAmountOf(char letter) {
+    return this.bag.getAmountOf(letter);
+  }
 }

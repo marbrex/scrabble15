@@ -17,4 +17,5 @@ public enum LetterBagType implements Serializable {
   GV, // getValueOf
   GRT, // grabRandomTile
   EXC, // exchangeLetterTiles
+  GAO, // getAmountOf
 }

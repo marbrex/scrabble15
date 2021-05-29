@@ -464,6 +464,11 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         // callback
         this.gameScreen.exchangeLetterTilesAnswer(tiles);
         break;
+      case GAO:
+        int a = msg.getAnswer();
+        // callback
+        this.gameScreen.getAmountOfAnswer(a);
+        break;
     }
   }
 
@@ -1039,6 +1044,20 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   @Override
   public void exchangeLetterTiles(Collection<LetterTile> tilesToExchange) {
     ExchangeMessage msg = new ExchangeMessage(MessageType.EXCHANGE, this.player, tilesToExchange);
+    this.out.writeObject(msg);
+    this.out.flush();
+  }
+
+  /**
+   * Method to get the remaining quantity of the specified letter tile from the server.
+   * 
+   * @param letter which should be checked.
+   * @author hendiehl
+   */
+  @Override
+  public void getAmountOf(char letter) {
+    LetterBagMessage msg =
+        new LetterBagMessage(MessageType.BAG, this.player, 0, letter, LetterBagType.GAO);
     this.out.writeObject(msg);
     this.out.flush();
   }

@@ -220,6 +220,12 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
             LetterBagType.GV);
         this.sendLetterBagResponse(answer);
         break;
+      case GAO:
+        int a = this.gameInfoController.getAmountOf(msg.getLetter());
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, null, a, null,
+            LetterBagType.GAO);
+        this.sendLetterBagResponse(answer);
+        break;
     }
     this.gameInfoController.checkBagSize(); // after every message.
   }
