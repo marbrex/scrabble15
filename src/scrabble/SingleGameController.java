@@ -191,7 +191,7 @@ public class SingleGameController extends GameController {
                 dialogWindow.setText(aiPlayer.helpPoorHuman());
                 if (aiPlayer.helpPoorHuman().equals("YOU CANNOT MAKE ANY WORDS WITH THESE LETTERS!")) {
                     dialogWindow.appendText("\nNo words, huh? Let me help you");
-
+                    replaceBar();
                 }
             }
         });

@@ -221,7 +221,7 @@
       <children>
         <HBox id="actions-block" alignment="CENTER" fillHeight="false" prefHeight="80.0" prefWidth="475.0">
           <children>
-            <JFXButton id="shuffle-btn" fx:id="shuffleBtn" alignment="CENTER" focusTraversable="false" maxHeight="50.0" mouseTransparent="true" text="Shuffle">
+            <JFXButton id="shuffle-btn" fx:id="exchangeBtn" alignment="CENTER" focusTraversable="false" maxHeight="50.0" mouseTransparent="true" text="Exchange">
               <font>
                 <Font name="System Bold" size="20.0" />
               </font>
