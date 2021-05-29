@@ -115,6 +115,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
         case EXCHANGE:
           this.reactToExchange(message);
           break;
+        case INTAM:
+          this.reactToAmountMessage(message);
+          break;
       }
     } catch (EOFException e) {
       this.isRunning = false;
@@ -128,6 +131,19 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Method to react to an AmountMessage intend.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToAmountMessage(Message message) {
+    ArrayList<Integer> amount = this.gameInfoController.getAmountOfEveryTile();
+    AmountMessage msg = new AmountMessage(MessageType.INTAM, this.player, amount);
+    this.out.writeObject(msg);
+    this.out.flush();
   }
 
   /**

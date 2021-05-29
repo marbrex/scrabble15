@@ -750,4 +750,17 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     }
 
   }
+
+  /**
+   * Method to use the getAmountOfEveryTile method of the LetterBag.
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getAmountOfEveryTile() {
+    ArrayList<Integer> amount = this.gameInfoController.getAmountOfEveryTile();
+    if (this.gameScreen != null) {
+      this.gameScreen.getAmountOfEveryTileAnswer(amount);
+    }
+  }
 }

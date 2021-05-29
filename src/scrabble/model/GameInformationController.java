@@ -713,4 +713,14 @@ public class GameInformationController {
   public int getAmountOf(char letter) {
     return this.bag.getAmountOf(letter);
   }
+
+  /**
+   * Method which returns the remaining quantity of the specified letter tile.
+   * 
+   * @return quantity of Tile
+   * @author hendiehl
+   */
+  public ArrayList<Integer> getAmountOfEveryTile() {
+    return this.bag.getAmountOfEveryTile();
+  }
 }

@@ -8,6 +8,7 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import com.google.common.collect.Multiset;
@@ -250,6 +251,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case DELET:
           this.reactToDelet(message);
           break;
+        case INTAM:
+          this.reactToAmount(message);
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -263,6 +267,19 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to react to an AmountMessage.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToAmount(Message message) {
+    AmountMessage amount = (AmountMessage) message;
+    if (this.gameScreen != null) {
+      this.gameScreen.getAmountOfEveryTileAnswer(amount.getAmounts());
     }
   }
 
@@ -1058,6 +1075,18 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   public void getAmountOf(char letter) {
     LetterBagMessage msg =
         new LetterBagMessage(MessageType.BAG, this.player, 0, letter, LetterBagType.GAO);
+    this.out.writeObject(msg);
+    this.out.flush();
+  }
+
+  /**
+   * Method which returns the remaining quantity of the specified letter tile during a network game.
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getAmountOfEveryTile() {
+    Message msg = new Message(MessageType.INTAM, this.player);
     this.out.writeObject(msg);
     this.out.flush();
   }

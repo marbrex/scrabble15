@@ -3,7 +3,6 @@ package scrabble.network;
 import java.io.Serializable;
 import java.util.ArrayList;
 import scrabble.game.LetterBag.Tile;
-import scrabble.game.LetterTile;
 import scrabble.model.MessageType;
 import scrabble.model.Player;
 

@@ -33,4 +33,5 @@ public enum MessageType implements Serializable {
   DELET, // message to inform about a player leave during a game.
   PREP, // message to inform about a coming screen change.
   EXCHANGE, // message to exchange letter tiles of players.
+  INTAM, // message to use the getAmountOfEveryTile method of the LetterBag.
 }

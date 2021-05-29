@@ -1172,4 +1172,8 @@ public class GameController {
   public void getAmountOfAnswer(int answer) {
 
   }
+  
+  public void getAmountOfEveryTileAnswer(ArrayList<Integer> amount) {
+
+  }
 }
