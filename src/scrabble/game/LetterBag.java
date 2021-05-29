@@ -152,6 +152,20 @@ public class LetterBag implements Serializable {
   }
 
   /**
+   * Returns the remaining quantity of the specified letter tile.
+   *
+   * @return Remaining quantity of the specified letter tile.
+   * @author ekasmamy
+   */
+  public ArrayList<Integer> getAmountOfEveryTile() {
+    ArrayList<Integer> list = new ArrayList<>();
+    for (Tile tile : bag.elementSet()) {
+      list.add(bag.count(tile));
+    }
+    return list;
+  }
+
+  /**
    * Returns the original quantity of the specified letter tile.
    *
    * @param letter Letter (char).
