@@ -1,11 +1,13 @@
 package scrabble.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import com.google.common.collect.Multiset;
 import scrabble.game.LetterBag.Tile;
 import scrabble.game.LetterBag;
+import scrabble.game.LetterTile;
 import scrabble.network.GameHandler;
 import scrabble.network.LobbyAiProtocol;
 import scrabble.network.LobbyHostProtocol;
@@ -518,6 +520,17 @@ public class GameInformationController {
   }
 
   /**
+   * Method to get access to the exchangeLetterTiles method in a network game.
+   * 
+   * @param tilesToExchange
+   * @return exchanged tiles.
+   * @author hendiehl
+   */
+  public Multiset<Tile> exchangeLetterTiles(Collection<LetterTile> tilesToExchange) {
+    return this.bag.exchangeLetterTiles(tilesToExchange);
+  }
+
+  /**
    * Method to get access to the getAmount method in an network game.
    * 
    * @return amount of the letter bag
@@ -678,5 +691,15 @@ public class GameInformationController {
     for (NetworkPlayer player : this.players) {
       player.sendBagSize(this.bag.getAmount());
     }
+  }
+
+  /**
+   * Method to fill the LetterBag with new LetterTiles after a network game ended. In reason to set
+   * the LetterBag ready for a new game.
+   * 
+   * @author hendiehl
+   */
+  public void fillBag() {
+    this.bag.fillBag();
   }
 }

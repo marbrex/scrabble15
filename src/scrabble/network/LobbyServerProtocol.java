@@ -112,6 +112,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
         case LOAD:
           this.reactToLoad(message);
           break;
+        case EXCHANGE:
+          this.reactToExchange(message);
+          break;
       }
     } catch (EOFException e) {
       this.isRunning = false;
@@ -125,6 +128,23 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Method to react to an incoming ExchangeMessage.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToExchange(Message message) {
+    ExchangeMessage msg = (ExchangeMessage) message;
+    Multiset<Tile> tiles;
+    LetterMultisetReturnMessage answer;
+    tiles = this.gameInfoController.exchangeLetterTiles(msg.getTile());
+    answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+        LetterBagType.EXC);
+    // no need of size change, amount will not change.
+    this.sendLetterBagResponse(answer);
   }
 
   /**

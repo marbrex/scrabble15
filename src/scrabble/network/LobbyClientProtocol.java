@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collection;
 import com.google.common.collect.Multiset;
 import scrabble.model.HumanPlayer;
 import scrabble.model.LetterBagType;
@@ -19,6 +20,7 @@ import scrabble.GameFinderController;
 import scrabble.GameLobbyController;
 import scrabble.dbhandler.DBUpdate;
 import scrabble.game.LetterBag.Tile;
+import scrabble.game.LetterTile;
 import scrabble.model.GameStatusType;
 import scrabble.model.MessageType;
 
@@ -456,6 +458,11 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         int j = msg.getAnswer();
         // callback
         this.gameScreen.getValueOfAnswer(j);
+        break;
+      case EXC:
+        tiles = msg.getTiles();
+        // callback
+        this.gameScreen.exchangeLetterTilesAnswer(tiles);
         break;
     }
   }
@@ -1021,5 +1028,18 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   @Override
   public void sendPassMessage() {
     this.chat.sendPassToServer();
+  }
+
+  /**
+   * method to end tiles to the server during a network game in reason to change them for new ones.
+   * 
+   * @param tilesToExchange tiles which should be changed by server.
+   * @author hendiehl
+   */
+  @Override
+  public void exchangeLetterTiles(Collection<LetterTile> tilesToExchange) {
+    ExchangeMessage msg = new ExchangeMessage(MessageType.EXCHANGE, this.player, tilesToExchange);
+    this.out.writeObject(msg);
+    this.out.flush();
   }
 }

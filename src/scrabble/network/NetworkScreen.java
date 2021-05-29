@@ -1,8 +1,10 @@
 package scrabble.network;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import scrabble.GameController;
 import scrabble.GameLobbyController;
+import scrabble.game.LetterTile;
 import scrabble.model.Player;
 
 public interface NetworkScreen {
@@ -60,5 +62,7 @@ public interface NetworkScreen {
   public void getRemainingTiles();
 
   public void getAmount();
+  
+  public void exchangeLetterTiles(Collection<LetterTile> tilesToExchange);
   // others will follow
 }

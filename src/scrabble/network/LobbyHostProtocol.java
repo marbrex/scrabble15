@@ -2,6 +2,7 @@ package scrabble.network;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import com.google.common.collect.Multiset;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
@@ -10,6 +11,7 @@ import scrabble.GameController;
 import scrabble.GameLobbyController;
 import scrabble.dbhandler.DBUpdate;
 import scrabble.game.LetterBag.Tile;
+import scrabble.game.LetterTile;
 import scrabble.model.GameInformationController;
 import scrabble.model.GameStatusType;
 
@@ -718,5 +720,18 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
     if (this.gameLobby != null) {
       this.gameLobby.setTimeLabel("Lobby is full, please start the game.");
     }
+  }
+
+  /**
+   * Method to exchange the letter tiles of a host during a network game.
+   * 
+   * @param tiles which should be exchanged.
+   * @author hendiehl
+   */
+  @Override
+  public void exchangeLetterTiles(Collection<LetterTile> tilesToExchange) {
+    Multiset<Tile> tiles = this.gameInfoController.exchangeLetterTiles(tilesToExchange);
+    // callback
+    this.gameScreen.exchangeLetterTilesAnswer(tiles);
   }
 }

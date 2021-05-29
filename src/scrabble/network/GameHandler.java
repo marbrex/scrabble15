@@ -417,8 +417,8 @@ public class GameHandler extends Thread {
         list.add(player); // Adding only LobbyServerProtocols
       }
     }
-    this.game.prepareLobbyReturn(list); // changing the GameInfoController and the screen by all
-                                        // members
+    this.game.fillBag(); // filling the bag for a next round
+    this.game.prepareLobbyReturn(list); // changing the GameInfoController by all members
     // The List is now ordered in protocol intern order.
     ArrayList<Player> list2 = new ArrayList<Player>(); // need to select the player classes.
     for (NetworkPlayer player : list) {
