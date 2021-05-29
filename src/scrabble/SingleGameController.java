@@ -328,7 +328,7 @@ public class SingleGameController extends GameController {
 
         // enabling every action button
         okBtn.setMouseTransparent(!active);
-        shuffleBtn.setMouseTransparent(!active);
+        exchangeBtn.setMouseTransparent(!active);
     }
 
     /**

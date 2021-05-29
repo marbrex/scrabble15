@@ -86,7 +86,7 @@ public class GameController {
    * Shuffle button, which shuffles the LetterBar.
    */
   @FXML
-  public JFXButton shuffleBtn;
+  public JFXButton exchangeBtn;
 
   @FXML
   public StackPane bagBtn;
@@ -294,7 +294,7 @@ public class GameController {
 
           // enabling every action button
           okBtn.setMouseTransparent(false);
-          shuffleBtn.setMouseTransparent(false);
+          exchangeBtn.setMouseTransparent(false);
 
           // starting the timer (10 minutes for each turn)
           timer = new Timer(true);
@@ -393,7 +393,7 @@ public class GameController {
 
             // disabling every action button
             okBtn.setMouseTransparent(true);
-            shuffleBtn.setMouseTransparent(true);
+            exchangeBtn.setMouseTransparent(true);
 
             timer.cancel();
 
@@ -702,7 +702,9 @@ public class GameController {
    */
   protected void setButtonActions() {
 
-    shuffleBtn.setOnMouseClicked(event -> letterBar.shuffle());
+    exchangeBtn.setOnMouseClicked(event -> {
+      protocol.exchangeLetterTiles(letterBar.getTilesInBar());
+    });
 
     quitGame.setOnMouseClicked(event -> {
       changeScene("/fxml/MainPage.fxml", "/css/mainMenu.css");
@@ -1155,7 +1157,9 @@ public class GameController {
    * 
    */
   public void exchangeLetterTilesAnswer(Multiset<Tile> tiles) {
-
+    Platform.runLater(() -> {
+      letterBar.setTiles(tiles);
+    });
   }
 
   /**

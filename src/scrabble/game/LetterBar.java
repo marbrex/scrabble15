@@ -2,6 +2,7 @@ package scrabble.game;
 
 import com.google.common.collect.Multiset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -322,5 +323,25 @@ public class LetterBar {
    */
   public int getSize() {
     return size;
+  }
+
+  /**
+   * Sets the letter tiles in the bar.
+   *
+   * @param tiles New collection of tiles.
+   * @author ekasmamy
+   */
+  public void setTiles(Collection<Tile> tiles) {
+    if (tiles.size() == size) {
+      Iterator<Tile> it = tiles.iterator();
+      for (Slot slot : slots) {
+        if (it.hasNext()) {
+          Tile tile = it.next();
+          LetterTile ltrTile = new LetterTile(tile.letter, tile.value, controller.grid.cellSize,
+              controller);
+          slot.setContent(ltrTile);
+        }
+      }
+    }
   }
 }
