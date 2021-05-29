@@ -526,8 +526,8 @@ public class GameInformationController {
    * @return exchanged tiles.
    * @author hendiehl
    */
-  public Multiset<Tile> exchangeLetterTiles(Collection<LetterTile> tilesToExchange) {
-    return this.bag.exchangeLetterTiles(tilesToExchange);
+  public Multiset<Tile> exchangeLetterTiles(ArrayList<Tile> tilesToExchange) {
+    return this.bag.exchangeTiles(tilesToExchange);
   }
 
   /**
@@ -593,7 +593,7 @@ public class GameInformationController {
    * inform the handler that the game field is loaded by a specific player. After all players are
    * filled the GameHandler will start his procedure.
    * 
-   * @param NetworkPlayer which game field finished the initialization
+   * @param player which game field finished the initialization
    * @author hendiehl
    */
   public synchronized void informLoading(NetworkPlayer player) {

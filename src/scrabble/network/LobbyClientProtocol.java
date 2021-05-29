@@ -1042,7 +1042,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @author hendiehl
    */
   @Override
-  public void exchangeLetterTiles(ArrayList<LetterTile> tilesToExchange) {
+  public void exchangeLetterTiles(ArrayList<Tile> tilesToExchange) {
     ExchangeMessage msg = new ExchangeMessage(MessageType.EXCHANGE, this.player, tilesToExchange);
     this.out.writeObject(msg);
     this.out.flush();

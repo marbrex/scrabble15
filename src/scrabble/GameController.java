@@ -703,7 +703,11 @@ public class GameController {
   protected void setButtonActions() {
 
     exchangeBtn.setOnMouseClicked(event -> {
-      protocol.exchangeLetterTiles(letterBar.getTilesInBar());
+      ArrayList<Tile> tiles = new ArrayList<>();
+      for (LetterTile letterTile : letterBar.getTilesInBar()) {
+        tiles.add(new Tile(letterTile.getLetter(), letterTile.getPoints()));
+      }
+      protocol.exchangeLetterTiles(tiles);
     });
 
     quitGame.setOnMouseClicked(event -> {

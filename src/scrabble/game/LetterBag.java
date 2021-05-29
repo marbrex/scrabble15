@@ -3,6 +3,7 @@ package scrabble.game;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
@@ -109,31 +110,13 @@ public class LetterBag implements Serializable {
   }
 
   /**
-   * Exchanges a Collection of LetterTiles with other random tiles in the bag.
-   *
-   * @param tilesToExchange Collection of LetterTiles to exchange.
-   * @return A new set of Tiles of the same size.
-   * @author ekasmamy
-   */
-  public Multiset<Tile> exchangeLetterTiles(Collection<LetterTile> tilesToExchange) {
-    Multiset<Tile> set = HashMultiset.create();
-    for (int i = 0; i < tilesToExchange.size(); i++) {
-      set.add(grabRandomTile());
-    }
-    tilesToExchange.forEach(tile -> {
-      bag.add(new Tile(tile.getLetter(), tile.getPoints()));
-    });
-    return set;
-  }
-
-  /**
    * Exchanges a Collection of Tiles with other random tiles in the bag.
    *
    * @param tilesToExchange Collection of Tiles to exchange.
    * @return A new set of Tiles of the same size.
    * @author ekasmamy
    */
-  public Multiset<Tile> exchangeTiles(Collection<Tile> tilesToExchange) {
+  public Multiset<Tile> exchangeTiles(ArrayList<Tile> tilesToExchange) {
     Multiset<Tile> set = HashMultiset.create();
     for (int i = 0; i < tilesToExchange.size(); i++) {
       set.add(grabRandomTile());
