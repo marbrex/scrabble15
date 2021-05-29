@@ -448,3 +448,17 @@
   -fx-opacity: 0.6;
   -fx-cursor: hand;
 }
+
+.remaining-amount-tile-block {
+  -fx-alignment: center;
+  -fx-padding: 5px;
+  -fx-spacing: 5px;
+  -fx-fill-height: false;
+}
+
+.remaining-amount-tile-label {
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
+  -fx-padding: 3px;
+  -fx-text-fill: white;
+}

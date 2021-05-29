@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import com.google.common.collect.Multiset;
+import javafx.util.Pair;
 import scrabble.model.HumanPlayer;
 import scrabble.model.LetterBagType;
 import scrabble.model.Player;
@@ -140,7 +141,7 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
    * @author hendiehl
    */
   private void reactToAmountMessage(Message message) {
-    ArrayList<Integer> amount = this.gameInfoController.getAmountOfEveryTile();
+    ArrayList<Pair<Character, Integer>> amount = this.gameInfoController.getAmountOfEveryTile();
     AmountMessage msg = new AmountMessage(MessageType.INTAM, this.player, amount);
     this.out.writeObject(msg);
     this.out.flush();

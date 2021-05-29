@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
+import javafx.util.Pair;
 
 /**
  * scrabble.game.LetterBag is a Singleton class that can be instantiated only once. To create the
@@ -157,10 +158,10 @@ public class LetterBag implements Serializable {
    * @return Remaining quantity of the specified letter tile.
    * @author ekasmamy
    */
-  public ArrayList<Integer> getAmountOfEveryTile() {
-    ArrayList<Integer> list = new ArrayList<>();
+  public ArrayList<Pair<Character, Integer>> getAmountOfEveryTile() {
+    ArrayList<Pair<Character, Integer>> list = new ArrayList<>();
     for (Tile tile : bag.elementSet()) {
-      list.add(bag.count(tile));
+      list.add(new Pair<Character, Integer>(tile.letter, bag.count(tile)));
     }
     return list;
   }

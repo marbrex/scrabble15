@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import com.google.common.collect.Multiset;
+import javafx.util.Pair;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
 import scrabble.model.Profile;
@@ -758,7 +759,7 @@ public class LobbyHostProtocol implements NetworkPlayer, NetworkScreen {
    */
   @Override
   public void getAmountOfEveryTile() {
-    ArrayList<Integer> amount = this.gameInfoController.getAmountOfEveryTile();
+    ArrayList<Pair<Character, Integer>> amount = this.gameInfoController.getAmountOfEveryTile();
     if (this.gameScreen != null) {
       this.gameScreen.getAmountOfEveryTileAnswer(amount);
     }

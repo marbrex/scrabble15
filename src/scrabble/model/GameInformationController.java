@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import com.google.common.collect.Multiset;
+import javafx.util.Pair;
 import scrabble.game.LetterBag.Tile;
 import scrabble.game.LetterBag;
 import scrabble.game.LetterTile;
@@ -720,7 +721,7 @@ public class GameInformationController {
    * @return quantity of Tile
    * @author hendiehl
    */
-  public ArrayList<Integer> getAmountOfEveryTile() {
+  public ArrayList<Pair<Character, Integer>> getAmountOfEveryTile() {
     return this.bag.getAmountOfEveryTile();
   }
 }

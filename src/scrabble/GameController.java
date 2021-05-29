@@ -36,6 +36,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import scrabble.game.Grid;
@@ -718,6 +719,13 @@ public class GameController {
       api.endMove();
     });
 
+    bagBtn.setOnMouseClicked(mouseEvent -> {
+      popupBlankBlock.setVisible(true);
+      popupBlankBlock.setViewOrder(--minViewOrder);
+
+      protocol.getAmountOfEveryTile();
+    });
+
   }
 
   /**
@@ -1173,7 +1181,62 @@ public class GameController {
 
   }
   
-  public void getAmountOfEveryTileAnswer(ArrayList<Integer> amount) {
+  public void getAmountOfEveryTileAnswer(ArrayList<Pair<Character, Integer>> amount) {
+    Platform.runLater(() -> {
 
+      bagBtn.setMouseTransparent(true);
+
+      LetterBag bag = LetterBag.getInstance();
+      for (int j = 0; j < bag.getAlphabetSize(); j++) {
+        char l = bag.getLetterInAlphabet(j);
+        int v = bag.getValueInAlphabet(j);
+
+        LetterTile ltrTile = new LetterTile(l, v, grid.cellSize, thisController);
+        ltrTile.setPointsVisible(false);
+        ltrTile.isBlank = true;
+        ltrTile.container.setOnDragDetected(null);
+        ltrTile.container.setOnDragDone(null);
+        ltrTile.container.setOnMouseDragged(null);
+        ltrTile.container.setOnMouseReleased(null);
+        ltrTile.container.setOnMouseClicked(null);
+
+        popupBlankBlock.setOnMouseClicked(event -> {
+          popupBlankBlock.setVisible(false);
+          okBtn.setDisable(false);
+          popupBlankMessage.getChildren().clear();
+          bagBtn.setMouseTransparent(false);
+          popupBlankBlock.setOnMouseClicked(null);
+        });
+
+        popupBlankMessage.setOnMouseClicked(event -> {
+          popupBlankBlock.setVisible(false);
+          okBtn.setDisable(false);
+          popupBlankMessage.getChildren().clear();
+          bagBtn.setMouseTransparent(false);
+          popupBlankMessage.setOnMouseClicked(null);
+        });
+
+        int remAmount = 0;
+        for (Pair<Character, Integer> charIntPair : amount) {
+          if (charIntPair.getKey().equals(l)) {
+            remAmount = charIntPair.getValue();
+            break;
+          }
+        }
+
+        if (remAmount == 0) {
+          ltrTile.setDisable(true);
+        }
+
+        Label remAmountLabel = new Label(String.valueOf(remAmount));
+        remAmountLabel.getStyleClass().add("remaining-amount-tile-label");
+
+        HBox box = new HBox(ltrTile.container, remAmountLabel);
+        box.getStyleClass().add("remaining-amount-tile-block");
+        box.setAlignment(Pos.CENTER);
+
+        popupBlankMessage.getChildren().add(box);
+      }
+    });
   }
 }
