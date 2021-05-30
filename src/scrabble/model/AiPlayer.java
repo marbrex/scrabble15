@@ -320,13 +320,14 @@ public class AiPlayer extends Player implements Serializable {
       if (!placeableWords.isEmpty()) {
         break;
       } else {
-        if (!ailetters.isEmpty()) {
+        if (!ailetters.isEmpty() && ailetters.size() > 7) {
           ailetters.remove(ailetters.size() - 1);
-          System.out.println("BOT: REMOVE - " + letterTile.getLetter());
         }
       }
     }
     if (placeableWords.isEmpty()) {
+      System.out.print("BOT: MY TILES BEFORE NO WORDS FOUND - ");
+      displayTiles();
       System.out.println("BOT: NO WORDS FOUND");
       return null;
     }
@@ -1010,7 +1011,7 @@ public class AiPlayer extends Player implements Serializable {
    * @author astarche
    */
   public void giveLettersToAiPlayer(LetterBag bag) {
-    if (bag.getAmount() >= 7 - ailetters.size()) {
+    if (bag.getAmount() >= 7 - ailetters.size() && ailetters.size() < 7) {
       Multiset<LetterBag.Tile> tiles = bag.grabRandomTiles(7 - ailetters.size());
       for (LetterBag.Tile tile : tiles) {
         ailetters.add(new LetterTile(tile.letter, tile.value, 10, gc));
