@@ -5,6 +5,7 @@ import com.google.common.collect.Multiset;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Random;
 import javafx.util.Pair;
 
@@ -121,8 +122,13 @@ public class LetterBag implements Serializable {
     Multiset<Tile> set = HashMultiset.create();
     for (int i = 0; i < tilesToExchange.size(); i++) {
       set.add(grabRandomTile());
+
+      for (Tile element : bag.elementSet()) {
+        if (element.equals(tilesToExchange.get(i))) {
+          bag.add(element);
+        }
+      }
     }
-    bag.addAll(tilesToExchange);
     return set;
   }
 

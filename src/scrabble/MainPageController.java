@@ -107,7 +107,7 @@ public class MainPageController implements Initializable {
     JFXButton singlePlayerBtn = new JFXButton("Singleplayer");
     singlePlayerBtn.setOnMouseClicked(event -> {
       setNetworkMode(false);
-      changeScene("/fxml/LoadingScreen.fxml", "/css/mainMenu.css", event);
+      changeScene("/fxml/singlePlayerLobby.fxml", "/css/mainMenu.css", event);
     });
     singlePlayerBtn.getStyleClass().add("button");
     buttons.add(singlePlayerBtn);

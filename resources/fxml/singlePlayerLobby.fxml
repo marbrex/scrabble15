@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="530.0" prefWidth="719.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.SingleLobbyController">
+	<center>
+		<VBox fx:id="mainBlock" alignment="CENTER" maxWidth="406.0" prefHeight="504.0" prefWidth="406.0" spacing="20.0" BorderPane.alignment="CENTER">
+			<children>
+            <VBox spacing="10.0">
+               <children>
+                  <HBox alignment="CENTER" spacing="10.0">
+                     <children>
+      						<Label text="Choose number of bots:" />
+                        <ChoiceBox fx:id="nbBots" prefWidth="150.0" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+			</children>
+		</VBox>
+	</center>
+   <bottom>
+				<HBox fx:id="buttonsBlock" alignment="CENTER" spacing="10.0" BorderPane.alignment="CENTER">
+					<children>
+						<JFXButton fx:id="backBtn" text="Back" />
+						<JFXButton fx:id="startBtn" text="Start" />
+					</children>
+         <padding>
+            <Insets bottom="40.0" left="40.0" right="40.0" top="40.0" />
+         </padding>
+				</HBox>
+   </bottom>
+</BorderPane>

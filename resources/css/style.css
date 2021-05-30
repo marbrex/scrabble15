@@ -322,7 +322,7 @@
 
 .letter-btn-frozen {
   -fx-border-color: gray;
-  -fx-background-color: #31d3ff;
+  -fx-background-color: #fff0b5;
 }
 
 .letter-btn-hor-min {
@@ -454,6 +454,10 @@
   -fx-padding: 5px;
   -fx-spacing: 5px;
   -fx-fill-height: false;
+}
+
+.remaining-amount-tile-letter-disable {
+  -fx-background-color: #a79152;
 }
 
 .remaining-amount-tile-label {
