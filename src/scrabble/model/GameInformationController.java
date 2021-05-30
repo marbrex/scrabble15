@@ -1,14 +1,12 @@
 package scrabble.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import com.google.common.collect.Multiset;
 import javafx.util.Pair;
 import scrabble.game.LetterBag.Tile;
 import scrabble.game.LetterBag;
-import scrabble.game.LetterTile;
 import scrabble.network.GameHandler;
 import scrabble.network.LobbyAiProtocol;
 import scrabble.network.LobbyHostProtocol;

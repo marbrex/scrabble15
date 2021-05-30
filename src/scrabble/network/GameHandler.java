@@ -214,6 +214,7 @@ public class GameHandler extends Thread {
         this.waitAiTime(); // Only in purpose to show AiPlayer on the field --> 10sek
         LobbyAiProtocol ai = (LobbyAiProtocol) player; // special move method of AiPlayer
         String action = ai.aiMove(); // calculating a move by the AiPlayer.
+        this.waitAiTime();
         System.out.println("GAME HANDLER : Ai action = " + action);
         // points have to be calculated.
         this.informAiActions(action); // special inform fo AiPlayer moves.
@@ -270,7 +271,7 @@ public class GameHandler extends Thread {
    */
   private synchronized void waitAiTime() {
     try {
-      this.wait(10000);
+      this.wait(6000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }

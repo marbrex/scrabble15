@@ -712,6 +712,9 @@ public class GameController {
     });
 
     quitGame.setOnMouseClicked(event -> {
+      if (this.protocol != null) {
+        this.shutdown();
+      }
       changeScene("/fxml/MainPage.fxml", "/css/mainMenu.css");
     });
 

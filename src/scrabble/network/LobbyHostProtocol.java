@@ -2,7 +2,6 @@ package scrabble.network;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import com.google.common.collect.Multiset;
 import javafx.util.Pair;
 import scrabble.model.HumanPlayer;
@@ -12,7 +11,6 @@ import scrabble.GameController;
 import scrabble.GameLobbyController;
 import scrabble.dbhandler.DBUpdate;
 import scrabble.game.LetterBag.Tile;
-import scrabble.game.LetterTile;
 import scrabble.model.GameInformationController;
 import scrabble.model.GameStatusType;
 
