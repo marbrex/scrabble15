@@ -446,6 +446,7 @@ public class TutorialGameController extends GameController {
    * @author astarche
    */
   private void endGame() {
+    bag.fillBag();
     FXMLLoader loader = new FXMLLoader();
     if (points[0] < points[1]) {
       Player p = players.get(0);
