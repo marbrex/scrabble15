@@ -690,26 +690,34 @@ public class AiPlayer extends Player implements Serializable {
      * Method is used in multiplayer.
      *
      * @return string with changes in form of json
-     * @author astarche
+     * @author ekasmamy
      */
     public String createJsonString() {
+
         ArrayList<Word> wordsInGrid = gc.grid.words;
         int score = 0;
-        String action = "{\n"
-                + " \"nb\": \"" + wordsInGrid.size() + "\",\n"
-                + " \"words\": [\n";
+        StringBuilder action = new StringBuilder(
+                "{\n" + " \"nb\": \"" + wordsInGrid.size() + "\",\n" + " \"words\": [\n");
 
         for (int j = 0; j < wordsInGrid.size(); j++) {
             Word word = wordsInGrid.get(j);
+            System.out.println("\nCurrent word: " + word.getWordAsString());
+            System.out.println("is newly placed: " + word.newlyPlaced);
+            System.out.println("is frozen: " + word.frozen);
+            System.out.println("letters:");
+
             if (word.newlyPlaced) {
                 String spelling = word.getWordAsString();
-                action += "  {\n"
-                        + "   \"word\": \"" + spelling + "\",\n"
-                        + "   \"points\": \"" + word.getPoints() + "\",\n"
-                        + "   \"tiles\": [\n";
+                action.append("  {\n").append("   \"word\": \"").append(spelling).append("\",\n")
+                        .append("   \"points\": \"").append(word.getPoints()).append("\",\n")
+                        .append("   \"tiles\": [\n");
 
                 for (int i = 0; i < word.getWordLength(); i++) {
                     LetterTile letterTile = word.getLetter(i);
+                    System.out.println("Current letter: " + letterTile.getLetter());
+                    System.out.println("is newly placed: " + letterTile.isNewlyPlaced);
+                    System.out.println("is frozen: " + letterTile.isFrozen);
+
                     if (letterTile.isNewlyPlaced) {
                         char letter = letterTile.getLetter();
                         int value = letterTile.getPoints();
@@ -717,43 +725,37 @@ public class AiPlayer extends Player implements Serializable {
                         int col = gc.grid.getCellColumn(letterTile);
                         boolean isBlank = letterTile.isBlank;
 
-                        action += "    {\n"
-                                + "     \"letter\": \"" + letter + "\",\n"
-                                + "     \"value\": \"" + value + "\",\n"
-                                + "     \"row\": \"" + row + "\",\n"
-                                + "     \"col\": \"" + col + "\",\n"
-                                + "     \"isBlank\": \"" + isBlank + "\"\n"
-                                + "    }";
+                        action.append("    {\n").append("     \"letter\": \"").append(letter)
+                                .append("\",\n").append("     \"value\": \"").append(value)
+                                .append("\",\n").append("     \"row\": \"").append(row).append("\",\n")
+                                .append("     \"col\": \"").append(col).append("\",\n")
+                                .append("     \"isBlank\": \"").append(isBlank).append("\"\n")
+                                .append("    }");
 
                         if (i == word.getWordLength() - 1) {
-                            action += "\n";
+                            action.append("\n");
                         } else {
-                            action += ",\n";
+                            action.append(",\n");
                         }
-
-                        letterTile.isNewlyPlaced = false;
                     }
                 }
 
-                action += "   ]";
+                action.append("   ]\n" + "  }");
 
                 if (j == wordsInGrid.size() - 1) {
-                    action += "\n"
-                            + "  }\n";
+                    action.append("\n");
                 } else {
-                    action += ",\n";
+                    action.append(",\n");
                 }
-
-                word.newlyPlaced = false;
-
                 score += word.getPoints();
             }
         }
 
-        action += " ],\n"
-                + " \"score\": \"" + score + "\"\n"
-                + "}";
-        return action;
+        action.append(" ],\n").append(" \"score\": \"").append(score).append("\"\n")
+                .append("}");
+
+        System.out.println(action);
+        return action.toString();
     }
 
     /**
