@@ -125,7 +125,8 @@ public class AiPlayer extends Player implements Serializable {
   }
 
   /**
-   * Checks for a number of specified letters in the word. It is used to find duplicates.
+   * Checks for a number of specified letters in the word.
+   * It is used to find duplicates.
    *
    * @param word   word
    * @param letter specified letter
@@ -143,7 +144,8 @@ public class AiPlayer extends Player implements Serializable {
   }
 
   /**
-   * Checks for a number of specified letters in the list of letters It is used to find duplicates.
+   * Checks for a number of specified letters in the list of letters
+   * It is used to find duplicates.
    *
    * @param letters the letters
    * @param letter  the letter
@@ -161,7 +163,8 @@ public class AiPlayer extends Player implements Serializable {
   }
 
   /**
-   * Gives letters that are needed to complement the word in order to make a new word
+   * Gives letters that are needed to complement the word
+   * in order to make a new word
    *
    * @param word     word that needs to be complemented
    * @param toAppend new word
@@ -238,7 +241,8 @@ public class AiPlayer extends Player implements Serializable {
   }
 
   /**
-   * Gives a list with all the words that can be made with one tile without breaking the rules.
+   * Gives a list with all the words that can be made with one tile
+   * without breaking the rules.
    *
    * @param words       found with the specified tile
    * @param centralTile the specified tile
@@ -270,9 +274,9 @@ public class AiPlayer extends Player implements Serializable {
   }
 
   /**
-   * This method is used to make turn of AI player. Firstly, it tries to complement already an
-   * existing word to make a new one. If AI does not manage that, it tries to make a word with one
-   * free tile.
+   * This method is used to make turn of AI player. Firstly, it tries to complement
+   * already an existing word to make a new one. If AI does not manage that, it tries
+   * to make a word with one free tile.
    *
    * @return placed word, null if no words were placed
    * @author astarche
@@ -682,99 +686,126 @@ public class AiPlayer extends Player implements Serializable {
   }
 
   /**
-   * Returns changes done to the grid during the last turn in form of json. Method is used in
-   * multiplayer.
+   * Returns changes done to the grid during the last turn in form of json.
+   * Method is used in multiplayer.
    *
    * @return string with changes in form of json
-   * @author astarche
+   * @author ekasmamy
    */
   public String createJsonString() {
+
     ArrayList<Word> wordsInGrid = gc.grid.words;
     int score = 0;
-    String action = "{\n"
-        + " \"nb\": \"" + wordsInGrid.size() + "\",\n"
-        + " \"words\": [\n";
+    StringBuilder action = new StringBuilder(
+        "{\n" + " \"nb\": \"" + wordsInGrid.size() + "\",\n" + " \"words\": [\n");
 
     for (int j = 0; j < wordsInGrid.size(); j++) {
       Word word = wordsInGrid.get(j);
+      System.out.println("\nCurrent word: " + word.getWordAsString());
+      System.out.println("is newly placed: " + word.newlyPlaced);
+      System.out.println("is frozen: " + word.frozen);
+      System.out.println("letters:");
+
       if (word.newlyPlaced) {
         String spelling = word.getWordAsString();
-        action += "  {\n"
-            + "   \"word\": \"" + spelling + "\",\n"
-            + "   \"points\": \"" + word.getPoints() + "\",\n"
-            + "   \"tiles\": [\n";
+        action.append("  {\n").append("   \"word\": \"").append(spelling).append("\",\n")
+            .append("   \"points\": \"").append(word.getPoints()).append("\",\n")
+            .append("   \"tiles\": [\n");
 
-    /**
-     * Returns changes done to the grid during the last turn in form of json.
-     * Method is used in multiplayer.
-     *
-     * @return string with changes in form of json
-     * @author ekasmamy
-     */
-    public String createJsonString() {
+        for (int i = 0; i < word.getWordLength(); i++) {
+          LetterTile letterTile = word.getLetter(i);
+          System.out.println("Current letter: " + letterTile.getLetter());
+          System.out.println("is newly placed: " + letterTile.isNewlyPlaced);
+          System.out.println("is frozen: " + letterTile.isFrozen);
 
-        ArrayList<Word> wordsInGrid = gc.grid.words;
-        int score = 0;
-        StringBuilder action = new StringBuilder(
-                "{\n" + " \"nb\": \"" + wordsInGrid.size() + "\",\n" + " \"words\": [\n");
+          if (letterTile.isNewlyPlaced) {
+            char letter = letterTile.getLetter();
+            int value = letterTile.getPoints();
+            int row = gc.grid.getCellRow(letterTile);
+            int col = gc.grid.getCellColumn(letterTile);
+            boolean isBlank = letterTile.isBlank;
 
-        for (int j = 0; j < wordsInGrid.size(); j++) {
-            Word word = wordsInGrid.get(j);
-            System.out.println("\nCurrent word: " + word.getWordAsString());
-            System.out.println("is newly placed: " + word.newlyPlaced);
-            System.out.println("is frozen: " + word.frozen);
-            System.out.println("letters:");
+            action.append("    {\n").append("     \"letter\": \"").append(letter)
+                .append("\",\n").append("     \"value\": \"").append(value)
+                .append("\",\n").append("     \"row\": \"").append(row).append("\",\n")
+                .append("     \"col\": \"").append(col).append("\",\n")
+                .append("     \"isBlank\": \"").append(isBlank).append("\"\n")
+                .append("    }");
 
-            if (word.newlyPlaced) {
-                String spelling = word.getWordAsString();
-                action.append("  {\n").append("   \"word\": \"").append(spelling).append("\",\n")
-                        .append("   \"points\": \"").append(word.getPoints()).append("\",\n")
-                        .append("   \"tiles\": [\n");
-
-                for (int i = 0; i < word.getWordLength(); i++) {
-                    LetterTile letterTile = word.getLetter(i);
-                    System.out.println("Current letter: " + letterTile.getLetter());
-                    System.out.println("is newly placed: " + letterTile.isNewlyPlaced);
-                    System.out.println("is frozen: " + letterTile.isFrozen);
-
-                    if (letterTile.isNewlyPlaced) {
-                        char letter = letterTile.getLetter();
-                        int value = letterTile.getPoints();
-                        int row = gc.grid.getCellRow(letterTile);
-                        int col = gc.grid.getCellColumn(letterTile);
-                        boolean isBlank = letterTile.isBlank;
-
-                        action.append("    {\n").append("     \"letter\": \"").append(letter)
-                                .append("\",\n").append("     \"value\": \"").append(value)
-                                .append("\",\n").append("     \"row\": \"").append(row).append("\",\n")
-                                .append("     \"col\": \"").append(col).append("\",\n")
-                                .append("     \"isBlank\": \"").append(isBlank).append("\"\n")
-                                .append("    }");
-
-                        if (i == word.getWordLength() - 1) {
-                            action.append("\n");
-                        } else {
-                            action.append(",\n");
-                        }
-                    }
-                }
-
-                action.append("   ]\n" + "  }");
-
-                if (j == wordsInGrid.size() - 1) {
-                    action.append("\n");
-                } else {
-                    action.append(",\n");
-                }
-                score += word.getPoints();
+            if (i == word.getWordLength() - 1) {
+              action.append("\n");
+            } else {
+              action.append(",\n");
             }
+          }
         }
 
-        action.append(" ],\n").append(" \"score\": \"").append(score).append("\"\n")
-                .append("}");
+        action.append("   ]\n" + "  }");
 
-        System.out.println(action);
-        return action.toString();
+        if (j == wordsInGrid.size() - 1) {
+          action.append("\n");
+        } else {
+          action.append(",\n");
+        }
+        score += word.getPoints();
+      }
+    }
+
+    action.append(" ],\n").append(" \"score\": \"").append(score).append("\"\n")
+        .append("}");
+
+    System.out.println(action);
+    return action.toString();
+  }
+
+  /**
+   * If grid is empty, ai makes first turn.
+   *
+   * @return placed word
+   * @author astarche
+   * @author astarche
+   */
+  private Word firstTurn() {
+    ArrayList<String> foundWords = findWords(ailetters);
+    if (foundWords.isEmpty()) {
+      return null;
+    }
+    String word;
+    if (DBInformation.isAiDifficultyHard(Profile.getPlayer())) {
+      word = foundWords.get(selectTheBestWord(foundWords));
+    } else {
+      word = foundWords.get(0);
+    }
+    System.out.println("BOT: I WILL USE THE WORD - " + word);
+    LetterTile first = null;
+    LetterTile last = null;
+    int col = 7;
+    int row = 7;
+    for (int i = 0; i < word.length(); i++) {
+      if (findTile(word.charAt(i)) == -1) {
+        System.out.println("ADDING BLANK TILE");
+        ailetters.remove(ailetters.get(findTile('\0')));
+        LetterTile blank = new LetterTile(word.charAt(i), 0, 10, gc);
+        if (i == 0) {
+          first = blank;
+        }
+
+        if (i == word.length() - 1) {
+          last = blank;
+        }
+        gc.grid.setSlotContent(col, row, blank);
+        row++;
+        continue;
+      }
+      if (i == 0) {
+        first = ailetters.get(findTile(word.charAt(i)));
+      }
+      if (i == word.length() - 1) {
+        last = ailetters.get(findTile(word.charAt(i)));
+      }
+      gc.grid.setSlotContent(col, row, ailetters.get(findTile(word.charAt(i))));
+      ailetters.remove(ailetters.get(findTile(word.charAt(i))));
+      row++;
     }
     return new Word(first, last, gc);
   }
@@ -799,8 +830,7 @@ public class AiPlayer extends Player implements Serializable {
         }
         gc.grid.setSlotContent(column, row - (i + 1), ailetters.get(findTile(part.charAt(i))));
         System.out.println("TILE ADDED TOP");
-        System.out
-            .println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
+        System.out.println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
         ailetters.remove(ailetters.get(findTile(part.charAt(i))));
       } else {
         if (findTile('\0') != -1) {
@@ -839,8 +869,7 @@ public class AiPlayer extends Player implements Serializable {
         }
         gc.grid.setSlotContent(column, row + (i + 1), ailetters.get(findTile(part.charAt(i))));
         System.out.println("TILE ADDED BOTTOM");
-        System.out
-            .println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
+        System.out.println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
         ailetters.remove(ailetters.get(findTile(part.charAt(i))));
       } else {
         if (findTile('\0') != -1) {
@@ -880,8 +909,7 @@ public class AiPlayer extends Player implements Serializable {
         }
         gc.grid.setSlotContent(column - (i + 1), row, ailetters.get(findTile(part.charAt(i))));
         System.out.println("TILE ADDED LEFT");
-        System.out
-            .println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
+        System.out.println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
         ailetters.remove(ailetters.get(findTile(part.charAt(i))));
       } else {
         if (findTile('\0') != -1) {
@@ -920,8 +948,7 @@ public class AiPlayer extends Player implements Serializable {
         }
         gc.grid.setSlotContent(column + (i + 1), row, ailetters.get(findTile(part.charAt(i))));
         System.out.println("TILE ADDED RIGHT");
-        System.out
-            .println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
+        System.out.println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
         ailetters.remove(ailetters.get(findTile(part.charAt(i))));
       } else {
         if (findTile('\0') != -1) {
@@ -1005,8 +1032,8 @@ public class AiPlayer extends Player implements Serializable {
   }
 
   /**
-   * Gives human player some words that he can construct with his letter bar. Can be used only in
-   * single player.
+   * Gives human player some words that he can construct with his letter bar.
+   * Can be used only in single player.
    *
    * @return the string with possible words
    * @author astarche
