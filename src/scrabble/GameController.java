@@ -241,7 +241,9 @@ public class GameController {
       } else if (this.protocol instanceof LobbyHostProtocol) {
         ((LobbyHostProtocol) this.protocol).shutdown();
       }
-      this.timer.cancel(); // cancel the timer
+      if (this.timer != null) {
+        this.timer.cancel(); // cancel the timer
+      }
     }
   }
 

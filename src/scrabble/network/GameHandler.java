@@ -35,6 +35,8 @@ public class GameHandler extends Thread {
   private boolean bagIsEmpty;
   // is used to get a different behavior for a wanted and a unwanted ending
   private boolean isShutdown;
+  ArrayList<NetworkPlayer> deleted;
+  DynamicValue actualCounter;
 
   // should i control a specific notify call ?
   /**
@@ -45,6 +47,7 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   public GameHandler(GameInformationController game, ArrayList<NetworkPlayer> players) {
+    this.deleted = new ArrayList<NetworkPlayer>();
     this.loading = true;
     this.game = game;
     this.players = players;
@@ -201,7 +204,19 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   private void makeATurn() {
-    for (NetworkPlayer player : this.players) {
+    for (DynamicValue i = new DynamicValue(); i.getValue() < this.players.size(); i.increase()) {
+      NetworkPlayer player = this.players.get(i.getValue());
+      actualCounter = i;
+      boolean hit = false;
+      for (NetworkPlayer delet : this.deleted) {
+        if (player.equals(delet)) {
+          hit = true;
+          break;
+        }
+      }
+      if (hit) {
+        continue;
+      }
       this.checkRunning(); // check if a game should stop
       if (!this.gameIsOn) { // leaving the loop if a game stopped
         break;
@@ -231,7 +246,6 @@ public class GameHandler extends Thread {
       this.turn++; // increase the turn counter
       this.game.sendBagSize(); // after every turn.
     }
-
   }
 
   /**
@@ -310,6 +324,8 @@ public class GameHandler extends Thread {
       this.gameIsOn = false; // ending the game.
     } else if (this.bagIsEmpty) { // The LetterBag is empty.
       System.out.println("GAME HANDLER : Game end : empty LetterBag");
+      this.gameIsOn = false;
+    } else if (this.players.size() <= 1) { // all human players have leave the game
       this.gameIsOn = false;
     }
   }
@@ -447,11 +463,16 @@ public class GameHandler extends Thread {
    */
   public synchronized void playerDeleted(NetworkPlayer player) {
     this.points.remove(player);
+    this.deleted.add(player);
     // Player should be deleted from list because of same
     if (player.equals(actual)) { // the actual player has left the game
       if (this.getState() == Thread.State.WAITING) { // Thread waits for end move
-        this.invokeTurnPhase(); // just notify the thread so the method can be used
+        if (this.actualCounter != null) {
+          this.actualCounter.decrease();
+        }
+        this.notify();
       }
+      //
     }
     // Now the players have to be informed.
     for (NetworkPlayer other : this.players) {
@@ -496,5 +517,53 @@ public class GameHandler extends Thread {
    */
   public void setHost(LobbyHostProtocol host) {
     this.host = host;
+  }
+
+  private class DynamicValue {
+    /**
+     * Private class which imitates an integer value. I tried to dynamically change the value of an
+     * Integer object during a loop iteration but it doesn't work. This class will work as a dynamic
+     * int iterator. Is used when the player on turn leave the game. In this case the actual counter
+     * have to be decreased to cover the size loss.
+     * 
+     * @author hendiehl
+     */
+    private int value;
+
+    /**
+     * Constructor of the value wrapper.
+     * 
+     * @author hendiehl
+     */
+    private DynamicValue() {
+      this.value = 0;
+    }
+
+    /**
+     * Method to decrease the value.
+     * 
+     * @author hendiehl
+     */
+    private void decrease() {
+      this.value -= 1;
+    }
+
+    /**
+     * Method to get the value.
+     * 
+     * @author hendiel
+     */
+    private int getValue() {
+      return this.value;
+    }
+
+    /**
+     * Method to increase the value.
+     * 
+     * @author hendiehl
+     */
+    private void increase() {
+      this.value += 1;
+    }
   }
 }
