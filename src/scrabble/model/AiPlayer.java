@@ -22,10 +22,6 @@ import java.util.Random;
 
 public class AiPlayer extends Player implements Serializable {
 
-    private String[] difficulty = {"easy", "hard"};
-
-    private String chosenDifficulty;
-
     private GameController gc;
 
     /**
@@ -52,36 +48,6 @@ public class AiPlayer extends Player implements Serializable {
      */
     public GameController getController() {
         return this.gc;
-    }
-
-    /**
-     * Setting the difficulty of the AI-Player.
-     *
-     * @param diff Setting the difficulty of the AI-Player
-     * @author skeskinc
-     */
-    public void setDifficulty(String diff) {
-        switch (diff) {
-            case ("easy"):
-                this.chosenDifficulty = difficulty[0];
-                break;
-            case ("hard"):
-                this.chosenDifficulty = difficulty[1];
-                break;
-            default:
-                this.chosenDifficulty = null;
-                break;
-        }
-    }
-
-    /**
-     * Returns the difficulty of the AI-Player.
-     *
-     * @return Difficulty of the AI-Player
-     * @author skeskinc
-     */
-    public String getDifficulty() {
-        return this.chosenDifficulty;
     }
 
     /**
