@@ -28,8 +28,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import scrabble.dbhandler.DBInformation;
-import scrabble.game.*;
+
+import scrabble.game.LeaderBoard;
+import scrabble.game.LetterBag;
 import scrabble.game.LetterBag.Tile;
+import scrabble.game.LetterBar;
+import scrabble.game.Word;
 import scrabble.model.AiPlayer;
 import scrabble.model.HumanPlayer;
 import scrabble.model.Player;
@@ -62,9 +66,11 @@ public class SingleGameController extends GameController {
     private int[] points = new int[4];
 
     /**
-     * Initialize narrator.
+     * Initializes narrator. Shows the picture of the narrator
+     * and text under the narrator
      *
-     * @return the border pane
+     * @return the border pane with the narrator and the text area
+     * @author astarche
      */
     private BorderPane initializeNarrator() {
         VBox mainBlock = new VBox();
@@ -86,21 +92,27 @@ public class SingleGameController extends GameController {
     }
 
     /**
-     * Show narrator.
+     * Shows the narrator.
+     *
+     * @author astarche
      */
     private void showNarrator() {
         this.gridWrapper.getChildren().add(this.dialogPane);
     }
 
     /**
-     * Hide narrator.
+     * Hides the narrator.
+     *
+     * @author astarche
      */
     private void hideNarrator() {
         this.gridWrapper.getChildren().remove(this.dialogPane);
     }
 
     /**
-     * Show rules.
+     * Shows rules.The is invoked by pressing R on the players keyboard.
+     *
+     * @author astarche
      */
     private void showRules() {
         if (!this.gridWrapper.getChildren().contains(this.dialogPane)) {
@@ -119,7 +131,9 @@ public class SingleGameController extends GameController {
     }
 
     /**
-     * Sets the listeners.
+     * Sets all key and button listeners that are needed for the tutorial mode.
+     *
+     * @author astarche
      */
     private void setListeners() {
         okBtn.setOnAction(event -> {
@@ -161,7 +175,9 @@ public class SingleGameController extends GameController {
     }
 
     /**
-     * Initialize dialog.
+     * Initializes the list with the phrases of the narrator from the txt file.
+     *
+     * @author astarche
      */
     private void initializeDialog() {
         try {
@@ -181,7 +197,10 @@ public class SingleGameController extends GameController {
 
 
     /**
-     * Play guide.
+     * Plays guide. Starts after the player launches the tutorial mode.
+     * The player reads the rules and the instructions.
+     *
+     * @author astarche
      */
     private void playGuide() {
         showNarrator();
@@ -215,7 +234,7 @@ public class SingleGameController extends GameController {
                 }
                 dialogWindow.setText(aiPlayer.helpPoorHuman());
                 if (aiPlayer.helpPoorHuman().equals("Did not find any words :(")) {
-                    dialogWindow.appendText("\nTry to press exchange");
+                    dialogWindow.appendText("\nTry to press exchange, it will not skip your turn");
                 }
             }
         });
@@ -241,7 +260,9 @@ public class SingleGameController extends GameController {
 
 
     /**
-     * Start move.
+     * Starts the actual gameplay
+     *
+     * @author ekasmamy
      */
     public void startMove() {
 
@@ -323,9 +344,10 @@ public class SingleGameController extends GameController {
 
     /**
      * End move.
+     *
+     * @author ekasmamy
      */
     public void endMove() {
-
         // verifying the player's input
         boolean validInput = grid.verifyWordsValidity();
 
@@ -336,8 +358,6 @@ public class SingleGameController extends GameController {
             timer.cancel();
 
         }
-
-        // TODO: update the LeaderBoard
 
     }
 
@@ -359,7 +379,9 @@ public class SingleGameController extends GameController {
     }
 
     /**
-     * Inits the players.
+     * Initializes the players array for the single player mode.
+     *
+     * @author ekasmamy
      */
     @Override
     public void initPlayers() {
@@ -369,7 +391,6 @@ public class SingleGameController extends GameController {
         host.setId(1);
         players.add(host);
         players.add(this.aiPlayer);
-
 //        for (int i = 2; i <= nbPlayers; i++) {
 //            AiPlayer ai = new AiPlayer();
 //            ai.setId(i);
@@ -419,6 +440,11 @@ public class SingleGameController extends GameController {
         });
     }
 
+    /**
+     * Ends the game, shows the result and goes back to the main menu.
+     *
+     * @author astarche
+     */
     private void endGame() {
         FXMLLoader loader = new FXMLLoader();
         if (points[0] < points[1]) {
@@ -492,7 +518,7 @@ public class SingleGameController extends GameController {
 
         exchangeBtn.setOnAction(event -> {
             Platform.runLater(() -> {
-               if (bag.getAmount() >= 7) {
+                if (bag.getAmount() >= 7) {
                     letterBar.setTiles(bag.grabRandomTiles(7));
                 } else {
                     letterBar.setTiles(bag.grabRandomTiles(bag.getAmount()));
@@ -509,6 +535,7 @@ public class SingleGameController extends GameController {
      * Provider method of the grabRandomTiles method of LetterBag.
      *
      * @param tiles the tiles
+     * @author ekasmamy
      */
     public void grabRandomTilesAnswer(Multiset<Tile> tiles) {
         System.out.println("GAME CONTROLLER : grabRandomTilesAnswer received");
@@ -523,6 +550,7 @@ public class SingleGameController extends GameController {
      * Sets the player active.
      *
      * @param id the new player active
+     * @author ekasmamy
      */
     public void setPlayerActive(int id) {
         System.out.println("ID: " + id);
@@ -540,19 +568,10 @@ public class SingleGameController extends GameController {
 
     /**
      * Sets the round.
+     *
+     * @author ekasmamy
      */
     public void setRound() {
         roundLabel.setText(String.valueOf(++roundCounter));
-    }
-
-    /**
-     * Other player on move.
-     *
-     * @param id the id
-     */
-    public void otherPlayerOnMove(int id) {
-
-        setRound();
-        setPlayerActive(id);
     }
 }

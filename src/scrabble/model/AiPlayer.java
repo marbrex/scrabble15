@@ -165,6 +165,7 @@ public class AiPlayer extends Player implements Serializable {
      * @param word   word
      * @param letter specified letter
      * @return the number of specified letters in the word
+     * @author astarche
      */
     private int numberOf(String word, char letter) {
         int count = 0;
@@ -183,6 +184,7 @@ public class AiPlayer extends Player implements Serializable {
      * @param letters the letters
      * @param letter  the letter
      * @return the int
+     * @author astarche
      */
     private int numberOf(ArrayList<Character> letters, char letter) {
         int count = 0;
@@ -201,6 +203,7 @@ public class AiPlayer extends Player implements Serializable {
      * @param word     word that needs to be complemented
      * @param toAppend new word
      * @return true, if successful
+     * @author astarche
      */
     private String giveLettersToComplement(String word, String toAppend) {
         ArrayList<Character> lettersAsChar = getValues(ailetters);
@@ -250,6 +253,7 @@ public class AiPlayer extends Player implements Serializable {
      * @param letters letters
      * @param word    word that needs to be constructed
      * @return number of blank tiles that are needed to make the word, 0 if no blank tiles are needed
+     * @author astarche
      */
     private int hasEnoughLetters(String letters, String word) {
         int diff = 0;
@@ -277,6 +281,7 @@ public class AiPlayer extends Player implements Serializable {
      * @param words       found with the specified tile
      * @param centralTile the specified tile
      * @return a list with safe words
+     * @author astarche
      */
     private ArrayList<String> giveSafeWords(ArrayList<String> words, LetterTile centralTile) {
         ArrayList<String> safeWords = new ArrayList<String>();
@@ -411,6 +416,7 @@ public class AiPlayer extends Player implements Serializable {
      *
      * @param words list of words
      * @return index of the longest word in the list
+     * @author astarche
      */
     private int selectTheBestWord(ArrayList<String> words) {
         int res = 0;
@@ -427,6 +433,7 @@ public class AiPlayer extends Player implements Serializable {
      *
      * @param centralTile the central tile
      * @return true, if horizontal
+     * @author astarche
      */
     private boolean wordPlacedHorizontal(LetterTile centralTile) {
         return gc.grid.getNeighbourCell(centralTile, "bottom") != null ||
@@ -458,6 +465,7 @@ public class AiPlayer extends Player implements Serializable {
      * Complements already an existing word to make a new one.
      *
      * @return new word
+     * @author astarche
      */
     private Word complementWord() {
         Word toAppend = null;
@@ -537,6 +545,7 @@ public class AiPlayer extends Player implements Serializable {
      *
      * @param word the specified word
      * @return the list
+     * @author astarche
      */
     private ArrayList<String> wordsThatContain(String word) {
         ArrayList<String> foundWords = new ArrayList<String>();
@@ -556,6 +565,7 @@ public class AiPlayer extends Player implements Serializable {
      * @param length    the length of word
      * @param direction the direction of the word
      * @return true, if the word is safe
+     * @author astarche
      */
     private boolean isSafe(int col, int row, int length, String direction) {
         boolean safe = true;
@@ -783,8 +793,9 @@ public class AiPlayer extends Player implements Serializable {
     /**
      * If grid is empty, ai makes first turn.
      *
-     * @author astarche
      * @return placed word
+     * @author astarche
+     * @author astarche
      */
     private Word firstTurn() {
         ArrayList<String> foundWords = findWords(ailetters);
@@ -839,6 +850,7 @@ public class AiPlayer extends Player implements Serializable {
      * @param part   string with letters that need to be added
      * @param gc     Game Controller
      * @return the letter tile
+     * @author astarche
      */
     private LetterTile addTilesTop(int column, int row, String part, GameController gc) {
         part = new StringBuilder(part).reverse().toString();
@@ -881,6 +893,7 @@ public class AiPlayer extends Player implements Serializable {
      * @param part   string with letters that need to be added
      * @param gc     Game Controller
      * @return the letter tile
+     * @author astarche
      */
     private LetterTile addTilesBottom(int column, int row, String part, GameController gc) {
         LetterTile tile = null;
@@ -924,6 +937,7 @@ public class AiPlayer extends Player implements Serializable {
      * @param part   string with letters that need to be added
      * @param gc     Game Controller
      * @return the letter tile
+     * @author astarche
      */
     private LetterTile addTilesLeft(int column, int row, String part, GameController gc) {
         LetterTile tile = null;
@@ -968,6 +982,7 @@ public class AiPlayer extends Player implements Serializable {
      * @param part   string with letters that need to be added
      * @param gc     Game Controller
      * @return the letter tile
+     * @author astarche
      */
     private LetterTile addTilesRight(int column, int row, String part, GameController gc) {
         LetterTile tile = null;

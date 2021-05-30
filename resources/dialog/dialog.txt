@@ -14,11 +14,11 @@ The game is ended by any of these causes:
 One player plays every tile on their rack, and there are no tiles remaining in the bag (regardless of the tiles on the opponent's rack).
 At least six successive scoreless turns have occurred and either player decides to end the game.
 A player uses more than 10 minutes of overtime.
-Now try to make a word by placing tiles on the game field. After that I will place my word (if I can of course)
+Now try to make a word by placing tiles on the game field. After that I will place my word (if I can of course).
 Use your mouse to grab the tiles from the letter bar below and drag them to the game field.
 If the word you placed highlighted in green, it means that your word is valid and you can press ok to finish your turn!
 If the word you placed highlighted in red, it means that tiles you placed do not make a word!
-Also note that when you place a word you can see how many points it is going to score.
+Also note that when you place a word you can see how many points it is going to score. Different multipliers (DW, DL, TL, TW) multiply the score!
 If can't construct any word, press H on your keyboard and I will help you.
-If you forgot the rules, press R on your keyboard and I will remind them for you.
+If you forgot the rules, press R on your keyboard and I will remind them for you. Also you can just press PASS and then I will make my turn
 Nice job! Looks like you have learnt how to play! Now try to beat me or leave the game if you want! Also in the tutorial mode you have unlimited time for your turns! Play until the letter bag is empty! Also you can press R if you forgot the rules.
