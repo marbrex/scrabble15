@@ -151,8 +151,14 @@ public class GameInformationController {
     if (this.players.size() == 4) {
       System.err.println("Maximum Player Amount Joined");
       // The host is GameInfoController internal every time the first player in list.
-      LobbyHostProtocol host = (LobbyHostProtocol) this.players.get(0);
-      host.informAboutLobby();
+      if (this.players.get(0) instanceof LobbyHostProtocol) {
+        LobbyHostProtocol host = (LobbyHostProtocol) this.players.get(0);
+        host.informAboutLobby();
+      }
+      /*
+       * Condition is only needed because of test requirements, a host is every time a part of the
+       * lobby, but during JUnit tests, special TestProtocols are used.
+       */
     }
   }
 
@@ -699,7 +705,9 @@ public class GameInformationController {
    * @author hendiehl
    */
   public void fillBag() {
-    this.bag.fillBag();
+    if (this.bag != null) {
+      this.bag.fillBag();
+    }
   }
 
   /**

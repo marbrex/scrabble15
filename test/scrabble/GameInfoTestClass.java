@@ -107,6 +107,9 @@ class GameInfoTestClass {
     }
     // performing the method with huge intern Impact();
     this.game.checkLobbySize();
+    // Here the host is now informed to start the lobby.
+    // The host performance can be imitate with his startMethod.
+    this.game.lobbyFull(); // starting the lobby like a host.
     // check if the status is changed, the status should be now GAME
     assertEquals(GameStatusType.GAME, this.game.getStatus());
     try {
