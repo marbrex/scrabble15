@@ -56,11 +56,11 @@ public class TutorialGameController extends GameController {
 
     private final ArrayList<String> dialogLines = new ArrayList<String>();
 
-    private TextArea dialogWindow;
+  private final List<String> dialogLines = new ArrayList<String>();
 
-    private ImageView im;
+  private TextArea dialogWindow;
 
-    private BorderPane dialogPane;
+  private ImageView im;
 
     private int indx = 0;
     private int[] points = new int[4];
@@ -173,6 +173,17 @@ public class TutorialGameController extends GameController {
             }
         });
     }
+    indx = 2;
+    this.dialogWindow.setText(dialogLines.get(1));
+    this.im.setOnMouseClicked(mouseEvent -> {
+      if (indx < 16) {
+        this.dialogWindow.setText(dialogLines.get(indx));
+        indx++;
+      } else {
+        hideNarrator();
+      }
+    });
+  }
 
     /**
      * Initializes the list with the phrases of the narrator from the txt file.
@@ -194,6 +205,7 @@ public class TutorialGameController extends GameController {
             e.printStackTrace();
         }
     }
+  }
 
 
     /**
@@ -266,43 +278,43 @@ public class TutorialGameController extends GameController {
      */
     public void startMove() {
 
-        int id = Profile.getPlayer().getId();
+    int id = Profile.getPlayer().getId();
 
-        setRound();
-        setPlayerActive(id);
-        setActions(true);
+    setRound();
+    setPlayerActive(id);
+    setActions(true);
 
-        // Filling the empty slots in the LetterBar if it's the case
-        int freeSlotsCount = letterBar.getCountFreeSlots();
-        if (freeSlotsCount > 0) {
+    // Filling the empty slots in the LetterBar if it's the case
+    int freeSlotsCount = letterBar.getCountFreeSlots();
+    if (freeSlotsCount > 0) {
 
-            letterBar.fillGaps(LetterBag.getInstance().grabRandomTiles(freeSlotsCount));
-            letterBar.display();
-        }
+      letterBar.fillGaps(LetterBag.getInstance().grabRandomTiles(freeSlotsCount));
+      letterBar.display();
+    }
 
         // starting the timer (10 minutes for each turn)
         //  timer = new Timer();
 
-        TimerTask endMove = new TimerTask() {
-            @Override
-            public void run() {
+    TimerTask endMove = new TimerTask() {
+      @Override
+      public void run() {
 
-                // System.out.println("Time is over - moving tiles in grid back to bar..");
-                // moving all tiles in grid back to bar
-                letterBar.putTilesBackToBar();
+        // System.out.println("Time is over - moving tiles in grid back to bar..");
+        // moving all tiles in grid back to bar
+        letterBar.putTilesBackToBar();
 
-                setActions(false);
+        setActions(false);
 
-                // ending the current player's move after the end of the timer
-                endMove();
+        // ending the current player's move after the end of the timer
+        endMove();
 
-            }
-        };
+      }
+    };
 
-        //timer.schedule(endMove, 1000 * 60 * roundTime);
+    //timer.schedule(endMove, 1000 * 60 * roundTime);
 
-        // Every second the Label will decrement
-        timerLabel.setText(roundTime + ":00");
+    // Every second the Label will decrement
+    timerLabel.setText(roundTime + ":00");
 
 //        TimerTask updateLabel = new TimerTask() {
 //            @Override
@@ -340,7 +352,7 @@ public class TutorialGameController extends GameController {
 
         // timer.scheduleAtFixedRate(updateLabel, 0, 1000);
 
-    }
+  }
 
     /**
      * End move.
@@ -351,32 +363,32 @@ public class TutorialGameController extends GameController {
         // verifying the player's input
         boolean validInput = grid.verifyWordsValidity();
 
-        if (validInput) {
+    if (validInput) {
 
-            setActions(false);
+      setActions(false);
 
-            timer.cancel();
-
-        }
+      timer.cancel();
 
     }
 
-    /**
-     * Sets the actions.
-     *
-     * @param active the new actions
-     */
-    public void setActions(boolean active) {
-        // enabling every LetterTile in Bar
-        letterBar.getTilesInBar().forEach(tile -> {
-            tile.setMouseTransparent(!active);
-            tile.isFrozen = !active;
-        });
-
-        // enabling every action button
-        okBtn.setMouseTransparent(!active);
-        exchangeBtn.setMouseTransparent(!active);
     }
+
+  /**
+   * Sets the actions.
+   *
+   * @param active the new actions
+   */
+  public void setActions(boolean active) {
+    // enabling every LetterTile in Bar
+    letterBar.getTilesInBar().forEach(tile -> {
+      tile.setMouseTransparent(!active);
+      tile.isFrozen = !active;
+    });
+
+    // enabling every action button
+    okBtn.setMouseTransparent(!active);
+    exchangeBtn.setMouseTransparent(!active);
+  }
 
     /**
      * Initializes the players array for the single player mode.
@@ -396,49 +408,50 @@ public class TutorialGameController extends GameController {
 //            ai.setId(i);
 //            players.add(ai);
 //        }
-    }
+  }
 
-    /**
-     * Inits the leader board.
-     */
-    public void initLeaderBoard() {
+  /**
+   * Inits the leader board.
+   */
+  public void initLeaderBoard() {
 
-        initPlayers();
+    initPlayers();
 
-        // Creating a Leader Board
-        leaderBoard = new LeaderBoard(players);
+    // Creating a Leader Board
+    leaderBoard = new LeaderBoard(players);
 
-        players.forEach(player -> {
-            BorderPane playerBlock = new BorderPane();
-            playerBlock.getStyleClass().add("players-block");
-            playerBlock.setPadding(new Insets(10, 30, 10, 30));
-            System.out.println(player.getName() + " has ID: " + player.getId());
-            playerBlock.setId(String.valueOf(player.getId()));
+    players.forEach(player -> {
+      BorderPane playerBlock = new BorderPane();
+      playerBlock.getStyleClass().add("players-block");
+      playerBlock.setPadding(new Insets(10, 30, 10, 30));
+      System.out.println(player.getName() + " has ID: " + player.getId());
+      playerBlock.setId(String.valueOf(player.getId()));
 
-            StackPane avatarWrapper = new StackPane();
-            avatarWrapper.getStyleClass().add("player-avatar-frame");
-            avatarWrapper.setAlignment(Pos.CENTER);
+      StackPane avatarWrapper = new StackPane();
+      avatarWrapper.getStyleClass().add("player-avatar-frame");
+      avatarWrapper.setAlignment(Pos.CENTER);
 
-            ImageView avatar = new ImageView(new Image(getClass().getResourceAsStream("/img/" + player.getImage())));
-            avatar.setFitHeight(60);
-            avatar.setFitWidth(60);
+      ImageView avatar = new ImageView(
+          new Image(getClass().getResourceAsStream("/img/" + player.getImage())));
+      avatar.setFitHeight(60);
+      avatar.setFitWidth(60);
 
-            Label nickname = new Label(player.getName());
-            nickname.getStyleClass().add("players-name");
-            Label score = new Label(String.valueOf(player.getScore()));
-            score.getStyleClass().add("players-score");
+      Label nickname = new Label(player.getName());
+      nickname.getStyleClass().add("players-name");
+      Label score = new Label(String.valueOf(player.getScore()));
+      score.getStyleClass().add("players-score");
 
-            avatarWrapper.getChildren().add(avatar);
-            playerBlock.setLeft(avatarWrapper);
-            playerBlock.setCenter(nickname);
-            playerBlock.setRight(score);
-            BorderPane.setAlignment(avatarWrapper, Pos.CENTER);
-            BorderPane.setAlignment(nickname, Pos.CENTER);
-            BorderPane.setAlignment(score, Pos.CENTER);
+      avatarWrapper.getChildren().add(avatar);
+      playerBlock.setLeft(avatarWrapper);
+      playerBlock.setCenter(nickname);
+      playerBlock.setRight(score);
+      BorderPane.setAlignment(avatarWrapper, Pos.CENTER);
+      BorderPane.setAlignment(nickname, Pos.CENTER);
+      BorderPane.setAlignment(score, Pos.CENTER);
 
-            playersBlock.getChildren().add(playerBlock);
-        });
-    }
+      playersBlock.getChildren().add(playerBlock);
+    });
+  }
 
     /**
      * Ends the game, shows the result and goes back to the main menu.
@@ -496,19 +509,19 @@ public class TutorialGameController extends GameController {
         initLeaderBoard();
         initGrid();
 
-        letterBar = new LetterBar(this);
+    letterBar = new LetterBar(this);
 
-        // Binding GridPane Wrapper's Height to be always equal to its Width
-        gridWrapper.widthProperty().addListener((observable, oldValue, newValue) -> {
-            gridWrapper.setMaxHeight(newValue.doubleValue());
-        });
+    // Binding GridPane Wrapper's Height to be always equal to its Width
+    gridWrapper.widthProperty().addListener((observable, oldValue, newValue) -> {
+      gridWrapper.setMaxHeight(newValue.doubleValue());
+    });
 
-        // Binding GridPane Wrapper's Width to be always equal to its Parent Node's Height
-        mainBlock.heightProperty().addListener((observable, oldValue, newValue) -> {
-            gridWrapper.setMaxWidth(newValue.doubleValue());
-        });
+    // Binding GridPane Wrapper's Width to be always equal to its Parent Node's Height
+    mainBlock.heightProperty().addListener((observable, oldValue, newValue) -> {
+      gridWrapper.setMaxWidth(newValue.doubleValue());
+    });
 
-        sideBar.maxHeightProperty().bind(mainBlock.heightProperty());
+    sideBar.maxHeightProperty().bind(mainBlock.heightProperty());
 
         this.aiPlayer.giveLettersToAiPlayer(bag);
         this.aiPlayer.displayTiles();
@@ -527,7 +540,7 @@ public class TutorialGameController extends GameController {
 
         playGuide();
 
-    }
+    playGuide();
 
     /**
      * Provider method of the grabRandomTiles method of LetterBag.
@@ -557,12 +570,17 @@ public class TutorialGameController extends GameController {
             BorderPane playerBlock = (BorderPane) block;
             playerBlock.getLeft().getStyleClass().remove("player-avatar-frame-active");
 
-            if (Integer.parseInt(block.getId()) == id) {
-                System.out.println("Found! ID: " + block.getId());
-                playerBlock.getLeft().getStyleClass().add("player-avatar-frame-active");
-            }
-        });
-    }
+  /**
+   * Sets the player active.
+   *
+   * @param id the new player active
+   */
+  public void setPlayerActive(int id) {
+    System.out.println("ID: " + id);
+    playersBlock.getChildren().forEach(block -> {
+      System.out.println("Current player block ID: " + block.getId());
+      BorderPane playerBlock = (BorderPane) block;
+      playerBlock.getLeft().getStyleClass().remove("player-avatar-frame-active");
 
     /**
      * Sets the round.

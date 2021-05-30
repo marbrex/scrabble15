@@ -56,7 +56,7 @@ public class MainPageController implements Initializable {
 
   /**
    * Setting boolean var to true, if network-mode is chosen.
-   * 
+   *
    * @param check Setting var to true or false
    * @author skeskinc
    */
@@ -66,7 +66,7 @@ public class MainPageController implements Initializable {
 
   /**
    * Check, if chosen mode is a network-mode.
-   * 
+   *
    * @return true, if multiplayer has been pressed, else false
    * @author skeskinc
    */
@@ -76,10 +76,10 @@ public class MainPageController implements Initializable {
 
   /**
    * Changing scene.
-   * 
+   *
    * @param resource Getting resource of next scene
-   * @param style Setting style-sheet of next scene
-   * @param event Handling Event Actions
+   * @param style    Setting style-sheet of next scene
+   * @param event    Handling Event Actions
    * @author ekasmamy
    * @author skeskinc
    */
@@ -98,7 +98,7 @@ public class MainPageController implements Initializable {
 
   /**
    * Managing Button changes.
-   * 
+   *
    * @return specific button-collections
    * @author ekasmamy
    */
@@ -141,7 +141,7 @@ public class MainPageController implements Initializable {
 
   /**
    * Handling Scene Change and application exit.
-   * 
+   *
    * @author ekasmamy
    */
   @Override

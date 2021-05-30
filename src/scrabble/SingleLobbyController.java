@@ -8,6 +8,11 @@ import javafx.scene.Parent;
 import javafx.scene.control.ChoiceBox;
 import javafx.stage.Stage;
 
+/**
+ * Simple lobby for setting parameters of single player mode.
+ *
+ * @author ekasmamy
+ */
 public class SingleLobbyController {
 
   @FXML
@@ -69,7 +74,8 @@ public class SingleLobbyController {
             + "}";
 
         ScrabbleApp.getScene().getStylesheets().clear();
-        ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("/css/style.css").toExternalForm());
+        ScrabbleApp.getScene().getStylesheets()
+            .add(getClass().getResource("/css/style.css").toExternalForm());
         ScrabbleApp.getScene().setRoot(root);
 
       } catch (IOException e) {

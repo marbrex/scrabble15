@@ -64,7 +64,7 @@ import scrabble.network.NetworkScreen;
 
 /**
  * The Main Game Controller linked with "interface.fxml" file. It manages every element in the game
- * field.
+ * field for the single player mode.
  *
  * @author ekasmamy
  */
@@ -261,7 +261,7 @@ public class SingleGameController extends GameController {
       addToScoreOfPlayer(currentPlayerId, score);
       bagCount.setText(String.valueOf(bag.getAmount()));
 
-      int nextId = ( currentPlayerId + 1 ) % nbPlayers;
+      int nextId = (currentPlayerId + 1) % nbPlayers;
       startMove(++roundCounter, nextId);
 
     }
@@ -455,59 +455,59 @@ public class SingleGameController extends GameController {
    */
   public void displayBag(ArrayList<Pair<Character, Integer>> amount) {
 
-      bagBtn.setMouseTransparent(true);
+    bagBtn.setMouseTransparent(true);
 
-      LetterBag bag = LetterBag.getInstance();
-      for (int j = 0; j < bag.getAlphabetSize(); j++) {
-        char l = bag.getLetterInAlphabet(j);
-        int v = bag.getValueInAlphabet(j);
+    LetterBag bag = LetterBag.getInstance();
+    for (int j = 0; j < bag.getAlphabetSize(); j++) {
+      char l = bag.getLetterInAlphabet(j);
+      int v = bag.getValueInAlphabet(j);
 
-        LetterTile ltrTile = new LetterTile(l, v, grid.cellSize, thisController);
-        ltrTile.setPointsVisible(false);
-        ltrTile.isBlank = true;
-        ltrTile.container.setOnDragDetected(null);
-        ltrTile.container.setOnDragDone(null);
-        ltrTile.container.setOnMouseDragged(null);
-        ltrTile.container.setOnMouseReleased(null);
-        ltrTile.container.setOnMouseClicked(null);
+      LetterTile ltrTile = new LetterTile(l, v, grid.cellSize, thisController);
+      ltrTile.setPointsVisible(false);
+      ltrTile.isBlank = true;
+      ltrTile.container.setOnDragDetected(null);
+      ltrTile.container.setOnDragDone(null);
+      ltrTile.container.setOnMouseDragged(null);
+      ltrTile.container.setOnMouseReleased(null);
+      ltrTile.container.setOnMouseClicked(null);
 
-        popupBlankBlock.setOnMouseClicked(event -> {
-          popupBlankBlock.setVisible(false);
-          okBtn.setDisable(false);
-          popupBlankMessage.getChildren().clear();
-          bagBtn.setMouseTransparent(false);
-          popupBlankBlock.setOnMouseClicked(null);
-        });
+      popupBlankBlock.setOnMouseClicked(event -> {
+        popupBlankBlock.setVisible(false);
+        okBtn.setDisable(false);
+        popupBlankMessage.getChildren().clear();
+        bagBtn.setMouseTransparent(false);
+        popupBlankBlock.setOnMouseClicked(null);
+      });
 
-        popupBlankMessage.setOnMouseClicked(event -> {
-          popupBlankBlock.setVisible(false);
-          okBtn.setDisable(false);
-          popupBlankMessage.getChildren().clear();
-          bagBtn.setMouseTransparent(false);
-          popupBlankMessage.setOnMouseClicked(null);
-        });
+      popupBlankMessage.setOnMouseClicked(event -> {
+        popupBlankBlock.setVisible(false);
+        okBtn.setDisable(false);
+        popupBlankMessage.getChildren().clear();
+        bagBtn.setMouseTransparent(false);
+        popupBlankMessage.setOnMouseClicked(null);
+      });
 
-        int remAmount = 0;
-        for (Pair<Character, Integer> charIntPair : amount) {
-          if (charIntPair.getKey().equals(l)) {
-            remAmount = charIntPair.getValue();
-            break;
-          }
+      int remAmount = 0;
+      for (Pair<Character, Integer> charIntPair : amount) {
+        if (charIntPair.getKey().equals(l)) {
+          remAmount = charIntPair.getValue();
+          break;
         }
-
-        Label remAmountLabel = new Label(String.valueOf(remAmount));
-        remAmountLabel.getStyleClass().add("remaining-amount-tile-label");
-
-        if (remAmount == 0) {
-          ltrTile.setDisable(true);
-          remAmountLabel.setTextFill(Color.CRIMSON);
-        }
-
-        HBox box = new HBox(ltrTile.container, remAmountLabel);
-        box.getStyleClass().add("remaining-amount-tile-block");
-        box.setAlignment(Pos.CENTER);
-
-        popupBlankMessage.getChildren().add(box);
       }
+
+      Label remAmountLabel = new Label(String.valueOf(remAmount));
+      remAmountLabel.getStyleClass().add("remaining-amount-tile-label");
+
+      if (remAmount == 0) {
+        ltrTile.setDisable(true);
+        remAmountLabel.setTextFill(Color.CRIMSON);
+      }
+
+      HBox box = new HBox(ltrTile.container, remAmountLabel);
+      box.getStyleClass().add("remaining-amount-tile-block");
+      box.setAlignment(Pos.CENTER);
+
+      popupBlankMessage.getChildren().add(box);
+    }
   }
 }
