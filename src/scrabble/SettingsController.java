@@ -43,9 +43,6 @@ public class SettingsController implements Initializable {
   private JFXButton gameplayVid;
 
   @FXML
-  private JFXButton soundVid;
-
-  @FXML
   private JFXButton backVid;
 
   @FXML
@@ -56,8 +53,6 @@ public class SettingsController implements Initializable {
 
   private boolean fullScreen = DBInformation.isFullscreen(Profile.getPlayer());
   private boolean difficultyHard = DBInformation.isAiDifficultyHard(Profile.getPlayer());
-  private boolean soundOn = DBInformation.isSoundOn(Profile.getPlayer());
-  private double soundLevel = DBInformation.getSoundLevel(Profile.getPlayer());
   private int settingsId = DBInformation.getSettingsId(Profile.getPlayer());
 
 
@@ -70,7 +65,7 @@ public class SettingsController implements Initializable {
             "section-btn-right-current");
       }
     }
-    gameplayVid.getStyleClass().add("section-btn-mid-current");
+    gameplayVid.getStyleClass().add("section-btn-right-current");
     // videoVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
     // soundVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
     // gameplayVid.setStyle(null);
@@ -120,72 +115,6 @@ public class SettingsController implements Initializable {
     mainBlock.getChildren().add(lowerBlock);
   }
 
-  /** Switch to sound settings screen */
-  @FXML
-  public void switchToSound() {
-    for (Node n : switchSection.getChildren()) {
-      if (n instanceof JFXButton) {
-        n.getStyleClass().removeAll("section-btn-left-current", "section-btn-mid-current",
-            "section-btn-right-current");
-      }
-    }
-    soundVid.getStyleClass().add("section-btn-right-current");
-    title.setText("Settings -> Sound");
-    // videoVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
-    // gameplayVid.setStyle("-fx-border-color: black;-fx-background-color: grey");
-    // soundVid.setStyle(null);
-    title.setText("Settings -> Sound");
-    mainBlock.getChildren().clear();
-    JFXToggleButton toggle = new JFXToggleButton();
-    toggle.setSelected(soundOn);
-    toggle.setFont(new Font("System", 28));
-    toggle.setSelected(soundOn);
-    if (soundOn) {
-      toggle.setText("ON");
-    } else {
-      toggle.setText("OFF");
-    }
-    toggle.setOnAction(event -> {
-      if (soundOn) {
-        toggle.setSelected(false);
-        toggle.setText("OFF");
-        soundOn = false;
-      } else {
-        toggle.setSelected(true);
-        toggle.setText("ON");
-        soundOn = true;
-      }
-      DBUpdate.updateSoundSwitcher(settingsId, soundOn);
-    });
-    HBox upperBlock = new HBox();
-    upperBlock.setAlignment(Pos.CENTER);
-    upperBlock.setPrefHeight(100);
-    upperBlock.setPrefWidth(200);
-    upperBlock.getChildren().add(toggle);
-    mainBlock.getChildren().add(upperBlock);
-    HBox lowerBlockOne = new HBox();
-    lowerBlockOne.setAlignment(Pos.CENTER);
-    lowerBlockOne.setPrefWidth(200);
-    lowerBlockOne.setPrefHeight(100);
-    Label level = new Label("Sound Level:");
-    level.setFont(new Font("System", 28));
-    lowerBlockOne.getChildren().add(level);
-    HBox lowerBlockTwo = new HBox();
-    lowerBlockTwo.setAlignment(Pos.CENTER);
-    lowerBlockTwo.setPrefWidth(200);
-    lowerBlockTwo.setPrefHeight(100);
-    Slider slider = new Slider();
-    slider.showTickLabelsProperty().setValue(true);
-    slider.setValue(soundLevel);
-    System.out.println(slider.getValue());
-    slider.setOnMouseReleased(event -> {
-      soundLevel = slider.getValue();
-      DBUpdate.updateSoundLevel(settingsId, soundLevel);
-    });
-    lowerBlockTwo.getChildren().add(slider);
-    lowerBlockOne.getChildren().add(lowerBlockTwo);
-    mainBlock.getChildren().add(lowerBlockOne);
-  }
 
   /** Switch to video settings screen */
   @FXML
@@ -287,6 +216,7 @@ public class SettingsController implements Initializable {
     lowerBlockOne.setPrefHeight(100);
     Label colorLabel = new Label("Game Color:");
     colorLabel.setFont(new Font("System", 26));
+    colorLabel.setVisible(false);
     lowerBlockOne.getChildren().add(colorLabel);
     HBox lowerBlockTwo = new HBox();
     lowerBlockTwo.setAlignment(Pos.CENTER);
@@ -294,6 +224,7 @@ public class SettingsController implements Initializable {
     lowerBlockTwo.setPrefHeight(100);
     ChoiceBox<String> cb = new ChoiceBox();
     cb.getItems().add("some variants of color combinations");
+    cb.setVisible(false);
     lowerBlockTwo.getChildren().add(cb);
     lowerBlockMain.getChildren().add(lowerBlockOne);
     lowerBlockMain.getChildren().add(lowerBlockTwo);
