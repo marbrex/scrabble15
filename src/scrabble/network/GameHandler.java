@@ -214,7 +214,7 @@ public class GameHandler extends Thread {
         this.waitAiTime(); // Only in purpose to show AiPlayer on the field --> 10sek
         LobbyAiProtocol ai = (LobbyAiProtocol) player; // special move method of AiPlayer
         String action = ai.aiMove(); // calculating a move by the AiPlayer.
-        this.waitAiTime();
+        // this.waitAiTime();
         System.out.println("GAME HANDLER : Ai action = " + action);
         // points have to be calculated.
         this.informAiActions(action); // special inform fo AiPlayer moves.
@@ -246,6 +246,9 @@ public class GameHandler extends Thread {
   private void informAiActions(String action) {
     System.out.println("GAME HANDLER : Inform about AiAction");
     JSONObject data = new JSONObject(action);
+    int points = data.getInt("score");
+    int add = points + this.points.get(actual);
+    this.points.replace(actual, add);
     JSONArray words = data.getJSONArray("words");
     // AiPlayer points have to be calculated on a special way
     if (words.length() == 0) {
@@ -254,10 +257,14 @@ public class GameHandler extends Thread {
     } else {
       for (NetworkPlayer player : this.players) {
         if (player instanceof LobbyServerProtocol) {
-          player.sendActionMessage(action, 0, this.actual.getPlayer().getId());
+          player.sendActionMessage(action, this.points.get(this.actual),
+              this.actual.getPlayer().getId());
           // Only LobbyServerProtocols need to be informed.
         }
       }
+      this.host.sendActionMessage(
+          "{\n" + " \"nb\": \"0\",\n" + " \"words\": [\n" + " ],\n" + " \"score\": \"0\"\n" + "}",
+          this.points.get(this.actual), this.actual.getPlayer().getId());
       this.actionlessMove = 0;
 
     }

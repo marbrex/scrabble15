@@ -45,14 +45,20 @@ public class LobbyAiProtocol implements NetworkPlayer {
    * @param field game field of the host
    * @author hendiehl
    */
-  public String aiMove() {
+  public synchronized String aiMove() {
     System.out.println("AI PROTOCOL : Calculate move");
-    //this.ai.makeTurn(); // making the turn
+    // this.ai.makeTurn(); // making the turn
     this.ai.giveLettersToAiPlayer(LetterBag.getInstance());
     Platform.runLater(() -> {
       this.ai.makeTurn(); // making the turn
       this.ai.getController().grid.verifyWordsValidity();
     });
+    try {
+      this.wait(1000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
     return this.ai.createJsonString();
   }
 
