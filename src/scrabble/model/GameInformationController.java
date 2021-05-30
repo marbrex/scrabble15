@@ -31,6 +31,7 @@ public class GameInformationController {
   private String multiplierContent = ""; // own chosen multiplier field
   private String dictionaryContent = ""; // own chosen dictionary file
   private HashMap<NetworkPlayer, Boolean> initCheck;
+  private StartGameHandler starter; // start handler for a network game.
 
   /**
    * Constructor which initialize the class and set up important help classes.
@@ -171,8 +172,8 @@ public class GameInformationController {
   public void lobbyFull() { // do it in the StartHandler thread
     this.status = GameStatusType.GAME; // Is it also end to the clients
                                        // ????????????????????????????????????????????ß
-    StartGameHandler starter = new StartGameHandler(this);
-    starter.start(); // start the starting procedure.
+    this.starter = new StartGameHandler(this);
+    this.starter.start(); // start the starting procedure.
   }
 
   /**
@@ -324,7 +325,7 @@ public class GameInformationController {
   }
 
   /**
-   * Method used by Protocols to add the sequence chosen by a member of the Lobby to the protocols
+   * Method used by Protocols to add the sequence chosen by a member of the Lobby to the protocols.
    * 
    * @param pos position array of the user election
    * @author hendiehl
@@ -343,7 +344,7 @@ public class GameInformationController {
   }
 
   /**
-   * Method to check if all protocols have send the election sequence;
+   * Method to check if all protocols have send the election sequence.
    * 
    * @author hendiehl
    */
@@ -361,11 +362,12 @@ public class GameInformationController {
 
   /**
    * Method to start the game itself by giving the players the opportunity of chose a player
-   * sequence
+   * sequence.
    * 
    * @author hendiehl
    */
   private void startGame() {
+    this.starter = null; // is not in use any more from this pint
     this.fillGame(); // filling game with AiPlayers
     System.out.println("GAME INFO : PLayer list shoud be size 4 is " + this.players.size());
     this.setPlayerSequence(); // setting the sequence for the game
@@ -396,10 +398,10 @@ public class GameInformationController {
   }
 
   /**
-   * Method to inform the players that the Game starts
+   * Method to inform the players that the Game starts.
    * 
    * @author hendiehl
-   * @param players Player list for the started game
+   * @param players Player list for the started game.
    */
   private void sendGameMessage(ArrayList<Player> players) {
     for (NetworkPlayer player : this.players) {
@@ -408,33 +410,34 @@ public class GameInformationController {
   }
 
   /**
-   * Method to end a player move before the maximum time goes by
+   * Method to end a player move before the maximum time goes by.
    * 
    * @param action String representation of the action a player performed in his last move.
    * @param points Points a player gain with his last move action.
    * @author hendiehl
    */
-  public void endMoveForTime(String action, int points) { // here freeze
+  public void endMoveForTime(String action, int points) {
     System.out.println("GAME INFO : Interupt play move");
-    this.gameHandler.endMoveForTime(action, points); // Perhaps controlling the interaction so that
-                                                     // only the
-    // player onMove can notify ?
+    this.gameHandler.endMoveForTime(action, points);
   }
 
   /**
-   * Method to shutdown a Lobby or game
+   * Method to shutdown a Lobby or game.
    * 
    * @author hendiehl
    */
   public void shutdown() {
     this.mainServer.shutdown();
+    if (this.starter != null) {
+      this.starter.shutdown();
+    }
     if (this.gameHandler != null) {
       this.gameHandler.shutdown();
     }
   }
 
   /**
-   * Method to fill the list for a network game with AIPLayers if the lobby isn't full
+   * Method to fill the list for a network game with AIPLayers if the lobby isn't full.
    * 
    * @author hendiehl
    */
