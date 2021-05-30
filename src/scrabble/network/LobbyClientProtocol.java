@@ -771,7 +771,11 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     // System.out.println("Send shutdown message");
     Message msg = new Message(MessageType.SHUTDOWN, this.player);
     if (this.chat != null) {
-      this.chat.sendLeaveMessageToServer();
+      if (this.gameScreen != null) {
+        this.chat.sendLeaveGameToServer();
+      } else {
+        this.chat.sendLeaveMessageToServer();
+      }
     }
     if (this.server != null) {
       if (!this.server.isClosed()) {
