@@ -39,6 +39,7 @@ import javafx.scene.paint.Paint;
 import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import scrabble.dbhandler.DBUpdate;
 import scrabble.game.Grid;
 import scrabble.game.LeaderBoard;
 import scrabble.game.LetterBag;
@@ -458,6 +459,7 @@ public class GameController {
                   }
 
                   score += word.getPoints();
+                  protocol.sendWordMessage(spelling);
                 }
               }
 
@@ -717,6 +719,7 @@ public class GameController {
       if (this.protocol != null) {
         this.shutdown();
       }
+      DBUpdate.updateGamesLost(Profile.getPlayer());
       changeScene("/fxml/MainPage.fxml", "/css/mainMenu.css");
     });
 
@@ -1185,7 +1188,7 @@ public class GameController {
   public void getAmountOfAnswer(int answer) {
 
   }
-  
+
   public void getAmountOfEveryTileAnswer(ArrayList<Pair<Character, Integer>> amount) {
     Platform.runLater(() -> {
 
