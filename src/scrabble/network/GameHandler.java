@@ -244,31 +244,31 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   private void informAiActions(String action) {
-    System.out.println("GAME HANDLER : Inform about AiAction");
-    JSONObject data = new JSONObject(action);
-    int points = data.getInt("score");
-    int add = points + this.points.get(actual);
-    this.points.replace(actual, add);
-    JSONArray words = data.getJSONArray("words");
-    // AiPlayer points have to be calculated on a special way
-    if (words.length() == 0) {
-      System.out.println("GAME HANDLER : Actionless Ai move");
-      this.actionlessMove++;
-    } else {
-      for (NetworkPlayer player : this.players) {
-        if (player instanceof LobbyServerProtocol) {
-          player.sendActionMessage(action, this.points.get(this.actual),
-              this.actual.getPlayer().getId());
-          // Only LobbyServerProtocols need to be informed.
+    if (!this.isShutdown) {
+      System.out.println("GAME HANDLER : Inform about AiAction");
+      JSONObject data = new JSONObject(action);
+      int points = data.getInt("score");
+      int add = points + this.points.get(actual);
+      this.points.replace(actual, add);
+      JSONArray words = data.getJSONArray("words");
+      // AiPlayer points have to be calculated on a special way
+      if (words.length() == 0) {
+        System.out.println("GAME HANDLER : Actionless Ai move");
+        this.actionlessMove++;
+      } else {
+        for (NetworkPlayer player : this.players) {
+          if (player instanceof LobbyServerProtocol) {
+            player.sendActionMessage(action, this.points.get(this.actual),
+                this.actual.getPlayer().getId());
+            // Only LobbyServerProtocols need to be informed.
+          }
         }
+        this.host.sendActionMessage(
+            "{\n" + " \"nb\": \"0\",\n" + " \"words\": [\n" + " ],\n" + " \"score\": \"0\"\n" + "}",
+            this.points.get(this.actual), this.actual.getPlayer().getId());
+        this.actionlessMove = 0;
       }
-      this.host.sendActionMessage(
-          "{\n" + " \"nb\": \"0\",\n" + " \"words\": [\n" + " ],\n" + " \"score\": \"0\"\n" + "}",
-          this.points.get(this.actual), this.actual.getPlayer().getId());
-      this.actionlessMove = 0;
-
     }
-
   }
 
   /**
@@ -323,9 +323,11 @@ public class GameHandler extends Thread {
   private synchronized void waitMazimumTime() { // here a illegal monitor state exception occurs
     System.out.println("GAME HANDLER : Wait move time");
     try {
-      this.wait(); // wait until player inform server
+      if (!this.isShutdown) {
+        this.wait(); // wait until player inform server
+      }
     } catch (InterruptedException e) {
-      // Doing something change to a other approach different message for endTurn and forceEndTurn
+      System.err.println("GAME HANDLER : Critical interupt");
     }
   }
 
@@ -379,11 +381,13 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   private void informActions(String action, int points) {
-    for (NetworkPlayer player : this.players) { // go through them
-      if (!player.equals(this.actual)) { // not the actual
-        if (!(player instanceof LobbyAiProtocol)) { // no AiPlayers they get information from host
-                                                    // grid
-          player.sendActionMessage(action, points, this.actual.getPlayer().getId());
+    if (!this.isShutdown) {
+      for (NetworkPlayer player : this.players) { // go through them
+        if (!player.equals(this.actual)) { // not the actual
+          if (!(player instanceof LobbyAiProtocol)) { // no AiPlayers they get information from host
+                                                      // grid
+            player.sendActionMessage(action, points, this.actual.getPlayer().getId());
+          }
         }
       }
     }
@@ -395,9 +399,10 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   public void shutdown() {
+    System.out.println("GAME HANDLER : Shutdown initialized");
     this.isShutdown = true;
     this.gameIsOn = false;
-    this.invokeTurnPhase(); // In case the thread is waiting
+    this.interrupt();
   }
 
   /**

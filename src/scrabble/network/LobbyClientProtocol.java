@@ -601,6 +601,8 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     this.shutdownProtocol(false);
     if (this.gameLobbyController != null) {
       this.gameLobbyController.openMenu();
+    } else if (this.gameScreen != null) {
+      this.gameScreen.changeScene("/fxml/MainPage.fxml", "/css/mainMenu.css");
     } else {
       this.gameFinderController.openMenu();
     }

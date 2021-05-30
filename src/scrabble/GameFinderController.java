@@ -2,7 +2,8 @@ package scrabble;
 
 import java.io.IOException;
 import java.net.ConnectException;
-
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import com.jfoenix.controls.JFXRadioButton;
@@ -206,6 +207,7 @@ public class GameFinderController implements LobbyController {
   @FXML
   private void initialize() {
     this.loadBackground();
+    this.setDefaultAdress();
     System.out.println("GAME FINDER : Activate auto search");
     clientProtocol = new LobbyClientProtocol(this, this.hostIP);
     clientProtocol.start();
@@ -400,13 +402,29 @@ public class GameFinderController implements LobbyController {
     if (this.adressSwitch.isSelected()) {
       this.hostAdress.setVisible(true);
       this.setAdress.setVisible(true);
+      this.setStatusLabel("Please type in host address");
     } else {
-      this.hostIP = "localhost";
+      this.setDefaultAdress();
       this.setStatusLabel("The local host is now the address");
       this.setStatusLabel2("Please type in a new port");
       this.hostAdress.setVisible(false);
       this.setAdress.setVisible(false);
     }
+  }
+
+  /**
+   * Method to set the default host iP.
+   * 
+   * @author hendiehl
+   */
+  private void setDefaultAdress() {
+    String adr = "localhost";
+    try {
+      adr = InetAddress.getLocalHost().getHostAddress();
+    } catch (UnknownHostException e) {
+      adr = "localhost"; // making sure some address is always set
+    }
+    this.hostIP = adr;
   }
 
   /**
