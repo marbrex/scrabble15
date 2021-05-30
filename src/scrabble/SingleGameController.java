@@ -520,8 +520,6 @@ public class SingleGameController extends GameController {
             Platform.runLater(() -> {
                 if (bag.getAmount() >= 7) {
                     letterBar.setTiles(bag.grabRandomTiles(7));
-                } else {
-                    letterBar.setTiles(bag.grabRandomTiles(bag.getAmount()));
                 }
                 bagCount.setText(String.valueOf(bag.getAmount()));
             });
