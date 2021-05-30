@@ -68,7 +68,7 @@ public class AiPlayer extends Player implements Serializable {
      * @return true, if successful
      * @author astarche
      */
-    public boolean findWord(ArrayList<LetterTile> letters, String toFind) {
+    private boolean findWord(ArrayList<LetterTile> letters, String toFind) {
         boolean found = false;
         if (hasLettersOf(getValues(letters), toFind)) {
             String hl = clear(getValues(letters).toString(), toFind);
@@ -98,7 +98,7 @@ public class AiPlayer extends Player implements Serializable {
      * @return the list
      * @author astarche
      */
-    public ArrayList<String> findWords(ArrayList<LetterTile> letters) {
+    private ArrayList<String> findWords(ArrayList<LetterTile> letters) {
         ArrayList<String> foundWords = new ArrayList<String>();
         for (String word : Dictionary.getWords()) {
             if (this.findWord(letters, word)) {
@@ -116,7 +116,7 @@ public class AiPlayer extends Player implements Serializable {
      * @return true, if successful
      * @author astarche
      */
-    public boolean hasLettersOf(ArrayList<Character> currentLetters, String word) {
+    private boolean hasLettersOf(ArrayList<Character> currentLetters, String word) {
         ArrayList<Character> wordList = new ArrayList<Character>();
         for (int i = 0; i < word.length(); i++) {
             wordList.add(word.charAt(i));
@@ -187,7 +187,7 @@ public class AiPlayer extends Player implements Serializable {
      * @return the values
      * @author astarche
      */
-    public ArrayList<Character> getValues(ArrayList<LetterTile> letters) {
+    private ArrayList<Character> getValues(ArrayList<LetterTile> letters) {
         ArrayList<Character> values = new ArrayList<Character>();
         for (LetterTile letter : letters) {
             values.add(letter.getLetter());
@@ -203,7 +203,7 @@ public class AiPlayer extends Player implements Serializable {
      * @return string with letters that are only used in the searched word
      * @author astarche
      */
-    public String clear(String currentLetters, String word) {
+    private String clear(String currentLetters, String word) {
         StringBuilder cleared = new StringBuilder();
         for (int i = 0; i < currentLetters.length(); i++) {
             if (word.contains(Character.toString(currentLetters.charAt(i)))) {
@@ -832,17 +832,14 @@ public class AiPlayer extends Player implements Serializable {
                 ailetters.remove(ailetters.get(findTile(part.charAt(i))));
             } else {
                 if (findTile('\0') != -1) {
-                    //ailetters.get(findTile('\0'));
                     LetterTile blank = new LetterTile(part.charAt(i), 0, 10, gc);
                     ailetters.remove(ailetters.get(findTile('\0')));
-                    //ailetters.add(new LetterTile(part.charAt(i), 0, 10, gc));
                     if (i == part.length() - 1) {
                         tile = blank;
                     }
                     gc.grid.setSlotContent(column, row - (i + 1), blank);
                     System.out.println("TILE ADDED TOP");
                     System.out.println("BOT: REMOVED TILE - BLANK TILE");
-                    // ailetters.remove(ailetters.get(findTile(part.charAt(i))));
                 } else {
                     return null;
                 }
@@ -870,23 +867,18 @@ public class AiPlayer extends Player implements Serializable {
                 }
                 gc.grid.setSlotContent(column, row + (i + 1), ailetters.get(findTile(part.charAt(i))));
                 System.out.println("TILE ADDED BOTTOM");
-                // wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
                 System.out.println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
                 ailetters.remove(ailetters.get(findTile(part.charAt(i))));
             } else {
                 if (findTile('\0') != -1) {
-                    //ailetters.get(findTile('\0'));
                     LetterTile blank = new LetterTile(part.charAt(i), 0, 10, gc);
                     ailetters.remove(ailetters.get(findTile('\0')));
-                    //ailetters.add(new LetterTile(part.charAt(i), 0, 10, gc));
                     if (i == part.length() - 1) {
                         tile = blank;
                     }
                     gc.grid.setSlotContent(column, row + (i + 1), blank);
                     System.out.println("TILE ADDED BOTTOM");
-                    //wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
                     System.out.println("BOT: REMOVED TILE - BLANK TILE");
-                    //ailetters.remove(ailetters.get(findTile(part.charAt(i))));
                 } else {
                     return null;
                 }
@@ -915,23 +907,18 @@ public class AiPlayer extends Player implements Serializable {
                 }
                 gc.grid.setSlotContent(column - (i + 1), row, ailetters.get(findTile(part.charAt(i))));
                 System.out.println("TILE ADDED LEFT");
-                // wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
                 System.out.println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
                 ailetters.remove(ailetters.get(findTile(part.charAt(i))));
             } else {
                 if (findTile('\0') != -1) {
-                    //ailetters.get(findTile('\0'));
                     LetterTile blank = new LetterTile(part.charAt(i), 0, 10, gc);
                     ailetters.remove(ailetters.get(findTile('\0')));
-                    //ailetters.add(new LetterTile(part.charAt(i), 0, 10, gc));
                     if (i == part.length() - 1) {
                         tile = blank;
                     }
                     gc.grid.setSlotContent(column - (i + 1), row, blank);
                     System.out.println("TILE ADDED LEFT");
-                    //wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
                     System.out.println("BOT: REMOVED TILE - BLANK TILE");
-                    //ailetters.remove(ailetters.get(findTile(part.charAt(i))));
                 } else {
                     return null;
                 }
@@ -959,23 +946,18 @@ public class AiPlayer extends Player implements Serializable {
                 }
                 gc.grid.setSlotContent(column + (i + 1), row, ailetters.get(findTile(part.charAt(i))));
                 System.out.println("TILE ADDED RIGHT");
-                //wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
                 System.out.println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
                 ailetters.remove(ailetters.get(findTile(part.charAt(i))));
             } else {
                 if (findTile('\0') != -1) {
-                    //ailetters.get(findTile('\0'));
                     LetterTile blank = new LetterTile(part.charAt(i), 0, 10, gc);
                     ailetters.remove(ailetters.get(findTile('\0')));
-                    //ailetters.add(new LetterTile(part.charAt(i), 0, 10, gc));
                     if (i == part.length() - 1) {
                         tile = blank;
                     }
                     gc.grid.setSlotContent(column + (i + 1), row, blank);
                     System.out.println("TILE ADDED RIGHT");
-                    // wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
                     System.out.println("BOT: REMOVED TILE - BLANK TILE");
-                    // ailetters.remove(ailetters.get(findTile(part.charAt(i))));
                 } else {
                     return null;
                 }
