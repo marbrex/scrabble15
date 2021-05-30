@@ -679,7 +679,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
       if (this.server != null) {
         this.out.shutdwon(this.server); // shutdown the queue
       }
-      this.out.shutdownEnsurement(); // ensure sender shutdown
+      if (this.out != null) { // is the case if protocol hasn't a connection.
+        this.out.shutdownEnsurement(); // ensure sender shutdown
+      }
       // System.out.println("connection closed");
     } catch (IOException e) {
       // TODO Auto-generated catch block

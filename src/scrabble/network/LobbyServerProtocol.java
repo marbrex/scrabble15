@@ -386,7 +386,9 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       if (this.client != null) {
         this.out.shutdwon(this.client); // shutdown the queue
       }
-      this.out.shutdownEnsurement(); // ensure sender shutdown
+      if (this.out != null) {
+        this.out.shutdownEnsurement(); // ensure sender shutdown
+      }
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
