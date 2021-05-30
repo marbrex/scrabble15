@@ -77,12 +77,22 @@ public class SenderHoldBackQueue {
       }
     }
     try {
-      this.wait(500); // giving server time receive the messages.
+      this.wait(500); // giving server time to receive the messages.
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
     s.close();
+    this.sender.inform();
+  }
+
+  /**
+   * Method ensure thread shutdown.
+   * 
+   * @author hendiehl
+   */
+  public void shutdownEnsurement() {
+    this.isRunning = false;
     this.sender.inform();
   }
 
@@ -96,8 +106,6 @@ public class SenderHoldBackQueue {
      * @author hendiehl
      */
 
-    private boolean shutdown;
-
 
     /**
      * Run method of the thread class.
@@ -107,9 +115,6 @@ public class SenderHoldBackQueue {
     public void run() {
       while (isRunning) {
         send();
-      }
-      if (shutdown) {
-
       }
       System.err.println("SENDER OUTRUN");
     }

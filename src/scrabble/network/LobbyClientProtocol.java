@@ -8,9 +8,7 @@ import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collection;
 import com.google.common.collect.Multiset;
 import scrabble.model.HumanPlayer;
 import scrabble.model.LetterBagType;
@@ -21,7 +19,6 @@ import scrabble.GameFinderController;
 import scrabble.GameLobbyController;
 import scrabble.dbhandler.DBUpdate;
 import scrabble.game.LetterBag.Tile;
-import scrabble.game.LetterTile;
 import scrabble.model.GameStatusType;
 import scrabble.model.MessageType;
 
@@ -253,6 +250,8 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
           break;
         case INTAM:
           this.reactToAmount(message);
+          break;
+        default:
           break;
       }
     } catch (EOFException e) {
@@ -680,6 +679,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
       if (this.server != null) {
         this.out.shutdwon(this.server); // shutdown the queue
       }
+      this.out.shutdownEnsurement(); // ensure sender shutdown
       // System.out.println("connection closed");
     } catch (IOException e) {
       // TODO Auto-generated catch block

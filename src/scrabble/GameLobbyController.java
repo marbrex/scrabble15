@@ -652,6 +652,7 @@ public class GameLobbyController implements LobbyController {
    */
   @FXML
   private void changedBoxAction(ActionEvent e) {
+    @SuppressWarnings("unchecked")
     JFXComboBox<String> box = (JFXComboBox<String>) e.getSource();
     String choosen = box.getValue();
     // System.out.println(choosen);
