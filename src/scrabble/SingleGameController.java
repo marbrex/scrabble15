@@ -17,6 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.animation.KeyValue;
@@ -26,7 +28,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -82,6 +86,8 @@ public class SingleGameController extends GameController {
 
   private int currentPlayerId;
 
+  private final int roundTime = 10;
+
   private void initData(int nbBots) {
     this.nbBots = nbBots;
     this.nbPlayers = nbBots + 1;
@@ -94,9 +100,12 @@ public class SingleGameController extends GameController {
 
     this.bots = new ArrayList<>();
 
+    System.out.println("Bots' IDs are: ");
     for (int i = 1; i <= nbBots; i++) {
       AiPlayer bot = new AiPlayer();
       bot.setId(i);
+      bot.setController(this);
+      System.out.println(bot.getId());
 
       this.bots.add(bot);
       this.players.add(bot);
@@ -127,6 +136,7 @@ public class SingleGameController extends GameController {
   }
 
   public void startMove(int turn, int id) {
+    System.out.println("----- START startMove() ------");
     setRound();
     setPlayerActive(id);
 
@@ -134,11 +144,26 @@ public class SingleGameController extends GameController {
     int freeSlotsCount = letterBar.getCountFreeSlots();
     if (freeSlotsCount > 0) {
 
-      letterBar.fillGaps(bag.grabRandomTiles(freeSlotsCount));
-      letterBar.display();
+      if (currentPlayerId == 0) {
+        // player
+        System.out.println("Player is on move !");
+        letterBar.fillGaps(bag.grabRandomTiles(freeSlotsCount));
+        letterBar.display();
+      }
 
-      bagCount.setText(String.valueOf(bag.getAmount()));
     }
+
+    if (currentPlayerId != 0) {
+      // bot
+      System.out.println("BOT " + id + " is on move !");
+      bots.forEach(bot -> {
+        if (bot.getId() == id) {
+          bot.giveLettersToAiPlayer(bag);
+        }
+      });
+    }
+
+    bagCount.setText(String.valueOf(bag.getAmount()));
 
     // enabling every LetterTile in Bar
     letterBar.getTilesInBar().forEach(tile -> {
@@ -219,6 +244,22 @@ public class SingleGameController extends GameController {
     };
 
     timer.scheduleAtFixedRate(updateLabel, 0, 1000);
+
+    if (currentPlayerId != 0) {
+      // bot
+      bots.forEach(bot -> {
+        if (bot.getId() == id) {
+          bot.makeTurn();
+          boolean validMove = grid.verifyWordsValidity();
+          if (validMove) {
+            timer.purge();
+            endMove();
+          }
+        }
+      });
+    }
+
+    System.out.println("----- END startMove() ------");
   }
 
   /**
@@ -261,8 +302,11 @@ public class SingleGameController extends GameController {
       addToScoreOfPlayer(currentPlayerId, score);
       bagCount.setText(String.valueOf(bag.getAmount()));
 
-      int nextId = (currentPlayerId + 1) % nbPlayers;
-      startMove(++roundCounter, nextId);
+      currentPlayerId = (currentPlayerId + 1) % nbPlayers;
+      System.out.println("\nNext player ID is : " + currentPlayerId);
+
+      if (bag.getAmount() == 0) {
+      }
 
     }
 
@@ -285,6 +329,7 @@ public class SingleGameController extends GameController {
     });
 
     quitGame.setOnMouseClicked(event -> {
+      bag.fillBag();
       changeScene("/fxml/MainPage.fxml", "/css/mainMenu.css");
     });
 
