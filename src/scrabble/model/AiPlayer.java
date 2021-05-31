@@ -370,14 +370,13 @@ public class AiPlayer extends Player implements Serializable {
     }
     Word placed;
     if (word.charAt(0) == centralTile.getLetter()) {
-      placed = new Word(centralTile, last, gc);
+      return new Word(centralTile, last, gc);
     } else if (word.charAt(word.length() - 1) == centralTile.getLetter()) {
-      placed = new Word(first, centralTile, gc);
+      return new Word(first, centralTile, gc);
     } else {
-      placed = new Word(first, last, gc);
+      return new Word(first, last, gc);
     }
-    placed.newlyPlaced = false;
-    return placed;
+
   }
 
   /**
@@ -506,9 +505,7 @@ public class AiPlayer extends Player implements Serializable {
         return null;
       }
     }
-    Word placed = new Word(first, last, gc);
-    placed.newlyPlaced = false;
-    return placed;
+    return new Word(first, last, gc);
   }
 
   /**
@@ -812,9 +809,7 @@ public class AiPlayer extends Player implements Serializable {
       ailetters.remove(ailetters.get(findTile(word.charAt(i))));
       row++;
     }
-    Word placed = new Word(first, last, gc);
-    placed.newlyPlaced = false;
-    return placed;
+    return new Word(first, last, gc);
   }
 
   /**
