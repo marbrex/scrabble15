@@ -156,7 +156,7 @@ public class GameController {
 
   public Timer timer;
 
-  public final int roundTime = 2;
+  public final int roundTime = 10;
 
   @FXML
   public VBox playersBlock;
