@@ -468,7 +468,6 @@ public class GameController {
                   }
 
                   score += word.getPoints();
-                  protocol.sendWordMessage(spelling);
                 }
               }
 
