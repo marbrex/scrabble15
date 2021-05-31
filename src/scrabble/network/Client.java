@@ -1,12 +1,11 @@
 package scrabble.network;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.SocketException;
-import java.util.ArrayList;
 
 
 /**
@@ -28,7 +27,6 @@ public class Client extends Thread {
   /**
    * Constructor for test-application which is not implemented in actual game.
    * 
-   * @param cc ChatController of test-application
    * @param username Name of the connected user
    * @author astarche
    * @author skeskinc
@@ -42,14 +40,15 @@ public class Client extends Thread {
   /**
    * Constructor to print chat Message to an GameLobby or an GameField Version for an Lobby Client.
    * 
-   * @param client protocol of the corresponding user
-   * @param port port on which the Chat server listen -> given by the network protocol
-   * @param username name of the Human Player instance
+   * @param client protocol of the corresponding user.
+   * @param port port on which the Chat server listen -> given by the network protocol.
+   * @param username name of the Human Player instance.
+   * @param ip of the host for connection.
    * @author hendiehl
    */
-  public Client(NetworkScreen client, int port, String username) {
+  public Client(NetworkScreen client, int port, String username, String ip) {
     this.port = port;
-    this.hostName = "localhost";
+    this.hostName = ip;
     this.client = client;
     this.username = username;
   }

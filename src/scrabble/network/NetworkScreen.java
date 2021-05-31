@@ -3,6 +3,7 @@ package scrabble.network;
 import java.util.ArrayList;
 import scrabble.GameController;
 import scrabble.GameLobbyController;
+import scrabble.game.LetterBag.Tile;
 import scrabble.model.Player;
 
 public interface NetworkScreen {
@@ -38,6 +39,10 @@ public interface NetworkScreen {
 
   public void setLobbyController(GameLobbyController glc);
 
+  public void sendWordMessage(String word);
+
+  public void sendPassMessage();
+
   public ArrayList<Player> getPlayerList(); // need to send the new list after election
   // Methods of the LetterBag Class for Network use
 
@@ -56,5 +61,11 @@ public interface NetworkScreen {
   public void getRemainingTiles();
 
   public void getAmount();
+
+  public void exchangeLetterTiles(ArrayList<Tile> tilesToExchange);
+
   // others will follow
+  public void getAmountOf(char letter);
+
+  public void getAmountOfEveryTile();
 }

@@ -7,7 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import scrabble.GameController;
-import scrabble.model.Letter;
 
 /**
  * scrabble.game.Grid Class is used to stock the internal state of the letters grid.

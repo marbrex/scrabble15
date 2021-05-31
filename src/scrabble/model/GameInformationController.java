@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import com.google.common.collect.Multiset;
+import javafx.util.Pair;
 import scrabble.game.LetterBag.Tile;
 import scrabble.game.LetterBag;
 import scrabble.network.GameHandler;
 import scrabble.network.LobbyAiProtocol;
+import scrabble.network.LobbyHostProtocol;
 import scrabble.network.LobbyServer;
 import scrabble.network.LobbyServerProtocol;
 import scrabble.network.NetworkPlayer;
@@ -29,6 +31,7 @@ public class GameInformationController {
   private String multiplierContent = ""; // own chosen multiplier field
   private String dictionaryContent = ""; // own chosen dictionary file
   private HashMap<NetworkPlayer, Boolean> initCheck;
+  private StartGameHandler starter; // start handler for a network game.
 
   /**
    * Constructor which initialize the class and set up important help classes.
@@ -121,7 +124,7 @@ public class GameInformationController {
 
   /**
    * Method to add players to a game. Only adds a player if the maximum of 4 players are not
-   * reached. Will be executed by several threads
+   * reached. Will be executed by several threads.
    * 
    * @param player player which want to be added
    * @return information about the success of add procedure
@@ -140,16 +143,23 @@ public class GameInformationController {
   }
 
   /**
-   * Method to check maximum player amount in the lobby and activate the game procedure
+   * Method to check maximum player amount in the lobby and inform the host about activating the
+   * game procedure.
    * 
    * @author hendiehl
    */
-  public void checkLobbySize() { // here add a condition that it will only be tested if not in Game
-                                 // --> because of after game lobby
+  public void checkLobbySize() {
     if (this.players.size() == 4) {
       System.err.println("Maximum Player Amount Joined");
-      this.lobbyFull(); // will be called before the last lobby updates
-                        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      // The host is GameInfoController internal every time the first player in list.
+      if (this.players.get(0) instanceof LobbyHostProtocol) {
+        LobbyHostProtocol host = (LobbyHostProtocol) this.players.get(0);
+        host.informAboutLobby();
+      }
+      /*
+       * Condition is only needed because of test requirements, a host is every time a part of the
+       * lobby, but during JUnit tests, special TestProtocols are used.
+       */
     }
   }
 
@@ -162,8 +172,8 @@ public class GameInformationController {
   public void lobbyFull() { // do it in the StartHandler thread
     this.status = GameStatusType.GAME; // Is it also end to the clients
                                        // ????????????????????????????????????????????ß
-    StartGameHandler starter = new StartGameHandler(this);
-    starter.start(); // start the starting procedure.
+    this.starter = new StartGameHandler(this);
+    this.starter.start(); // start the starting procedure.
   }
 
   /**
@@ -243,15 +253,15 @@ public class GameInformationController {
    * 
    * @author hendiehl
    */
-  public synchronized void deletePlayer(NetworkPlayer player) { // Possibility of a Deadlock,
-                                                                // because of the election
+  public synchronized void deletePlayer(NetworkPlayer player) {
+    System.out.println("GAME HANDLER : Player deletion");
     if (this.players.contains(player)) {
       this.players.remove(player);
       this.check.remove(player);
       if (this.gameHandler == null) { // the game doesn't started
         this.updateAllLobbys();
-        this.checkGameStart(); // just in case that a player left the lobby directly after all other
-                               // players send their sequence
+        this.checkGameStart();
+        System.out.println("GAME HANDLER : Player delete in Lobby");
       } else { // the game is on
         this.initCheck.remove(player); // deleting him from the loading check map.
         this.invokeGameHandler(); // prevent deadlock while waiting for loading.
@@ -315,7 +325,7 @@ public class GameInformationController {
   }
 
   /**
-   * Method used by Protocols to add the sequence chosen by a member of the Lobby to the protocols
+   * Method used by Protocols to add the sequence chosen by a member of the Lobby to the protocols.
    * 
    * @param pos position array of the user election
    * @author hendiehl
@@ -334,7 +344,7 @@ public class GameInformationController {
   }
 
   /**
-   * Method to check if all protocols have send the election sequence;
+   * Method to check if all protocols have send the election sequence.
    * 
    * @author hendiehl
    */
@@ -352,11 +362,12 @@ public class GameInformationController {
 
   /**
    * Method to start the game itself by giving the players the opportunity of chose a player
-   * sequence
+   * sequence.
    * 
    * @author hendiehl
    */
   private void startGame() {
+    this.starter = null; // is not in use any more from this pint
     this.fillGame(); // filling game with AiPlayers
     System.out.println("GAME INFO : PLayer list shoud be size 4 is " + this.players.size());
     this.setPlayerSequence(); // setting the sequence for the game
@@ -387,10 +398,10 @@ public class GameInformationController {
   }
 
   /**
-   * Method to inform the players that the Game starts
+   * Method to inform the players that the Game starts.
    * 
    * @author hendiehl
-   * @param players Player list for the started game
+   * @param players Player list for the started game.
    */
   private void sendGameMessage(ArrayList<Player> players) {
     for (NetworkPlayer player : this.players) {
@@ -399,33 +410,34 @@ public class GameInformationController {
   }
 
   /**
-   * Method to end a player move before the maximum time goes by
+   * Method to end a player move before the maximum time goes by.
    * 
    * @param action String representation of the action a player performed in his last move.
    * @param points Points a player gain with his last move action.
    * @author hendiehl
    */
-  public void endMoveForTime(String action, int points) { // here freeze
+  public void endMoveForTime(String action, int points) {
     System.out.println("GAME INFO : Interupt play move");
-    this.gameHandler.endMoveForTime(action, points); // Perhaps controlling the interaction so that
-                                                     // only the
-    // player onMove can notify ?
+    this.gameHandler.endMoveForTime(action, points);
   }
 
   /**
-   * Method to shutdown a Lobby or game
+   * Method to shutdown a Lobby or game.
    * 
    * @author hendiehl
    */
   public void shutdown() {
     this.mainServer.shutdown();
+    if (this.starter != null) {
+      this.starter.shutdown();
+    }
     if (this.gameHandler != null) {
       this.gameHandler.shutdown();
     }
   }
 
   /**
-   * Method to fill the list for a network game with AIPLayers if the lobby isn't full
+   * Method to fill the list for a network game with AIPLayers if the lobby isn't full.
    * 
    * @author hendiehl
    */
@@ -516,6 +528,17 @@ public class GameInformationController {
   }
 
   /**
+   * Method to get access to the exchangeLetterTiles method in a network game.
+   * 
+   * @param tilesToExchange
+   * @return exchanged tiles.
+   * @author hendiehl
+   */
+  public Multiset<Tile> exchangeLetterTiles(ArrayList<Tile> tilesToExchange) {
+    return this.bag.exchangeTiles(tilesToExchange);
+  }
+
+  /**
    * Method to get access to the getAmount method in an network game.
    * 
    * @return amount of the letter bag
@@ -578,7 +601,7 @@ public class GameInformationController {
    * inform the handler that the game field is loaded by a specific player. After all players are
    * filled the GameHandler will start his procedure.
    * 
-   * @param NetworkPlayer which game field finished the initialization
+   * @param player which game field finished the initialization
    * @author hendiehl
    */
   public synchronized void informLoading(NetworkPlayer player) {
@@ -676,5 +699,38 @@ public class GameInformationController {
     for (NetworkPlayer player : this.players) {
       player.sendBagSize(this.bag.getAmount());
     }
+  }
+
+  /**
+   * Method to fill the LetterBag with new LetterTiles after a network game ended. In reason to set
+   * the LetterBag ready for a new game.
+   * 
+   * @author hendiehl
+   */
+  public void fillBag() {
+    if (this.bag != null) {
+      this.bag.fillBag();
+    }
+  }
+
+  /**
+   * Method which returns the remaining quantity of the specified letter tile from the LetterBag.
+   * 
+   * @param letter Letter which should be check.
+   * @return amount of letters.
+   * @author hendrik
+   */
+  public int getAmountOf(char letter) {
+    return this.bag.getAmountOf(letter);
+  }
+
+  /**
+   * Method which returns the remaining quantity of the specified letter tile.
+   * 
+   * @return quantity of Tile
+   * @author hendiehl
+   */
+  public ArrayList<Pair<Character, Integer>> getAmountOfEveryTile() {
+    return this.bag.getAmountOfEveryTile();
   }
 }

@@ -29,15 +29,19 @@ import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.util.Pair;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import scrabble.dbhandler.DBUpdate;
 import scrabble.game.Grid;
 import scrabble.game.LeaderBoard;
 import scrabble.game.LetterBag;
@@ -86,7 +90,7 @@ public class GameController {
    * Shuffle button, which shuffles the LetterBar.
    */
   @FXML
-  public JFXButton shuffleBtn;
+  public JFXButton exchangeBtn;
 
   @FXML
   public StackPane bagBtn;
@@ -152,7 +156,7 @@ public class GameController {
 
   public Timer timer;
 
-  public final int roundTime = 2;
+  public final int roundTime = 10;
 
   @FXML
   public VBox playersBlock;
@@ -234,11 +238,15 @@ public class GameController {
    */
   public void shutdown() {
     System.out.println("GAME CONTROLLER : Shutdown initialized");
-    if (this.protocol instanceof LobbyClientProtocol) {
-      ((LobbyClientProtocol) this.protocol).shutdownProtocol(true);
-    } else if (this.protocol instanceof LobbyHostProtocol) {
-      ((LobbyHostProtocol) this.protocol).shutdown();
-
+    if (this.protocol != null) { // could be a non network game.
+      if (this.protocol instanceof LobbyClientProtocol) {
+        ((LobbyClientProtocol) this.protocol).shutdownProtocol(true);
+      } else if (this.protocol instanceof LobbyHostProtocol) {
+        ((LobbyHostProtocol) this.protocol).shutdown();
+      }
+      if (this.timer != null) {
+        this.timer.cancel(); // cancel the timer
+      }
     }
   }
 
@@ -292,7 +300,7 @@ public class GameController {
 
           // enabling every action button
           okBtn.setMouseTransparent(false);
-          shuffleBtn.setMouseTransparent(false);
+          exchangeBtn.setMouseTransparent(false);
 
           // starting the timer (10 minutes for each turn)
           timer = new Timer(true);
@@ -368,8 +376,8 @@ public class GameController {
       }
 
       /**
-       * This function will be executed when the player's turn is over.
-       * By time over or by manual turn ending.
+       * This function will be executed when the player's turn is over. By time over or by manual
+       * turn ending.
        *
        * @author ekasmamy
        */
@@ -391,7 +399,7 @@ public class GameController {
 
             // disabling every action button
             okBtn.setMouseTransparent(true);
-            shuffleBtn.setMouseTransparent(true);
+            exchangeBtn.setMouseTransparent(true);
 
             timer.cancel();
 
@@ -400,12 +408,14 @@ public class GameController {
 
               ArrayList<Word> wordsInGrid = grid.words;
               int score = 0;
-              StringBuilder action = new StringBuilder("{\n"
-                  + " \"nb\": \"" + wordsInGrid.size() + "\",\n"
-                  + " \"words\": [\n");
+              StringBuilder action = new StringBuilder(
+                  "{\n"
+                      + " \"nb\": \"" + wordsInGrid.size() + "\",\n"
+                      + " \"words\": [\n");
 
               for (int j = 0; j < wordsInGrid.size(); j++) {
                 Word word = wordsInGrid.get(j);
+
                 System.out.println("\nCurrent word: " + word.getWordAsString());
                 System.out.println("is newly placed: " + word.newlyPlaced);
                 System.out.println("is frozen: " + word.frozen);
@@ -413,6 +423,7 @@ public class GameController {
 
                 if (word.newlyPlaced) {
                   String spelling = word.getWordAsString();
+
                   action.append("  {\n")
                       .append("   \"word\": \"").append(spelling).append("\",\n")
                       .append("   \"points\": \"").append(word.getPoints()).append("\",\n")
@@ -495,8 +506,8 @@ public class GameController {
       }
 
       /**
-       * This function will be executed after a player has ended his turn.
-       * By time over or by manual turn ending.
+       * This function will be executed after a player has ended his turn. By time over or by manual
+       * turn ending.
        *
        * @author ekasmamy
        */
@@ -512,6 +523,7 @@ public class GameController {
 
           JSONObject data = new JSONObject(action);
           JSONArray words = data.getJSONArray("words");
+
           for (int i = 0; i < words.length(); i++) {
             JSONObject word = words.getJSONObject(i);
             JSONArray tiles = word.getJSONArray("tiles");
@@ -704,14 +716,31 @@ public class GameController {
    */
   protected void setButtonActions() {
 
-    shuffleBtn.setOnMouseClicked(event -> letterBar.shuffle());
+    exchangeBtn.setOnMouseClicked(event -> {
+      ArrayList<Tile> tiles = new ArrayList<>();
+      for (LetterTile letterTile : letterBar.getTilesInBar()) {
+        tiles.add(new Tile(letterTile.getLetter(), letterTile.getPoints()));
+      }
+      protocol.exchangeLetterTiles(tiles);
+    });
 
     quitGame.setOnMouseClicked(event -> {
+      if (this.protocol != null) {
+        this.shutdown();
+      }
+      DBUpdate.updateGamesLost(Profile.getPlayer());
       changeScene("/fxml/MainPage.fxml", "/css/mainMenu.css");
     });
 
     okBtn.setOnMouseClicked(event -> {
       api.endMove();
+    });
+
+    bagBtn.setOnMouseClicked(mouseEvent -> {
+      popupBlankBlock.setVisible(true);
+      popupBlankBlock.setViewOrder(--minViewOrder);
+
+      protocol.getAmountOfEveryTile();
     });
 
   }
@@ -823,7 +852,7 @@ public class GameController {
 
       initChat();
 
-      this.protocol.setGameScreen(this); //setting controller to protocol
+      this.protocol.setGameScreen(this); // setting controller to protocol
 
       if (dictContent.isEmpty()) {
         // if dictionary content transferred by the lobby is empty => use default dictionary
@@ -857,8 +886,8 @@ public class GameController {
         avatarWrapper.getStyleClass().add("player-avatar-frame");
         avatarWrapper.setAlignment(Pos.CENTER);
 
-        ImageView avatar = new ImageView(
-            new Image(getClass().getResourceAsStream("/img/" + player.getImage())));
+        ImageView avatar =
+            new ImageView(new Image(getClass().getResourceAsStream("/img/" + player.getImage())));
         avatar.setFitHeight(60);
         avatar.setFitWidth(60);
 
@@ -884,7 +913,7 @@ public class GameController {
     letterBar = new LetterBar(this);
 
     initApi();
-    if (this.protocol != null) { //Have to be checked again
+    if (this.protocol != null) { // Have to be checked again
       this.protocol.loadFinished();
     }
     System.out.println("GAME CONTROLLER : Finished loading");
@@ -1121,6 +1150,7 @@ public class GameController {
         e.printStackTrace();
       }
     });
+    this.timer.cancel();
   }
 
   /**
@@ -1147,6 +1177,86 @@ public class GameController {
       } catch (IOException e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
+      }
+    });
+    this.timer.cancel();
+  }
+
+  /**
+   * Response from the server
+   */
+  public void exchangeLetterTilesAnswer(Multiset<Tile> tiles) {
+    Platform.runLater(() -> {
+      letterBar.setTiles(tiles);
+    });
+  }
+
+  /**
+   * Response from the server
+   */
+  public void getAmountOfAnswer(int answer) {
+
+  }
+
+  /**
+   * Response from the server
+   */
+  public void getAmountOfEveryTileAnswer(ArrayList<Pair<Character, Integer>> amount) {
+    Platform.runLater(() -> {
+
+      bagBtn.setMouseTransparent(true);
+
+      LetterBag bag = LetterBag.getInstance();
+      for (int j = 0; j < bag.getAlphabetSize(); j++) {
+        char l = bag.getLetterInAlphabet(j);
+        int v = bag.getValueInAlphabet(j);
+
+        LetterTile ltrTile = new LetterTile(l, v, grid.cellSize, thisController);
+        ltrTile.setPointsVisible(false);
+        ltrTile.isBlank = true;
+        ltrTile.container.setOnDragDetected(null);
+        ltrTile.container.setOnDragDone(null);
+        ltrTile.container.setOnMouseDragged(null);
+        ltrTile.container.setOnMouseReleased(null);
+        ltrTile.container.setOnMouseClicked(null);
+
+        popupBlankBlock.setOnMouseClicked(event -> {
+          popupBlankBlock.setVisible(false);
+          okBtn.setDisable(false);
+          popupBlankMessage.getChildren().clear();
+          bagBtn.setMouseTransparent(false);
+          popupBlankBlock.setOnMouseClicked(null);
+        });
+
+        popupBlankMessage.setOnMouseClicked(event -> {
+          popupBlankBlock.setVisible(false);
+          okBtn.setDisable(false);
+          popupBlankMessage.getChildren().clear();
+          bagBtn.setMouseTransparent(false);
+          popupBlankMessage.setOnMouseClicked(null);
+        });
+
+        int remAmount = 0;
+        for (Pair<Character, Integer> charIntPair : amount) {
+          if (charIntPair.getKey().equals(l)) {
+            remAmount = charIntPair.getValue();
+            break;
+          }
+        }
+
+        Label remAmountLabel = new Label(String.valueOf(remAmount));
+        remAmountLabel.getStyleClass().add("remaining-amount-tile-label");
+
+        if (remAmount == 0) {
+          ltrTile.setDisable(true);
+          remAmountLabel.setTextFill(Color.CRIMSON);
+        }
+
+        HBox box = new HBox(ltrTile.container, remAmountLabel);
+        box.getStyleClass().add("remaining-amount-tile-block");
+        box.setAlignment(Pos.CENTER);
+
+        popupBlankMessage.getChildren().add(box);
       }
     });
   }

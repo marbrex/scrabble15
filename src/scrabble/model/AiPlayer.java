@@ -2,30 +2,33 @@ package scrabble.model;
 
 import com.google.common.collect.Multiset;
 import scrabble.GameController;
+import scrabble.dbhandler.DBInformation;
 import scrabble.game.Grid;
 import scrabble.game.LetterBag;
 import scrabble.game.LetterTile;
 import scrabble.game.Word;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * scrabble.model.AiPlayer extends from the Player class and is necessary to determine the
  * difficulty of each AI Player.
- * 
+ *
  * @author astarche
  * @author skeskinc
  */
 
 public class AiPlayer extends Player implements Serializable {
 
-  private String[] difficulty = {"easy", "hard"};
-  private String chosenDifficulty;
   private GameController gc;
-  
-  /** The letters that aiplayer uses to construct new words. */
-  private List<LetterTile> ailetters = new ArrayList<LetterTile>();
+
+  /**
+   * The letters that aiplayer uses to construct new words.
+   */
+  private ArrayList<LetterTile> ailetters = new ArrayList<LetterTile>();
+
 
   /**
    * Constructor of the AiPlayer class.
@@ -39,67 +42,46 @@ public class AiPlayer extends Player implements Serializable {
   }
 
   /**
-   * Setting the difficulty of the AI-Player.
+   * Gets the controller.
    *
-   * @author skeskinc
-   * @param diff Setting the difficulty of the AI-Player
+   * @return the controller
    */
-  public void setDifficulty(String diff) {
-    switch (diff) {
-      case ("easy"):
-        this.chosenDifficulty = difficulty[0];
-        break;
-      case ("hard"):
-        this.chosenDifficulty = difficulty[1];
-        break;
-      default:
-        this.chosenDifficulty = null;
-        break;
-    }
+  public GameController getController() {
+    return this.gc;
   }
 
   /**
-   * Returns the difficulty of the AI-Player.
+   * Sets Game Controller.
    *
-   * @author skeskinc
-   * @return Difficulty of the AI-Player
-   */
-  public String getDifficulty() {
-    return this.chosenDifficulty;
-  }
-
-  /**
-   * Sets Game Controller
-   *
-   * @author astarche
    * @param gc Game Controller
+   * @author astarche
    */
-  public void setController(GameController gc){
+  public void setController(GameController gc) {
     this.gc = gc;
   }
 
   /**
    * Checks if the word can be made with the available letters.
    *
-   * @author astarche
    * @param letters the letters
-   * @param toFind the to find
+   * @param toFind  the to find
    * @return true, if successful
+   * @author astarche
    */
-  public boolean findWord(List<LetterTile> letters, String toFind) {
+  private boolean findWord(ArrayList<LetterTile> letters, String toFind) {
     boolean found = false;
     if (hasLettersOf(getValues(letters), toFind)) {
       String hl = clear(getValues(letters).toString(), toFind);
       if (hasEnoughLetters(hl, toFind) == 0) {
         System.out.println("THE WORD " + toFind + " CAN BE MADE WITHOUT BLANK TILES");
         found = true;
-      }else if(hasEnoughLetters(hl, toFind) == 1){
-        if (hasTile('\0', letters) >= 1){
+      } else if (hasEnoughLetters(hl, toFind) == 1) {
+        if (hasTile('\0', letters) >= 1) {
           System.out.println("THE WORD " + toFind + " CAN BE MADE WITH ONE BLANK TILE");
           found = true;
         }
-      }else if(hasEnoughLetters(hl, toFind) == 2){
-        if (hasTile( '\0', letters) >= 2){
+      } else if (hasEnoughLetters(hl, toFind) == 2) {
+        if (hasTile('\0', letters) >= 2) {
           System.out.println("THE WORD " + toFind + " CAN BE MADE WITH TWO BLANK TILES");
           found = true;
         }
@@ -112,12 +94,12 @@ public class AiPlayer extends Player implements Serializable {
    * Returns a list with all possible words from the dictionary that can be made with the given
    * letters.
    *
-   * @author astarche
    * @param letters the letters
    * @return the list
+   * @author astarche
    */
-  public List<String> findWords(List<LetterTile> letters) {
-    List<String> foundWords = new ArrayList<String>();
+  private ArrayList<String> findWords(ArrayList<LetterTile> letters) {
+    ArrayList<String> foundWords = new ArrayList<String>();
     for (String word : Dictionary.getWords()) {
       if (this.findWord(letters, word)) {
         foundWords.add(word);
@@ -129,13 +111,13 @@ public class AiPlayer extends Player implements Serializable {
   /**
    * Checks if all letters to make the searched word are present.
    *
-   * @author astarche
    * @param currentLetters the current letters
-   * @param word the word
+   * @param word           the word
    * @return true, if successful
+   * @author astarche
    */
-  public boolean hasLettersOf(List<Character> currentLetters, String word) {
-    List<Character> wordList = new ArrayList<Character>();
+  private boolean hasLettersOf(ArrayList<Character> currentLetters, String word) {
+    ArrayList<Character> wordList = new ArrayList<Character>();
     for (int i = 0; i < word.length(); i++) {
       wordList.add(word.charAt(i));
     }
@@ -143,14 +125,70 @@ public class AiPlayer extends Player implements Serializable {
   }
 
   /**
+   * Checks for a number of specified letters in the word.
+   * It is used to find duplicates.
+   *
+   * @param word   word
+   * @param letter specified letter
+   * @return the number of specified letters in the word
+   * @author astarche
+   */
+  private int numberOf(String word, char letter) {
+    int count = 0;
+    for (int i = 0; i < word.length(); i++) {
+      if (word.charAt(i) == letter) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  /**
+   * Checks for a number of specified letters in the list of letters
+   * It is used to find duplicates.
+   *
+   * @param letters the letters
+   * @param letter  the letter
+   * @return the int
+   * @author astarche
+   */
+  private int numberOf(ArrayList<Character> letters, char letter) {
+    int count = 0;
+    for (Character character : letters) {
+      if (character == letter) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  /**
+   * Gives letters that are needed to complement the word
+   * in order to make a new word
+   *
+   * @param word     word that needs to be complemented
+   * @param toAppend new word
+   * @return true, if successful
+   * @author astarche
+   */
+  private String giveLettersToComplement(String word, String toAppend) {
+    ArrayList<Character> lettersAsChar = getValues(ailetters);
+    String clear = word.replaceAll(toAppend, "");
+    if (clear.isEmpty()) {
+      clear = toAppend;
+    }
+    return clear;
+  }
+
+  /**
    * Returns a list with char values of the letters.
    *
-   * @author astarche
    * @param letters the letters
    * @return the values
+   * @author astarche
    */
-  public List<Character> getValues(List<LetterTile> letters) {
-    List<Character> values = new ArrayList<Character>();
+  private ArrayList<Character> getValues(ArrayList<LetterTile> letters) {
+    ArrayList<Character> values = new ArrayList<Character>();
     for (LetterTile letter : letters) {
       values.add(letter.getLetter());
     }
@@ -160,12 +198,12 @@ public class AiPlayer extends Player implements Serializable {
   /**
    * Removes all the letters that are not used in the searched word.
    *
-   * @author astarche
    * @param currentLetters the current letters
-   * @param word the word
+   * @param word           the word
    * @return string with letters that are only used in the searched word
+   * @author astarche
    */
-  public String clear(String currentLetters, String word) {
+  private String clear(String currentLetters, String word) {
     StringBuilder cleared = new StringBuilder();
     for (int i = 0; i < currentLetters.length(); i++) {
       if (word.contains(Character.toString(currentLetters.charAt(i)))) {
@@ -175,249 +213,513 @@ public class AiPlayer extends Player implements Serializable {
     return cleared.toString();
   }
 
-
   /**
-   * Help class to compare words.
-   */
-  private static class Letter{
-
-    /** The letter. */
-    private final char letter;
-
-    /** The freq. */
-    private int freq;
-
-    /**
-     * Instantiates a new letter.
-     *
-     * @param letter the letter
-     * @param freq the freq
-     */
-    public Letter(char letter, int freq){
-      this.letter = letter;
-      this.freq = freq;
-    }
-
-    /**
-     * Gets the char.
-     *
-     * @return the char
-     */
-    public char getChar(){
-      return this.letter;
-    }
-
-    /**
-     * Gets the freq.
-     *
-     * @return the freq
-     */
-    public int getFreq(){
-      return this.freq;
-    }
-
-    /**
-     * Inc freq.
-     */
-    public void incFreq(){
-      this.freq += 1;
-    }
-
-    /**
-     * Contains.
-     *
-     * @param c the c
-     * @param arr the arr
-     * @return true, if successful
-     */
-    public static boolean contains(char c, List<Letter> arr){
-      boolean result = false;
-      for (Letter l : arr){
-        if (l.getChar() == c){
-          result = true;
-          break;
-        }
-      }
-      return result;
-    }
-    /**
-     * Sets the freq.
-     *
-     * @param c the c
-     * @param arr the arr
-     */
-    public static void setFreq(char c, List<Letter> arr){
-      for (int i = 0;i < arr.size();i++){
-        if (arr.get(i).getChar() == c){
-          arr.get(i).incFreq();
-        }
-      }
-    }
-    /**
-     * Gets the index.
-     *
-     * @param c the c
-     * @param arr the arr
-     * @return the index
-     */
-    public static int getIndex(char c, List<Letter> arr){
-      int indx = 0;
-      for (int i = 0;i < arr.size();i++){
-        if(arr.get(i).getChar() == c){
-          indx = i;
-        }
-      }
-      return indx;
-    }
-  }
-
-  /**
-   * Checks for enough letters.
+   * Checks for there are enough letters to build the specified word.
    *
-   * @param letters the letters
-   * @param word the word
-   * @return the int
+   * @param letters letters
+   * @param word    word that needs to be constructed
+   * @return number of blank tiles that are needed to make the word, 0 if no blank tiles are needed
+   * @author astarche
    */
-  private int hasEnoughLetters(String letters, String word){
-    List<Letter> lettersarr = new ArrayList<Letter>();
-    List<Letter> wordarr = new ArrayList<Letter>();
-    for (int i = 0;i < letters.length();i++){
-      if (!Letter.contains(letters.charAt(i), lettersarr)){
-        lettersarr.add(new Letter(letters.charAt(i), 0));
-      }else{
-        Letter.setFreq(letters.charAt(i), lettersarr);
-      }
-    }
-
-    for (int i = 0;i < word.length();i++){
-      if (!Letter.contains(word.charAt(i), wordarr)){
-        wordarr.add(new Letter(word.charAt(i), 0));
-      }else{
-        Letter.setFreq(word.charAt(i), wordarr);
-      }
-    }
+  private int hasEnoughLetters(String letters, String word) {
     int diff = 0;
-    for(Letter l : lettersarr){
-      if (l.getFreq() != wordarr.get(Letter.getIndex(l.getChar(), wordarr)).getFreq()){
-        diff++;
+    ArrayList<Character> lettersAsList = new ArrayList<Character>();
+    for (int i = 0; i < letters.length(); i++) {
+      lettersAsList.add(letters.charAt(i));
+    }
+    ArrayList<Character> help = new ArrayList<Character>();
+    for (int i = 0; i < word.length(); i++) {
+      if (help.contains(word.charAt(i))) {
+        continue;
+      }
+      if (numberOf(lettersAsList, word.charAt(i)) < numberOf(word, word.charAt(i))) {
+        help.add(word.charAt(i));
+        diff += Math.abs(numberOf(lettersAsList, word.charAt(i)) - numberOf(word, word.charAt(i)));
       }
     }
     return diff;
   }
 
   /**
-   * Make turn.
+   * Gives a list with all the words that can be made with one tile
+   * without breaking the rules.
    *
+   * @param words       found with the specified tile
+   * @param centralTile the specified tile
+   * @return a list with safe words
    * @author astarche
-   * @return constructed word in form of json
    */
-  public void makeTurn() {
-    List<LetterTile> lettersOnGrid = gc.grid.getTilesInGrid();
-    if (lettersOnGrid.isEmpty()){
-      firstWord();
-      gc.grid.verifyWordsValidity();
-      return;
+  private ArrayList<String> giveSafeWords(ArrayList<String> words, LetterTile centralTile) {
+    ArrayList<String> safeWords = new ArrayList<String>();
+    for (String word : words) {
+      System.out.println("CHECKING WORD: " + word);
+      String[] parts = word.split(Character.toString(centralTile.getLetter()), 2);
+      int col = gc.grid.getCellColumn(centralTile);
+      int row = gc.grid.getCellRow(centralTile);
+      if (wordPlacedHorizontal(centralTile)) {
+        if (isSafe(col, row, parts[0].length(), "left") &&
+            isSafe(col, row, parts[1].length(), "right")
+            && hasLetter(word, centralTile.getLetter())) {
+          safeWords.add(word);
+        }
+      } else {
+        if (isSafe(col, row, parts[0].length(), "top") &&
+            isSafe(col, row, parts[1].length(), "bottom")
+            && hasLetter(word, centralTile.getLetter())) {
+          safeWords.add(word);
+        }
+      }
     }
-    String word = null;
-    boolean flag = false;
+    return safeWords;
+  }
+
+  /**
+   * This method is used to make turn of AI player. Firstly, it tries to complement
+   * already an existing word to make a new one. If AI does not manage that, it tries
+   * to make a word with one free tile.
+   *
+   * @return placed word, null if no words were placed
+   * @author astarche
+   */
+  public Word makeTurn() {
+    if (!DBInformation.isAiDifficultyHard(Profile.getPlayer())) {
+      Random random = new Random();
+      if (random.nextInt(9) == 5) { // 10% chance that aiplayer will skip his turn
+        System.out.println("BOT: RANDOM SKIP!");
+        return null;
+      }
+    }
+    ArrayList<LetterTile> lettersOnGrid = gc.grid.getTilesInGrid();
+    if (lettersOnGrid.isEmpty()) {
+      return firstTurn();
+    }
+    Word cmp = complementWord();
+    if (cmp != null) {
+      return cmp;
+    }
+    String word;
+    ArrayList<String> placeableWords = new ArrayList<String>();
     for (LetterTile letterTile : lettersOnGrid) {
       if (isFree(letterTile, gc.grid)) {
         ailetters.add(letterTile);
         System.out.println("BOT: TRYING TO MAKE SOMETHING WITH " + letterTile.getLetter());
-        List<String> foundWords = findWords(ailetters);
+        ArrayList<String> foundWords = findWords(ailetters);
         if (foundWords.isEmpty()) {
           System.out.println("BOT: CANT MAKE ANYTHING WITH LETTER " + letterTile.getLetter());
+          System.out.println("BOT: REMOVE - " + letterTile.getLetter());
           ailetters.remove(ailetters.size() - 1);
           continue;
         }
         for (String foundWord : foundWords) {
           if (hasLetter(foundWord, ailetters.get(ailetters.size() - 1).getLetter())) {
-            word = foundWord;
-            System.out.println("BOT: I WILL USE THE WORD: " + word);
-            flag = true;
-            break;
+            placeableWords.add(foundWord);
           }
         }
-        if (flag){
-          break;
+      }
+      placeableWords = giveSafeWords(placeableWords, letterTile);
+      if (!placeableWords.isEmpty()) {
+        break;
+      } else {
+        if (!ailetters.isEmpty() && ailetters.size() > 7) {
+          ailetters.remove(ailetters.size() - 1);
         }
       }
     }
-    if (word == null){
+    if (placeableWords.isEmpty()) {
+      System.out.print("BOT: MY TILES BEFORE NO WORDS FOUND - ");
+      displayTiles();
       System.out.println("BOT: NO WORDS FOUND");
-      return;
+      return null;
     }
+    if (DBInformation.isAiDifficultyHard(Profile.getPlayer())) {
+      word = placeableWords.get(selectTheBestWord(placeableWords));
+    } else {
+      word = placeableWords.get(0);
+    }
+    System.out.println("BOT: I WILL USE THE WORD: " + word);
     LetterTile centralTile = ailetters.get(ailetters.size() - 1);
-    // List<LetterTile> wordOnGrid = new ArrayList<LetterTile>();
-    // wordOnGrid.add(tile);
-    LetterTile first = null;
-    LetterTile last = null;
+    LetterTile first;
+    LetterTile last;
     ailetters.remove(ailetters.size() - 1);
+    System.out.println("CENTRAL TILE: " + centralTile.getLetter());
     int row = gc.grid.getCellRow(centralTile);
-    int column = gc.grid.getCellColumn(centralTile);
+    int col = gc.grid.getCellColumn(centralTile);
     String[] parts = word.split(Character.toString(centralTile.getLetter()), 2);
-    if (parts.length > 1 && !parts[0].equals("")){
-      if (gc.grid.getNeighbourCell(centralTile, "bottom") == null && gc.grid.getNeighbourCell(centralTile, "top") == null){
-        first = addTilesTop(column, row, parts[0], gc);
-        last = addTilesBottom(column, row, parts[1], gc);
-      }else if (gc.grid.getNeighbourCell(centralTile, "left") == null && gc.grid.getNeighbourCell(centralTile, "right") == null){
-        first = addTilesLeft(column, row, parts[0], gc);
-        last = addTilesRight(column, row, parts[1], gc);
+    if (wordPlacedHorizontal(centralTile)) {
+      if (!parts[0].isEmpty() && !parts[1].isEmpty()) {
+        first = addTilesLeft(col, row, parts[0], gc);
+        last = addTilesRight(col, row, parts[1], gc);
+      } else if (parts[1].isEmpty()) {
+        first = addTilesLeft(col, row, parts[0], gc);
+        last = centralTile;
+      } else {
+        first = centralTile;
+        last = addTilesRight(col, row, parts[1], gc);
       }
-    }else if(parts.length == 1){
-      if (gc.grid.getNeighbourCell(centralTile, "top") == null){
-        first = addTilesTop(column, row, parts[0], gc);
-      }else if (gc.grid.getNeighbourCell(centralTile, "left") == null){
-        first = addTilesLeft(column, row, parts[0], gc);
-      }
-    }else {
-      if (gc.grid.getNeighbourCell(centralTile, "bottom") == null){
-        last = addTilesBottom(column, row, parts[1], gc);
-      }else if (gc.grid.getNeighbourCell(centralTile, "right") == null){
-        last = addTilesRight(column, row, parts[1], gc);
+    } else {
+      if (!parts[0].isEmpty() && !parts[1].isEmpty()) {
+        first = addTilesTop(col, row, parts[0], gc);
+        last = addTilesBottom(col, row, parts[1], gc);
+      } else if (parts[1].isEmpty()) {
+        first = addTilesTop(col, row, parts[0], gc);
+        last = centralTile;
+      } else {
+        first = centralTile;
+        last = addTilesBottom(col, row, parts[1], gc);
       }
     }
-
-    if (word.charAt(0) == centralTile.getLetter()){
-      System.out.println("Last letter -> " + last.getLetter());
-      new Word(centralTile, last, gc);
-    }else if (word.charAt(word.length() - 1) == centralTile.getLetter()){
-      System.out.println("First letter -> " + first.getLetter());
-      new Word(first, centralTile, gc);
-    }else{
-      System.out.println("First letter -> " + first.getLetter());
-      System.out.println("Last letter -> " + last.getLetter());
-      new Word(first, last, gc);
+    Word placed;
+    if (word.charAt(0) == centralTile.getLetter()) {
+      return new Word(centralTile, last, gc);
+    } else if (word.charAt(word.length() - 1) == centralTile.getLetter()) {
+      return new Word(first, centralTile, gc);
+    } else {
+      return new Word(first, last, gc);
     }
 
-    //Word foundWord = new Word(wordOnGrid.get(0), wordOnGrid.get(wordOnGrid.size() - 1), gc);
-    gc.grid.verifyWordsValidity();
-    // System.out.println("BOT: Word length -> " + foundWord.getWordLength());
   }
+
+  /**
+   * Finds the longest word in the list of words
+   *
+   * @param words list of words
+   * @return index of the longest word in the list
+   * @author astarche
+   */
+  private int selectTheBestWord(ArrayList<String> words) {
+    int res = 0;
+    for (int i = 1; i < words.size(); i++) {
+      if (words.get(i).length() > words.get(i - 1).length()) {
+        res = i;
+      }
+    }
+    return res;
+  }
+
+  /**
+   * Checks if word will be placed horizontal
+   *
+   * @param centralTile the central tile
+   * @return true, if horizontal
+   * @author astarche
+   */
+  private boolean wordPlacedHorizontal(LetterTile centralTile) {
+    return gc.grid.getNeighbourCell(centralTile, "bottom") != null ||
+        gc.grid.getNeighbourCell(centralTile, "top") != null;
+  }
+
+  private boolean safeToComplement(String word, Word toCmp) {
+    int colFirst = gc.grid.getCellColumn(toCmp.getFirst());
+    int rowFirst = gc.grid.getCellRow(toCmp.getFirst());
+    int colLast = gc.grid.getCellColumn(toCmp.getLast());
+    int rowLast = gc.grid.getCellRow(toCmp.getLast());
+    String[] parts = word.split(toCmp.getWordAsString(), 2);
+    boolean safe = false;
+    if (toCmp.isHorizontal()) {
+      if (isSafe(colFirst, rowFirst, parts[0].length(), "left") &&
+          isSafe(colLast, rowLast, parts[1].length(), "right")) {
+        safe = true;
+      }
+    } else {
+      if (isSafe(colFirst, rowFirst, parts[0].length(), "top") &&
+          isSafe(colLast, rowLast, parts[1].length(), "bottom")) {
+        safe = true;
+      }
+    }
+    return safe;
+  }
+
+  /**
+   * Complements already an existing word to make a new one.
+   *
+   * @return new word
+   * @author astarche
+   */
+  private Word complementWord() {
+    Word toAppend = null;
+    String appendedWord = null;
+    boolean flag = false;
+    for (Word word : gc.grid.words) {
+      String hl = word.getWordAsString();
+      ArrayList<String> words = wordsThatContain(hl);
+      for (String s : words) {
+        String letters = giveLettersToComplement(s, hl);
+        if (findWord(ailetters, letters) && safeToComplement(s, word)) {
+          toAppend = word;
+          appendedWord = s;
+          flag = true;
+          break;
+        }
+
+      }
+      if (flag) {
+        break;
+      }
+    }
+    if (appendedWord == null) {
+      System.out.println("BOT: SKIP TURN");
+      return null;
+    }
+    System.out.println("BOT: I WILL USE THE WORD - " + appendedWord);
+    String[] parts = appendedWord.split(toAppend.getWordAsString(), 2);
+    int colFirst = gc.grid.getCellColumn(toAppend.getFirst());
+    int rowFirst = gc.grid.getCellRow(toAppend.getFirst());
+    int colLast = gc.grid.getCellColumn(toAppend.getLast());
+    int rowLast = gc.grid.getCellRow(toAppend.getLast());
+    LetterTile first;
+    LetterTile last = null;
+    if (toAppend.isVertical()) {
+      System.out.println("BOT: I WILL PLACE THIS WORD VERTICALLY");
+      if (isSafe(colFirst, rowFirst, parts[0].length(), "top") &&
+          isSafe(colLast, rowLast, parts[1].length(), "bottom")) {
+        if (!parts[0].isEmpty() && !parts[1].isEmpty()) {
+          first = addTilesTop(colFirst, rowFirst, parts[0], gc);
+          last = addTilesBottom(colLast, rowLast, parts[1], gc);
+        } else if (parts[1].isEmpty()) {
+          first = addTilesTop(colFirst, rowFirst, parts[0], gc);
+          last = toAppend.getLast();
+        } else {
+          first = toAppend.getFirst();
+          last = addTilesBottom(colLast, rowLast, parts[1], gc);
+        }
+      } else {
+        System.out.println("NOT A SAFE ZONE");
+        return null;
+      }
+    } else {
+      System.out.println("BOT: I WILL PLACE THIS WORD HORIZONTALLY");
+      if (isSafe(colFirst, rowFirst, parts[0].length(), "left") &&
+          isSafe(colLast, rowLast, parts[1].length(), "right")) {
+        if (!parts[0].isEmpty() && !parts[1].isEmpty()) {
+          first = addTilesLeft(colFirst, rowFirst, parts[0], gc);
+          last = addTilesRight(colLast, rowLast, parts[1], gc);
+        } else if (parts[1].isEmpty()) {
+          first = addTilesLeft(colFirst, rowFirst, parts[0], gc);
+          last = toAppend.getLast();
+        } else {
+          first = toAppend.getFirst();
+          last = addTilesRight(colLast, rowLast, parts[1], gc);
+        }
+      } else {
+        System.out.println("NOT A SAFE ZONE");
+        return null;
+      }
+    }
+    return new Word(first, last, gc);
+  }
+
+  /**
+   * Gives a list of words that contain the specified word in it.
+   *
+   * @param word the specified word
+   * @return the list
+   * @author astarche
+   */
+  private ArrayList<String> wordsThatContain(String word) {
+    ArrayList<String> foundWords = new ArrayList<String>();
+    for (String dictWord : Dictionary.getWords()) {
+      if (dictWord.matches(".*" + word + ".*{1}") && !dictWord.equals(word)) {
+        foundWords.add(dictWord);
+      }
+    }
+    return foundWords;
+  }
+
+  /**
+   * Checks if placed word is gonna be safe (will not break any rules of the game).
+   *
+   * @param col       the column
+   * @param row       the row
+   * @param length    the length of word
+   * @param direction the direction of the word
+   * @return true, if the word is safe
+   * @author astarche
+   */
+  private boolean isSafe(int col, int row, int length, String direction) {
+    boolean safe = true;
+    if (col + length > 14 || row + length > 14 || col - length < 0 || row - length < 0) {
+      return false;
+    }
+    System.out.println("BOUNDS +: " + (gc.grid.getGlobalIndex(col, row) + length));
+    System.out.println("BOUNDS -: " + (gc.grid.getGlobalIndex(col, row) - length));
+    if (length == 0) {
+      switch (direction) {
+        case "top":
+          if (row - 1 > -1) {
+            if (gc.grid.getSlot(col, row - 1).content != null) {
+              safe = false;
+              break;
+            }
+          }
+          break;
+        case "bottom":
+          if (row + 1 < 15) {
+            if (gc.grid.getSlot(col, row + 1).content != null) {
+              safe = false;
+              break;
+            }
+          }
+          break;
+        case "left":
+          if (col - 1 > -1) {
+            if (gc.grid.getSlot(col - 1, row).content != null) {
+              safe = false;
+              break;
+            }
+          }
+          break;
+        case "right":
+          if (col + 1 < 15) {
+            if (gc.grid.getSlot(col + 1, row).content != null) {
+              safe = false;
+              break;
+            }
+          }
+          break;
+      }
+      return safe;
+    }
+    switch (direction) {
+      case "top":
+        row -= 1;
+        System.out.println("BOT: CHECKING TOP");
+        for (int i = 0; i < length; i++) {
+          if (i == length - 1 && row - 1 > -1) {
+            if (gc.grid.getSlot(col, row - 1).content != null) {
+              safe = false;
+              break;
+            }
+          }
+          System.out.println("BOT: CHECKING " + "(" + col + "," + row + ")");
+          if ((gc.grid.getSlot(col, row).content != null)) {
+            System.out.println("1)BOT: (" + col + "," + row + ") is not safe");
+            safe = false;
+            break;
+          } else if ((gc.grid.getSlot(col + 1, row).content != null) ||
+              (gc.grid.getSlot(col - 1, row).content != null)) {
+            System.out.println("2)BOT: (" + col + "," + row + ") is not safe");
+            safe = false;
+            break;
+          }
+          System.out.println("BOT: (" + col + "," + row + ") is safe");
+          row--;
+        }
+        break;
+      case "bottom":
+        row += 1;
+        System.out.println("BOT: CHECKING BOTTOM");
+        for (int i = 0; i < length; i++) {
+          if (i == length - 1 && row + 1 < 15) {
+
+            if (gc.grid.getSlot(col, row + 1).content != null) {
+              safe = false;
+              break;
+            }
+          }
+          System.out.println("BOT: CHECKING " + "(" + col + "," + row + ")");
+          if ((gc.grid.getSlot(col, row).content != null)) {
+            System.out.println("1)BOT: (" + col + "," + row + ") is not safe");
+            safe = false;
+            break;
+          } else if ((gc.grid.getSlot(col + 1, row).content != null) ||
+              (gc.grid.getSlot(col - 1, row).content != null)) {
+            System.out.println("2)BOT: (" + col + "," + row + ") is not safe");
+            safe = false;
+            break;
+          }
+          System.out.println("BOT: (" + col + "," + row + ") is safe");
+          row++;
+        }
+        break;
+      case "left":
+        col -= 1;
+        for (int i = 0; i < length; i++) {
+          if (i == length - 1 && col - 1 > -1) {
+            if (gc.grid.getSlot(col - 1, row).content != null) {
+              safe = false;
+              break;
+            }
+          }
+
+          System.out.println("BOT: CHECKING " + "(" + col + "," + row + ")");
+          if ((gc.grid.getSlot(col, row).content != null)) {
+            System.out.println("1)BOT: (" + col + "," + row + ") is not safe");
+            safe = false;
+            break;
+          } else if ((gc.grid.getSlot(col, row + 1).content != null) ||
+              (gc.grid.getSlot(col, row - 1).content != null)) {
+            System.out.println("2)BOT: (" + col + "," + row + ") is not safe");
+            safe = false;
+            break;
+          }
+          System.out.println("BOT: (" + col + "," + row + ") is safe");
+          col--;
+        }
+        break;
+      case "right":
+        col += 1;
+        System.out.println("BOT: CHECKING RIGHT");
+        for (int i = 0; i < length; i++) {
+          if (i == length - 1 && col + 1 < 15) {
+            if (gc.grid.getSlot(col + 1, row).content != null) {
+              safe = false;
+              break;
+            }
+          }
+          System.out.println("BOT: CHECKING " + "(" + col + "," + row + ")");
+          if ((gc.grid.getSlot(col, row).content != null)) {
+            System.out.println("1)BOT: (" + col + "," + row + ") is not safe");
+            safe = false;
+            break;
+          } else if ((gc.grid.getSlot(col, row + 1).content != null) ||
+              (gc.grid.getSlot(col, row - 1).content != null)) {
+            System.out.println("2)BOT: (" + col + "," + row + ") is not safe");
+            safe = false;
+            break;
+          }
+          System.out.println("BOT: (" + col + "," + row + ") is safe");
+          col++;
+        }
+        break;
+      default:
+        break;
+    }
+    return safe;
+  }
+
   /**
    * Returns changes done to the grid during the last turn in form of json.
+   * Method is used in multiplayer.
    *
-   * @author astarche
    * @return string with changes in form of json
+   * @author ekasmamy
    */
   public String createJsonString() {
+
     ArrayList<Word> wordsInGrid = gc.grid.words;
     int score = 0;
-    String action = "{\n"
-            + " \"nb\": \"" + wordsInGrid.size() + "\",\n"
-            + " \"words\": [\n";
+    StringBuilder action = new StringBuilder(
+        "{\n" + " \"nb\": \"" + wordsInGrid.size() + "\",\n" + " \"words\": [\n");
 
     for (int j = 0; j < wordsInGrid.size(); j++) {
       Word word = wordsInGrid.get(j);
+      System.out.println("\nCurrent word: " + word.getWordAsString());
+      System.out.println("is newly placed: " + word.newlyPlaced);
+      System.out.println("is frozen: " + word.frozen);
+      System.out.println("letters:");
+
       if (word.newlyPlaced) {
         String spelling = word.getWordAsString();
-        action += "  {\n"
-                + "   \"word\": \"" + spelling + "\",\n"
-                + "   \"points\": \"" + word.getPoints() + "\",\n"
-                + "   \"tiles\": [\n";
+        action.append("  {\n").append("   \"word\": \"").append(spelling).append("\",\n")
+            .append("   \"points\": \"").append(word.getPoints()).append("\",\n")
+            .append("   \"tiles\": [\n");
 
         for (int i = 0; i < word.getWordLength(); i++) {
           LetterTile letterTile = word.getLetter(i);
+          System.out.println("Current letter: " + letterTile.getLetter());
+          System.out.println("is newly placed: " + letterTile.isNewlyPlaced);
+          System.out.println("is frozen: " + letterTile.isFrozen);
+
           if (letterTile.isNewlyPlaced) {
             char letter = letterTile.getLetter();
             int value = letterTile.getPoints();
@@ -425,105 +727,124 @@ public class AiPlayer extends Player implements Serializable {
             int col = gc.grid.getCellColumn(letterTile);
             boolean isBlank = letterTile.isBlank;
 
-            action += "    {\n"
-                    + "     \"letter\": \"" + letter + "\",\n"
-                    + "     \"value\": \"" + value + "\",\n"
-                    + "     \"row\": \"" + row + "\",\n"
-                    + "     \"col\": \"" + col + "\",\n"
-                    + "     \"isBlank\": \"" + isBlank + "\"\n"
-                    + "    }";
+            action.append("    {\n").append("     \"letter\": \"").append(letter)
+                .append("\",\n").append("     \"value\": \"").append(value)
+                .append("\",\n").append("     \"row\": \"").append(row).append("\",\n")
+                .append("     \"col\": \"").append(col).append("\",\n")
+                .append("     \"isBlank\": \"").append(isBlank).append("\"\n")
+                .append("    }");
 
             if (i == word.getWordLength() - 1) {
-              action += "\n";
+              action.append("\n");
             } else {
-              action += ",\n";
+              action.append(",\n");
             }
-
-            letterTile.isNewlyPlaced = false;
           }
         }
 
-        action += "   ]";
+        action.append("   ]\n" + "  }");
 
         if (j == wordsInGrid.size() - 1) {
-          action += "\n"
-                  + "  }\n";
+          action.append("\n");
         } else {
-          action += ",\n";
+          action.append(",\n");
         }
-
-        word.newlyPlaced = false;
-
         score += word.getPoints();
       }
     }
 
-    action += " ],\n"
-            + " \"score\": \"" + score + "\"\n"
-            + "}";
-    return action;
+    action.append(" ],\n").append(" \"score\": \"").append(score).append("\"\n")
+        .append("}");
+
+    System.out.println(action);
+    return action.toString();
   }
 
   /**
-   * First word.
+   * If grid is empty, ai makes first turn.
+   *
+   * @return placed word
+   * @author astarche
+   * @author astarche
    */
-  private void firstWord(){
-    List<String> foundWords = findWords(ailetters);
-    if (foundWords.isEmpty()){
-      return;
+  private Word firstTurn() {
+    ArrayList<String> foundWords = findWords(ailetters);
+    if (foundWords.isEmpty()) {
+      return null;
     }
-    String word = foundWords.get(0);
+    String word;
+    if (DBInformation.isAiDifficultyHard(Profile.getPlayer())) {
+      word = foundWords.get(selectTheBestWord(foundWords));
+    } else {
+      word = foundWords.get(0);
+    }
+    System.out.println("BOT: I WILL USE THE WORD - " + word);
     LetterTile first = null;
     LetterTile last = null;
     int col = 7;
     int row = 7;
-    for (int i = 0;i < word.length();i++){
-      if (i == 0){
+    for (int i = 0; i < word.length(); i++) {
+      if (findTile(word.charAt(i)) == -1) {
+        System.out.println("ADDING BLANK TILE");
+        ailetters.remove(ailetters.get(findTile('\0')));
+        LetterTile blank = new LetterTile(word.charAt(i), 0, 10, gc);
+        if (i == 0) {
+          first = blank;
+        }
+
+        if (i == word.length() - 1) {
+          last = blank;
+        }
+        gc.grid.setSlotContent(col, row, blank);
+        row++;
+        continue;
+      }
+      if (i == 0) {
         first = ailetters.get(findTile(word.charAt(i)));
       }
-      if (i == word.length() - 1){
+      if (i == word.length() - 1) {
         last = ailetters.get(findTile(word.charAt(i)));
       }
       gc.grid.setSlotContent(col, row, ailetters.get(findTile(word.charAt(i))));
+      ailetters.remove(ailetters.get(findTile(word.charAt(i))));
       row++;
     }
-    Word foundWord = new Word(first, last, gc);
+    return new Word(first, last, gc);
   }
 
   /**
    * Adds tiles over the given slot.
    *
    * @param column the column of the slot
-   * @param row the row of the slot
-   * @param part string with letters that need to be added
-   * @param gc Game Controller
+   * @param row    the row of the slot
+   * @param part   string with letters that need to be added
+   * @param gc     Game Controller
    * @return the letter tile
+   * @author astarche
    */
-  private LetterTile addTilesTop(int column, int row, String part, GameController gc){
+  private LetterTile addTilesTop(int column, int row, String part, GameController gc) {
     part = new StringBuilder(part).reverse().toString();
     LetterTile tile = null;
-    for (int i = 0; i < part.length();i++) {
+    for (int i = 0; i < part.length(); i++) {
       if (findTile(part.charAt(i)) != -1) {
-        if (i == part.length() - 1){
+        if (i == part.length() - 1) {
           tile = ailetters.get(findTile(part.charAt(i)));
         }
         gc.grid.setSlotContent(column, row - (i + 1), ailetters.get(findTile(part.charAt(i))));
         System.out.println("TILE ADDED TOP");
-        //wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
         System.out.println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
         ailetters.remove(ailetters.get(findTile(part.charAt(i))));
-      }else{
+      } else {
         if (findTile('\0') != -1) {
-          ailetters.get(findTile('\0')).setLetter(part.charAt(i));
-          if (i == part.length() - 1){
-            tile = ailetters.get(findTile(part.charAt(i)));
+          LetterTile blank = new LetterTile(part.charAt(i), 0, 10, gc);
+          ailetters.remove(ailetters.get(findTile('\0')));
+          if (i == part.length() - 1) {
+            tile = blank;
           }
-          gc.grid.setSlotContent(column, row - (i + 1), ailetters.get(findTile(part.charAt(i))));
+          gc.grid.setSlotContent(column, row - (i + 1), blank);
           System.out.println("TILE ADDED TOP");
-          //wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
           System.out.println("BOT: REMOVED TILE - BLANK TILE");
-          ailetters.remove(ailetters.get(findTile(part.charAt(i))));
-        }else{
+        } else {
           return null;
         }
       }
@@ -535,35 +856,34 @@ public class AiPlayer extends Player implements Serializable {
    * Adds tiles below the given slot.
    *
    * @param column the column of the slot
-   * @param row the row of the slot
-   * @param part string with letters that need to be added
-   * @param gc Game Controller
+   * @param row    the row of the slot
+   * @param part   string with letters that need to be added
+   * @param gc     Game Controller
    * @return the letter tile
+   * @author astarche
    */
-  private LetterTile addTilesBottom(int column, int row, String part, GameController gc){
+  private LetterTile addTilesBottom(int column, int row, String part, GameController gc) {
     LetterTile tile = null;
-    for (int i = 0; i < part.length();i++) {
+    for (int i = 0; i < part.length(); i++) {
       if (findTile(part.charAt(i)) != -1) {
-        if (i == part.length() - 1){
+        if (i == part.length() - 1) {
           tile = ailetters.get(findTile(part.charAt(i)));
         }
         gc.grid.setSlotContent(column, row + (i + 1), ailetters.get(findTile(part.charAt(i))));
         System.out.println("TILE ADDED BOTTOM");
-        // wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
         System.out.println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
         ailetters.remove(ailetters.get(findTile(part.charAt(i))));
-      }else{
+      } else {
         if (findTile('\0') != -1) {
-          ailetters.get(findTile('\0')).setLetter(part.charAt(i));
-          if (i == part.length() - 1){
-            tile = ailetters.get(findTile(part.charAt(i)));
+          LetterTile blank = new LetterTile(part.charAt(i), 0, 10, gc);
+          ailetters.remove(ailetters.get(findTile('\0')));
+          if (i == part.length() - 1) {
+            tile = blank;
           }
-          gc.grid.setSlotContent(column, row + (i + 1), ailetters.get(findTile(part.charAt(i))));
+          gc.grid.setSlotContent(column, row + (i + 1), blank);
           System.out.println("TILE ADDED BOTTOM");
-          //wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
           System.out.println("BOT: REMOVED TILE - BLANK TILE");
-          ailetters.remove(ailetters.get(findTile(part.charAt(i))));
-        }else{
+        } else {
           return null;
         }
       }
@@ -575,36 +895,35 @@ public class AiPlayer extends Player implements Serializable {
    * Adds the tiles on the left of the given slot.
    *
    * @param column the column of the slot
-   * @param row the row of the slot
-   * @param part string with letters that need to be added
-   * @param gc Game Controller
+   * @param row    the row of the slot
+   * @param part   string with letters that need to be added
+   * @param gc     Game Controller
    * @return the letter tile
+   * @author astarche
    */
-  private LetterTile addTilesLeft(int column, int row, String part, GameController gc){
+  private LetterTile addTilesLeft(int column, int row, String part, GameController gc) {
     LetterTile tile = null;
     part = new StringBuilder(part).reverse().toString();
-    for (int i = 0; i < part.length();i++){
+    for (int i = 0; i < part.length(); i++) {
       if (findTile(part.charAt(i)) != -1) {
-        if (i == part.length() - 1){
+        if (i == part.length() - 1) {
           tile = ailetters.get(findTile(part.charAt(i)));
         }
         gc.grid.setSlotContent(column - (i + 1), row, ailetters.get(findTile(part.charAt(i))));
         System.out.println("TILE ADDED LEFT");
-        // wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
         System.out.println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
         ailetters.remove(ailetters.get(findTile(part.charAt(i))));
-      }else{
+      } else {
         if (findTile('\0') != -1) {
-          ailetters.get(findTile('\0')).setLetter(part.charAt(i));
-          if (i == part.length() - 1){
-            tile = ailetters.get(findTile(part.charAt(i)));
+          LetterTile blank = new LetterTile(part.charAt(i), 0, 10, gc);
+          ailetters.remove(ailetters.get(findTile('\0')));
+          if (i == part.length() - 1) {
+            tile = blank;
           }
-          gc.grid.setSlotContent(column - (i + 1), row, ailetters.get(findTile(part.charAt(i))));
+          gc.grid.setSlotContent(column - (i + 1), row, blank);
           System.out.println("TILE ADDED LEFT");
-          //wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
           System.out.println("BOT: REMOVED TILE - BLANK TILE");
-          ailetters.remove(ailetters.get(findTile(part.charAt(i))));
-        }else {
+        } else {
           return null;
         }
       }
@@ -616,35 +935,34 @@ public class AiPlayer extends Player implements Serializable {
    * Adds the tiles on the right of the given slot.
    *
    * @param column the column of the slot
-   * @param row the row of the slot
-   * @param part string with letters that need to be added
-   * @param gc Game Controller
+   * @param row    the row of the slot
+   * @param part   string with letters that need to be added
+   * @param gc     Game Controller
    * @return the letter tile
+   * @author astarche
    */
-  private LetterTile addTilesRight(int column, int row, String part, GameController gc){
+  private LetterTile addTilesRight(int column, int row, String part, GameController gc) {
     LetterTile tile = null;
-    for (int i = 0; i < part.length();i++){
+    for (int i = 0; i < part.length(); i++) {
       if (findTile(part.charAt(i)) != -1) {
-        if (i == part.length() - 1){
+        if (i == part.length() - 1) {
           tile = ailetters.get(findTile(part.charAt(i)));
         }
         gc.grid.setSlotContent(column + (i + 1), row, ailetters.get(findTile(part.charAt(i))));
         System.out.println("TILE ADDED RIGHT");
-        //wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
         System.out.println("BOT: REMOVED TILE - " + ailetters.get(findTile(part.charAt(i))).getLetter());
         ailetters.remove(ailetters.get(findTile(part.charAt(i))));
-      }else {
-        if (findTile('\0') != -1){
-          ailetters.get(findTile('\0')).setLetter(part.charAt(i));
-          if (i == part.length() - 1){
-            tile = ailetters.get(findTile(part.charAt(i)));
+      } else {
+        if (findTile('\0') != -1) {
+          LetterTile blank = new LetterTile(part.charAt(i), 0, 10, gc);
+          ailetters.remove(ailetters.get(findTile('\0')));
+          if (i == part.length() - 1) {
+            tile = blank;
           }
-          gc.grid.setSlotContent(column + (i + 1), row, ailetters.get(findTile(part.charAt(i))));
+          gc.grid.setSlotContent(column + (i + 1), row, blank);
           System.out.println("TILE ADDED RIGHT");
-          // wordOnGrid.add(ailetters.get(findTile(part.charAt(i))));
           System.out.println("BOT: REMOVED TILE - BLANK TILE");
-          ailetters.remove(ailetters.get(findTile(part.charAt(i))));
-        }else{
+        } else {
           return null;
         }
       }
@@ -654,117 +972,124 @@ public class AiPlayer extends Player implements Serializable {
 
 
   /**
-   * Checks if the letter tile is free (has no neighbours).
+   * Checks if the letter tile is free (has exactly 2 neighbours vertically or horizontally).
    *
-   * @author astarche
    * @param tile the tile
    * @param grid the grid
    * @return true, if is free
+   * @author astarche
    */
-  private boolean isFree(LetterTile tile, Grid grid){
-    return grid.getNeighbourCell(tile, "right") == null
-            || grid.getNeighbourCell(tile, "left") == null
-            || grid.getNeighbourCell(tile, "top") == null
-            || grid.getNeighbourCell(tile, "bottom") == null;
+  private boolean isFree(LetterTile tile, Grid grid) {
+    return (grid.getNeighbourCell(tile, "right") == null
+        && grid.getNeighbourCell(tile, "left") == null)
+        || (grid.getNeighbourCell(tile, "top") == null
+        && grid.getNeighbourCell(tile, "bottom") == null);
   }
 
   /**
    * Checks if constructed word contains the tile on the grid.
    *
-   * @author astarche
-   * @param word the word
+   * @param word   the word
    * @param letter letter
    * @return true, if successful
+   * @author astarche
    */
-  private boolean hasLetter(String word, char letter){
+  private boolean hasLetter(String word, char letter) {
     boolean contains = false;
-    for (int i = 0;i < word.length();i++){
-        if (word.charAt(i) == letter){
-          contains = true;
-          break;
+    for (int i = 0; i < word.length(); i++) {
+      if (word.charAt(i) == letter) {
+        contains = true;
+        break;
       }
     }
     return contains;
   }
+
   /**
-   * Generates random tiles and adds them to the list with the letters of the aiplayer
+   * Grabs random tiles from the bag and gives them to the aiplayer.
    *
-   * @author astarche
-   * @param gc Game Controller
-   */
-  public void giveLettersToAiPlayer(){
-    String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    Random random = new Random();
-    int sz = ailetters.size();
-    for (int i = 0;i < 5 - sz;i++){
-      ailetters.add(new LetterTile(alphabet.charAt(random.nextInt(alphabet.length())), 1, 10,
-              gc));
-    }
-    ailetters.add(new LetterTile('\0', 0, 10, gc));
-    ailetters.add(new LetterTile('\0', 0, 10, gc));
-  }
-  /**
-   * Grabs random tiles from the bag and gives them to the aiplayer
-   *
-   * @author astarche
    * @param bag bag with letters that is used in the game
-   */
-  public void giveLettersToAiPlayer(LetterBag bag){
-    Multiset<LetterBag.Tile> tiles = bag.grabRandomTiles(7 - ailetters.size());
-    for (LetterBag.Tile tile :tiles){
-      ailetters.add(new LetterTile(tile.letter, tile.value, 10, gc));
-    }
-  }
-  /**
-   * Displays tiles, that the aiplayer currently has
-   *
    * @author astarche
    */
-  public void displayTiles(){
-    System.out.print("BOT: MY TILES ARE: ");
-    for (LetterTile tile : ailetters){
-      System.out.print(tile.getLetter());
-    }
-    System.out.println();
-  }
-  /**
-   * Gives human player some words that he can construct with his letters.
-   * Can be used only in single player.
-   *
-   * @author astarche
-   * @return the string with possible words
-   */
-  public String helpPoorHuman() {
-    List<LetterTile> letters = gc.grid.getTilesInGrid();
-    for (int i = 0; i < 7; i++) {
-      if (gc.letterBar.getSlot(i).content != null) {
-        letters.add(gc.letterBar.getSlot(i).content);
+  public void giveLettersToAiPlayer(LetterBag bag) {
+    if (bag.getAmount() >= 7 - ailetters.size() && ailetters.size() < 7) {
+      Multiset<LetterBag.Tile> tiles = bag.grabRandomTiles(7 - ailetters.size());
+      for (LetterBag.Tile tile : tiles) {
+        ailetters.add(new LetterTile(tile.letter, tile.value, 10, gc));
       }
-    }
-    List<String> foundWords = findWords(letters);
-    if (!foundWords.isEmpty()) {
-      StringBuilder s = new StringBuilder("TRY THIS WORDS:\n");
-      for (String foundWord : foundWords) {
-        s.append(foundWord).append("\n");
-      }
-      return s.toString();
-    } else {
-      return "YOU CANNOT MAKE ANY WORDS WITH THESE LETTERS!";
     }
   }
 
   /**
-   * Searches for a specified tile and returns the number of this tiles in the given list
+   * Displays tiles, that the aiplayer currently has.
    *
    * @author astarche
-   * @param toFind letter that needs to be found
+   */
+  public void displayTiles() {
+    System.out.print("BOT: MY TILES ARE: ");
+    for (LetterTile tile : ailetters) {
+      System.out.print(tile.getLetter());
+    }
+    System.out.println();
+  }
+
+  /**
+   * Gives human player some words that he can construct with his letter bar.
+   * Can be used only in single player.
+   *
+   * @return the string with possible words
+   * @author astarche
+   */
+  public String helpPoorHuman() {
+    ArrayList<LetterTile> freeLettersOnGrid = new ArrayList<>();
+    for (int i = 0; i < gc.grid.getTilesInGrid().size(); i++) {
+      if (isFree(gc.grid.getTilesInGrid().get(i), gc.grid)) {
+        freeLettersOnGrid.add(gc.grid.getTilesInGrid().get(i));
+      }
+    }
+    StringBuilder s = new StringBuilder("Try this words:\n");
+    ArrayList<LetterTile> barAsList = gc.letterBar.getTilesInBar();
+    if (freeLettersOnGrid.isEmpty()) {
+      ArrayList<String> foundWords = findWords(barAsList);
+      if (foundWords.isEmpty()) {
+        return "Did not find any words :(";
+      } else {
+        for (String st : foundWords) {
+          s.append(st).append("\n");
+        }
+        return s.toString();
+      }
+    }
+    for (LetterTile tile : freeLettersOnGrid) {
+      barAsList.add(tile);
+      ArrayList<String> foundWords = findWords(barAsList);
+      if (foundWords.isEmpty()) {
+        System.out.println("BOT: CANT MAKE ANYTHING WITH LETTER " + tile.getLetter());
+        barAsList.remove(ailetters.size() - 1);
+        continue;
+      }
+      for (String foundWord : foundWords) {
+        if (hasLetter(foundWord, barAsList.get(barAsList.size() - 1).getLetter())) {
+          s.append(foundWord).append("\n");
+        }
+      }
+    }
+    return s.toString();
+  }
+
+
+  /**
+   * Searches for a specified tile and returns the number of this tiles in the given list.
+   *
+   * @param toFind  letter that needs to be found
    * @param letters list with available letter
    * @return the number of searched tiles in the list
+   * @author astarche
    */
-  private int hasTile(char toFind, List<LetterTile> letters){
+  private int hasTile(char toFind, ArrayList<LetterTile> letters) {
     int found = 0;
-    for (LetterTile tile : letters){
-      if (tile.getLetter() == toFind){
+    for (LetterTile tile : letters) {
+      if (tile.getLetter() == toFind) {
         found++;
       }
     }
@@ -772,16 +1097,16 @@ public class AiPlayer extends Player implements Serializable {
   }
 
   /**
-   * Finds a specified tile and returns its index
+   * Finds a specified tile and returns its index.
    *
-   * @author astarche
    * @param toFind letter that needs to be found
    * @return index
+   * @author astarche
    */
-  private int findTile(char toFind){
+  private int findTile(char toFind) {
     int indx = -1;
-    for (int i = 0;i < ailetters.size();i++){
-      if (ailetters.get(i).getLetter() == toFind){
+    for (int i = 0; i < ailetters.size(); i++) {
+      if (ailetters.get(i).getLetter() == toFind) {
         indx = i;
       }
     }

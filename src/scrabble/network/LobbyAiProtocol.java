@@ -1,6 +1,9 @@
 package scrabble.network;
 
 import java.util.ArrayList;
+
+import javafx.application.Platform;
+import scrabble.game.LetterBag;
 import scrabble.model.AiPlayer;
 import scrabble.model.GameInformationController;
 import scrabble.model.Player;
@@ -42,11 +45,21 @@ public class LobbyAiProtocol implements NetworkPlayer {
    * @param field game field of the host
    * @author hendiehl
    */
-  public String aiMove() {
+  public synchronized String aiMove() {
     System.out.println("AI PROTOCOL : Calculate move");
-    this.ai.makeTurn(); // making the turn.
-    String action = this.ai.createJsonString(); // returning the action performed by the Ai.
-    return action;
+    // this.ai.makeTurn(); // making the turn
+    this.ai.giveLettersToAiPlayer(LetterBag.getInstance());
+    Platform.runLater(() -> {
+      this.ai.makeTurn(); // making the turn
+      this.ai.getController().grid.verifyWordsValidity();
+    });
+    try {
+      this.wait(1000);
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return this.ai.createJsonString();
   }
 
   /**

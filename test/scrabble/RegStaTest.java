@@ -20,10 +20,9 @@ import scrabble.dbhandler.Database;
 import scrabble.model.HumanPlayer;
 
 /**
- * Tests for the Register and Statistic Screens functionalities against test DB
- * 
- * 
- *
+ * Tests for the Register and Statistic Screens functionalities against test DB.
+ *  
+ * @author mraucher
  */
 public class RegStaTest {
 
@@ -34,10 +33,12 @@ public class RegStaTest {
 
   /**
    * Setting the connection before testing.
+   * 
+   * @author mraucher
    */
   @BeforeAll
   public static void setDatabase() {
-    Database.connectToDB();
+    Database.connectToDb();
     Database.setConnection("Scrabble15Test.db");
     connection = Database.getConnection();
     Database.createTables();
@@ -50,7 +51,7 @@ public class RegStaTest {
   /**
    * Filling tables with default content and prepared names.
    * 
-   * 
+   * @author mraucher
    */
   @BeforeEach
   public void fillingPlayerTable() {
@@ -62,9 +63,10 @@ public class RegStaTest {
 
 
   /**
-   * Tests, if the player will be deleted successfully from DB
+   * Tests, if the player will be deleted successfully from DB.
    * 
    * @throws SQLException on a database access error
+   * @author mraucher
    */
   @Test
   public void removePlayerSuccessfully() throws SQLException {
@@ -79,9 +81,10 @@ public class RegStaTest {
   }
 
   /**
-   * Tests, if a player can update its name successfully in DB
+   * Tests, if a player can update its name successfully in DB.
    * 
    * @throws SQLException on a database access error
+   * @author mraucher
    */
   @Test
   public void updatePlayerNameSuccessfully() throws SQLException {
@@ -99,6 +102,7 @@ public class RegStaTest {
    * Expected: There will only be zero or one player with the new name.
    * 
    * @throws SQLException on a database access error
+   * @author mraucher
    */
   @Test
   public void updatePlayerNameFailsNameAlreadyInDB() throws SQLException {
@@ -112,7 +116,9 @@ public class RegStaTest {
   }
 
   /**
-   * Tests, if the player statistics will be returned from DB successfully
+   * Tests, if the player statistics will be returned from DB successfully.
+   * 
+   * @author mraucher
    */
   @Test
   public void getPlayerStatisticReturnsCorrectStatistics() {
@@ -124,9 +130,10 @@ public class RegStaTest {
   }
 
   /**
-   * Tests, if a new player can be registered into DB successfully
+   * Tests, if a new player can be registered into DB successfully.
    * 
    * @throws SQLException on a database access error
+   * @author mraucher
    */
   @Test
   public void registerNewPlayerInDatabaseSuccessfully() throws SQLException {
@@ -153,7 +160,7 @@ public class RegStaTest {
   /**
    * Removing players from previous methods.
    * 
-   * 
+   * @author mraucher
    */
   @AfterEach
   public void removePlayers() {
@@ -166,11 +173,11 @@ public class RegStaTest {
   /**
    * Closing the connection after all tests.
    * 
-   * 
+   * @author mraucher
    */
   @AfterAll
   public static void closingConnection() {
-    Database.disconnectDB();
+    Database.disconnectDb();
     File file = new File(System.getProperty("user.home") + System.getProperty("file.separator")
         + ".Scrabble" + System.getProperty("file.separator") + "Scrabble15Test.db");
     if (file.exists()) {

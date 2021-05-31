@@ -322,7 +322,7 @@
 
 .letter-btn-frozen {
   -fx-border-color: gray;
-  -fx-background-color: #31d3ff;
+  -fx-background-color: #fff0b5;
 }
 
 .letter-btn-hor-min {
@@ -447,4 +447,22 @@
 #bag-btn:hover {
   -fx-opacity: 0.6;
   -fx-cursor: hand;
+}
+
+.remaining-amount-tile-block {
+  -fx-alignment: center;
+  -fx-padding: 5px;
+  -fx-spacing: 5px;
+  -fx-fill-height: false;
+}
+
+.remaining-amount-tile-letter-disable {
+  -fx-background-color: #a79152;
+}
+
+.remaining-amount-tile-label {
+  -fx-font-size: 14px;
+  -fx-font-weight: bold;
+  -fx-padding: 3px;
+  -fx-text-fill: white;
 }

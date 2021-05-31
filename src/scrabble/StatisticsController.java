@@ -6,16 +6,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
-import java.util.ResourceBundle;
-
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
-
+import java.util.ResourceBundle;
 import scrabble.dbhandler.DBInformation;
 import scrabble.dbhandler.DBUpdate;
 import scrabble.dbhandler.Database;
 import scrabble.model.HumanPlayer;
-import scrabble.model.Profile;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -30,9 +27,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+import scrabble.model.Profile;
 
 /**
- * 
  * The controller class for the Statistics.fxml screen.
  * 
  * @author mraucher

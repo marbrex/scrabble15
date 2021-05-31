@@ -3,8 +3,11 @@ package scrabble.game;
 import com.google.common.collect.HashMultiset;
 import com.google.common.collect.Multiset;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Random;
+import javafx.util.Pair;
 
 /**
  * scrabble.game.LetterBag is a Singleton class that can be instantiated only once. To create the
@@ -109,36 +112,23 @@ public class LetterBag implements Serializable {
   }
 
   /**
-   * Exchanges a Collection of LetterTiles with other random tiles in the bag.
-   *
-   * @param tilesToExchange Collection of LetterTiles to exchange.
-   * @return A new set of Tiles of the same size.
-   * @author ekasmamy
-   */
-  public Multiset<Tile> exchangeLetterTiles(Collection<LetterTile> tilesToExchange) {
-    Multiset<Tile> set = HashMultiset.create();
-    for (int i = 0; i < tilesToExchange.size(); i++) {
-      set.add(grabRandomTile());
-    }
-    tilesToExchange.forEach(tile -> {
-      bag.add(new Tile(tile.getLetter(), tile.getPoints()));
-    });
-    return set;
-  }
-
-  /**
    * Exchanges a Collection of Tiles with other random tiles in the bag.
    *
    * @param tilesToExchange Collection of Tiles to exchange.
    * @return A new set of Tiles of the same size.
    * @author ekasmamy
    */
-  public Multiset<Tile> exchangeTiles(Collection<Tile> tilesToExchange) {
+  public Multiset<Tile> exchangeTiles(ArrayList<Tile> tilesToExchange) {
     Multiset<Tile> set = HashMultiset.create();
     for (int i = 0; i < tilesToExchange.size(); i++) {
       set.add(grabRandomTile());
+
+      for (Tile element : bag.elementSet()) {
+        if (element.equals(tilesToExchange.get(i))) {
+          bag.add(element);
+        }
+      }
     }
-    bag.addAll(tilesToExchange);
     return set;
   }
 
@@ -166,6 +156,20 @@ public class LetterBag implements Serializable {
       }
     }
     return 0;
+  }
+
+  /**
+   * Returns the remaining quantity of the specified letter tile.
+   *
+   * @return Remaining quantity of the specified letter tile.
+   * @author ekasmamy
+   */
+  public ArrayList<Pair<Character, Integer>> getAmountOfEveryTile() {
+    ArrayList<Pair<Character, Integer>> list = new ArrayList<>();
+    for (Tile tile : bag.elementSet()) {
+      list.add(new Pair<Character, Integer>(tile.letter, bag.count(tile)));
+    }
+    return list;
   }
 
   /**

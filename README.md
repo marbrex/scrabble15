@@ -3,7 +3,10 @@ This is a team project of **Software Engineering Practice** in **Mannheim Univer
 
 # Build
 
-- **Maven :** mvn package
+Maven :
+- Build with tests: **mvn package**
+- Build without tests: **mvn package -Dmaven.test.skip=true**
+
 
 # Run
 

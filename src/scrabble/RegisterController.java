@@ -2,9 +2,9 @@ package scrabble;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ResourceBundle;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXTextArea;
+import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,7 +19,7 @@ import scrabble.model.*;
 
 /**
  * 
- * The controller class for the Register.fxml screen
+ * The controller class for the Register.fxml screen.
  * 
  * @author mraucher
  */
@@ -45,7 +45,7 @@ public class RegisterController implements Initializable {
 
 
   /**
-   * The event handler for the register button
+   * The event handler for the register button.
    * 
    * @param event ActionEvent if the register button is clicked
    * @author mraucher
@@ -81,14 +81,14 @@ public class RegisterController implements Initializable {
       try {
         Parent root = FXMLLoader.load(getClass().getResource("/fxml/ChooseProfileScene.fxml"));
         /*
-        Stage stage = (Stage) this.root.getScene().getWindow();
-        Scene scene =
-            new Scene(root, this.root.getScene().getWidth(), this.root.getScene().getHeight());
-        scene.getStylesheets().add(getClass().getResource("/css/changeProfile.css").toExternalForm());
-        stage.setScene(scene);
-        */
+         * Stage stage = (Stage) this.root.getScene().getWindow(); Scene scene = new Scene(root,
+         * this.root.getScene().getWidth(), this.root.getScene().getHeight());
+         * scene.getStylesheets().add(getClass().getResource("/css/changeProfile.css").
+         * toExternalForm()); stage.setScene(scene);
+         */
         ScrabbleApp.getScene().getStylesheets().clear();
-        ScrabbleApp.getScene().getStylesheets().add(getClass().getResource("/css/changeProfile.css").toExternalForm());
+        ScrabbleApp.getScene().getStylesheets()
+            .add(getClass().getResource("/css/changeProfile.css").toExternalForm());
         ScrabbleApp.getScene().setRoot(root);
       } catch (IOException e) {
         e.printStackTrace();
@@ -97,7 +97,7 @@ public class RegisterController implements Initializable {
   }
 
   /**
-   * Initializes a new human player
+   * Initializes a new human player.
    * 
    * @author mraucher
    */
@@ -107,7 +107,7 @@ public class RegisterController implements Initializable {
   }
 
   /**
-   * Sets the user to female when the corresponding button is pressed
+   * Sets the user to female when the corresponding button is pressed.
    * 
    * @param event ActionEvent if the button is clicked
    * @author mraucher
@@ -119,7 +119,7 @@ public class RegisterController implements Initializable {
   }
 
   /**
-   * Sets the user to male when the corresponding button is pressed
+   * Sets the user to male when the corresponding button is pressed.
    * 
    * @param event ActionEvent if the button is clicked
    * @author mraucher
@@ -131,7 +131,7 @@ public class RegisterController implements Initializable {
   }
 
   /**
-   * Sets the user to anonymous when the corresponding button is pressed
+   * Sets the user to anonymous when the corresponding button is pressed.
    * 
    * @param event ActionEvent if the button is clicked
    * @author mraucher
@@ -143,7 +143,7 @@ public class RegisterController implements Initializable {
   }
 
   /**
-   * Sets the user to animal when the corresponding button is pressed
+   * Sets the user to animal when the corresponding button is pressed.
    * 
    * @param event ActionEvent if the button is clicked
    * @author mraucher
@@ -155,7 +155,7 @@ public class RegisterController implements Initializable {
   }
 
   /**
-   * Generating a player id
+   * Generating a player id.
    * 
    * @return the generated Id
    * @author mraucher

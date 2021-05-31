@@ -35,6 +35,8 @@ public class GameHandler extends Thread {
   private boolean bagIsEmpty;
   // is used to get a different behavior for a wanted and a unwanted ending
   private boolean isShutdown;
+  ArrayList<NetworkPlayer> deleted;
+  DynamicValue actualCounter;
 
   // should i control a specific notify call ?
   /**
@@ -45,6 +47,7 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   public GameHandler(GameInformationController game, ArrayList<NetworkPlayer> players) {
+    this.deleted = new ArrayList<NetworkPlayer>();
     this.loading = true;
     this.game = game;
     this.players = players;
@@ -201,7 +204,19 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   private void makeATurn() {
-    for (NetworkPlayer player : this.players) {
+    for (DynamicValue i = new DynamicValue(); i.getValue() < this.players.size(); i.increase()) {
+      NetworkPlayer player = this.players.get(i.getValue());
+      actualCounter = i;
+      boolean hit = false;
+      for (NetworkPlayer delet : this.deleted) {
+        if (player.equals(delet)) {
+          hit = true;
+          break;
+        }
+      }
+      if (hit) {
+        continue;
+      }
       this.checkRunning(); // check if a game should stop
       if (!this.gameIsOn) { // leaving the loop if a game stopped
         break;
@@ -214,6 +229,7 @@ public class GameHandler extends Thread {
         this.waitAiTime(); // Only in purpose to show AiPlayer on the field --> 10sek
         LobbyAiProtocol ai = (LobbyAiProtocol) player; // special move method of AiPlayer
         String action = ai.aiMove(); // calculating a move by the AiPlayer.
+        // this.waitAiTime();
         System.out.println("GAME HANDLER : Ai action = " + action);
         // points have to be calculated.
         this.informAiActions(action); // special inform fo AiPlayer moves.
@@ -230,7 +246,6 @@ public class GameHandler extends Thread {
       this.turn++; // increase the turn counter
       this.game.sendBagSize(); // after every turn.
     }
-
   }
 
   /**
@@ -243,24 +258,31 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   private void informAiActions(String action) {
-    System.out.println("GAME HANDLER : Inform about AiAction");
-    JSONObject data = new JSONObject(action);
-    JSONArray words = data.getJSONArray("words");
-    // AiPlayer points have to be calculated on a special way
-    if (words.length() == 0) {
-      System.out.println("GAME HANDLER : Actionless Ai move");
-      this.actionlessMove++;
-    } else {
-      for (NetworkPlayer player : this.players) {
-        if (player instanceof LobbyServerProtocol) {
-          player.sendActionMessage(action, 0, this.actual.getPlayer().getId());
-          // Only LobbyServerProtocols need to be informed.
+    if (!this.isShutdown) {
+      System.out.println("GAME HANDLER : Inform about AiAction");
+      JSONObject data = new JSONObject(action);
+      int points = data.getInt("score");
+      int add = points + this.points.get(actual);
+      this.points.replace(actual, add);
+      JSONArray words = data.getJSONArray("words");
+      // AiPlayer points have to be calculated on a special way
+      if (words.length() == 0) {
+        System.out.println("GAME HANDLER : Actionless Ai move");
+        this.actionlessMove++;
+      } else {
+        for (NetworkPlayer player : this.players) {
+          if (player instanceof LobbyServerProtocol) {
+            player.sendActionMessage(action, this.points.get(this.actual),
+                this.actual.getPlayer().getId());
+            // Only LobbyServerProtocols need to be informed.
+          }
         }
+        this.host.sendActionMessage(
+            "{\n" + " \"nb\": \"0\",\n" + " \"words\": [\n" + " ],\n" + " \"score\": \"0\"\n" + "}",
+            this.points.get(this.actual), this.actual.getPlayer().getId());
+        this.actionlessMove = 0;
       }
-      this.actionlessMove = 0;
-
     }
-
   }
 
   /**
@@ -270,7 +292,7 @@ public class GameHandler extends Thread {
    */
   private synchronized void waitAiTime() {
     try {
-      this.wait(10000);
+      this.wait(6000);
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
@@ -303,6 +325,8 @@ public class GameHandler extends Thread {
     } else if (this.bagIsEmpty) { // The LetterBag is empty.
       System.out.println("GAME HANDLER : Game end : empty LetterBag");
       this.gameIsOn = false;
+    } else if (this.players.size() <= 1) { // all human players have leave the game
+      this.gameIsOn = false;
     }
   }
 
@@ -315,9 +339,11 @@ public class GameHandler extends Thread {
   private synchronized void waitMazimumTime() { // here a illegal monitor state exception occurs
     System.out.println("GAME HANDLER : Wait move time");
     try {
-      this.wait(); // wait until player inform server
+      if (!this.isShutdown) {
+        this.wait(); // wait until player inform server
+      }
     } catch (InterruptedException e) {
-      // Doing something change to a other approach different message for endTurn and forceEndTurn
+      System.err.println("GAME HANDLER : Critical interupt");
     }
   }
 
@@ -371,11 +397,13 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   private void informActions(String action, int points) {
-    for (NetworkPlayer player : this.players) { // go through them
-      if (!player.equals(this.actual)) { // not the actual
-        if (!(player instanceof LobbyAiProtocol)) { // no AiPlayers they get information from host
-                                                    // grid
-          player.sendActionMessage(action, points, this.actual.getPlayer().getId());
+    if (!this.isShutdown) {
+      for (NetworkPlayer player : this.players) { // go through them
+        if (!player.equals(this.actual)) { // not the actual
+          if (!(player instanceof LobbyAiProtocol)) { // no AiPlayers they get information from host
+                                                      // grid
+            player.sendActionMessage(action, points, this.actual.getPlayer().getId());
+          }
         }
       }
     }
@@ -387,9 +415,10 @@ public class GameHandler extends Thread {
    * @author hendiehl
    */
   public void shutdown() {
+    System.out.println("GAME HANDLER : Shutdown initialized");
     this.isShutdown = true;
     this.gameIsOn = false;
-    this.invokeTurnPhase(); // In case the thread is waiting
+    this.interrupt();
   }
 
   /**
@@ -417,8 +446,8 @@ public class GameHandler extends Thread {
         list.add(player); // Adding only LobbyServerProtocols
       }
     }
-    this.game.prepareLobbyReturn(list); // changing the GameInfoController and the screen by all
-                                        // members
+    this.game.fillBag(); // filling the bag for a next round
+    this.game.prepareLobbyReturn(list); // changing the GameInfoController by all members
     // The List is now ordered in protocol intern order.
     ArrayList<Player> list2 = new ArrayList<Player>(); // need to select the player classes.
     for (NetworkPlayer player : list) {
@@ -434,11 +463,16 @@ public class GameHandler extends Thread {
    */
   public synchronized void playerDeleted(NetworkPlayer player) {
     this.points.remove(player);
+    this.deleted.add(player);
     // Player should be deleted from list because of same
     if (player.equals(actual)) { // the actual player has left the game
       if (this.getState() == Thread.State.WAITING) { // Thread waits for end move
-        this.invokeTurnPhase(); // just notify the thread so the method can be used
+        if (this.actualCounter != null) {
+          this.actualCounter.decrease();
+        }
+        this.notify();
       }
+      //
     }
     // Now the players have to be informed.
     for (NetworkPlayer other : this.players) {
@@ -483,5 +517,53 @@ public class GameHandler extends Thread {
    */
   public void setHost(LobbyHostProtocol host) {
     this.host = host;
+  }
+
+  private class DynamicValue {
+    /**
+     * Private class which imitates an integer value. I tried to dynamically change the value of an
+     * Integer object during a loop iteration but it doesn't work. This class will work as a dynamic
+     * int iterator. Is used when the player on turn leave the game. In this case the actual counter
+     * have to be decreased to cover the size loss.
+     * 
+     * @author hendiehl
+     */
+    private int value;
+
+    /**
+     * Constructor of the value wrapper.
+     * 
+     * @author hendiehl
+     */
+    private DynamicValue() {
+      this.value = 0;
+    }
+
+    /**
+     * Method to decrease the value.
+     * 
+     * @author hendiehl
+     */
+    private void decrease() {
+      this.value -= 1;
+    }
+
+    /**
+     * Method to get the value.
+     * 
+     * @author hendiel
+     */
+    private int getValue() {
+      return this.value;
+    }
+
+    /**
+     * Method to increase the value.
+     * 
+     * @author hendiehl
+     */
+    private void increase() {
+      this.value += 1;
+    }
   }
 }

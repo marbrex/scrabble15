@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXCheckBox?>
+<?import com.jfoenix.controls.JFXRadioButton?>
+<?import com.jfoenix.controls.JFXTextField?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.Reflection?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -19,24 +18,23 @@
       <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="600.0" prefWidth="800.0">
          <children>
             <JFXButton fx:id="backButton" buttonType="RAISED" onAction="#backButtonAction" opacity="0.5" text="Back" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
-            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="200.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="250.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <children>
                   <ImageView fitHeight="150.0" fitWidth="200.0" opacity="0.5" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../img/survey.png" />
                      </image>
                   </ImageView>
-                  <CheckBox fx:id="portBox" disable="true" mnemonicParsing="false" opacity="0.5" text="Port" />
+                  <JFXCheckBox fx:id="portBox" disable="true" opacity="0.5" text="Port" />
                   <Label fx:id="statusLabel" />
                   <Label fx:id="statusLabel2" />
                   <JFXButton fx:id="joinBtn" buttonType="RAISED" disable="true" onAction="#joinAction" opacity="0.5" text="Join" />
-                  <RadioButton fx:id="useOwnPort" disable="true" mnemonicParsing="false" onAction="#ownPortWanted" opacity="0.5" text="Use own port" />
-                  <TextField fx:id="portField" disable="true" opacity="0.5" visible="false">
-                     <effect>
-                        <Reflection />
-                     </effect>
-                  </TextField>
+                  <JFXRadioButton fx:id="useOwnPort" onAction="#ownPortWanted" opacity="0.5" text="Use own port" />
+                  <JFXTextField fx:id="portField" disable="true" opacity="0.5" promptText="Port number :" visible="false" />
                   <JFXButton fx:id="search" buttonType="RAISED" disable="true" onAction="#searchAction" opacity="0.5" text="Search" visible="false" />
+                  <JFXRadioButton fx:id="adressSwitch" onAction="#adressSwitchAction" opacity="0.5" text="Set Host Address" />
+                  <JFXTextField fx:id="hostAdress" opacity="0.5" promptText="Host Adress" visible="false" />
+                  <JFXButton fx:id="setAdress" onAction="#setAdressAction" opacity="0.5" text="Set" visible="false" />
                </children></VBox>
          </children>
          <padding>

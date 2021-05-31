@@ -2,6 +2,8 @@ package scrabble.network;
 
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
+import java.net.SocketException;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -43,7 +45,7 @@ public class SenderHoldBackQueue {
    * @param msg Message which will be sended.
    * @author hendiehl
    */
-  public void writeObject(Message msg) {
+  public synchronized void writeObject(Message msg) {
     System.out.println("SENDER : Added");
     this.holder.add(msg); // adding to queue
     this.sender.inform();;
@@ -59,11 +61,37 @@ public class SenderHoldBackQueue {
   }
 
   /**
-   * Method to shutdown the sender thread.
+   * Method to shutdown the sender thread. Because the call hierarchy of the sender thread is
+   * notified but executed after the shutdown procedure of the client protocol the sender shutdown
+   * have to be slowed down.
+   * 
+   * @author hendiehl
+   * @throws IOException
+   */
+  public synchronized void shutdwon(Socket s) throws IOException {
+    System.out.println("SENDER : Shutdown size : " + this.holder.size());
+    this.isRunning = false;
+    if (!this.holder.isEmpty()) {
+      while (!this.holder.isEmpty()) {
+        this.sender.send();
+      }
+    }
+    try {
+      this.wait(500); // giving server time to receive the messages.
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    s.close();
+    this.sender.inform();
+  }
+
+  /**
+   * Method ensure thread shutdown.
    * 
    * @author hendiehl
    */
-  public void shutdwon() {
+  public void shutdownEnsurement() {
     this.isRunning = false;
     this.sender.inform();
   }
@@ -96,13 +124,18 @@ public class SenderHoldBackQueue {
      * 
      * @author hendiehl
      */
-    private void send() {
+    private synchronized void send() {
       if (!holder.isEmpty()) {
         try {
-          out.writeObject(holder.poll());
-          out.flush();
-          System.out.println("SENDER : sended");
-          System.out.println("SENDER : size : " + holder.size());
+          if (holder.peek() != null) {
+            out.writeObject(holder.poll());
+            out.flush();
+            System.out.println("SENDER : sended");
+            System.out.println("SENDER : size : " + holder.size());
+          }
+        } catch (SocketException e) {
+          System.err.println("SENDER : Socket closed");
+          isRunning = false;
         } catch (IOException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();

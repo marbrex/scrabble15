@@ -3,6 +3,7 @@ package scrabble;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.google.common.collect.Multiset;
+import java.util.ArrayList;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import scrabble.game.LetterBag;
 import scrabble.game.LetterBag.Tile;
+import scrabble.game.LetterTile;
 
 /**
  * This is a JUnit test class for the scrabble.game.LetterBag class.
@@ -126,8 +128,11 @@ public class LetterBagTest {
       assertTrue(remainAmount < originalAmount, "[error]");
     });
 
+    ArrayList<Tile> tiles = new ArrayList<>();
+    tiles.addAll(set);
+
     System.out.println("│ Exchanging the grabbed tiles with random tiles in the bag...");
-    Multiset<Tile> exchangedSet = bag.exchangeTiles(set);
+    Multiset<Tile> exchangedSet = bag.exchangeTiles(tiles);
 
     assertTrue(!exchangedSet.isEmpty(), "[exchanged set is empty]");
 

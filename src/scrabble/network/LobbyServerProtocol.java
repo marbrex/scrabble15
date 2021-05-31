@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import com.google.common.collect.Multiset;
+import javafx.util.Pair;
 import scrabble.model.HumanPlayer;
 import scrabble.model.LetterBagType;
 import scrabble.model.Player;
@@ -112,6 +113,14 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
         case LOAD:
           this.reactToLoad(message);
           break;
+        case EXCHANGE:
+          this.reactToExchange(message);
+          break;
+        case INTAM:
+          this.reactToAmountMessage(message);
+          break;
+        default:
+          break;
       }
     } catch (EOFException e) {
       this.isRunning = false;
@@ -125,6 +134,36 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+  }
+
+  /**
+   * Method to react to an AmountMessage intend.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToAmountMessage(Message message) {
+    ArrayList<Pair<Character, Integer>> amount = this.gameInfoController.getAmountOfEveryTile();
+    AmountMessage msg = new AmountMessage(MessageType.INTAM, this.player, amount);
+    this.out.writeObject(msg);
+    this.out.flush();
+  }
+
+  /**
+   * Method to react to an incoming ExchangeMessage.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToExchange(Message message) {
+    ExchangeMessage msg = (ExchangeMessage) message;
+    Multiset<Tile> tiles;
+    LetterMultisetReturnMessage answer;
+    tiles = this.gameInfoController.exchangeLetterTiles(msg.getTile());
+    answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, tiles, 0, null,
+        LetterBagType.EXC);
+    // no need of size change, amount will not change.
+    this.sendLetterBagResponse(answer);
   }
 
   /**
@@ -199,6 +238,14 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
         answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, null, j, null,
             LetterBagType.GV);
         this.sendLetterBagResponse(answer);
+        break;
+      case GAO:
+        int a = this.gameInfoController.getAmountOf(msg.getLetter());
+        answer = new LetterMultisetReturnMessage(MessageType.BAG, this.player, null, a, null,
+            LetterBagType.GAO);
+        this.sendLetterBagResponse(answer);
+        break;
+      default:
         break;
     }
     this.gameInfoController.checkBagSize(); // after every message.
@@ -280,7 +327,6 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
       this.player = (HumanPlayer) message.getOwner();
       this.sendLobbyInformation();
       this.gameInfoController.checkLobbySize();
-      // Implement if for error code 5
     } else {
       this.sendRejectInfomation(); // should the protocol be shutdown ?
     }
@@ -338,8 +384,10 @@ public class LobbyServerProtocol extends Thread implements NetworkPlayer {
   private void closeConnection() { // change !!!!!!!!!!!!!!!!!!!!!
     try {
       if (this.client != null) {
-        this.out.shutdwon(); // shutdown the queue
-        this.client.close(); // close also in and output stream
+        this.out.shutdwon(this.client); // shutdown the queue
+      }
+      if (this.out != null) {
+        this.out.shutdownEnsurement(); // ensure sender shutdown
       }
     } catch (IOException e) {
       // TODO Auto-generated catch block

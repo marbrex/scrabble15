@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="root" prefHeight="673.0" prefWidth="889.0" xmlns="http://javafx.com/javafx/11"
-  xmlns:fx="http://javafx.com/fxml/1" fx:controller="scrabble.GameController">
+  xmlns:fx="http://javafx.com/fxml/1">
   <center>
     <HBox fx:id="mainBlock" alignment="CENTER" BorderPane.alignment="CENTER">
       <children>

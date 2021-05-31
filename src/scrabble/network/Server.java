@@ -17,8 +17,6 @@ public class Server extends Thread {
 
   private ServerSocket serversocket;
   private Socket clientsocket;
-  private int port;
-  private int maxPlayers;
   private boolean running;
   static ArrayList<ServerProtocol> allClients = new ArrayList<ServerProtocol>();
   private int counter = 0;
@@ -29,7 +27,6 @@ public class Server extends Thread {
    * @author hendiehl
    */
   public Server() {
-    this.maxPlayers = 4;
     try {
       this.serversocket = new ServerSocket(0);
     } catch (IOException e) {

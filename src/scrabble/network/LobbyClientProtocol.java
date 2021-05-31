@@ -17,6 +17,7 @@ import scrabble.model.Profile;
 import scrabble.GameController;
 import scrabble.GameFinderController;
 import scrabble.GameLobbyController;
+import scrabble.dbhandler.DBUpdate;
 import scrabble.game.LetterBag.Tile;
 import scrabble.model.GameStatusType;
 import scrabble.model.MessageType;
@@ -38,7 +39,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
   /** standard connection port */
   private int port = 11111;
   /** network address for local network connections */
-  private String adress = "localhost";
+  private String adress;
   /** own port number if wanted */
   private boolean ownPort;
   // Control
@@ -78,7 +79,8 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @param controller Controller of the GameFinder screen
    * @author hendiehl
    */
-  public LobbyClientProtocol(GameFinderController controller) {
+  public LobbyClientProtocol(GameFinderController controller, String adress) {
+    this.adress = adress;
     this.gameFinderController = controller;
     this.loadPlayer();
   }
@@ -137,8 +139,9 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @throws IOException
    * @author hendiehl
    */
-  public LobbyClientProtocol(GameFinderController controller, int ownPort)
+  public LobbyClientProtocol(GameFinderController controller, int ownPort, String adress)
       throws ConnectException, IOException {
+    this.adress = adress;
     this.gameFinderController = controller;
     this.server = new Socket(adress, ownPort);
     this.in = new ObjectInputStream(server.getInputStream());
@@ -245,6 +248,11 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         case DELET:
           this.reactToDelet(message);
           break;
+        case INTAM:
+          this.reactToAmount(message);
+          break;
+        default:
+          break;
       }
     } catch (EOFException e) {
       this.shutdownProtocol(true);
@@ -258,6 +266,19 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     } catch (IOException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
+    }
+  }
+
+  /**
+   * Method to react to an AmountMessage.
+   * 
+   * @param message
+   * @author hendiehl
+   */
+  private void reactToAmount(Message message) {
+    AmountMessage amount = (AmountMessage) message;
+    if (this.gameScreen != null) {
+      this.gameScreen.getAmountOfEveryTileAnswer(amount.getAmounts());
     }
   }
 
@@ -331,7 +352,13 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     System.out.println("CLIENT PROTOCOL : DB-Message received");
     DBMessage msg = (DBMessage) message;
     boolean won = msg.isWon();
-    // Here save the data in corresponding DB
+    if (won) {
+      System.out.println("CLIENT PROTOCOL : Client win" + won);
+      DBUpdate.updateGamesWon(this.player);
+    } else {
+      System.out.println("CLIENT : PROTOCOL : Client win : " + won);
+      DBUpdate.updateGamesLost(this.player);
+    }
   }
 
   /**
@@ -447,6 +474,16 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
         int j = msg.getAnswer();
         // callback
         this.gameScreen.getValueOfAnswer(j);
+        break;
+      case EXC:
+        tiles = msg.getTiles();
+        // callback
+        this.gameScreen.exchangeLetterTilesAnswer(tiles);
+        break;
+      case GAO:
+        int a = msg.getAnswer();
+        // callback
+        this.gameScreen.getAmountOfAnswer(a);
         break;
     }
   }
@@ -564,6 +601,8 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     this.shutdownProtocol(false);
     if (this.gameLobbyController != null) {
       this.gameLobbyController.openMenu();
+    } else if (this.gameScreen != null) {
+      this.gameScreen.changeScene("/fxml/MainPage.fxml", "/css/mainMenu.css");
     } else {
       this.gameFinderController.openMenu();
     }
@@ -640,8 +679,10 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     try { // if a input or output stream is closed the other close himself and the close method
           // throw the exception
       if (this.server != null) {
-        this.out.shutdwon(); // shutdown the queue
-        this.server.close();
+        this.out.shutdwon(this.server); // shutdown the queue
+      }
+      if (this.out != null) { // is the case if protocol hasn't a connection.
+        this.out.shutdownEnsurement(); // ensure sender shutdown
       }
       // System.out.println("connection closed");
     } catch (IOException e) {
@@ -730,7 +771,11 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     // System.out.println("Send shutdown message");
     Message msg = new Message(MessageType.SHUTDOWN, this.player);
     if (this.chat != null) {
-      this.chat.sendLeaveMessageToServer();
+      if (this.gameScreen != null) {
+        this.chat.sendLeaveGameToServer();
+      } else {
+        this.chat.sendLeaveMessageToServer();
+      }
     }
     if (this.server != null) {
       if (!this.server.isClosed()) {
@@ -777,7 +822,7 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
    * @author hendiehl
    */
   public void startChatClient(int port) {
-    this.chat = new Client(this, port, this.player.getName());
+    this.chat = new Client(this, port, this.player.getName(), this.adress);
     this.chat.connect();
     this.chat.start();
     this.chat.sendJoinMessageToServer();
@@ -977,6 +1022,12 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     return this.ownID;
   }
 
+  /**
+   * Method to inform the protocol about the finished screen loading of the lobby. Is used to open
+   * the AfterGameScreen in the lobby.
+   * 
+   * @author hendiehl
+   */
   @Override
   public void informLobbyReturn() {
     System.out.println("CLIENT PROTOCOL : Lobby load finish");
@@ -986,5 +1037,65 @@ public class LobbyClientProtocol extends Thread implements NetworkScreen {
     }
     this.playerResult = null;
     this.pointsResult = null;
+  }
+
+  /**
+   * Method to send a word message in the chat, to inform other players about placed words.
+   *
+   * @param word A word placed on the game field.
+   * @author hendiehl
+   */
+  @Override
+  public void sendWordMessage(String word) {
+    this.chat.sendWordMessageToServer(word);
+  }
+
+  /**
+   * Method to send a pass message in the chat to inform players about a player pass.
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void sendPassMessage() {
+    this.chat.sendPassToServer();
+  }
+
+  /**
+   * method to end tiles to the server during a network game in reason to change them for new ones.
+   * 
+   * @param tilesToExchange tiles which should be changed by server.
+   * @author hendiehl
+   */
+  @Override
+  public void exchangeLetterTiles(ArrayList<Tile> tilesToExchange) {
+    ExchangeMessage msg = new ExchangeMessage(MessageType.EXCHANGE, this.player, tilesToExchange);
+    this.out.writeObject(msg);
+    this.out.flush();
+  }
+
+  /**
+   * Method to get the remaining quantity of the specified letter tile from the server.
+   * 
+   * @param letter which should be checked.
+   * @author hendiehl
+   */
+  @Override
+  public void getAmountOf(char letter) {
+    LetterBagMessage msg =
+        new LetterBagMessage(MessageType.BAG, this.player, 0, letter, LetterBagType.GAO);
+    this.out.writeObject(msg);
+    this.out.flush();
+  }
+
+  /**
+   * Method which returns the remaining quantity of the specified letter tile during a network game.
+   * 
+   * @author hendiehl
+   */
+  @Override
+  public void getAmountOfEveryTile() {
+    Message msg = new Message(MessageType.INTAM, this.player);
+    this.out.writeObject(msg);
+    this.out.flush();
   }
 }

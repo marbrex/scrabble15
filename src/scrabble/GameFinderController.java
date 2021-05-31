@@ -2,17 +2,17 @@ package scrabble;
 
 import java.io.IOException;
 import java.net.ConnectException;
-
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import com.jfoenix.controls.JFXButton;
-
+import com.jfoenix.controls.JFXCheckBox;
+import com.jfoenix.controls.JFXRadioButton;
+import com.jfoenix.controls.JFXTextField;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -28,13 +28,13 @@ public class GameFinderController implements LobbyController {
   @FXML
   private JFXButton joinBtn;
   @FXML
-  private TextField portField;
+  private JFXTextField portField;
   @FXML
-  private RadioButton useOwnPort;
+  private JFXRadioButton useOwnPort;
   @FXML
   private Label statusLabel;
   @FXML
-  private CheckBox portBox;
+  private JFXCheckBox portBox;
   @FXML
   private JFXButton backButton;
   @FXML
@@ -45,6 +45,13 @@ public class GameFinderController implements LobbyController {
   private JFXButton search;
   @FXML
   private StackPane root;
+  @FXML
+  private JFXRadioButton adressSwitch;
+  @FXML
+  private JFXTextField hostAdress;
+  @FXML
+  private JFXButton setAdress;
+  private String hostIP = "localhost";
   private LobbyClientProtocol clientProtocol;
 
 
@@ -200,8 +207,9 @@ public class GameFinderController implements LobbyController {
   @FXML
   private void initialize() {
     this.loadBackground();
+    this.setDefaultAdress();
     System.out.println("GAME FINDER : Activate auto search");
-    clientProtocol = new LobbyClientProtocol(this);
+    clientProtocol = new LobbyClientProtocol(this, this.hostIP);
     clientProtocol.start();
     this.useOwnPort.setDisable(false);
   }
@@ -262,9 +270,10 @@ public class GameFinderController implements LobbyController {
       System.out.println("GAME FINDER : Port input accepted");
       int port = Integer.valueOf(this.portField.getText());
       if (port <= 65535) {
+        this.portBox.setSelected(false);
         this.clientProtocol.shutdownProtocol(true);
         try {
-          this.clientProtocol = new LobbyClientProtocol(this, port);
+          this.clientProtocol = new LobbyClientProtocol(this, port, this.hostIP);
           this.clientProtocol.start();
           System.out.println("GAME FINDER : Connection on port");
           // this.joinBtn.setDisable(false);
@@ -285,7 +294,8 @@ public class GameFinderController implements LobbyController {
     } else if (this.checkAutoSearch(this.portField.getText())) {
       System.out.println("GAME FINDER : Activate auto search");
       this.clientProtocol.shutdownProtocol(true);
-      this.clientProtocol = new LobbyClientProtocol(this);
+      this.portBox.setSelected(false);
+      this.clientProtocol = new LobbyClientProtocol(this, this.hostIP);
       this.clientProtocol.start();
       this.setStatusLabel2("Search Network Game");
     } else {
@@ -379,5 +389,75 @@ public class GameFinderController implements LobbyController {
    */
   private void loadBackground() {
     this.background.setImage(new Image(getClass().getResourceAsStream("/img/GameFinder.jpg")));
+  }
+
+  /**
+   * Method to handle the action event of the adressSwitch RadioButton. Is used to show the host IP
+   * controls.
+   * 
+   * @author hendiehl
+   */
+  @FXML
+  private void adressSwitchAction() {
+    if (this.adressSwitch.isSelected()) {
+      this.hostAdress.setVisible(true);
+      this.setAdress.setVisible(true);
+      this.setStatusLabel("Please type in host address");
+    } else {
+      this.setDefaultAdress();
+      this.setStatusLabel("The local host is now the address");
+      this.setStatusLabel2("Please type in a new port");
+      this.hostAdress.setVisible(false);
+      this.setAdress.setVisible(false);
+    }
+  }
+
+  /**
+   * Method to set the default host iP.
+   * 
+   * @author hendiehl
+   */
+  private void setDefaultAdress() {
+    String adr = "localhost";
+    try {
+      adr = InetAddress.getLocalHost().getHostAddress();
+    } catch (UnknownHostException e) {
+      adr = "localhost"; // making sure some address is always set
+    }
+    this.hostIP = adr;
+  }
+
+  /**
+   * Method to handle the action event of the setAdress button. Will check the IP string and start a
+   * new client protocol.
+   * 
+   * @author hendiehl
+   */
+  @FXML
+  private void setAdressAction() {
+    String adress = this.hostAdress.getText();
+    if (this.checkIP(adress)) {
+      this.hostIP = adress;
+      this.portBox.setSelected(false);
+      this.clientProtocol.shutdownProtocol(true);
+      this.clientProtocol = new LobbyClientProtocol(this, this.hostIP);
+      this.clientProtocol.start();
+      this.setStatusLabel("New address is set !");
+    } else {
+      this.setStatusLabel("Not a valid address");
+      this.setStatusLabel2("Please type in a new one");
+    }
+
+  }
+
+  /**
+   * Method to check the IP address to a simple IP form, consisting of number connected with a dot.
+   * 
+   * @param ip of the host given by user.
+   * @return acceptance of IP form.
+   * @author hendiehl
+   */
+  private boolean checkIP(String ip) {
+    return ip.matches("^([\\d]{1,3}\\.){3,}[\\d]{1,}$");
   }
 }

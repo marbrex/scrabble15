@@ -189,6 +189,10 @@ public class LoadingController implements Initializable {
                 return new GameController(protocol, isHost, mapContent, players, dictionary, ownID);
               });
               root = loader.load();
+              GameController gameController = loader.<GameController>getController();
+              ScrabbleApp.getStage().setOnHidden(e -> {
+                gameController.shutdown();
+              });
             }
             ScrabbleApp.getScene().getStylesheets().clear();
             ScrabbleApp.getScene().getStylesheets()
